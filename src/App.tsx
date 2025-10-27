@@ -17,7 +17,6 @@ import CourseDetail from "./pages/CourseDetail";
 import LessonPage from "./pages/LessonPage";
 import { ThemeProvider } from "./context/ThemeContext";
 import { ProfileProvider } from "./context/ProfileContext";
-import ReloadPrompt from "./components/ReloadPrompt";
 import { SupabaseProvider } from "./context/SupabaseContext";
 import Login from "./pages/Login";
 
@@ -32,7 +31,6 @@ const App = () => (
             <ProfileProvider>
               <Toaster />
               <Sonner />
-              <ReloadPrompt />
               <Routes>
                 <Route path="/login" element={<Login />} />
                 <Route element={<Layout />}>
