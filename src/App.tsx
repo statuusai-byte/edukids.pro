@@ -11,6 +11,7 @@ import Store from "./pages/Store";
 import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
 import { AgeProvider } from "./context/AgeContext";
+import ActivityDetail from "./pages/ActivityDetail";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,7 @@ const App = () => (
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
             <Route path="/activities" element={<Activities />} />
+            <Route path="/activities/:subject" element={<ActivityDetail />} />
             <Route path="/courses" element={<Courses />} />
             <Route path="/store" element={<Store />} />
             <Route path="/dashboard" element={<Dashboard />} />

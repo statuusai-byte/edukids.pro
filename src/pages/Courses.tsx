@@ -6,39 +6,53 @@ import { useMemo } from "react";
 
 const allCourses = [
   { 
-    title: "Introdução à Programação", 
-    instructor: "Prof. Ada", 
-    duration: "2h 30m", 
-    imageUrl: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=2070&auto=format&fit=crop",
-    ageGroups: ['10-12']
+    title: "Inglês para Crianças", 
+    instructor: "Teacher Liza", 
+    duration: "3h 45m", 
+    imageUrl: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop",
+    ageGroups: ['4-6', '7-9', '10-12']
   },
   { 
-    title: "A Magia dos Números", 
-    instructor: "Prof. Alan", 
-    duration: "3h 15m", 
-    imageUrl: "https://images.unsplash.com/photo-1509228468518-180dd4864904?q=80&w=2070&auto=format&fit=crop",
+    title: "Violão para Iniciantes", 
+    instructor: "Maestro Léo", 
+    duration: "4h 20m", 
+    imageUrl: "https://images.unsplash.com/photo-1558020245-70c1a53218a9?q=80&w=2070&auto=format&fit=crop",
     ageGroups: ['7-9', '10-12']
   },
   { 
-    title: "Desenhando com Formas", 
-    instructor: "Prof. Grace", 
-    duration: "1h 45m", 
-    imageUrl: "https://images.unsplash.com/photo-1588864721034-4c4b8c13dc32?q=80&w=2070&auto=format&fit=crop",
-    ageGroups: ['4-6', '7-9']
+    title: "Espanhol Divertido", 
+    instructor: "Profe Sofia", 
+    duration: "3h 10m", 
+    imageUrl: "https://images.unsplash.com/photo-1534790566855-4cb788d389ec?q=80&w=2070&auto=format&fit=crop",
+    ageGroups: ['7-9', '10-12']
   },
   { 
-    title: "Viagem pelo Sistema Solar", 
-    instructor: "Prof. Carl", 
-    duration: "4h 00m", 
-    imageUrl: "https://images.unsplash.com/photo-1614726365902-79a8e383d11d?q=80&w=2070&auto=format&fit=crop",
+    title: "Desenho e Pintura Digital", 
+    instructor: "Artista Gabi", 
+    duration: "5h 00m", 
+    imageUrl: "https://images.unsplash.com/photo-1589150306321-458c3d39c37a?q=80&w=1974&auto=format&fit=crop",
     ageGroups: ['7-9', '10-12']
   },
   {
-    title: "Cores e Sentimentos",
-    instructor: "Prof. Léo",
-    duration: "1h 10m",
-    imageUrl: "https://images.unsplash.com/photo-1534353436294-0dbd4bdac845?q=80&w=2070&auto=format&fit=crop",
-    ageGroups: ['4-6']
+    title: "Pequenos Cientistas",
+    instructor: "Dr. Elara",
+    duration: "2h 15m",
+    imageUrl: "https://images.unsplash.com/photo-1576086213369-97a306d36557?q=80&w=2080&auto=format&fit=crop",
+    ageGroups: ['4-6', '7-9']
+  },
+  {
+    title: "Robótica com LEGO",
+    instructor: "Eng. Rick",
+    duration: "6h 30m",
+    imageUrl: "https://images.unsplash.com/photo-1678922619217-061b7a23b0e1?q=80&w=2070&auto=format&fit=crop",
+    ageGroups: ['10-12']
+  },
+  {
+    title: "Teclado Mágico",
+    instructor: "Maestra Ana",
+    duration: "4h 00m",
+    imageUrl: "https://images.unsplash.com/photo-1612021459339-39989c23165a?q=80&w=2070&auto=format&fit=crop",
+    ageGroups: ['4-6', '7-9', '10-12']
   }
 ];
 
