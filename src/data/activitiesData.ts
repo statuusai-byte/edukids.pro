@@ -58,8 +58,8 @@ export const subjectsData: Subject[] = [
             title: "Introdução ao Contar",
             description: "Pequenas práticas para reconhecer números.",
             lessons: [
-              { id: "m1-l1", title: "Quantas maçãs? (1-3)", description: "Contando até 3 com maçãs.", content: "Mostre 1 a 3 maçãs e conte em voz alta.", type: "exercise" },
-              { id: "m1-l2", title: "Contando Maçãs (4-5)", description: "Expandindo até 5.", content: "Agora conte até 5 com maçãs coloridas.", type: "exercise" }
+              { id: "m1-l1", title: "Quantas maçãs? (1-3)", description: "Contando até 3 com maçãs.", content: "Conte em voz alta: 🍎. Quantas são? (Resposta: 1). Conte: 🍎🍎. Quantas são? (Resposta: 2).", type: "exercise" },
+              { id: "m1-l2", title: "Contando Maçãs (4-5)", description: "Expandindo até 5.", content: "Conte: 🍎🍎🍎🍎. Quantas são? (Resposta: 4). Conte: 🍎🍎🍎🍎🍎. Quantas são? (Resposta: 5).", type: "exercise" }
             ]
           },
           {
@@ -68,7 +68,7 @@ export const subjectsData: Subject[] = [
             description: "Jogos e desafios para fixação.",
             lessons: [
               { id: "m1-l3", title: "Jogo Rápido: Escolha o Número", description: "Escolha quantas maçãs aparecem.", content: "Clique no número correto.", type: "game" },
-              { id: "m1-l4", title: "Desafio de Tempo", description: "Conte rapidamente para ganhar estrelas.", content: "Tempo limitado para contar.", type: "exercise" }
+              { id: "m1-l4", title: "Desafio de Tempo", description: "Conte rapidamente para ganhar estrelas.", content: "Desafio: Em 10 segundos, conte quantos objetos aparecem na tela. (Simulação de quiz rápido).", type: "exercise" }
             ]
           },
           {
@@ -76,8 +76,8 @@ export const subjectsData: Subject[] = [
             title: "Revisão e Prática",
             description: "Reforce o que aprendeu com atividades variadas.",
             lessons: [
-              { id: "m1-l5", title: "Mix de Frutas", description: "Conte diferentes frutas misturadas.", content: "Conte e escreva os totais.", type: "exercise" },
-              { id: "m1-l6", title: "Autoavaliação", description: "Repita os exercícios que teve dificuldade.", content: "Escolha lições completadas para rever.", type: "exercise" }
+              { id: "m1-l5", title: "Mix de Frutas", description: "Conte diferentes frutas misturadas.", content: "Pergunta: Se você tem 3 bananas 🍌🍌🍌 e 2 laranjas 🍊🍊, quantas frutas tem no total? (Resposta: 5).", type: "exercise" },
+              { id: "m1-l6", title: "Autoavaliação", description: "Repita os exercícios que teve dificuldade.", content: "Revisão: Qual é o número que vem depois do 4? (Resposta: 5).", type: "exercise" }
             ]
           }
         ]
@@ -93,16 +93,16 @@ export const subjectsData: Subject[] = [
             id: "m2-mod-1",
             title: "Reconhecendo Formas",
             lessons: [
-              { id: "m2-l1", title: "O que é um círculo?", description: "Identifique círculos em imagens.", content: "Atividade de reconhecimento.", type: "exercise" },
-              { id: "m2-l2", title: "Quadrados e Triângulos", description: "Compare formas básicas.", content: "Desenhe exemplos e localize objetos.", type: "exercise" }
+              { id: "m2-l1", title: "O que é um círculo?", description: "Identifique círculos em imagens.", content: "O círculo é redondo como uma bola. Qual objeto abaixo é um círculo? (Opções: ⏹️, 🔺, ⭕).", type: "exercise" },
+              { id: "m2-l2", title: "Quadrados e Triângulos", description: "Compare formas básicas.", content: "O quadrado tem 4 lados iguais. O triângulo tem 3 lados. Quantos lados tem um quadrado? (Resposta: 4).", type: "exercise" }
             ]
           },
           {
             id: "m2-mod-2",
             title: "Formas no Mundo",
             lessons: [
-              { id: "m2-l3", title: "Formas em Casa", description: "Encontre objetos que representem cada forma.", content: "Tarefa para casa.", type: "exercise" },
-              { id: "m2-l4", title: "Atividade Criativa", description: "Desenhe uma cena usando 5 formas diferentes.", content: "Crie e conte as formas usadas.", type: "exercise" }
+              { id: "m2-l3", title: "Formas em Casa", description: "Encontre objetos que representem cada forma.", content: "Tarefa: Olhe pela janela. O que tem formato de retângulo? (Exemplo: a porta).", type: "exercise" },
+              { id: "m2-l4", title: "Atividade Criativa", description: "Desenhe uma cena usando 5 formas diferentes.", content: "Desenhe uma casa usando um triângulo (telhado) e um quadrado (corpo).", type: "exercise" }
             ]
           }
         ]
@@ -118,16 +118,16 @@ export const subjectsData: Subject[] = [
             id: "m3-mod-basico",
             title: "Soma Básica",
             lessons: [
-              { id: "m3-l1", title: "1+1 e 2+1", description: "Somando pequenas quantidades com blocos.", content: "Use blocos para visualizar somas.", type: "exercise" },
-              { id: "m3-l2", title: "Objetos do Dia a Dia", description: "Some brinquedos e conte o total.", content: "Exercício prático com objetos.", type: "exercise" }
+              { id: "m3-l1", title: "1+1 e 2+1", description: "Somando pequenas quantidades com blocos.", content: "Se você tem 1 bloco azul e ganha mais 1 bloco azul, quantos blocos tem? (Resposta: 2).", type: "exercise" },
+              { id: "m3-l2", title: "Objetos do Dia a Dia", description: "Some brinquedos e conte o total.", content: "Você tem 3 carrinhos e 2 bonecas. Quantos brinquedos no total? (Resposta: 5).", type: "exercise" }
             ]
           },
           {
             id: "m3-mod-visual",
             title: "Visualizando Somatórios",
             lessons: [
-              { id: "m3-l3", title: "Barra de Somas", description: "Use barras para juntar números.", content: "Representações visuais da adição.", type: "exercise" },
-              { id: "m3-l4", title: "Problema com Figuras", description: "Pequenos problemas que ativam o raciocínio.", content: "Leia e resolva.", type: "exercise" }
+              { id: "m3-l3", title: "Barra de Somas", description: "Use barras para juntar números.", content: "Pergunta: 4 + 3 = ? (Resposta: 7).", type: "exercise" },
+              { id: "m3-l4", title: "Problema com Figuras", description: "Pequenos problemas que ativam o raciocínio.", content: "Havia 5 pássaros na árvore. 2 voaram. Quantos restaram? (Resposta: 3).", type: "exercise" }
             ]
           }
         ]
@@ -143,16 +143,16 @@ export const subjectsData: Subject[] = [
             id: "m4-mod-1",
             title: "Tabuada Inicial",
             lessons: [
-              { id: "m4-l1", title: "Tabuada do 1 ao 5", description: "Aprenda com jogos e repetições.", content: "Prática com flashcards.", type: "exercise" },
-              { id: "m4-l2", title: "Quiz Rápido", description: "Responda multiplicações simples.", content: "Quiz cronometrado.", type: "exercise" }
+              { id: "m4-l1", title: "Tabuada do 1 ao 5", description: "Aprenda com jogos e repetições.", content: "Quiz: 3 x 4 = ? (Resposta: 12). 5 x 5 = ? (Resposta: 25).", type: "exercise" },
+              { id: "m4-l2", title: "Quiz Rápido", description: "Responda multiplicações simples.", content: "Teste de velocidade: Qual é o resultado de 2 x 7? (Resposta: 14).", type: "exercise" }
             ]
           },
           {
             id: "m4-mod-2",
             title: "Velocidade e Precisão",
             lessons: [
-              { id: "m4-l3", title: "Tabuada do 6 ao 10", description: "Continue a prática com suporte visual.", content: "Exercícios dirigidos.", type: "exercise" },
-              { id: "m4-l4", title: "Desafio de 60s", description: "Quantas respostas corretas em 60s?", content: "Teste de velocidade.", type: "exercise" }
+              { id: "m4-l3", title: "Tabuada do 6 ao 10", description: "Continue a prática com suporte visual.", content: "Quiz: 8 x 9 = ? (Resposta: 72). 6 x 6 = ? (Resposta: 36).", type: "exercise" },
+              { id: "m4-l4", title: "Desafio de 60s", description: "Quantas respostas corretas em 60s?", content: "Desafio: Responda 10 perguntas de multiplicação em 60 segundos.", type: "exercise" }
             ]
           }
         ]
@@ -169,15 +169,15 @@ export const subjectsData: Subject[] = [
             title: "Meio e Quarto",
             lessons: [
               { id: "m5-l1", title: "Meio e Quarto", description: "Entenda partes básicas de uma pizza.", videoUrl: "https://www.youtube.com/embed/CGyEd0aKWZE", type: "video" },
-              { id: "m5-l2", title: "Dividindo Reais", description: "Exercícios práticos com imagens.", content: "Corte e identifique frações.", type: "exercise" }
+              { id: "m5-l2", title: "Dividindo Reais", description: "Se você dividir uma maçã em 4 partes iguais, cada parte é chamada de: (Resposta: Um quarto).", content: "Exercícios práticos com imagens.", type: "exercise" }
             ]
           },
           {
             id: "m5-mod-2",
             title: "Frações Equivalentes",
             lessons: [
-              { id: "m5-l3", title: "Comparando Frações", description: "Identifique frações equivalentes.", content: "Atividade interativa.", type: "exercise" },
-              { id: "m5-l4", title: "Desafio Visual", description: "Jogo com comparação e equivalência.", content: "Exercício de correspondência.", type: "exercise" }
+              { id: "m5-l3", title: "Comparando Frações", description: "Identifique frações equivalentes.", content: "Qual fração é igual a 1/2? (Opções: 2/4, 1/3, 3/5).", type: "exercise" },
+              { id: "m5-l4", title: "Desafio Visual", description: "Jogo com comparação e equivalência.", content: "Se 2/8 da pizza foi comida, qual fração equivalente sobrou? (Resposta: 6/8 ou 3/4).", type: "exercise" }
             ]
           }
         ]
@@ -193,16 +193,16 @@ export const subjectsData: Subject[] = [
             id: "m6-mod-1",
             title: "Enigmas Iniciais",
             lessons: [
-              { id: "m6-l1", title: "Desafios Iniciais", description: "Problemas simples de raciocínio.", content: "Resolva pequenos enigmas.", type: "exercise" },
-              { id: "m6-l2", title: "Pense em Etapas", description: "Divida problemas em passos.", content: "Exercício guiado.", type: "exercise" }
+              { id: "m6-l1", title: "Desafios Iniciais", description: "Problemas simples de raciocínio.", content: "Se um trem sai às 8h e viaja por 3 horas, a que horas ele chega? (Resposta: 11h).", type: "exercise" },
+              { id: "m6-l2", title: "Pense em Etapas", description: "Divida problemas em passos.", content: "Um fazendeiro tem 10 galinhas. Se ele vender 4 e comprar 2, quantas galinhas ele tem agora? (Resposta: 8).", type: "exercise" }
             ]
           },
           {
             id: "m6-mod-2",
             title: "Raciocínio Composto",
             lessons: [
-              { id: "m6-l3", title: "Problemas com Várias Etapas", description: "Desafios que exigem persistência.", content: "Problemas mais longos.", type: "exercise" },
-              { id: "m6-l4", title: "Resolução Criativa", description: "Encontre soluções alternativas.", content: "Atividade aberta.", type: "exercise" }
+              { id: "m6-l3", title: "Problemas com Várias Etapas", description: "Desafios que exigem persistência.", content: "Se o preço de um livro é R$ 20 e você tem um desconto de 10%, quanto você paga? (Resposta: R$ 18).", type: "exercise" },
+              { id: "m6-l4", title: "Resolução Criativa", description: "Encontre soluções alternativas.", content: "Desafio: Use os números 2, 3, 5 e 8 para formar o número 50 usando adição e multiplicação.", type: "exercise" }
             ]
           }
         ]
@@ -219,15 +219,15 @@ export const subjectsData: Subject[] = [
             title: "Introdução à Geometria",
             lessons: [
               { id: "m7-l1", title: "Ângulos e Tipos", description: "Aprenda sobre ângulos retos, agudos e obtusos.", videoUrl: "https://www.youtube.com/embed/8ZK0hXp1mvM", type: "video" },
-              { id: "m7-l2", title: "Perímetro Básico", description: "Meça e calcule perímetros.", content: "Exercícios práticos de perímetro.", type: "exercise" }
+              { id: "m7-l2", title: "Perímetro Básico", description: "Meça e calcule perímetros.", content: "Qual é o perímetro de um quadrado com lados de 5cm? (Resposta: 20cm).", type: "exercise" }
             ]
           },
           {
             id: "m7-mod-2",
             title: "Área e Aplicações",
             lessons: [
-              { id: "m7-l3", title: "Área de Retângulos", description: "Calcule áreas simples.", content: "Atividade prática.", type: "exercise" },
-              { id: "m7-l4", title: "Problemas do Mundo Real", description: "Aplicações práticas de área.", content: "Questões contextualizadas.", type: "exercise" }
+              { id: "m7-l3", title: "Área de Retângulos", description: "Calcule áreas simples.", content: "Qual é a área de um retângulo com 4cm de largura e 6cm de comprimento? (Resposta: 24cm²).", type: "exercise" },
+              { id: "m7-l4", title: "Problemas do Mundo Real", description: "Aplicações práticas de área.", content: "Se você precisa pintar uma parede de 3m x 4m, qual é a área total a ser pintada? (Resposta: 12m²).", type: "exercise" }
             ]
           }
         ]
@@ -252,16 +252,16 @@ export const subjectsData: Subject[] = [
             id: "p1-mod-1",
             title: "Letras e Sons",
             lessons: [
-              { id: "p1-l1", title: "A a Z - Sons Iniciais", description: "Associe letras a sons e imagens.", content: "Cartões interativos de som.", type: "exercise" },
-              { id: "p1-l2", title: "Letras em Palavras", description: "Identifique letras no começo das palavras.", content: "Atividade de correspondência.", type: "exercise" }
+              { id: "p1-l1", title: "A a Z - Sons Iniciais", description: "Associe letras a sons e imagens.", content: "Qual letra faz o som de 'A' de 'Abelha'? (Resposta: A).", type: "exercise" },
+              { id: "p1-l2", title: "Letras em Palavras", description: "Identifique letras no começo das palavras.", content: "Qual é a primeira letra da palavra 'CASA'? (Resposta: C).", type: "exercise" }
             ]
           },
           {
             id: "p1-mod-2",
             title: "Brincando com Letras",
             lessons: [
-              { id: "p1-l3", title: "Montando Palavras Simples", description: "Junte letras para formar palavras curto.", content: "Jogo de montar palavras.", type: "exercise" },
-              { id: "p1-l4", title: "Caça às Letras", description: "Localize letras em textos curtos.", content: "Exercício de leitura guiada.", type: "exercise" }
+              { id: "p1-l3", title: "Montando Palavras Simples", description: "Junte letras para formar palavras curto.", content: "Junte as letras B-O-L-A. Qual palavra você formou? (Resposta: BOLA).", type: "exercise" },
+              { id: "p1-l4", title: "Caça às Letras", description: "Localize letras em textos curtos.", content: "Leitura: 'O gato comeu o peixe.' Quantas vezes a letra 'O' aparece?", type: "exercise" }
             ]
           }
         ]
@@ -277,8 +277,8 @@ export const subjectsData: Subject[] = [
             id: "p2-mod-1",
             title: "Sílabas Simples",
             lessons: [
-              { id: "p2-l1", title: "Dividindo em Sílabas", description: "Entenda a separação por sílaba.", content: "Atividade com exemplos.", type: "exercise" },
-              { id: "p2-l2", title: "Sílabas e Sons", description: "Combine sílabas para formar palavras.", content: "Exercício interativo.", type: "exercise" }
+              { id: "p2-l1", title: "Dividindo em Sílabas", description: "Entenda a separação por sílaba.", content: "Quantas sílabas tem a palavra 'PATO'? (Resposta: 2).", type: "exercise" },
+              { id: "p2-l2", title: "Sílabas e Sons", description: "Combine sílabas para formar palavras.", content: "Junte as sílabas 'CA' e 'LO'. Qual palavra você formou? (Resposta: CALO).", type: "exercise" }
             ]
           },
           {
@@ -302,8 +302,8 @@ export const subjectsData: Subject[] = [
             id: "p3-mod-1",
             title: "Rimas Básicas",
             lessons: [
-              { id: "p3-l1", title: "Rimas Simples", description: "Encontre pares que rimam.", content: "Atividade com cartões.", type: "exercise" },
-              { id: "p3-l2", title: "Crie Sua Rima", description: "Escreva rimas simples.", content: "Exercício criativo.", type: "exercise" }
+              { id: "p3-l1", title: "Rimas Simples", description: "Encontre pares que rimam.", content: "Qual palavra rima com 'PÃO'? (Opções: MÃO, GATO, BOLA).", type: "exercise" },
+              { id: "p3-l2", title: "Crie Sua Rima", description: "Escreva rimas simples.", content: "Complete a frase: 'O sapo pulou no _____' (Sugestão: RIO).", type: "exercise" }
             ]
           }
         ]
@@ -319,8 +319,8 @@ export const subjectsData: Subject[] = [
             id: "p4-mod-1",
             title: "Compreensão Básica",
             lessons: [
-              { id: "p4-l1", title: "Leia e Responda", description: "Perguntas de múltipla escolha sobre o texto.", content: "Texto curto com perguntas.", type: "reading" },
-              { id: "p4-l2", title: "Resumo do Texto", description: "Aprenda a resumir ideias principais.", content: "Tarefa de resumo.", type: "exercise" }
+              { id: "p4-l1", title: "Leia e Responda", description: "Perguntas de múltipla escolha sobre o texto.", content: "Texto: 'O cachorro Rex gosta de correr no parque.' Pergunta: O que o Rex gosta de fazer? (Resposta: Correr no parque).", type: "reading" },
+              { id: "p4-l2", title: "Resumo do Texto", description: "Aprenda a resumir ideias principais.", content: "Leia a história do coelho e da tartaruga e escreva em uma frase quem ganhou a corrida.", type: "exercise" }
             ]
           }
         ]
@@ -336,8 +336,8 @@ export const subjectsData: Subject[] = [
             id: "p5-mod-1",
             title: "Regras e Exemplos",
             lessons: [
-              { id: "p5-l1", title: "Acentos Básicos", description: "Regras de acentuação.", content: "Exemplos e exercícios.", type: "exercise" },
-              { id: "p5-l2", title: "Exercícios Práticos", description: "Aplique as regras em palavras reais.", content: "Quiz interativo.", type: "exercise" }
+              { id: "p5-l1", title: "Acentos Básicos", description: "Regras de acentuação.", content: "Qual palavra precisa de acento: 'cafe' ou 'mesa'? (Resposta: CAFÉ).", type: "exercise" },
+              { id: "p5-l2", title: "Exercícios Práticos", description: "Aplique as regras em palavras reais.", content: "Acentue corretamente: 'voce', 'pijama', 'arvore'. (Respostas: VOCÊ, ARVORE).", type: "exercise" }
             ]
           }
         ]
@@ -353,8 +353,8 @@ export const subjectsData: Subject[] = [
             id: "p6-mod-1",
             title: "Substantivos e Verbos",
             lessons: [
-              { id: "p6-l1", title: "Identificando Substantivos", description: "Marque substantivos em frases.", content: "Exercício de marcação.", type: "exercise" },
-              { id: "p6-l2", title: "Transformando Frases", description: "Use adjetivos para enriquecer frases.", content: "Atividade prática.", type: "exercise" }
+              { id: "p6-l1", title: "Identificando Substantivos", description: "Marque substantivos em frases.", content: "Na frase 'O menino comeu a maçã', qual é o substantivo? (Resposta: menino, maçã).", type: "exercise" },
+              { id: "p6-l2", title: "Transformando Frases", description: "Use adjetivos para enriquecer frases.", content: "Adicione um adjetivo à frase: 'O cachorro é grande.' (Sugestão: O cachorro é peludo/rápido).", type: "exercise" }
             ]
           }
         ]
@@ -370,8 +370,8 @@ export const subjectsData: Subject[] = [
             id: "p7-mod-1",
             title: "Planejamento",
             lessons: [
-              { id: "p7-l1", title: "Planejando a História", description: "Estruture início, meio e fim.", content: "Guia para criar uma história curta.", type: "exercise" },
-              { id: "p7-l2", title: "Escrevendo com Emoção", description: "Use adjetivos e verbos para dar vida ao texto.", content: "Exercício prático.", type: "exercise" }
+              { id: "p7-l1", title: "Planejando a História", description: "Estruture início, meio e fim.", content: "Escreva um parágrafo sobre o que acontece no início de uma aventura espacial.", type: "exercise" },
+              { id: "p7-l2", title: "Escrevendo com Emoção", description: "Use adjetivos e verbos para dar vida ao texto.", content: "Reescreva a frase 'Ele andou rápido' usando um verbo mais forte (Ex: Ele disparou).", type: "exercise" }
             ]
           }
         ]
@@ -396,16 +396,16 @@ export const subjectsData: Subject[] = [
             id: "c1-mod-1",
             title: "Órgãos e Funções",
             lessons: [
-              { id: "c1-l1", title: "Sistema Digestório", description: "Como os alimentos são processados no corpo.", content: "Leitura guiada com imagens.", type: "reading" },
-              { id: "c1-l2", title: "Sistema Respiratório", description: "Como respiramos.", content: "Exercício de identificação.", type: "exercise" }
+              { id: "c1-l1", title: "Sistema Digestório", description: "Como os alimentos são processados no corpo.", content: "Onde a comida é digerida? (Resposta: Estômago e intestinos).", type: "reading" },
+              { id: "c1-l2", title: "Sistema Respiratório", description: "Como respiramos.", content: "Qual órgão usamos para respirar? (Resposta: Pulmões).", type: "exercise" }
             ]
           },
           {
             id: "c1-mod-2",
             title: "Cuidados e Saúde",
             lessons: [
-              { id: "c1-l3", title: "Higiene e Hábitos Saudáveis", description: "Práticas para manter o corpo saudável.", content: "Checklist prático.", type: "exercise" },
-              { id: "c1-l4", title: "Experimento Simples", description: "Experimentos seguros para entender funções.", content: "Atividade prática.", type: "exercise" }
+              { id: "c1-l3", title: "Higiene e Hábitos Saudáveis", description: "Práticas para manter o corpo saudável.", content: "Por que é importante lavar as mãos antes de comer? (Resposta: Para remover germes).", type: "exercise" },
+              { id: "c1-l4", title: "Experimento Simples", description: "Experimentos seguros para entender funções.", content: "Experimento: Encha um balão com um canudo para simular a respiração dos pulmões.", type: "exercise" }
             ]
           }
         ]
@@ -430,16 +430,16 @@ export const subjectsData: Subject[] = [
             id: "h1-mod-1",
             title: "Contexto e Povos",
             lessons: [
-              { id: "h1-l1", title: "Povos Indígenas", description: "Quem vivia no Brasil antes de 1500?", content: "Leitura com mapa.", type: "reading" },
-              { id: "h1-l2", title: "Rotas e Viagens", description: "Como chegaram os portugueses?", content: "Linha do tempo.", type: "exercise" }
+              { id: "h1-l1", title: "Povos Indígenas", description: "Quem vivia no Brasil antes de 1500?", content: "Antes da chegada dos europeus, quem habitava o Brasil? (Resposta: Povos Indígenas).", type: "reading" },
+              { id: "h1-l2", title: "Rotas e Viagens", description: "Como chegaram os portugueses?", content: "Quem liderou a frota portuguesa que chegou ao Brasil em 1500? (Resposta: Pedro Álvares Cabral).", type: "exercise" }
             ]
           },
           {
             id: "h1-mod-2",
             title: "Consequências",
             lessons: [
-              { id: "h1-l3", title: "Impactos Culturais", description: "Mudanças geradas pelo encontro.", content: "Atividade de reflexão.", type: "exercise" },
-              { id: "h1-l4", title: "Revisão e Debate", description: "Questões para discutir em sala.", content: "Debate guiado.", type: "exercise" }
+              { id: "h1-l3", title: "Impactos Culturais", description: "Mudanças geradas pelo encontro.", content: "Cite uma mudança que ocorreu na vida dos indígenas após a chegada dos portugueses.", type: "exercise" },
+              { id: "h1-l4", title: "Revisão e Debate", description: "Questões para discutir em sala.", content: "Debate: O 'descobrimento' foi bom ou ruim para os povos que já viviam aqui?", type: "exercise" }
             ]
           }
         ]
@@ -464,8 +464,8 @@ export const subjectsData: Subject[] = [
             id: "g1-mod-1",
             title: "Mapa e Localização",
             lessons: [
-              { id: "g1-l1", title: "Mapa do Brasil", description: "Localize estados e capitais.", content: "Exercício de mapeamento.", type: "exercise" },
-              { id: "g1-l2", title: "Curiosidades por Capital", description: "Fatos interessantes sobre capitais.", content: "Leitura e perguntas.", type: "reading" }
+              { id: "g1-l1", title: "Mapa do Brasil", description: "Localize estados e capitais.", content: "Qual é a capital do estado de São Paulo? (Resposta: São Paulo).", type: "exercise" },
+              { id: "g1-l2", title: "Curiosidades por Capital", description: "Fatos interessantes sobre capitais.", content: "Qual capital brasileira é famosa por ter o Cristo Redentor? (Resposta: Rio de Janeiro).", type: "reading" }
             ]
           }
         ]
@@ -490,7 +490,7 @@ export const subjectsData: Subject[] = [
             id: "i1-mod-1",
             title: "Vocabulário Básico",
             lessons: [
-              { id: "i1-l1", title: "Cores em Inglês", description: "Nomes das cores e como usá-las.", content: "Flashcards de cores.", type: "exercise" },
+              { id: "i1-l1", title: "Cores em Inglês", description: "Nomes das cores e como usá-las.", content: "Como se diz 'azul' em inglês? (Resposta: Blue).", type: "exercise" },
               { id: "i1-l2", title: "Números Básicos", description: "Contando em inglês.", videoUrl: "https://www.youtube.com/embed/d3LLHe2fM0w", type: "video" }
             ]
           }
@@ -516,8 +516,8 @@ export const subjectsData: Subject[] = [
             id: "l1-mod-1",
             title: "Padrões Simples",
             lessons: [
-              { id: "l1-l1", title: "Sequências Simples", description: "Identifique o próximo item.", content: "Exercício visual.", type: "exercise" },
-              { id: "l1-l2", title: "Sequências com Cores", description: "Padrões coloridos.", content: "Atividade prática.", type: "exercise" }
+              { id: "l1-l1", title: "Sequências Simples", description: "Identifique o próximo item.", content: "Qual é o próximo: 🔴, 🔵, 🔴, 🔵, ___? (Resposta: 🔴).", type: "exercise" },
+              { id: "l1-l2", title: "Sequências com Cores", description: "Padrões coloridos.", content: "Qual é o próximo: 🟩, 🟨, 🟨, 🟩, 🟨, ___? (Resposta: 🟨).", type: "exercise" }
             ]
           }
         ]
@@ -542,8 +542,8 @@ export const subjectsData: Subject[] = [
             id: "a1-mod-1",
             title: "Ferramentas Básicas",
             lessons: [
-              { id: "a1-l1", title: "Conhecendo Pincéis", description: "Tipos de pincéis e usos.", content: "Leitura e demonstração.", type: "reading" },
-              { id: "a1-l2", title: "Criando um Personagem", description: "Do esboço à cor.", content: "Exercício passo-a-passo.", type: "exercise" }
+              { id: "a1-l1", title: "Conhecendo Pincéis", description: "Tipos de pincéis e usos.", content: "Qual pincel você usaria para pintar uma linha fina? (Resposta: Pincel fino/detalhe).", type: "reading" },
+              { id: "a1-l2", title: "Criando um Personagem", description: "Do esboço à cor.", content: "Tarefa: Desenhe um monstro amigável usando apenas as cores primárias (vermelho, azul, amarelo).", type: "exercise" }
             ]
           }
         ]
@@ -568,8 +568,8 @@ export const subjectsData: Subject[] = [
             id: "mu1-mod-1",
             title: "Introdução aos Instrumentos",
             lessons: [
-              { id: "mu1-l1", title: "Cordas e Sopro", description: "Identifique famílias de instrumentos.", content: "Atividade auditiva.", type: "exercise" },
-              { id: "mu1-l2", title: "Ritmos Simples", description: "Marque o tempo com palmas.", content: "Exercício de ritmo.", type: "exercise" }
+              { id: "mu1-l1", title: "Cordas e Sopro", description: "Identifique famílias de instrumentos.", content: "O violão é um instrumento de corda ou de sopro? (Resposta: Corda).", type: "exercise" },
+              { id: "mu1-l2", title: "Ritmos Simples", description: "Marque o tempo com palmas.", content: "Bata palmas no ritmo da música que está tocando (Instrução para o pai/professor).", type: "exercise" }
             ]
           }
         ]
@@ -594,8 +594,8 @@ export const subjectsData: Subject[] = [
             id: "pr1-mod-1",
             title: "Sequência e Comandos",
             lessons: [
-              { id: "pr1-l1", title: "Sequência de Comandos", description: "Ordem de execução e instruções.", content: "Atividade com blocos.", type: "exercise" },
-              { id: "pr1-l2", title: "Loops Simples", description: "Repetição com objetivos.", content: "Exercícios práticos.", type: "exercise" }
+              { id: "pr1-l1", title: "Sequência de Comandos", description: "Ordem de execução e instruções.", content: "Se você der os comandos 'Andar', 'Virar Esquerda', 'Andar', onde você termina? (Resposta: 2 passos à frente, virado para a esquerda).", type: "exercise" },
+              { id: "pr1-l2", title: "Loops Simples", description: "Repetição com objetivos.", content: "O que acontece se você usar o comando 'Repetir 5 vezes: Pular'? (Resposta: Você pula 5 vezes).", type: "exercise" }
             ]
           }
         ]
@@ -620,8 +620,8 @@ export const subjectsData: Subject[] = [
             id: "r1-mod-1",
             title: "Peças e Funções",
             lessons: [
-              { id: "r1-l1", title: "Sensores e Motores", description: "Tipos de sensores e funções.", content: "Leitura detalhada.", type: "reading" },
-              { id: "r1-l2", title: "Montagem Básica", description: "Monte a estrutura do robô.", content: "Atividade prática.", type: "exercise" }
+              { id: "r1-l1", title: "Sensores e Motores", description: "Tipos de sensores e funções.", content: "Qual peça faz o robô se mover? (Resposta: Motor).", type: "reading" },
+              { id: "r1-l2", title: "Montagem Básica", description: "Monte a estrutura do robô.", content: "Tarefa: Desenhe um diagrama de um robô que possa detectar uma parede e parar.", type: "exercise" }
             ]
           }
         ]
@@ -646,8 +646,8 @@ export const subjectsData: Subject[] = [
             id: "f1-mod-1",
             title: "Orçamento Básico",
             lessons: [
-              { id: "f1-l1", title: "Renda e Despesas", description: "Entenda o que é renda e despesas.", content: "Exercício prático.", type: "exercise" },
-              { id: "f1-l2", title: "Planejando uma Meta", description: "Defina uma meta de economia.", content: "Atividade de planejamento.", type: "exercise" }
+              { id: "f1-l1", title: "Renda e Despesas", description: "Entenda o que é renda e despesas.", content: "Se você ganha R$ 10 (renda) e gasta R$ 3 em doces (despesa), quanto sobra? (Resposta: R$ 7).", type: "exercise" },
+              { id: "f1-l2", title: "Planejando uma Meta", description: "Defina uma meta de economia.", content: "Se você quer comprar um brinquedo de R$ 50 e economiza R$ 10 por semana, em quantas semanas você consegue comprar? (Resposta: 5 semanas).", type: "exercise" }
             ]
           }
         ]
