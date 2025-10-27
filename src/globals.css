@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
+  :root, .theme-nebula {
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
     --card: 240 10% 3.9%;
@@ -25,6 +25,35 @@
     --ring: 262.1 83.3% 57.8%;
     --radius: 0.75rem;
   }
+
+  .theme-cosmos {
+    --background: 240 10% 2%;
+    --foreground: 0 0% 98%;
+    --primary: 220 90% 60%;
+    --secondary: 240 10% 8%;
+    --muted-foreground: 240 5% 70%;
+    --border: 240 10% 12%;
+  }
+
+  .theme-selva {
+    --background: 120 20% 4%;
+    --foreground: 90 20% 95%;
+    --primary: 80 70% 55%;
+    --primary-foreground: 90 100% 10%;
+    --secondary: 110 25% 10%;
+    --muted-foreground: 90 15% 65%;
+    --border: 110 25% 15%;
+  }
+
+  .theme-oceano {
+    --background: 210 30% 6%;
+    --foreground: 190 20% 95%;
+    --primary: 180 80% 50%;
+    --primary-foreground: 190 100% 5%;
+    --secondary: 200 40% 12%;
+    --muted-foreground: 190 15% 70%;
+    --border: 200 40% 18%;
+  }
 }
 
 @layer base {
@@ -34,6 +63,7 @@
   body {
     @apply text-foreground bg-background;
     font-feature-settings: "rlig" 1, "calt" 1;
+    transition: background 0.5s ease, color 0.5s ease;
   }
 }
 

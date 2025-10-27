@@ -5,9 +5,20 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useAge } from "@/context/AgeContext";
+import { useTheme } from "@/context/ThemeContext";
+import { Check } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const themes = [
+  { id: 'nebula', name: 'Nébula', gradient: 'from-purple-500 to-indigo-600' },
+  { id: 'cosmos', name: 'Cosmos', gradient: 'from-blue-400 to-cyan-500' },
+  { id: 'selva', name: 'Selva', gradient: 'from-lime-400 to-green-600' },
+  { id: 'oceano', name: 'Oceano', gradient: 'from-cyan-400 to-teal-500' },
+] as const;
 
 const Settings = () => {
   const { ageGroup, setAgeGroup } = useAge();
+  const { theme, setTheme } = useTheme();
 
   return (
     <div>
@@ -46,6 +57,35 @@ const Settings = () => {
             </div>
           </CardContent>
         </Card>
+
+        <Card className="glass-card">
+          <CardHeader>
+            <CardTitle>Aparência</CardTitle>
+            <CardDescription>Personalize o visual do aplicativo (Recurso Premium).</CardDescription>
+          </CardHeader>
+          <CardContent className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {themes.map((t) => (
+              <div key={t.id} className="text-center">
+                <button
+                  onClick={() => setTheme(t.id)}
+                  className={cn(
+                    "w-full h-20 rounded-lg bg-gradient-to-br relative flex items-center justify-center transition-all",
+                    t.gradient,
+                    theme === t.id && "ring-2 ring-offset-2 ring-offset-background ring-primary"
+                  )}
+                >
+                  {theme === t.id && (
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-lg">
+                      <Check className="h-8 w-8 text-white" />
+                    </div>
+                  )}
+                </button>
+                <p className="mt-2 text-sm font-medium">{t.name}</p>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
         <Card className="glass-card">
           <CardHeader>
             <CardTitle>Notificações</CardTitle>

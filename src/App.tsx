@@ -15,32 +15,35 @@ import ActivityDetail from "./pages/ActivityDetail";
 import GamePage from "./pages/GamePage";
 import CourseDetail from "./pages/CourseDetail";
 import LessonPage from "./pages/LessonPage";
+import { ThemeProvider } from "./context/ThemeContext";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AgeProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route element={<Layout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/activities" element={<Activities />} />
-            <Route path="/activities/:subject" element={<ActivityDetail />} />
-            <Route path="/activities/:subject/:activityId" element={<GamePage />} />
-            <Route path="/activities/:subject/:activityId/modules/:moduleId/lessons/:lessonId" element={<LessonPage />} />
-            <Route path="/courses" element={<Courses />} />
-            <Route path="/courses/:courseId" element={<CourseDetail />} />
-            <Route path="/store" element={<Store />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/settings" element={<Settings />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </AgeProvider>
+    <ThemeProvider>
+      <AgeProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route element={<Layout />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/activities" element={<Activities />} />
+              <Route path="/activities/:subject" element={<ActivityDetail />} />
+              <Route path="/activities/:subject/:activityId" element={<GamePage />} />
+              <Route path="/activities/:subject/:activityId/modules/:moduleId/lessons/:lessonId" element={<LessonPage />} />
+              <Route path="/courses" element={<Courses />} />
+              <Route path="/courses/:courseId" element={<CourseDetail />} />
+              <Route path="/store" element={<Store />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/settings" element={<Settings />} />
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </AgeProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 
