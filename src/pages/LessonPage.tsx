@@ -1,18 +1,21 @@
 import { useParams, Link as RouterLink, useNavigate } from "react-router-dom";
 import { subjectsData } from "@/data/activitiesData";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Lightbulb } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ContandoFrutas from "@/components/games/ContandoFrutas";
 import FormandoPalavras from "@/components/games/FormandoPalavras";
-import QuizComponent, { QuizQuestion } from "@/components/QuizComponent"; // Importando o QuizComponent e o tipo
+import QuizComponent, { QuizQuestion } from "@/components/QuizComponent";
 import { useProgress } from "@/hooks/use-progress";
+import RewardButton from "@/components/RewardButton"; // Importar o RewardButton
+import { showSuccess } from "@/utils/toast";
 
 const LessonPage = () => {
   const { subject: subjectSlug, activityId, moduleId, lessonId } = useParams();
   const navigate = useNavigate();
   const { isLessonCompleted, markLessonCompleted } = useProgress();
+  const [hintsAvailable, setHintsAvailable] = useState(0); // Estado para gerenciar dicas
 
   const { subject, activity, module, lesson, lessonIndex, moduleIndex } = useMemo(() => {
     const s = subjectsData.find(sub => sub.slug === subjectSlug);
@@ -95,6 +98,18 @@ const LessonPage = () => {
     // If no next, remain on current (user finished the activity)
   };
 
+  const handleReward = () => {
+    setHintsAvailable(prev => prev + 1);
+  };
+
+  const handleUseHint = () => {
+    if (hintsAvailable > 0) {
+      setHintsAvailable(prev => prev - 1);
+      showSuccess("Dica usada! Pense bem na sua próxima resposta.");
+      // Aqui você implementaria a lógica real da dica (ex: revelar uma letra, eliminar uma opção)
+    }
+  };
+
   const renderLessonContent = () => {
     if (lesson.type === 'game') {
       if (activity.id === 'm1') {
@@ -161,17 +176,34 @@ const LessonPage = () => {
         <div className="lg:col-span-2">
           {renderLessonContent()}
 
-          <div className="flex gap-4 mt-4">
+          <div className="flex gap-4 mt-4 items-center">
             <Button variant="outline" onClick={goPrev}>Anterior</Button>
             <Button onClick={goNext}>Próxima</Button>
             
-            {!isQuiz && (
-              <div className="ml-auto">
+            <div className="ml-auto flex items-center gap-4">
+              {/* Botão de Dica */}
+              <div className="flex items-center gap-2">
+                <Button 
+                  onClick={handleUseHint} 
+                  disabled={hintsAvailable === 0}
+                  variant="secondary"
+                  className="bg-primary/20 text-primary hover:bg-primary/30"
+                >
+                  <Lightbulb className="mr-2 h-4 w-4" />
+                  Dica ({hintsAvailable})
+                </Button>
+                <RewardButton 
+                  onReward={handleReward} 
+                  label="Ganhar Dica (Anúncio)" 
+                />
+              </div>
+
+              {!isQuiz && (
                 <Button className="bg-green-600 hover:bg-green-700" onClick={markCompleted}>
                   {completed ? "Revisar (Concluído)" : "Marcar como Concluída"}
                 </Button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
 
