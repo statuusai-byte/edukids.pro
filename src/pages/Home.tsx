@@ -60,13 +60,13 @@ const Home = () => {
           <h2 className="text-3xl md:text-4xl font-bold">Para Começar a Aventura...</h2>
           <p className="mt-2 text-lg text-muted-foreground">Qual é a idade do nosso explorador?</p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <Button asChild variant="outline" size="xl">
+            <Button asChild variant="outline" size="lg" className="h-16 px-8 text-xl">
               <Link to="/dashboard" onClick={() => setAgeGroup('4-6')}>4-6 anos</Link>
             </Button>
-            <Button asChild variant="outline" size="xl">
+            <Button asChild variant="outline" size="lg" className="h-16 px-8 text-xl">
               <Link to="/dashboard" onClick={() => setAgeGroup('7-9')}>7-9 anos</Link>
             </Button>
-            <Button asChild variant="outline" size="xl">
+            <Button asChild variant="outline" size="lg" className="h-16 px-8 text-xl">
               <Link to="/dashboard" onClick={() => setAgeGroup('10-12')}>10-12 anos</Link>
             </Button>
           </div>
