@@ -12,6 +12,7 @@ import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
 import { AgeProvider } from "./context/AgeContext";
 import ActivityDetail from "./pages/ActivityDetail";
+import GamePage from "./pages/GamePage";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/" element={<Home />} />
             <Route path="/activities" element={<Activities />} />
             <Route path="/activities/:subject" element={<ActivityDetail />} />
+            <Route path="/activities/:subject/:activityId" element={<GamePage />} />
             <Route path="/courses" element={<Courses />} />
             <Route path="/store" element={<Store />} />
             <Route path="/dashboard" element={<Dashboard />} />
