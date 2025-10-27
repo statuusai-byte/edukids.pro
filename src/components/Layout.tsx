@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import Header from "./Header";
+import { useAge } from "@/context/AgeContext";
+import { AgeGateModal } from "./AgeGateModal";
 
 const navItems = [
   { to: "/", icon: <Home className="h-6 w-6" />, label: "Home" },
@@ -21,8 +23,19 @@ const navItems = [
 ];
 
 const Layout = () => {
+  const { isLoading } = useAge();
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-background">
+        <Sparkles className="h-12 w-12 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <TooltipProvider>
+      <AgeGateModal />
       <div className="flex min-h-screen w-full bg-background text-foreground">
         <aside className="fixed inset-y-0 left-0 z-20 flex w-20 flex-col items-center border-r border-white/10 bg-secondary/30 backdrop-blur-xl py-6">
           <div className="mb-10 flex items-center justify-center">

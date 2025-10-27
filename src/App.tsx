@@ -10,26 +10,29 @@ import Courses from "./pages/Courses";
 import Store from "./pages/Store";
 import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
+import { AgeProvider } from "./context/AgeContext";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <Toaster />
-    <Sonner />
-    <BrowserRouter>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/activities" element={<Activities />} />
-          <Route path="/courses" element={<Courses />} />
-          <Route path="/store" element={<Store />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/settings" element={<Settings />} />
-        </Route>
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </BrowserRouter>
+    <AgeProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/activities" element={<Activities />} />
+            <Route path="/courses" element={<Courses />} />
+            <Route path="/store" element={<Store />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/settings" element={<Settings />} />
+          </Route>
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </AgeProvider>
   </QueryClientProvider>
 );
 

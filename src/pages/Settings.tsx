@@ -3,8 +3,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useAge } from "@/context/AgeContext";
 
 const Settings = () => {
+  const { ageGroup, setAgeGroup } = useAge();
+
   return (
     <div>
       <h1 className="text-4xl font-bold tracking-tighter mb-8">Configurações</h1>
@@ -20,8 +24,25 @@ const Settings = () => {
               <Input id="name" defaultValue="Alex" className="bg-secondary/60 border-white/20" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="age">Idade</Label>
-              <Input id="age" type="number" defaultValue="8" className="bg-secondary/60 border-white/20" />
+              <Label>Faixa Etária</Label>
+              <RadioGroup
+                value={ageGroup ?? ""}
+                onValueChange={(value) => setAgeGroup(value as '4-6' | '7-9' | '10-12')}
+                className="flex space-x-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="4-6" id="r1" />
+                  <Label htmlFor="r1">4-6 anos</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="7-9" id="r2" />
+                  <Label htmlFor="r2">7-9 anos</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="10-12" id="r3" />
+                  <Label htmlFor="r3">10-12 anos</Label>
+                </div>
+              </RadioGroup>
             </div>
           </CardContent>
         </Card>

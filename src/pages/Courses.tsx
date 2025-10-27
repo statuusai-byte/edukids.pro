@@ -1,35 +1,55 @@
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PlayCircle, Clock } from "lucide-react";
+import { useAge } from "@/context/AgeContext";
+import { useMemo } from "react";
 
-const courses = [
+const allCourses = [
   { 
     title: "Introdução à Programação", 
     instructor: "Prof. Ada", 
     duration: "2h 30m", 
-    imageUrl: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=2070&auto=format&fit=crop" 
+    imageUrl: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=2070&auto=format&fit=crop",
+    ageGroups: ['10-12']
   },
   { 
     title: "A Magia dos Números", 
     instructor: "Prof. Alan", 
     duration: "3h 15m", 
-    imageUrl: "https://images.unsplash.com/photo-1509228468518-180dd4864904?q=80&w=2070&auto=format&fit=crop" 
+    imageUrl: "https://images.unsplash.com/photo-1509228468518-180dd4864904?q=80&w=2070&auto=format&fit=crop",
+    ageGroups: ['7-9', '10-12']
   },
   { 
     title: "Desenhando com Formas", 
     instructor: "Prof. Grace", 
     duration: "1h 45m", 
-    imageUrl: "https://images.unsplash.com/photo-1588864721034-4c4b8c13dc32?q=80&w=2070&auto=format&fit=crop" 
+    imageUrl: "https://images.unsplash.com/photo-1588864721034-4c4b8c13dc32?q=80&w=2070&auto=format&fit=crop",
+    ageGroups: ['4-6', '7-9']
   },
   { 
     title: "Viagem pelo Sistema Solar", 
     instructor: "Prof. Carl", 
     duration: "4h 00m", 
-    imageUrl: "https://images.unsplash.com/photo-1614726365902-79a8e383d11d?q=80&w=2070&auto=format&fit=crop" 
+    imageUrl: "https://images.unsplash.com/photo-1614726365902-79a8e383d11d?q=80&w=2070&auto=format&fit=crop",
+    ageGroups: ['7-9', '10-12']
   },
+  {
+    title: "Cores e Sentimentos",
+    instructor: "Prof. Léo",
+    duration: "1h 10m",
+    imageUrl: "https://images.unsplash.com/photo-1534353436294-0dbd4bdac845?q=80&w=2070&auto=format&fit=crop",
+    ageGroups: ['4-6']
+  }
 ];
 
 const Courses = () => {
+  const { ageGroup } = useAge();
+
+  const courses = useMemo(() => {
+    if (!ageGroup) return [];
+    return allCourses.filter(course => course.ageGroups.includes(ageGroup));
+  }, [ageGroup]);
+
   return (
     <div>
       <h1 className="text-4xl font-bold tracking-tighter mb-8">Cursos</h1>
