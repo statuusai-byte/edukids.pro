@@ -63,7 +63,7 @@ const Layout = () => {
             ))}
           </nav>
         </aside>
-        <div className="flex flex-1 flex-col pl-20">
+        <div className="flex flex-1 flex-col pl-20 main-container relative">
           <Header />
           <main className="flex-1 p-4 sm:p-6 md:p-8">
             <Outlet />

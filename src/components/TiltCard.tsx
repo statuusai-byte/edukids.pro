@@ -27,10 +27,17 @@ export const TiltCard = ({ children, className }: TiltCardProps) => {
       x: yPct * -12, // Invert for natural feel
       y: xPct * 12,
     });
+
+    ref.current.style.setProperty('--glow-x', `${mouseX}px`);
+    ref.current.style.setProperty('--glow-y', `${mouseY}px`);
   };
 
   const onMouseLeave = () => {
     setRotate({ x: 0, y: 0 });
+    if (ref.current) {
+      ref.current.style.setProperty('--glow-x', `-100%`);
+      ref.current.style.setProperty('--glow-y', `-100%`);
+    }
   };
 
   return (
@@ -43,7 +50,7 @@ export const TiltCard = ({ children, className }: TiltCardProps) => {
         transition: 'transform 0.1s ease-out',
         transformStyle: 'preserve-3d',
       }}
-      className={cn("glass-card will-change-transform", className)}
+      className={cn("glass-card will-change-transform interactive-glow", className)}
     >
       {children}
     </div>
