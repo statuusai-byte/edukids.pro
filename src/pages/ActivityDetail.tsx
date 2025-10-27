@@ -3,25 +3,22 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { subjectsData } from "@/data/activitiesData";
 import { useAge } from "@/context/AgeContext";
-import { useMemo } from "react";
 import { ActivityCard } from "@/components/ActivityCard";
 
 const ActivityDetail = () => {
   const { subject: subjectSlug } = useParams();
   const { ageGroup } = useAge();
 
-  const subject = useMemo(() => {
-    return subjectsData.find(s => s.slug === subjectSlug);
-  }, [subjectSlug]);
-
-  const filteredActivities = useMemo(() => {
-    if (!subject || !ageGroup) return [];
-    return subject.activities.filter(activity => activity.ageGroups.includes(ageGroup));
-  }, [subject, ageGroup]);
+  const subject = subjectsData.find(s => s.slug === subjectSlug);
 
   if (!subject) {
     return <Navigate to="/activities" replace />;
   }
+
+  // Filtra as atividades diretamente para garantir que a lista está sempre atualizada.
+  const filteredActivities = ageGroup
+    ? subject.activities.filter(activity => activity.ageGroups.includes(ageGroup))
+    : [];
 
   return (
     <div>
