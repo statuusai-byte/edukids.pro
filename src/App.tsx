@@ -12,7 +12,7 @@ import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
 import { AgeProvider } from "./context/AgeContext";
 import ActivityDetail from "./pages/ActivityDetail";
-import GamePage from "./pages/GamePage";
+import ActivityContentPage from "./pages/ActivityContentPage"; // Importação atualizada
 import CourseDetail from "./pages/CourseDetail";
 import LessonPage from "./pages/LessonPage";
 import { ThemeProvider } from "./context/ThemeContext";
@@ -37,7 +37,7 @@ const App = () => (
                   <Route path="/" element={<Home />} />
                   <Route path="/activities" element={<Activities />} />
                   <Route path="/activities/:subject" element={<ActivityDetail />} />
-                  <Route path="/activities/:subject/:activityId" element={<GamePage />} />
+                  <Route path="/activities/:subject/:activityId" element={<ActivityContentPage />} />
                   <Route path="/activities/:subject/:activityId/modules/:moduleId/lessons/:lessonId" element={<LessonPage />} />
                   <Route path="/courses" element={<Courses />} />
                   <Route path="/courses/:courseId" element={<CourseDetail />} />

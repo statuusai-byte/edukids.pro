@@ -8,7 +8,7 @@ import ContandoFrutas from "@/components/games/ContandoFrutas";
 import { Link } from "react-router-dom";
 import { useProgress } from "@/hooks/use-progress";
 
-const GamePage = () => {
+const ActivityContentPage = () => {
   const { subject: subjectSlug, activityId } = useParams();
   const { isLessonCompleted } = useProgress();
 
@@ -113,4 +113,4 @@ const GamePage = () => {
   );
 };
 
-export default GamePage;
+export default ActivityContentPage;
