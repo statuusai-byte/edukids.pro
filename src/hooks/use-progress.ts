@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 
 const STORAGE_KEY = "edukids_progress_v1";
 
-type ProgressMap = Record<string, true>;
+type ProgressMap = Record<string, boolean>;
 
 function makeKey(subject: string, activity: string, moduleId: string, lessonId: string) {
   return `${subject}::${activity}::${moduleId}::${lessonId}`;
@@ -41,7 +41,7 @@ export function useProgress() {
   const markLessonCompleted = useCallback(
     (subject: string, activity: string, moduleId: string, lessonId: string) => {
       const key = makeKey(subject, activity, moduleId, lessonId);
-      const next = { ...progress, [key]: true };
+      const next: ProgressMap = { ...progress, [key]: true };
       setProgress(next);
       persist(next);
     },
