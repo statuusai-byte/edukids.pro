@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ContandoFrutas from "@/components/games/ContandoFrutas";
-import FormandoPalavras from "@/components/games/FormandoPalavras"; // Importando o novo jogo
+import FormandoPalavras from "@/components/games/FormandoPalavras";
+import QuizComponent, { QuizQuestion } from "@/components/QuizComponent"; // Importando o QuizComponent e o tipo
 import { useProgress } from "@/hooks/use-progress";
 
 const LessonPage = () => {
@@ -105,6 +106,19 @@ const LessonPage = () => {
       return <p className="text-muted-foreground">Jogo interativo em desenvolvimento.</p>;
     }
 
+    if (lesson.type === 'exercise' && lesson.content) {
+      try {
+        const questions: QuizQuestion[] = JSON.parse(lesson.content);
+        if (questions.length > 0) {
+          return <QuizComponent questions={questions} onQuizComplete={markCompleted} />;
+        }
+      } catch (e) {
+        console.error("Failed to parse quiz content:", e);
+        // Fallback to display raw content if JSON parsing fails
+        return <p className="text-foreground/90 mb-4">{lesson.content}</p>;
+      }
+    }
+
     if (lesson.videoUrl) {
       return (
         <div className="aspect-video rounded-2xl overflow-hidden border border-primary/50 shadow-lg shadow-primary/20">
@@ -126,6 +140,9 @@ const LessonPage = () => {
     );
   };
 
+  // Se for um quiz, o botão de 'Marcar como Concluída' será gerenciado pelo QuizComponent.
+  const isQuiz = lesson.type === 'exercise' && lesson.content && lesson.content.startsWith('[');
+
   return (
     <div>
       <div className="flex items-center gap-4 mb-6">
@@ -142,24 +159,19 @@ const LessonPage = () => {
 
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
-          <Card className="glass-card p-6">
-            <CardHeader>
-              <CardTitle>{lesson.title}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">{lesson.description}</p>
-              {renderLessonContent()}
-            </CardContent>
-          </Card>
+          {renderLessonContent()}
 
           <div className="flex gap-4 mt-4">
             <Button variant="outline" onClick={goPrev}>Anterior</Button>
             <Button onClick={goNext}>Próxima</Button>
-            <div className="ml-auto">
-              <Button className="bg-green-600 hover:bg-green-700" onClick={markCompleted}>
-                {completed ? "Revisar (Concluído)" : "Marcar como Concluída"}
-              </Button>
-            </div>
+            
+            {!isQuiz && (
+              <div className="ml-auto">
+                <Button className="bg-green-600 hover:bg-green-700" onClick={markCompleted}>
+                  {completed ? "Revisar (Concluído)" : "Marcar como Concluída"}
+                </Button>
+              </div>
+            )}
           </div>
         </div>
 
