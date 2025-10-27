@@ -1,7 +1,8 @@
 import { cn } from "@/lib/utils";
-import { Check, Palette } from "lucide-react";
+import { Check, Palette, Gem } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { usePremium } from "@/context/PremiumContext"; // Importar usePremium
 
 const themes = [
   { id: 'nebula', name: 'Nébula', gradient: 'from-purple-500 to-indigo-600' },
@@ -10,25 +11,23 @@ const themes = [
   { id: 'oceano', name: 'Oceano', gradient: 'from-cyan-400 to-teal-500' },
 ] as const;
 
-interface ThemePreviewCardProps {
-  isPremium: boolean;
-}
-
-export const ThemePreviewCard = ({ isPremium }: ThemePreviewCardProps) => {
+export const ThemePreviewCard = () => {
   const { theme, setTheme } = useTheme();
+  const { isPremium } = usePremium(); // Usar o status real
 
   return (
     <Card className="glass-card p-4">
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center gap-2">
           <Palette className="h-5 w-5 text-primary" /> Temas Visuais
+          {!isPremium && <Gem className="h-4 w-4 text-yellow-400 ml-2" />}
         </CardTitle>
       </CardHeader>
       <CardContent className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {themes.map((t) => (
           <div key={t.id} className="text-center">
             <button
-              onClick={() => isPremium && setTheme(t.id)}
+              onClick={() => isPremium && setTheme(t.id as 'nebula' | 'cosmos' | 'selva' | 'oceano')}
               disabled={!isPremium}
               className={cn(
                 "w-full h-20 rounded-lg bg-gradient-to-br relative flex items-center justify-center transition-all",

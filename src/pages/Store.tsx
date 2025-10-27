@@ -1,16 +1,56 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, Star, Bot, BookOpen, Users, Palette, BarChart3 } from "lucide-react";
+import { Check, Star, Bot, BookOpen, Users, Palette, BarChart3, Loader2 } from "lucide-react";
 import { ThemePreviewCard } from "@/components/ThemePreviewCard";
-
-// Simulação: No modo de teste, consideramos o usuário como Premium
-const IS_PREMIUM_TRIAL = true;
+import { usePremium } from "@/context/PremiumContext";
+import { useState } from "react";
+import { showLoading, showError, dismissToast } from "@/utils/toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useSupabase } from "@/context/SupabaseContext";
 
 const Store = () => {
+  const { isPremium } = usePremium();
+  const { user } = useSupabase();
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+
+  const handleCheckout = async () => {
+    if (!user) {
+      showError("Você precisa estar logado para iniciar uma assinatura.");
+      return;
+    }
+
+    setIsCheckingOut(true);
+    const loadingToast = showLoading("Iniciando checkout...");
+
+    try {
+      // 1. Chamar a Edge Function para criar a sessão de checkout
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${await supabase.auth.getSession().then(s => s.data.session?.access_token)}`,
+        },
+      });
+
+      if (error) throw new Error(error.message);
+      if (!data || !data.checkout_url) throw new Error("Falha ao obter URL de checkout.");
+
+      // 2. Redirecionar o usuário para a URL de checkout simulada
+      window.location.href = data.checkout_url;
+
+    } catch (error) {
+      console.error("Checkout failed:", error);
+      dismissToast(loadingToast);
+      showError("Erro ao processar a assinatura. Tente novamente.");
+      setIsCheckingOut(false);
+    }
+  };
+
   return (
     <div>
       <h1 className="text-4xl font-bold tracking-tighter mb-2 text-center">Explore todos os recursos Premium</h1>
-      <p className="text-muted-foreground text-center mb-12">O modo de teste está ativo. Aproveite o acesso total!</p>
+      <p className="text-muted-foreground text-center mb-12">
+        {isPremium ? "Você é Premium! Aproveite o acesso total." : "Assine o Premium para desbloquear tudo."}
+      </p>
       
       {/* Planos de Assinatura */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto mb-12">
@@ -36,9 +76,11 @@ const Store = () => {
             <CardHeader>
               <div className="flex justify-between items-center">
                 <CardTitle className="text-2xl text-primary">Plano Premium</CardTitle>
-                <div className="flex items-center gap-1 text-sm bg-primary/20 text-primary px-2 py-1 rounded-full">
-                  <Star className="h-4 w-4" /> Teste Ativo
-                </div>
+                {isPremium && (
+                  <div className="flex items-center gap-1 text-sm bg-primary/20 text-primary px-2 py-1 rounded-full">
+                    <Star className="h-4 w-4" /> Ativo
+                  </div>
+                )}
               </div>
               <CardDescription>Desbloqueie todo o potencial do EDUKIDS+.</CardDescription>
             </CardHeader>
@@ -52,7 +94,23 @@ const Store = () => {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button variant="outline" className="w-full border-primary/50 text-primary" disabled>Seu Plano Atual</Button>
+              {isPremium ? (
+                <Button variant="outline" className="w-full border-primary/50 text-primary" disabled>Seu Plano Atual</Button>
+              ) : (
+                <Button 
+                  onClick={handleCheckout} 
+                  className="w-full bg-primary hover:bg-primary/90"
+                  disabled={isCheckingOut}
+                >
+                  {isCheckingOut ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processando...
+                    </>
+                  ) : (
+                    "Assinar Agora (R$ 19,90/mês)"
+                  )}
+                </Button>
+              )}
             </CardFooter>
           </Card>
         </div>
@@ -62,7 +120,8 @@ const Store = () => {
       <div className="max-w-4xl mx-auto space-y-8">
         <h2 className="text-3xl font-bold tracking-tighter mt-12 mb-6">Recursos Exclusivos</h2>
         
-        <ThemePreviewCard isPremium={IS_PREMIUM_TRIAL} />
+        {/* Passa o status real de Premium */}
+        <ThemePreviewCard />
 
         <Card className="glass-card p-4">
           <CardHeader className="pb-4">

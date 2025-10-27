@@ -18,7 +18,9 @@ import LessonPage from "./pages/LessonPage";
 import { ThemeProvider } from "./context/ThemeContext";
 import { ProfileProvider } from "./context/ProfileContext";
 import { SupabaseProvider } from "./context/SupabaseContext";
+import { PremiumProvider } from "./context/PremiumContext"; // Importar PremiumProvider
 import Login from "./pages/Login";
+import SuccessPayment from "./pages/SuccessPayment"; // Importar SuccessPayment
 
 const queryClient = new QueryClient();
 
@@ -29,24 +31,27 @@ const App = () => (
         <SupabaseProvider>
           <AgeProvider>
             <ProfileProvider>
-              <Toaster />
-              <Sonner />
-              <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route element={<Layout />}>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/activities" element={<Activities />} />
-                  <Route path="/activities/:subject" element={<ActivityDetail />} />
-                  <Route path="/activities/:subject/:activityId" element={<ActivityContentPage />} />
-                  <Route path="/activities/:subject/:activityId/modules/:moduleId/lessons/:lessonId" element={<LessonPage />} />
-                  <Route path="/courses" element={<Courses />} />
-                  <Route path="/courses/:courseId" element={<CourseDetail />} />
-                  <Route path="/store" element={<Store />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/settings" element={<Settings />} />
-                </Route>
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+              <PremiumProvider>
+                <Toaster />
+                <Sonner />
+                <Routes>
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/success-payment" element={<SuccessPayment />} /> {/* Nova Rota */}
+                  <Route element={<Layout />}>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/activities" element={<Activities />} />
+                    <Route path="/activities/:subject" element={<ActivityDetail />} />
+                    <Route path="/activities/:subject/:activityId" element={<ActivityContentPage />} />
+                    <Route path="/activities/:subject/:activityId/modules/:moduleId/lessons/:lessonId" element={<LessonPage />} />
+                    <Route path="/courses" element={<Courses />} />
+                    <Route path="/courses/:courseId" element={<CourseDetail />} />
+                    <Route path="/store" element={<Store />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/settings" element={<Settings />} />
+                  </Route>
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </PremiumProvider>
             </ProfileProvider>
           </AgeProvider>
         </SupabaseProvider>
