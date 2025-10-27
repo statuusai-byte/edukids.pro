@@ -25,20 +25,6 @@
     --ring: 262.1 83.3% 57.8%;
     --radius: 0.75rem;
   }
-
-  .theme-espaco {
-    --background: 240 10% 2%; /* Fundo bem escuro */
-    --foreground: 30 100% 95%; /* Texto claro, levemente amarelado */
-    --primary: 30 100% 50%; /* Laranja vibrante (Sol/Fogo) */
-    --primary-foreground: 240 10% 2%;
-    --secondary: 240 10% 8%; /* Elementos secundários escuros */
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 10% 12%;
-    --muted-foreground: 240 5% 70%;
-    --border: 240 10% 15%;
-    --input: 240 10% 10%;
-    --ring: 30 100% 50%;
-  }
 }
 
 @layer base {
@@ -57,31 +43,15 @@
   to { background-position: 350% 50%, 350% 50%; }
 }
 
-@keyframes space-pan {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 100% 50%; }
-}
-
 .main-container::before {
   content: "";
   position: absolute;
   inset: 0;
   z-index: -1;
-  transition: background-image 0.5s ease-in-out, background-size 0.5s ease-in-out;
   background-attachment: fixed;
-}
-
-.theme-nebula .main-container::before {
+  /* Aplicando o fundo Nebula padrão */
   background-image: radial-gradient(ellipse 80% 80% at 50% -20%, rgba(120, 119, 198, 0.3), transparent);
   animation: aurora 60s linear infinite;
-}
-
-.theme-espaco .main-container::before {
-  /* Imagem de fundo de espaço com planetas */
-  background-image: url('https://images.unsplash.com/photo-1506318137071-a8e063b4be62?q=80&w=2070&auto=format&fit=crop');
-  background-size: 120%;
-  background-repeat: repeat;
-  animation: space-pan 120s linear infinite alternate;
 }
 
 .glass-card {

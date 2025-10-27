@@ -4,8 +4,8 @@ const DEFAULT_THEME = 'nebula';
 
 export const playSound = (type: SoundType) => {
   try {
-    const theme = localStorage.getItem('edukids_theme') || DEFAULT_THEME;
-    const soundPath = `/sounds/${theme}/${type}.mp3`;
+    // O tema é fixo agora, então usamos o caminho padrão
+    const soundPath = `/sounds/${DEFAULT_THEME}/${type}.mp3`;
     const audio = new Audio(soundPath);
     audio.volume = 0.3; // Sons de UI devem ser sutis
     audio.play().catch(() => {

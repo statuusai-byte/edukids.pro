@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, Star, Bot, BookOpen, Users, Palette, BarChart3, Loader2 } from "lucide-react";
-import { ThemePreviewCard } from "@/components/ThemePreviewCard";
 import { usePremium } from "@/context/PremiumContext";
 import { useState } from "react";
 import { showLoading, showError, dismissToast } from "@/utils/toast";
@@ -120,9 +119,6 @@ const Store = () => {
       <div className="max-w-4xl mx-auto space-y-8">
         <h2 className="text-3xl font-bold tracking-tighter mt-12 mb-6">Recursos Exclusivos</h2>
         
-        {/* Passa o status real de Premium */}
-        <ThemePreviewCard />
-
         <Card className="glass-card p-4">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2">

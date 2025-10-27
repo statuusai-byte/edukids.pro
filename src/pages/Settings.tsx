@@ -5,26 +5,18 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useAge } from "@/context/AgeContext";
-import { useTheme } from "@/context/ThemeContext";
-import { Check, Trash2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Trash2 } from "lucide-react";
 import { useProfile } from "@/context/ProfileContext";
 import { AvatarUploader } from "@/components/AvatarUploader";
 import { useProgress } from "@/hooks/use-progress";
 import { showSuccess } from "@/utils/toast";
 import { usePremium } from "@/context/PremiumContext";
 
-const themes = [
-  { id: 'nebula', name: 'Nébula (Padrão)', gradient: 'from-purple-500 to-indigo-600', premium: false },
-  { id: 'espaco', name: 'Espaço (Premium)', gradient: 'from-orange-500 to-red-600', premium: true },
-] as const;
-
 const Settings = () => {
   const { ageGroup, setAgeGroup } = useAge();
-  const { theme, setTheme } = useTheme();
   const { name, setName, avatarUrl, setAvatarUrl } = useProfile();
   const { clearAll } = useProgress();
-  const { isPremium } = usePremium();
+  const { isPremium } = usePremium(); // Mantido para referência futura, mas não usado para temas
 
   const handleAvatarChange = (file: File) => {
     const reader = new FileReader();
@@ -88,39 +80,6 @@ const Settings = () => {
                 </div>
               </RadioGroup>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card className="glass-card">
-          <CardHeader>
-            <CardTitle>Aparência</CardTitle>
-            <CardDescription>Personalize o visual do aplicativo.</CardDescription>
-          </CardHeader>
-          <CardContent className="grid grid-cols-2 gap-4">
-            {themes.map((t) => {
-              const isDisabled = t.premium && !isPremium;
-              return (
-                <div key={t.id} className="text-center">
-                  <button
-                    onClick={() => setTheme(t.id as 'nebula' | 'espaco')}
-                    disabled={isDisabled}
-                    className={cn(
-                      "w-full h-20 rounded-lg bg-gradient-to-br relative flex items-center justify-center transition-all",
-                      t.gradient,
-                      theme === t.id && "ring-2 ring-offset-2 ring-offset-background ring-primary",
-                      isDisabled && "opacity-50 cursor-not-allowed"
-                    )}
-                  >
-                    {theme === t.id && (
-                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-lg">
-                        <Check className="h-8 w-8 text-white" />
-                      </div>
-                    )}
-                  </button>
-                  <p className="mt-2 text-sm font-medium">{t.name}</p>
-                </div>
-              );
-            })}
           </CardContent>
         </Card>
 
