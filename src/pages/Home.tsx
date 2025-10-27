@@ -114,15 +114,9 @@ const Home = () => {
                     <p className="text-sm text-muted-foreground mt-1">{course.instructor}</p>
                   </div>
                   <div className="mt-3 flex items-center justify-between">
-                    {course.premium ? (
-                      <Button asChild variant="outline" size="sm">
-                        <Link to="/store">Fazer Upgrade</Link>
-                      </Button>
-                    ) : (
-                      <Button asChild variant="default" size="sm">
-                        <Link to={`/courses/${course.id}`}>Assistir</Link>
-                      </Button>
-                    )}
+                    <Button asChild variant="default" size="sm">
+                      <Link to={`/courses/${course.id}`}>Assistir</Link>
+                    </Button>
                     <div className="text-xs text-muted-foreground">{course.duration}</div>
                   </div>
                 </div>
@@ -132,7 +126,7 @@ const Home = () => {
         ) : (
           <div className="text-center text-muted-foreground">Selecione uma faixa etária para ver recomendações.</div>
         )}
-      </motion.section>
+      </section>
     </div>
   );
 };

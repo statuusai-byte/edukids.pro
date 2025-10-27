@@ -61,7 +61,7 @@ const Settings = () => {
         <Card className="glass-card">
           <CardHeader>
             <CardTitle>Aparência</CardTitle>
-            <CardDescription>Personalize o visual do aplicativo (Recurso Premium).</CardDescription>
+            <CardDescription>Personalize o visual do aplicativo.</CardDescription>
           </CardHeader>
           <CardContent className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {themes.map((t) => (

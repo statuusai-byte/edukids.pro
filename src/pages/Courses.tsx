@@ -46,16 +46,9 @@ const Courses = () => {
                     <Clock className="h-4 w-4 mr-1" />
                     {course.duration}
                   </div>
-
-                  {course.premium ? (
-                    <Button asChild variant="outline" className="text-sm">
-                      <Link to="/store">Fazer Upgrade</Link>
-                    </Button>
-                  ) : (
-                    <Button asChild variant="link" className="p-0 h-auto text-primary text-sm">
-                      <Link to={`/courses/${course.id}`}>Assistir <ArrowRight className="ml-2 h-4 w-4 inline" /></Link>
-                    </Button>
-                  )}
+                  <Button asChild variant="link" className="p-0 h-auto text-primary text-sm">
+                    <Link to={`/courses/${course.id}`}>Assistir <ArrowRight className="ml-2 h-4 w-4 inline" /></Link>
+                  </Button>
                 </CardFooter>
               </Card>
             </div>
