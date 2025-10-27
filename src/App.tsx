@@ -17,6 +17,7 @@ import CourseDetail from "./pages/CourseDetail";
 import LessonPage from "./pages/LessonPage";
 import { ThemeProvider } from "./context/ThemeContext";
 import { ProfileProvider } from "./context/ProfileContext";
+import ReloadPrompt from "./components/ReloadPrompt";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
         <ProfileProvider>
           <Toaster />
           <Sonner />
+          <ReloadPrompt />
           <BrowserRouter>
             <Routes>
               <Route element={<Layout />}>
