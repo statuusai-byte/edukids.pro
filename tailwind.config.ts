@@ -18,6 +18,10 @@ export default {
       },
     },
     extend: {
+      backgroundImage: {
+        'hero-desktop': "url('/hero-1920.png')",
+        'hero-mobile': "url('/hero-mobile.png')",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
