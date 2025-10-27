@@ -4,49 +4,55 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { useAge } from "@/context/AgeContext";
-import { Rocket } from "lucide-react";
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { useAge } from "@/context/AgeContext"
+import { Rocket } from "lucide-react"
+import { useLocation } from "react-router-dom"
 
-const ageGroups = [
-  { label: "4 a 6 anos", value: "4-6" as const },
-  { label: "7 a 9 anos", value: "7-9" as const },
-  { label: "10 a 12 anos", value: "10-12" as const },
-];
+const AgeGateModal = () => {
+  const { ageGroup, setAgeGroup } = useAge()
+  const location = useLocation()
 
-export const AgeGateModal = () => {
-  const { ageGroup, setAgeGroup } = useAge();
+  // A página inicial ('/') tem a sua própria interface de seleção de idade.
+  // Portanto, este modal só deve aparecer noutras páginas se nenhuma idade for selecionada.
+  const isHomePage = location.pathname === '/'
+  const isOpen = !ageGroup && !isHomePage
 
-  const handleSelectAge = (selectedAge: '4-6' | '7-9' | '10-12') => {
-    setAgeGroup(selectedAge);
-  };
+  const handleSelectAge = (group: '4-6' | '7-9' | '10-12') => {
+    setAgeGroup(group)
+  }
 
   return (
-    <Dialog open={!ageGroup}>
-      <DialogContent className="glass-card border-primary/50 sm:max-w-md text-center p-8">
+    <Dialog open={isOpen}>
+      <DialogContent 
+        className="glass-card border-primary/50 sm:max-w-md text-center p-8"
+        // Impede que o modal seja fechado ao clicar fora, forçando uma seleção.
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <div className="mx-auto mb-4 rounded-full bg-primary/20 p-3 border border-primary/50 w-fit">
             <Rocket className="h-8 w-8 text-primary" />
           </div>
-          <DialogTitle className="text-2xl font-bold tracking-tighter">Bem-vindo ao EDUKIDS+!</DialogTitle>
+          <DialogTitle className="text-2xl font-bold">Continue a Aventura!</DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            Para começar, selecione a faixa etária da criança. Isso nos ajudará a personalizar a aventura do saber!
+            Para aceder a esta página, por favor, selecione a faixa etária do explorador.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col space-y-4 mt-4">
-          {ageGroups.map((group) => (
-            <Button
-              key={group.value}
-              onClick={() => handleSelectAge(group.value)}
-              size="lg"
-              className="w-full text-lg py-6 rounded-full"
-            >
-              {group.label}
-            </Button>
-          ))}
+        <div className="mt-6 flex flex-col space-y-3">
+          <Button size="lg" onClick={() => handleSelectAge('4-6')}>
+            4-6 anos
+          </Button>
+          <Button size="lg" onClick={() => handleSelectAge('7-9')}>
+            7-9 anos
+          </Button>
+          <Button size="lg" onClick={() => handleSelectAge('10-12')}>
+            10-12 anos
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
+
+export default AgeGateModal
