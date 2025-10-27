@@ -3,13 +3,16 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Check, Star, Bot, BookOpen, Users, BarChart3, Loader2, Lightbulb } from "lucide-react";
 import { usePremium } from "@/context/PremiumContext";
 import { useState } from "react";
-import { showLoading, showError, dismissToast } from "@/utils/toast";
+import { showLoading, showError, dismissToast, showSuccess } from "@/utils/toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useSupabase } from "@/context/SupabaseContext";
+import { Icon } from "@/components/Icon";
+import { useHelpPackages } from "@/hooks/useHelpPackages";
 
 const Store = () => {
   const { isPremium } = usePremium();
   const { user } = useSupabase();
+  const { purchasePackage, hasPackage } = useHelpPackages();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   const handleCheckout = async () => {
@@ -44,24 +47,27 @@ const Store = () => {
     }
   };
 
-  const handleBuyPackage = (packageName: string) => {
+  const handleBuyPackage = (subjectSlug: string, packageName: string) => {
     if (!user) {
       showError("Você precisa estar logado para comprar pacotes.");
       return;
     }
-    // Simulação de compra de pacote
+    
     showLoading(`Comprando pacote ${packageName}...`);
     setTimeout(() => {
+      purchasePackage(subjectSlug);
       dismissToast(0); // Dismiss loading
       showSuccess(`Pacote de Ajuda '${packageName}' comprado com sucesso!`);
     }, 1500);
   };
 
   const helpPackages = [
-    { id: 'matematica', name: 'Pacote de Ajuda: Matemática', price: 'R$ 9,90', icon: 'Sigma', description: 'Dicas e soluções detalhadas para todos os exercícios de Matemática.' },
-    { id: 'portugues', name: 'Pacote de Ajuda: Português', price: 'R$ 9,90', icon: 'BookOpen', description: 'Acesso a gabaritos e explicações de gramática e interpretação.' },
-    { id: 'ciencias', name: 'Pacote de Ajuda: Ciências', price: 'R$ 9,90', icon: 'FlaskConical', description: 'Guias de experimentos e informações extras sobre o corpo humano e natureza.' },
-    { id: 'historia', name: 'Pacote de Ajuda: História', price: 'R$ 9,90', icon: 'Landmark', description: 'Linhas do tempo interativas e resumos de eventos históricos.' },
+    { id: 'matematica', name: 'Pacote de Ajuda: Matemática', price: 'R$ 9,90', icon: 'Sigma', description: 'Dicas e soluções detalhadas para todos os exercícios de Matemática.', slug: 'matematica' },
+    { id: 'portugues', name: 'Pacote de Ajuda: Português', price: 'R$ 9,90', icon: 'BookOpen', description: 'Acesso a gabaritos e explicações de gramática e interpretação.', slug: 'portugues' },
+    { id: 'ciencias', name: 'Pacote de Ajuda: Ciências', price: 'R$ 9,90', icon: 'FlaskConical', description: 'Guias de experimentos e informações extras sobre o corpo humano e natureza.', slug: 'ciencias' },
+    { id: 'historia', name: 'Pacote de Ajuda: História', price: 'R$ 9,90', icon: 'Landmark', description: 'Linhas do tempo interativas e resumos de eventos históricos.', slug: 'historia' },
+    { id: 'geografia', name: 'Pacote de Ajuda: Geografia', price: 'R$ 9,90', icon: 'Globe', description: 'Mapas interativos e informações detalhadas sobre regiões e capitais.', slug: 'geografia' },
+    { id: 'ingles', name: 'Pacote de Ajuda: Inglês', price: 'R$ 9,90', icon: 'SpellCheck', description: 'Traduções, pronúncias e exercícios extras para vocabulário.', slug: 'ingles' },
   ];
 
   return (
@@ -144,35 +150,38 @@ const Store = () => {
           Compre pacotes individuais para obter dicas e soluções avançadas em matérias específicas, ou assine o Premium para ter acesso a todos.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {helpPackages.map(pkg => (
-            <Card key={pkg.id} className="glass-card flex flex-col h-full">
-              <CardHeader className="pb-2">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">{pkg.name.split(': ')[1]}</CardTitle>
-                  {/* Usando Icon component para ícones */}
-                  <Icon name={pkg.icon as any} className="h-6 w-6 text-primary" />
-                </div>
-              </CardHeader>
-              <CardContent className="flex-grow">
-                <p className="text-sm text-muted-foreground line-clamp-3">{pkg.description}</p>
-              </CardContent>
-              <CardFooter className="pt-0">
-                {isPremium ? (
-                  <Button variant="outline" className="w-full bg-green-600/20 text-green-400 border-green-600/50" disabled>
-                    Acesso Premium
-                  </Button>
-                ) : (
-                  <Button 
-                    onClick={() => handleBuyPackage(pkg.name)} 
-                    className="w-full bg-secondary hover:bg-secondary/80 text-foreground"
-                  >
-                    Comprar ({pkg.price})
-                  </Button>
-                )}
-              </CardFooter>
-            </Card>
-          ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {helpPackages.map(pkg => {
+            const isPurchased = hasPackage(pkg.slug, isPremium);
+            
+            return (
+              <Card key={pkg.id} className="glass-card flex flex-col h-full">
+                <CardHeader className="pb-2">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg">{pkg.name.split(': ')[1]}</CardTitle>
+                    <Icon name={pkg.icon as any} className="h-6 w-6 text-primary" />
+                  </div>
+                </CardHeader>
+                <CardContent className="flex-grow">
+                  <p className="text-sm text-muted-foreground line-clamp-3">{pkg.description}</p>
+                </CardContent>
+                <CardFooter className="pt-0">
+                  {isPurchased ? (
+                    <Button variant="outline" className="w-full bg-green-600/20 text-green-400 border-green-600/50" disabled>
+                      {isPremium ? 'Acesso Premium' : 'Pacote Ativo'}
+                    </Button>
+                  ) : (
+                    <Button 
+                      onClick={() => handleBuyPackage(pkg.slug, pkg.name)} 
+                      className="w-full bg-secondary hover:bg-secondary/80 text-foreground"
+                    >
+                      Comprar ({pkg.price})
+                    </Button>
+                  )}
+                </CardFooter>
+              </Card>
+            );
+          })}
         </div>
       </div>
 
