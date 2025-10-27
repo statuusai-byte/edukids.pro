@@ -421,9 +421,12 @@ export const subjectsData: Subject[] = [
             id: "p4-mod-1",
             title: "Compreensão Básica",
             lessons: [
-              { id: "p4-l1", title: "Leia e Responda", description: "Perguntas de múltipla escolha sobre o texto.", content: "Texto: 'O cachorro Rex gosta de correr no parque. Ele é marrom e muito rápido.' Pergunta: De que cor é o cachorro Rex?", options: ["Preto", "Branco", "Marrom"], correctAnswer: "Marrom" },
-              { id: "p4-l2", title: "Resumo do Texto", description: "Aprenda a resumir ideias principais.", content: "Texto: 'A tartaruga e o coelho fizeram uma corrida. O coelho parou para dormir e a tartaruga, devagar, ganhou.' Pergunta: Quem ganhou a corrida?", options: ["O coelho", "A tartaruga", "Ninguém"], correctAnswer: "A tartaruga" },
-            ].map(q => ({ ...q, content: JSON.stringify([q]) })).map(q => q.content).join(''), type: "exercise" }
+              { id: "p4-l1", title: "Leia e Responda", description: "Perguntas de múltipla escolha sobre o texto.", content: JSON.stringify([
+                { question: "O cachorro Rex gosta de correr no parque. Ele é marrom e muito rápido. Pergunta: De que cor é o cachorro Rex?", options: ["Preto", "Branco", "Marrom"], correctAnswer: "Marrom" },
+              ]), type: "exercise" },
+              { id: "p4-l2", title: "Resumo do Texto", description: "Aprenda a resumir ideias principais.", content: JSON.stringify([
+                { question: "A tartaruga e o coelho fizeram uma corrida. O coelho parou para dormir e a tartaruga, devagar, ganhou. Pergunta: Quem ganhou a corrida?", options: ["O coelho", "A tartaruga", "Ninguém"], correctAnswer: "A tartaruga" },
+              ]), type: "exercise" }
             ]
           }
         ]
@@ -485,9 +488,12 @@ export const subjectsData: Subject[] = [
             id: "p7-mod-1",
             title: "Planejamento",
             lessons: [
-              { id: "p7-l1", title: "Planejando a História", description: "Estruture início, meio e fim.", content: "Pergunta: Qual é a primeira parte de uma história? (Resposta: Início/Introdução)", options: ["Meio", "Fim", "Início/Introdução"], correctAnswer: "Início/Introdução" },
-              { id: "p7-l2", title: "Escrevendo com Emoção", description: "Use adjetivos e verbos para dar vida ao texto.", content: "Pergunta: Qual verbo é mais forte que 'andou rápido'? (Resposta: Disparou)", options: ["Caminhou", "Disparou", "Parou"], correctAnswer: "Disparou" },
-            ].map(q => ({ ...q, content: JSON.stringify([q]) })).map(q => q.content).join(''), type: "exercise" }
+              { id: "p7-l1", title: "Planejando a História", description: "Estruture início, meio e fim.", content: JSON.stringify([
+                { question: "Qual é a primeira parte de uma história?", options: ["Meio", "Fim", "Início/Introdução"], correctAnswer: "Início/Introdução" },
+              ]), type: "exercise" },
+              { id: "p7-l2", title: "Escrevendo com Emoção", description: "Use adjetivos e verbos para dar vida ao texto.", content: JSON.stringify([
+                { question: "Qual verbo é mais forte que 'andou rápido'?", options: ["Caminhou", "Disparou", "Parou"], correctAnswer: "Disparou" },
+              ]), type: "exercise" }
             ]
           }
         ]
@@ -653,10 +659,6 @@ export const subjectsData: Subject[] = [
               { id: "l1-l1", title: "Sequências Simples", description: "Identifique o próximo item.", content: JSON.stringify([
                 { question: "Qual é o próximo: 🔴, 🔵, 🔴, 🔵, ___?", options: ["🔵", "🔴", "🟢"], correctAnswer: "🔴" },
                 { question: "Qual é o próximo: 1, 2, 3, 4, ___?", options: ["5", "6", "7"], correctAnswer: "5" },
-              ]), type: "exercise" },
-              { id: "l1-l2", title: "Sequências com Cores", description: "Padrões coloridos.", content: JSON.stringify([
-                { question: "Qual é o próximo: 🟩, 🟨, 🟨, 🟩, 🟨, ___?", options: ["🟨", "🟩", "🟦"], correctAnswer: "🟨" },
-                { question: "Qual é o próximo: A, B, C, D, ___?", options: ["E", "F", "G"], correctAnswer: "E" },
               ]), type: "exercise" }
             ]
           }
