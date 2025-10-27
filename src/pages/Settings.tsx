@@ -6,10 +6,12 @@ import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useAge } from "@/context/AgeContext";
 import { useTheme } from "@/context/ThemeContext";
-import { Check } from "lucide-react";
+import { Check, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useProfile } from "@/context/ProfileContext";
 import { AvatarUploader } from "@/components/AvatarUploader";
+import { useProgress } from "@/hooks/use-progress";
+import { showSuccess } from "@/utils/toast";
 
 const themes = [
   { id: 'nebula', name: 'Nébula', gradient: 'from-purple-500 to-indigo-600' },
@@ -22,6 +24,7 @@ const Settings = () => {
   const { ageGroup, setAgeGroup } = useAge();
   const { theme, setTheme } = useTheme();
   const { name, setName, avatarUrl, setAvatarUrl } = useProfile();
+  const { clearAll } = useProgress();
 
   const handleAvatarChange = (file: File) => {
     const reader = new FileReader();
@@ -29,6 +32,13 @@ const Settings = () => {
       setAvatarUrl(reader.result as string);
     };
     reader.readAsDataURL(file);
+  };
+
+  const handleResetProgress = () => {
+    if (window.confirm("Tem certeza que deseja resetar todo o progresso de lições e atividades? Esta ação é irreversível.")) {
+      clearAll();
+      showSuccess("Progresso resetado com sucesso! Comece a contar de novo.");
+    }
   };
 
   return (
@@ -111,8 +121,8 @@ const Settings = () => {
 
         <Card className="glass-card">
           <CardHeader>
-            <CardTitle>Notificações</CardTitle>
-            <CardDescription>Gerencie como você recebe as notificações.</CardDescription>
+            <CardTitle>Gerenciamento de Dados</CardTitle>
+            <CardDescription>Opções avançadas de dados e progresso.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between">
@@ -122,6 +132,16 @@ const Settings = () => {
             <div className="flex items-center justify-between">
               <Label htmlFor="in-app-notifications">Notificações no aplicativo</Label>
               <Switch id="in-app-notifications" defaultChecked />
+            </div>
+            <div className="pt-4 border-t border-white/10">
+              <Button 
+                variant="destructive" 
+                onClick={handleResetProgress}
+                className="w-full"
+              >
+                <Trash2 className="mr-2 h-4 w-4" /> Resetar Todo o Progresso
+              </Button>
+              <p className="text-xs text-muted-foreground mt-2">Isso apagará todas as lições marcadas como concluídas.</p>
             </div>
           </CardContent>
         </Card>
