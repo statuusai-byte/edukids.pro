@@ -28,6 +28,7 @@ const navItems = [
 const Layout = () => {
   const { isLoading } = useAge();
   const location = useLocation();
+  const isHomePage = location.pathname === '/';
 
   if (isLoading) {
     return (
@@ -70,7 +71,7 @@ const Layout = () => {
         </aside>
         <div className="flex flex-1 flex-col pl-20 main-container relative">
           <Header />
-          <main className="flex-1 p-4 sm:p-6 md:p-8">
+          <main className={`flex-1 ${isHomePage ? '' : 'p-4 sm:p-6 md:p-8'}`}>
             <AnimatePresence mode="wait">
               <PageTransition key={location.pathname}>
                 <Outlet />

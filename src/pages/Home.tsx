@@ -5,48 +5,43 @@ import { useAge } from '@/context/AgeContext';
 import { useEffect } from 'react';
 
 const Home = () => {
-  const { ageGroup, setAgeGroup } = useAge();
+  const { setAgeGroup } = useAge();
 
-  // Efeito para "limpar" a faixa etária ao visitar a página inicial
-  // Isto força o utilizador a fazer uma escolha consciente sempre que regressa aqui.
   useEffect(() => {
     setAgeGroup(null);
   }, [setAgeGroup]);
 
   return (
-    <div className="space-y-16">
-      <section className="flex flex-col items-center justify-center text-center min-h-[60vh] relative overflow-hidden">
-        {/* Elementos de fundo decorativos */}
-        <motion.div
-          className="absolute top-10 left-10 w-32 h-32 bg-secondary rounded-full opacity-30"
-          animate={{ y: [0, 20, 0], scale: [1, 1.1, 1] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+    <div>
+      <section className="relative w-full h-screen flex items-center justify-center text-center text-white overflow-hidden">
+        {/* Background Image Container */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-[url('/hero-mobile.png')] md:bg-[url('/hero-desktop.png')]"
+          aria-hidden="true"
         />
-        <motion.div
-          className="absolute bottom-10 right-10 w-48 h-48 bg-accent rounded-full opacity-30"
-          animate={{ y: [0, -20, 0], x: [0, 10, 0] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        />
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black/50" aria-hidden="true" />
 
-        <motion.div 
-          className="relative z-10 flex flex-col items-center"
+        {/* Content */}
+        <motion.div
+          className="relative z-10 flex flex-col items-center px-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary-foreground">
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-shadow-lg">
             EduKids+
           </h1>
-          <p className="mt-4 text-lg md:text-xl text-muted-foreground max-w-2xl">
+          <p className="mt-4 text-lg md:text-xl text-gray-200 max-w-2xl text-shadow">
             A plataforma onde a aprendizagem se transforma numa aventura emocionante. Explore, jogue e cresça connosco!
           </p>
-          <Button asChild size="lg" className="mt-8">
-            <Link to="/sobre">Saber Mais</Link>
+          <Button asChild size="lg" className="mt-8 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/30">
+            <a href="#age-selection">Começar Aventura</a>
           </Button>
         </motion.div>
       </section>
 
-      <section id="age-selection" className="container mx-auto px-4 text-center">
+      <section id="age-selection" className="container mx-auto px-4 text-center py-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -56,14 +51,14 @@ const Home = () => {
           <h2 className="text-3xl md:text-4xl font-bold">Para Começar a Aventura...</h2>
           <p className="mt-2 text-lg text-muted-foreground">Qual é a idade do nosso explorador?</p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <Button variant={ageGroup === '4-6' ? 'default' : 'outline'} size="xl" onClick={() => setAgeGroup('4-6')}>
-              <Link to="/dashboard">4-6 anos</Link>
+            <Button asChild variant="outline" size="xl">
+              <Link to="/dashboard" onClick={() => setAgeGroup('4-6')}>4-6 anos</Link>
             </Button>
-            <Button variant={ageGroup === '7-9' ? 'default' : 'outline'} size="xl" onClick={() => setAgeGroup('7-9')}>
-              <Link to="/dashboard">7-9 anos</Link>
+            <Button asChild variant="outline" size="xl">
+              <Link to="/dashboard" onClick={() => setAgeGroup('7-9')}>7-9 anos</Link>
             </Button>
-            <Button variant={ageGroup === '10-12' ? 'default' : 'outline'} size="xl" onClick={() => setAgeGroup('10-12')}>
-              <Link to="/dashboard">10-12 anos</Link>
+            <Button asChild variant="outline" size="xl">
+              <Link to="/dashboard" onClick={() => setAgeGroup('10-12')}>10-12 anos</Link>
             </Button>
           </div>
         </motion.div>
