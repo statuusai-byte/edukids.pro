@@ -6,6 +6,36 @@ import { TiltCard } from "@/components/TiltCard";
 import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Icon } from "@/components/Icon";
 
+const iconColorClass: Record<string, string> = {
+    cyan: 'text-cyan-400',
+    purple: 'text-purple-400',
+    green: 'text-green-400',
+    orange: 'text-orange-400',
+    teal: 'text-teal-400',
+    indigo: 'text-indigo-400',
+    yellow: 'text-yellow-400',
+    red: 'text-red-400',
+    pink: 'text-pink-400',
+    slate: 'text-slate-400',
+    rose: 'text-rose-400',
+    lime: 'text-lime-400',
+};
+
+const bgColorClass: Record<string, string> = {
+    cyan: 'bg-cyan-400',
+    purple: 'bg-purple-400',
+    green: 'bg-green-400',
+    orange: 'bg-orange-400',
+    teal: 'bg-teal-400',
+    indigo: 'bg-indigo-400',
+    yellow: 'bg-yellow-400',
+    red: 'bg-red-400',
+    pink: 'bg-pink-400',
+    slate: 'bg-slate-400',
+    rose: 'bg-rose-400',
+    lime: 'bg-lime-400',
+};
+
 const Activities = () => {
   const { ageGroup } = useAge();
 
@@ -36,7 +66,7 @@ const Activities = () => {
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-2xl font-bold">{subject.name}</CardTitle>
                   <div className="p-3 bg-secondary rounded-full transition-transform duration-300 group-hover:scale-110">
-                    <Icon name={subject.icon} className={`h-12 w-12 text-${subject.color}-400`} />
+                    <Icon name={subject.icon} className={`h-12 w-12 ${iconColorClass[subject.color] || 'text-primary'}`} />
                   </div>
                 </CardHeader>
                 <CardContent className="flex flex-col flex-grow">
@@ -46,13 +76,13 @@ const Activities = () => {
                   <div className="space-y-2 mb-4">
                     {subject.activitySamples.map(sample => (
                       <div key={sample} className="text-xs text-foreground/80 flex items-center">
-                        <span className={`inline-block w-1.5 h-1.5 bg-${subject.color}-400 rounded-full mr-2`}></span>
+                        <span className={`inline-block w-1.5 h-1.5 ${bgColorClass[subject.color] || 'bg-primary'} rounded-full mr-2`}></span>
                         {sample}
                       </div>
                     ))}
                   </div>
                   <div className="mt-auto">
-                    <div className={`h-1 w-10 bg-${subject.color}-400 rounded-full mt-4 transition-all duration-300 group-hover:w-20`}></div>
+                    <div className={`h-1 w-10 ${bgColorClass[subject.color] || 'bg-primary'} rounded-full mt-4 transition-all duration-300 group-hover:w-20`}></div>
                   </div>
                 </CardContent>
               </TiltCard>

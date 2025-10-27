@@ -10,8 +10,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
+import { useProfile } from "@/context/ProfileContext";
 
 const Header = () => {
+  const { name, avatarUrl } = useProfile();
+
   return (
     <header className="sticky top-0 z-10 flex h-20 items-center justify-between bg-background/80 backdrop-blur-lg px-4 sm:px-6">
       <div>
@@ -27,11 +30,11 @@ const Header = () => {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <div className="flex items-center gap-3 cursor-pointer">
-              <span className="text-md font-medium text-muted-foreground hidden sm:inline">Olá, Alex!</span>
+              <span className="text-md font-medium text-muted-foreground hidden sm:inline">Olá, {name}!</span>
               <Button variant="ghost" size="icon" className="rounded-full h-12 w-12">
                 <Avatar className="h-12 w-12 border-2 border-primary/50">
-                  <AvatarImage src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="Avatar" />
-                  <AvatarFallback>A</AvatarFallback>
+                  <AvatarImage src={avatarUrl ?? undefined} alt="Avatar" />
+                  <AvatarFallback>{name.charAt(0).toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <span className="sr-only">Menu do Usuário</span>
               </Button>

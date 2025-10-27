@@ -8,6 +8,8 @@ import { useAge } from "@/context/AgeContext";
 import { useTheme } from "@/context/ThemeContext";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useProfile } from "@/context/ProfileContext";
+import { AvatarUploader } from "@/components/AvatarUploader";
 
 const themes = [
   { id: 'nebula', name: 'Nébula', gradient: 'from-purple-500 to-indigo-600' },
@@ -19,6 +21,15 @@ const themes = [
 const Settings = () => {
   const { ageGroup, setAgeGroup } = useAge();
   const { theme, setTheme } = useTheme();
+  const { name, setName, avatarUrl, setAvatarUrl } = useProfile();
+
+  const handleAvatarChange = (file: File) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setAvatarUrl(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
 
   return (
     <div>
@@ -30,9 +41,21 @@ const Settings = () => {
             <CardDescription>Atualize as informações e preferências.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="name">Nome</Label>
-              <Input id="name" defaultValue="Alex" className="bg-secondary/60 border-white/20" />
+            <div className="flex items-center gap-6">
+              <AvatarUploader
+                src={avatarUrl}
+                fallback={name.charAt(0).toUpperCase()}
+                onImageSelect={handleAvatarChange}
+              />
+              <div className="space-y-2 flex-grow">
+                <Label htmlFor="name">Nome</Label>
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="bg-secondary/60 border-white/20"
+                />
+              </div>
             </div>
             <div className="space-y-2">
               <Label>Faixa Etária</Label>
