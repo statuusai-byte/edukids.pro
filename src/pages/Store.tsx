@@ -1,6 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, Star, Bot, BookOpen, Users, Palette, BarChart3 } from "lucide-react";
+import { ThemePreviewCard } from "@/components/ThemePreviewCard";
+
+// Simulação: No modo de teste, consideramos o usuário como Premium
+const IS_PREMIUM_TRIAL = true;
 
 const Store = () => {
   return (
@@ -9,7 +13,7 @@ const Store = () => {
       <p className="text-muted-foreground text-center mb-12">O modo de teste está ativo. Aproveite o acesso total!</p>
       
       {/* Planos de Assinatura */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto mb-12">
         <Card className="glass-card p-4 flex flex-col opacity-60">
           <CardHeader>
             <CardTitle className="text-2xl">Plano Gratuito</CardTitle>
@@ -52,6 +56,27 @@ const Store = () => {
             </CardFooter>
           </Card>
         </div>
+      </div>
+
+      {/* Seção de Recursos Premium */}
+      <div className="max-w-4xl mx-auto space-y-8">
+        <h2 className="text-3xl font-bold tracking-tighter mt-12 mb-6">Recursos Exclusivos</h2>
+        
+        <ThemePreviewCard isPremium={IS_PREMIUM_TRIAL} />
+
+        <Card className="glass-card p-4">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5 text-primary" /> Relatórios Avançados
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground">Acompanhe o progresso detalhado, tempo de tela por matéria e identifique áreas que precisam de mais atenção com relatórios semanais e mensais.</p>
+            <div className="h-32 bg-secondary/50 rounded-lg mt-4 flex items-center justify-center">
+              <p className="text-muted-foreground text-sm">Pré-visualização do gráfico de desempenho.</p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
