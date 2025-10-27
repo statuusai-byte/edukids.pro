@@ -12,12 +12,11 @@ import { useProfile } from "@/context/ProfileContext";
 import { AvatarUploader } from "@/components/AvatarUploader";
 import { useProgress } from "@/hooks/use-progress";
 import { showSuccess } from "@/utils/toast";
+import { usePremium } from "@/context/PremiumContext";
 
 const themes = [
-  { id: 'nebula', name: 'Nébula', gradient: 'from-purple-500 to-indigo-600' },
-  { id: 'cosmos', name: 'Cosmos', gradient: 'from-blue-400 to-cyan-500' },
-  { id: 'selva', name: 'Selva', gradient: 'from-lime-400 to-green-600' },
-  { id: 'oceano', name: 'Oceano', gradient: 'from-cyan-400 to-teal-500' },
+  { id: 'nebula', name: 'Nébula (Padrão)', gradient: 'from-purple-500 to-indigo-600', premium: false },
+  { id: 'espaco', name: 'Espaço (Premium)', gradient: 'from-orange-500 to-red-600', premium: true },
 ] as const;
 
 const Settings = () => {
@@ -25,6 +24,7 @@ const Settings = () => {
   const { theme, setTheme } = useTheme();
   const { name, setName, avatarUrl, setAvatarUrl } = useProfile();
   const { clearAll } = useProgress();
+  const { isPremium } = usePremium();
 
   const handleAvatarChange = (file: File) => {
     const reader = new FileReader();
@@ -96,26 +96,31 @@ const Settings = () => {
             <CardTitle>Aparência</CardTitle>
             <CardDescription>Personalize o visual do aplicativo.</CardDescription>
           </CardHeader>
-          <CardContent className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {themes.map((t) => (
-              <div key={t.id} className="text-center">
-                <button
-                  onClick={() => setTheme(t.id)}
-                  className={cn(
-                    "w-full h-20 rounded-lg bg-gradient-to-br relative flex items-center justify-center transition-all",
-                    t.gradient,
-                    theme === t.id && "ring-2 ring-offset-2 ring-offset-background ring-primary"
-                  )}
-                >
-                  {theme === t.id && (
-                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-lg">
-                      <Check className="h-8 w-8 text-white" />
-                    </div>
-                  )}
-                </button>
-                <p className="mt-2 text-sm font-medium">{t.name}</p>
-              </div>
-            ))}
+          <CardContent className="grid grid-cols-2 gap-4">
+            {themes.map((t) => {
+              const isDisabled = t.premium && !isPremium;
+              return (
+                <div key={t.id} className="text-center">
+                  <button
+                    onClick={() => setTheme(t.id as 'nebula' | 'espaco')}
+                    disabled={isDisabled}
+                    className={cn(
+                      "w-full h-20 rounded-lg bg-gradient-to-br relative flex items-center justify-center transition-all",
+                      t.gradient,
+                      theme === t.id && "ring-2 ring-offset-2 ring-offset-background ring-primary",
+                      isDisabled && "opacity-50 cursor-not-allowed"
+                    )}
+                  >
+                    {theme === t.id && (
+                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-lg">
+                        <Check className="h-8 w-8 text-white" />
+                      </div>
+                    )}
+                  </button>
+                  <p className="mt-2 text-sm font-medium">{t.name}</p>
+                </div>
+              );
+            })}
           </CardContent>
         </Card>
 

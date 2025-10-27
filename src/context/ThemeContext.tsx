@@ -1,6 +1,6 @@
 import { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 
-type Theme = 'nebula' | 'cosmos' | 'selva' | 'oceano';
+type Theme = 'nebula' | 'espaco';
 
 interface ThemeContextType {
   theme: Theme;
@@ -14,10 +14,11 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const storedTheme = localStorage.getItem('edukids_theme') as Theme;
-    if (storedTheme) {
+    if (storedTheme && (storedTheme === 'nebula' || storedTheme === 'espaco')) {
       setThemeState(storedTheme);
       document.documentElement.className = `theme-${storedTheme}`;
     } else {
+      setThemeState('nebula');
       document.documentElement.className = 'theme-nebula';
     }
   }, []);
