@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ContandoFrutas from "@/components/games/ContandoFrutas";
+import FormandoPalavras from "@/components/games/FormandoPalavras"; // Importando o novo jogo
 import { useProgress } from "@/hooks/use-progress";
 
 const LessonPage = () => {
@@ -93,6 +94,38 @@ const LessonPage = () => {
     // If no next, remain on current (user finished the activity)
   };
 
+  const renderLessonContent = () => {
+    if (lesson.type === 'game') {
+      if (activity.id === 'm1') {
+        return <ContandoFrutas />;
+      }
+      if (activity.id === 'p2') {
+        return <FormandoPalavras />;
+      }
+      return <p className="text-muted-foreground">Jogo interativo em desenvolvimento.</p>;
+    }
+
+    if (lesson.videoUrl) {
+      return (
+        <div className="aspect-video rounded-2xl overflow-hidden border border-primary/50 shadow-lg shadow-primary/20">
+          <iframe
+            width="100%"
+            height="100%"
+            src={lesson.videoUrl}
+            title={lesson.title}
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          ></iframe>
+        </div>
+      );
+    }
+
+    return (
+      <p className="text-foreground/90 mb-4">{lesson.content}</p>
+    );
+  };
+
   return (
     <div>
       <div className="flex items-center gap-4 mb-6">
@@ -114,28 +147,8 @@ const LessonPage = () => {
               <CardTitle>{lesson.title}</CardTitle>
             </CardHeader>
             <CardContent>
-              {lesson.type === 'game' && activity.id === 'm1' ? (
-                <>
-                  <p className="text-muted-foreground mb-4">{lesson.description}</p>
-                  <ContandoFrutas />
-                </>
-              ) : lesson.videoUrl ? (
-                <div className="aspect-video rounded-2xl overflow-hidden border border-primary/50 shadow-lg shadow-primary/20">
-                  <iframe
-                    width="100%"
-                    height="100%"
-                    src={lesson.videoUrl}
-                    title={lesson.title}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  ></iframe>
-                </div>
-              ) : (
-                <>
-                  <p className="text-foreground/90 mb-4">{lesson.content}</p>
-                </>
-              )}
+              <p className="text-muted-foreground mb-4">{lesson.description}</p>
+              {renderLessonContent()}
             </CardContent>
           </Card>
 
@@ -158,13 +171,15 @@ const LessonPage = () => {
             <CardContent className="space-y-2">
               {module.lessons.map((l, idx) => (
                 <div key={l.id} className={`p-2 rounded-md ${l.id === lesson.id ? 'bg-primary/10 border border-primary/30' : 'hover:bg-white/5'}`}>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="font-medium">{idx + 1}. {l.title}</div>
-                      <div className="text-xs text-muted-foreground">{l.description}</div>
+                  <RouterLink to={`/activities/${subject.slug}/${activity.id}/modules/${module.id}/lessons/${l.id}`}>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-medium">{idx + 1}. {l.title}</div>
+                        <div className="text-xs text-muted-foreground">{l.description}</div>
+                      </div>
+                      <div className="text-xs text-muted-foreground">{isLessonCompleted(subject.slug, activity.id, module.id, l.id) ? 'Concluída' : 'Aberta'}</div>
                     </div>
-                    <div className="text-xs text-muted-foreground">{isLessonCompleted(subject.slug, activity.id, module.id, l.id) ? 'Concluída' : 'Aberta'}</div>
-                  </div>
+                  </RouterLink>
                 </div>
               ))}
             </CardContent>

@@ -285,8 +285,8 @@ export const subjectsData: Subject[] = [
             id: "p2-mod-2",
             title: "Montando Palavras",
             lessons: [
-              { id: "p2-l3", title: "Forme palavras com imagens", description: "Associe imagens a palavras formadas.", content: "Atividade prática.", type: "exercise" },
-              { id: "p2-l4", title: "Jogos de Montagem", description: "Desafios progressivos de montagem.", content: "Minijogos com sílabas.", type: "exercise" }
+              { id: "p2-l3", title: "Forme palavras com imagens", description: "Associe imagens a palavras formadas.", type: "game" },
+              { id: "p2-l4", title: "Jogos de Montagem", description: "Desafios progressivos de montagem.", type: "game" }
             ]
           }
         ]
