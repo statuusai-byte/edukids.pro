@@ -14,6 +14,15 @@ export default defineConfig(() => ({
     dyadComponentTagger(), 
     react(),
     VitePWA({
+      // Desabilitando o Service Worker temporariamente para isolar o erro 404 no Vercel
+      strategies: 'injectManifest',
+      injectManifest: {
+        // Define um arquivo service worker vazio para desabilitar a funcionalidade
+        // Isso garante que o Vercel não tente servir um Service Worker que possa estar causando o erro.
+        src: 'public/sw.js',
+        dest: 'sw.js',
+        injectionPoint: undefined,
+      },
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'placeholder.svg'],
       manifest: {

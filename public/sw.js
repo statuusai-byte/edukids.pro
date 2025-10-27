@@ -1,0 +1,1 @@
+// Service Worker vazio para desabilitar a funcionalidade PWA temporariamente.
