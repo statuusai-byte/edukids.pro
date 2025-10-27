@@ -7,30 +7,30 @@ import { Switch } from "@/components/ui/switch";
 const Settings = () => {
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6">Configurações</h1>
-      <div className="grid gap-6 max-w-2xl">
-        <Card>
+      <h1 className="text-4xl font-bold tracking-tighter mb-8">Configurações</h1>
+      <div className="grid gap-8 max-w-2xl">
+        <Card className="glass-card">
           <CardHeader>
             <CardTitle>Perfil da Criança</CardTitle>
             <CardDescription>Atualize as informações e preferências.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="name">Nome</Label>
-              <Input id="name" defaultValue="Alex" />
+              <Input id="name" defaultValue="Alex" className="bg-secondary/60 border-white/20" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="age">Idade</Label>
-              <Input id="age" type="number" defaultValue="8" />
+              <Input id="age" type="number" defaultValue="8" className="bg-secondary/60 border-white/20" />
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="glass-card">
           <CardHeader>
             <CardTitle>Notificações</CardTitle>
             <CardDescription>Gerencie como você recebe as notificações.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
             <div className="flex items-center justify-between">
               <Label htmlFor="progress-reports">Relatórios de progresso por e-mail</Label>
               <Switch id="progress-reports" defaultChecked />
@@ -41,7 +41,7 @@ const Settings = () => {
             </div>
           </CardContent>
         </Card>
-        <Button>Salvar Alterações</Button>
+        <Button className="bg-primary hover:bg-primary/90 shadow-lg shadow-primary/30">Salvar Alterações</Button>
       </div>
     </div>
   );
