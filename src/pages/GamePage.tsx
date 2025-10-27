@@ -5,20 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ContandoFrutas from "@/components/games/ContandoFrutas";
-
-// A simple placeholder for a game component
-const GamePlaceholder = ({ title }: { title: string }) => (
-  <Card className="glass-card">
-    <CardHeader>
-      <CardTitle>{title}</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <div className="h-64 flex items-center justify-center">
-        <p className="text-muted-foreground">O jogo para esta atividade será implementado aqui em breve!</p>
-      </div>
-    </CardContent>
-  </Card>
-);
+import { Link } from "react-router-dom";
 
 const GamePage = () => {
   const { subject: subjectSlug, activityId } = useParams();
@@ -41,14 +28,8 @@ const GamePage = () => {
     );
   }
 
-  const renderGame = () => {
-    switch (activity.id) {
-      case 'm1':
-        return <ContandoFrutas />;
-      default:
-        return <GamePlaceholder title={activity.title} />;
-    }
-  };
+  // If activity is "Contando Frutas" and user visits root activity page, show a hero game preview + lessons
+  const isContandoFrutas = activity.id === 'm1';
 
   return (
     <div>
@@ -60,8 +41,39 @@ const GamePage = () => {
         </Button>
         <h1 className="text-4xl font-bold tracking-tighter">{activity.title}</h1>
       </div>
-      
-      {renderGame()}
+
+      {isContandoFrutas && (
+        <div className="mb-8">
+          <Card className="glass-card p-6">
+            <CardHeader>
+              <CardTitle>Mini Jogo: {activity.title}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground mb-4">Experimente um problema rápido do jogo antes de começar as lições.</p>
+              <ContandoFrutas />
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      <div>
+        <h2 className="text-2xl font-semibold mb-4">Lições</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {activity.lessons.map((lesson) => (
+            <Link to={`/activities/${subject.slug}/${activity.id}/lessons/${lesson.id}`} key={lesson.id}>
+              <div className="glass-card p-4 rounded-lg hover:shadow-lg transition-shadow cursor-pointer">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-semibold text-lg">{lesson.title}</h3>
+                    <p className="text-sm text-muted-foreground">{lesson.description}</p>
+                  </div>
+                  <div className="text-sm text-primary">Abrir</div>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
