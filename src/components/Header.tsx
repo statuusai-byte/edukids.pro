@@ -11,9 +11,11 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
 import { useProfile } from "@/context/ProfileContext";
+import { useSupabase } from "@/context/SupabaseContext";
 
 const Header = () => {
   const { name, avatarUrl } = useProfile();
+  const { signOut } = useSupabase();
 
   return (
     <header className="sticky top-0 z-10 flex h-20 items-center justify-between bg-background/80 backdrop-blur-lg px-4 sm:px-6">
@@ -53,7 +55,7 @@ const Header = () => {
               <Link to="/settings"><Settings className="mr-2 h-4 w-4" /> Configurações</Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator className="bg-white/10" />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={signOut}>
               <LogOut className="mr-2 h-4 w-4" /> Sair
             </DropdownMenuItem>
           </DropdownMenuContent>

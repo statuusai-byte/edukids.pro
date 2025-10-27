@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { NavLink, Outlet, useLocation, Navigate } from "react-router-dom";
 import {
   Home,
   BookOpen,
@@ -15,6 +15,7 @@ import AgeGateModal from "./AgeGateModal";
 import { AnimatePresence } from "framer-motion";
 import PageTransition from "./PageTransition";
 import { playSound } from "@/utils/sound";
+import { useSupabase } from "@/context/SupabaseContext";
 
 const navItems = [
   { to: "/", icon: <Home className="h-6 w-6" />, label: "Home" },
@@ -26,15 +27,35 @@ const navItems = [
 ];
 
 const Layout = () => {
-  const { isLoading } = useAge();
+  const { isLoading: isAgeLoading } = useAge();
+  const { user, isLoading: isAuthLoading } = useSupabase();
   const location = useLocation();
   const isHomePage = location.pathname === '/';
+  const isLoginPage = location.pathname === '/login';
 
-  if (isLoading) {
+  const protectedRoutes = navItems.map(item => item.to).filter(path => path !== '/');
+
+  if (isAgeLoading || isAuthLoading) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
         <Sparkles className="h-12 w-12 animate-spin text-primary" />
       </div>
+    );
+  }
+
+  // Redirecionar se a rota for protegida e o usuário não estiver logado
+  if (!user && protectedRoutes.includes(location.pathname) && !isLoginPage) {
+    return <Navigate to="/login" replace />;
+  }
+
+  // Se estiver na home, não mostra o layout completo (Header/Sidebar)
+  if (isHomePage) {
+    return (
+      <AnimatePresence mode="wait">
+        <PageTransition key={location.pathname}>
+          <Outlet />
+        </PageTransition>
+      </AnimatePresence>
     );
   }
 
@@ -71,7 +92,7 @@ const Layout = () => {
         </aside>
         <div className="flex flex-1 flex-col pl-20 main-container relative">
           <Header />
-          <main className={`flex-1 ${isHomePage ? '' : 'p-4 sm:p-6 md:p-8'}`}>
+          <main className={`flex-1 p-4 sm:p-6 md:p-8`}>
             <AnimatePresence mode="wait">
               <PageTransition key={location.pathname}>
                 <Outlet />
