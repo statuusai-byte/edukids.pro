@@ -127,13 +127,22 @@ const LessonPage = () => {
 
   const renderLessonContent = () => {
     if (lesson.type === 'game') {
+      // Renderiza o jogo correto baseado no ID da atividade
       if (activity.id === 'm1') {
+        // Matemática: Contando Frutas
         return <ContandoFrutas />;
       }
       if (activity.id === 'p2') {
+        // Português: Formando Palavras
         return <FormandoPalavras />;
       }
-      return <p className="text-muted-foreground">Jogo interativo em desenvolvimento.</p>;
+      // Se for um jogo genérico ou não implementado, permite marcar como concluído
+      return (
+        <Card className="glass-card p-6">
+          <CardTitle className="text-xl mb-4">Jogo Interativo</CardTitle>
+          <p className="text-muted-foreground">O jogo interativo para esta lição está em desenvolvimento. Clique em 'Marcar como Concluída' para avançar.</p>
+        </Card>
+      );
     }
 
     if (lesson.type === 'exercise' && lesson.content) {
@@ -172,6 +181,8 @@ const LessonPage = () => {
 
   // Se for um quiz, o botão de 'Marcar como Concluída' será gerenciado pelo QuizComponent.
   const isQuiz = lesson.type === 'exercise' && lesson.content && lesson.content.startsWith('[');
+  // Se for um jogo, o botão de 'Marcar como Concluída' deve ser manual, a menos que o jogo gerencie isso internamente.
+  const isGame = lesson.type === 'game';
 
   return (
     <div>
@@ -221,7 +232,8 @@ const LessonPage = () => {
                 )}
               </div>
 
-              {!isQuiz && (
+              {/* O botão de conclusão é manual para jogos e conteúdo de leitura/vídeo */}
+              {(!isQuiz || isGame) && (
                 <Button className="bg-green-600 hover:bg-green-700" onClick={markCompleted}>
                   {completed ? "Revisar (Concluído)" : "Marcar como Concluída"}
                 </Button>

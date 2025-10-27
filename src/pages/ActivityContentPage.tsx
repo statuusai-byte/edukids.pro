@@ -3,8 +3,6 @@ import { subjectsData } from "@/data/activitiesData";
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Folder } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import ContandoFrutas from "@/components/games/ContandoFrutas";
 import { Link } from "react-router-dom";
 import { useProgress } from "@/hooks/use-progress";
 
@@ -30,8 +28,6 @@ const ActivityContentPage = () => {
     );
   }
 
-  const isContandoFrutas = activity.id === 'm1';
-
   return (
     <div>
       <div className="flex items-center gap-4 mb-8">
@@ -42,20 +38,6 @@ const ActivityContentPage = () => {
         </Button>
         <h1 className="text-4xl font-bold tracking-tighter">{activity.title}</h1>
       </div>
-
-      {isContandoFrutas && (
-        <div className="mb-8">
-          <Card className="glass-card p-6">
-            <CardHeader>
-              <CardTitle>Mini Jogo: {activity.title}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">Experimente um problema rápido do jogo antes de começar as lições.</p>
-              <ContandoFrutas />
-            </CardContent>
-          </Card>
-        </div>
-      )}
 
       <div>
         <h2 className="text-2xl font-semibold mb-4">Pastas de Estudo</h2>
