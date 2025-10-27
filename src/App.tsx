@@ -13,6 +13,7 @@ import Settings from "./pages/Settings";
 import { AgeProvider } from "./context/AgeContext";
 import ActivityDetail from "./pages/ActivityDetail";
 import GamePage from "./pages/GamePage";
+import CourseDetail from "./pages/CourseDetail";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/activities/:subject" element={<ActivityDetail />} />
             <Route path="/activities/:subject/:activityId" element={<GamePage />} />
             <Route path="/courses" element={<Courses />} />
+            <Route path="/courses/:courseId" element={<CourseDetail />} />
             <Route path="/store" element={<Store />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/settings" element={<Settings />} />
