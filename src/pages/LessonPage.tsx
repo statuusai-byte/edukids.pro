@@ -5,22 +5,27 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ContandoFrutas from "@/components/games/ContandoFrutas";
+import { useProgress } from "@/hooks/use-progress";
 
 const LessonPage = () => {
-  const { subject: subjectSlug, activityId, lessonId } = useParams();
+  const { subject: subjectSlug, activityId, moduleId, lessonId } = useParams();
   const navigate = useNavigate();
+  const { isLessonCompleted, markLessonCompleted } = useProgress();
 
-  const { subject, activity, lesson, lessonIndex } = useMemo(() => {
+  const { subject, activity, module, lesson, lessonIndex, moduleIndex } = useMemo(() => {
     const s = subjectsData.find(sub => sub.slug === subjectSlug);
-    if (!s) return { subject: null, activity: null, lesson: null, lessonIndex: -1 };
+    if (!s) return { subject: null, activity: null, module: null, lesson: null, lessonIndex: -1, moduleIndex: -1 };
     const a = s.activities.find(act => act.id === activityId);
-    if (!a) return { subject: s, activity: null, lesson: null, lessonIndex: -1 };
-    const li = a.lessons.findIndex(l => l.id === lessonId);
-    const l = li >= 0 ? a.lessons[li] : null;
-    return { subject: s, activity: a, lesson: l, lessonIndex: li };
-  }, [subjectSlug, activityId, lessonId]);
+    if (!a) return { subject: s, activity: null, module: null, lesson: null, lessonIndex: -1, moduleIndex: -1 };
+    const mi = a.modules.findIndex(m => m.id === moduleId);
+    const m = mi >= 0 ? a.modules[mi] : null;
+    if (!m) return { subject: s, activity: a, module: null, lesson: null, lessonIndex: -1, moduleIndex: mi };
+    const li = m.lessons.findIndex(l => l.id === lessonId);
+    const l = li >= 0 ? m.lessons[li] : null;
+    return { subject: s, activity: a, module: m, lesson: l, lessonIndex: li, moduleIndex: mi };
+  }, [subjectSlug, activityId, moduleId, lessonId]);
 
-  if (!subject || !activity || !lesson) {
+  if (!subject || !activity || !module || !lesson) {
     return (
       <div>
         <h1 className="text-2xl font-bold">Lição não encontrada</h1>
@@ -31,22 +36,61 @@ const LessonPage = () => {
     );
   }
 
+  const completed = isLessonCompleted(subject.slug, activity.id, module.id, lesson.id);
+
   const goNext = () => {
+    // Next lesson in the same module
     const nextIndex = lessonIndex + 1;
-    if (nextIndex < activity.lessons.length) {
-      const next = activity.lessons[nextIndex];
-      navigate(`/activities/${subject.slug}/${activity.id}/lessons/${next.id}`);
+    if (nextIndex < module.lessons.length) {
+      const next = module.lessons[nextIndex];
+      navigate(`/activities/${subject.slug}/${activity.id}/modules/${module.id}/lessons/${next.id}`);
+      return;
     }
+
+    // Move to the next module's first lesson
+    const nextModuleIndex = moduleIndex + 1;
+    if (nextModuleIndex < activity.modules.length) {
+      const nextModule = activity.modules[nextModuleIndex];
+      const nextLesson = nextModule.lessons[0];
+      navigate(`/activities/${subject.slug}/${activity.id}/modules/${nextModule.id}/lessons/${nextLesson.id}`);
+      return;
+    }
+
+    // If nothing left, stay and maybe show a message (for now we just stay)
   };
 
   const goPrev = () => {
     const prevIndex = lessonIndex - 1;
     if (prevIndex >= 0) {
-      const prev = activity.lessons[prevIndex];
-      navigate(`/activities/${subject.slug}/${activity.id}/lessons/${prev.id}`);
-    } else {
-      navigate(`/activities/${subject.slug}/${activity.id}`);
+      const prev = module.lessons[prevIndex];
+      navigate(`/activities/${subject.slug}/${activity.id}/modules/${module.id}/lessons/${prev.id}`);
+      return;
     }
+
+    // go back to activity page
+    navigate(`/activities/${subject.slug}/${activity.id}`);
+  };
+
+  const markCompleted = () => {
+    markLessonCompleted(subject.slug, activity.id, module.id, lesson.id);
+
+    // Automatically navigate to next after marking complete (if exists)
+    const nextIndex = lessonIndex + 1;
+    if (nextIndex < module.lessons.length) {
+      const next = module.lessons[nextIndex];
+      navigate(`/activities/${subject.slug}/${activity.id}/modules/${module.id}/lessons/${next.id}`);
+      return;
+    }
+
+    const nextModuleIndex = moduleIndex + 1;
+    if (nextModuleIndex < activity.modules.length) {
+      const nextModule = activity.modules[nextModuleIndex];
+      const nextLesson = nextModule.lessons[0];
+      navigate(`/activities/${subject.slug}/${activity.id}/modules/${nextModule.id}/lessons/${nextLesson.id}`);
+      return;
+    }
+
+    // If no next, remain on current (user finished the activity)
   };
 
   return (
@@ -59,7 +103,7 @@ const LessonPage = () => {
         </Button>
         <div>
           <h1 className="text-2xl font-bold">{lesson.title}</h1>
-          <p className="text-muted-foreground">{activity.title} • {subject.name}</p>
+          <p className="text-muted-foreground">{activity.title} • {module.title}</p>
         </div>
       </div>
 
@@ -97,24 +141,29 @@ const LessonPage = () => {
 
           <div className="flex gap-4 mt-4">
             <Button variant="outline" onClick={goPrev}>Anterior</Button>
-            <Button onClick={goNext} className="ml-auto">Próxima Lição</Button>
+            <Button onClick={goNext}>Próxima</Button>
+            <div className="ml-auto">
+              <Button className="bg-green-600 hover:bg-green-700" onClick={markCompleted}>
+                {completed ? "Revisar (Concluído)" : "Marcar como Concluída"}
+              </Button>
+            </div>
           </div>
         </div>
 
         <aside>
           <Card className="glass-card p-4">
             <CardHeader>
-              <CardTitle>Índice da Atividade</CardTitle>
+              <CardTitle>Índice da Pasta</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              {activity.lessons.map((l, idx) => (
+              {module.lessons.map((l, idx) => (
                 <div key={l.id} className={`p-2 rounded-md ${l.id === lesson.id ? 'bg-primary/10 border border-primary/30' : 'hover:bg-white/5'}`}>
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="font-medium">{idx + 1}. {l.title}</div>
                       <div className="text-xs text-muted-foreground">{l.description}</div>
                     </div>
-                    <div className="text-xs text-muted-foreground">{l.type}</div>
+                    <div className="text-xs text-muted-foreground">{isLessonCompleted(subject.slug, activity.id, module.id, l.id) ? 'Concluída' : 'Aberta'}</div>
                   </div>
                 </div>
               ))}
