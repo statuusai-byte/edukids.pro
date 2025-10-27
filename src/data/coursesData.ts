@@ -1,4 +1,17 @@
-export const allCourses = [
+export type Course = {
+  id: string;
+  title: string;
+  instructor: string;
+  duration: string;
+  imageUrl: string;
+  ageGroups: ('4-6' | '7-9' | '10-12')[];
+  description: string;
+  videoUrl?: string;
+  premium: boolean;
+  recommended?: boolean;
+};
+
+export const allCourses: Course[] = [
   {
     id: "ingles-para-criancas",
     title: "Inglês para Crianças",
@@ -8,7 +21,8 @@ export const allCourses = [
     ageGroups: ['4-6', '7-9', '10-12'],
     description: "Curso interativo com músicas, jogos e vocabulário para ensinar cores, números, animais e cumprimentos em inglês.",
     videoUrl: "https://www.youtube.com/embed/hdhQk_DBp-E",
-    premium: false
+    premium: false,
+    recommended: true
   },
   {
     id: "violao-para-iniciantes",
@@ -19,7 +33,8 @@ export const allCourses = [
     ageGroups: ['7-9', '10-12'],
     description: "Aprenda postura, acordes básicos e ritmos para tocar canções infantis.",
     videoUrl: "https://www.youtube.com/embed/APa-t_H3_e4",
-    premium: true
+    premium: true,
+    recommended: true
   },
   {
     id: "desenho-e-pintura-digital",
@@ -30,7 +45,8 @@ export const allCourses = [
     ageGroups: ['7-9', '10-12'],
     description: "Técnicas de esboço, cor e sombreamento para criar personagens e cenários digitais.",
     videoUrl: "https://www.youtube.com/embed/u-46ksm_Y2I",
-    premium: true
+    premium: true,
+    recommended: false
   },
   {
     id: "pequenos-cientistas",
@@ -41,7 +57,8 @@ export const allCourses = [
     ageGroups: ['4-6', '7-9'],
     description: "Experimentos seguros e explicações fáceis sobre fenômenos do nosso dia a dia.",
     videoUrl: "https://www.youtube.com/embed/p5n2x0-nL-E",
-    premium: false
+    premium: false,
+    recommended: true
   },
   {
     id: "robotica-com-lego",
@@ -52,7 +69,8 @@ export const allCourses = [
     ageGroups: ['10-12'],
     description: "Construção e programação de robôs simples com blocos LEGO e lógica por blocos.",
     videoUrl: "https://www.youtube.com/embed/j2Q-hG5dyGk",
-    premium: true
+    premium: true,
+    recommended: true
   },
   {
     id: "teclado-magico",
@@ -63,9 +81,9 @@ export const allCourses = [
     ageGroups: ['4-6', '7-9', '10-12'],
     description: "Noções de notas, posição das mãos e melodias simples para tocar cantigas populares.",
     videoUrl: "https://www.youtube.com/embed/g-5-YI6t-8k",
-    premium: false
+    premium: false,
+    recommended: false
   },
-  // Additional courses to fill the page
   {
     id: "matematica-fundamental-1",
     title: "Matemática Fundamental: Número e Operações",
@@ -75,7 +93,8 @@ export const allCourses = [
     ageGroups: ['7-9', '10-12'],
     description: "Entenda adição, subtração e uso de problemas do mundo real para praticar operações.",
     videoUrl: "https://www.youtube.com/embed/3P7Q2v3k6nQ",
-    premium: false
+    premium: false,
+    recommended: true
   },
   {
     id: "matematica-fundamental-2",
@@ -86,7 +105,8 @@ export const allCourses = [
     ageGroups: ['7-9', '10-12'],
     description: "Conceitos de frações, decimais e exercícios práticos com figuras e comida.",
     videoUrl: "https://www.youtube.com/embed/OBk7r0m6S1M",
-    premium: true
+    premium: true,
+    recommended: false
   },
   {
     id: "portugues-leitura",
@@ -97,7 +117,8 @@ export const allCourses = [
     ageGroups: ['7-9', '10-12'],
     description: "Leitura guiada, técnicas de interpretação e perguntas para treinar compreensão.",
     videoUrl: "https://www.youtube.com/embed/ezjJc6nq3C8",
-    premium: false
+    premium: false,
+    recommended: true
   },
   {
     id: "portugues-escrita",
@@ -108,7 +129,8 @@ export const allCourses = [
     ageGroups: ['10-12'],
     description: "Planejamento, estrutura e revisão de textos para criar pequenas histórias e descrições.",
     videoUrl: "https://www.youtube.com/embed/57sH3Z6X3fE",
-    premium: true
+    premium: true,
+    recommended: false
   },
   {
     id: "ciencias-planta-e-animal",
@@ -119,7 +141,8 @@ export const allCourses = [
     ageGroups: ['7-9'],
     description: "Características básicas de plantas e animais, ciclo de vida e adaptações.",
     videoUrl: "https://www.youtube.com/embed/5a0D3kJw8FI",
-    premium: false
+    premium: false,
+    recommended: false
   },
   {
     id: "historia-brasil",
@@ -130,7 +153,8 @@ export const allCourses = [
     ageGroups: ['7-9', '10-12'],
     description: "Eventos principais da história do Brasil organizados em uma linha do tempo interativa.",
     videoUrl: "https://www.youtube.com/embed/8N1z7v7u2bI",
-    premium: false
+    premium: false,
+    recommended: false
   },
   {
     id: "geografia-mapas",
@@ -141,7 +165,8 @@ export const allCourses = [
     ageGroups: ['7-9', '10-12'],
     description: "Como ler mapas, símbolos e entender escalas e localização.",
     videoUrl: "https://www.youtube.com/embed/BVbU8gJ9dW4",
-    premium: false
+    premium: false,
+    recommended: false
   },
   {
     id: "artes-desenho",
@@ -152,7 +177,8 @@ export const allCourses = [
     ageGroups: ['7-9', '10-12'],
     description: "Sombreamento, proporção e uso de materiais simples para criar ilustrações.",
     videoUrl: "https://www.youtube.com/embed/Wd8eF3X1b0s",
-    premium: true
+    premium: true,
+    recommended: true
   },
   {
     id: "musica-ritmo",
@@ -163,7 +189,8 @@ export const allCourses = [
     ageGroups: ['4-6', '7-9'],
     description: "Exercícios rítmicos simples para desenvolver percepção musical e coordenação.",
     videoUrl: "https://www.youtube.com/embed/1G4isv_Fylg",
-    premium: false
+    premium: false,
+    recommended: false
   },
   {
     id: "programacao-inicial",
@@ -174,7 +201,8 @@ export const allCourses = [
     ageGroups: ['10-12'],
     description: "Conceitos de algoritmo, lógica, e como transformar problemas em instruções simples.",
     videoUrl: "https://www.youtube.com/embed/7Yk5t8f4u1o",
-    premium: true
+    premium: true,
+    recommended: false
   },
   {
     id: "educacao-financeira",
@@ -185,7 +213,8 @@ export const allCourses = [
     ageGroups: ['10-12'],
     description: "Noções de poupança, orçamento e objetivos financeiros de forma lúdica.",
     videoUrl: "https://www.youtube.com/embed/2X6q8bXbQ1I",
-    premium: false
+    premium: false,
+    recommended: true
   },
   {
     id: "laboratorio-caseiro",
@@ -196,7 +225,8 @@ export const allCourses = [
     ageGroups: ['7-9', '10-12'],
     description: "Experimentos simples usando materiais domésticos com explicações científicas.",
     videoUrl: "https://www.youtube.com/embed/6f2dSwcQK6M",
-    premium: false
+    premium: false,
+    recommended: false
   },
   {
     id: "cultura-popular",
@@ -207,7 +237,8 @@ export const allCourses = [
     ageGroups: ['7-9', '10-12'],
     description: "Festividades, músicas e histórias populares do Brasil e de outras culturas.",
     videoUrl: "https://www.youtube.com/embed/0pXYp72XMMI",
-    premium: false
+    premium: false,
+    recommended: false
   },
   {
     id: "quimica-basica",
@@ -218,7 +249,8 @@ export const allCourses = [
     ageGroups: ['10-12'],
     description: "Introdução a materiais, estados da matéria e reações simples (teoria e demonstração segura).",
     videoUrl: "https://www.youtube.com/embed/9bZkp7q19f0",
-    premium: true
+    premium: true,
+    recommended: false
   },
   {
     id: "filosofia-para-criancas",
@@ -229,7 +261,8 @@ export const allCourses = [
     ageGroups: ['10-12'],
     description: "Debates simples e exercícios para pensar criticamente e argumentar com respeito.",
     videoUrl: "https://www.youtube.com/embed/4rKsv3d0z_A",
-    premium: false
+    premium: false,
+    recommended: false
   },
   {
     id: "fotografia-crianca",
@@ -240,6 +273,7 @@ export const allCourses = [
     ageGroups: ['7-9', '10-12'],
     description: "Composição, enquadramento e como usar um celular para fazer fotos criativas.",
     videoUrl: "https://www.youtube.com/embed/NLQ2M7q88DI",
-    premium: true
+    premium: true,
+    recommended: false
   }
 ];

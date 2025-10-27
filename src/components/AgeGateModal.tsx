@@ -24,7 +24,7 @@ export const AgeGateModal = () => {
 
   return (
     <Dialog open={!ageGroup}>
-      <DialogContent className="glass-card border-primary/50 sm:max-w-md text-center p-8" hideCloseButton>
+      <DialogContent className="glass-card border-primary/50 sm:max-w-md text-center p-8">
         <DialogHeader>
           <div className="mx-auto mb-4 rounded-full bg-primary/20 p-3 border border-primary/50 w-fit">
             <Rocket className="h-8 w-8 text-primary" />
