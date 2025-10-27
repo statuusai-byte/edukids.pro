@@ -11,12 +11,21 @@ const Home = () => {
     setAgeGroup(null);
   }, [setAgeGroup]);
 
+  const desktopBg = "url('https://images.pexels.com/photos/325185/pexels-photo-325185.jpeg')";
+  const mobileBg = "url('https://images.pexels.com/photos/1624496/pexels-photo-1624496.jpeg')";
+
   return (
     <div>
       <section className="relative w-full h-screen flex items-center justify-center text-center text-white overflow-hidden">
         {/* Background Image Container */}
         <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-[url('https://images.unsplash.com/photo-1516542677382-1e6846391df7?q=80&w=1974&auto=format&fit=crop')] md:bg-[url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop')]"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: mobileBg }}
+          aria-hidden="true"
+        />
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat hidden md:block"
+          style={{ backgroundImage: desktopBg }}
           aria-hidden="true"
         />
         {/* Overlay */}
