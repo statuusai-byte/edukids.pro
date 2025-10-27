@@ -16,7 +16,7 @@ const Home = () => {
       <section className="relative w-full h-screen flex items-center justify-center text-center text-white overflow-hidden">
         {/* Background Image Container */}
         <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-hero-mobile md:bg-hero-desktop"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-[url('https://images.unsplash.com/photo-1516542677382-1e6846391df7?q=80&w=1974&auto=format&fit=crop')] md:bg-[url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop')]"
           aria-hidden="true"
         />
         {/* Overlay */}
