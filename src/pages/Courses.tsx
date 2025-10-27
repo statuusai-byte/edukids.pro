@@ -22,9 +22,9 @@ const Courses = () => {
         <p className="text-sm text-muted-foreground">Mostrando cursos para a faixa etária selecionada</p>
       </div>
 
-      {/* Placeholder para Banner de Anúncio */}
+      {/* Banner de Anúncio com ID real */}
       <div className="mb-8">
-        <AdBanner adUnitId="ca-app-pub-1234567890/banner-cursos" />
+        <AdBanner adUnitId="ca-app-pub-4720172954033263/9926891280" />
       </div>
 
       {courses.length > 0 ? (
