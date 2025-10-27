@@ -16,6 +16,7 @@ import { AnimatePresence } from "framer-motion";
 import PageTransition from "./PageTransition";
 import { playSound } from "@/utils/sound";
 import { useSupabase } from "@/context/SupabaseContext";
+import InterstitialAdManager from "./InterstitialAdManager"; // Importar o novo componente
 
 const navItems = [
   { to: "/", icon: <Home className="h-6 w-6" />, label: "Home" },
@@ -93,11 +94,13 @@ const Layout = () => {
         <div className="flex flex-1 flex-col pl-20 main-container relative">
           <Header />
           <main className={`flex-1 p-4 sm:p-6 md:p-8`}>
-            <AnimatePresence mode="wait">
-              <PageTransition key={location.pathname}>
-                <Outlet />
-              </PageTransition>
-            </AnimatePresence>
+            <InterstitialAdManager>
+              <AnimatePresence mode="wait">
+                <PageTransition key={location.pathname}>
+                  <Outlet />
+                </PageTransition>
+              </AnimatePresence>
+            </InterstitialAdManager>
           </main>
         </div>
       </div>
