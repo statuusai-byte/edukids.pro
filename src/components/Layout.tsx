@@ -14,6 +14,7 @@ import { useAge } from "@/context/AgeContext";
 import { AgeGateModal } from "./AgeGateModal";
 import { AnimatePresence } from "framer-motion";
 import PageTransition from "./PageTransition";
+import { playSound } from "@/utils/sound";
 
 const navItems = [
   { to: "/", icon: <Home className="h-6 w-6" />, label: "Home" },
@@ -50,6 +51,7 @@ const Layout = () => {
                 <TooltipTrigger asChild>
                   <NavLink
                     to={item.to}
+                    onClick={() => playSound('navigate')}
                     className={({ isActive }) =>
                       `flex h-12 w-12 items-center justify-center rounded-2xl text-muted-foreground transition-all duration-300 hover:text-primary hover:bg-primary/10 hover:scale-110
                       ${isActive ? "bg-primary text-primary-foreground scale-110 shadow-lg shadow-primary/50" : ""}`

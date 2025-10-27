@@ -67,26 +67,59 @@
   }
 }
 
+@keyframes aurora {
+  from { background-position: 50% 50%, 50% 50%; }
+  to { background-position: 350% 50%, 350% 50%; }
+}
+
+@keyframes cosmos-bg {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+@keyframes selva-bg {
+  0% { background-position: 50% 0%; }
+  100% { background-position: 50% 100%; }
+}
+
+@keyframes oceano-bg {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(5px, 10px) scale(1.05); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
 .main-container::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(
-      ellipse 80% 80% at 50% -20%,
-      rgba(120, 119, 198, 0.3),
-      transparent
-    ),
-    radial-gradient(
-      ellipse 80% 80% at 50% -20%,
-      rgba(120, 119, 198, 0.3),
-      transparent
-    );
-  background-size: 400% 400%;
-  background-position: 50% 50%;
-  animation: aurora 60s linear infinite;
   z-index: -1;
+  transition: background-image 0.5s ease-in-out;
 }
 
+.theme-nebula .main-container::before {
+  background-image: radial-gradient(ellipse 80% 80% at 50% -20%, rgba(120, 119, 198, 0.3), transparent);
+  animation: aurora 60s linear infinite;
+}
+
+.theme-cosmos .main-container::before {
+  background-image: radial-gradient(ellipse at top, transparent 50%, hsl(var(--primary) / 0.2)),
+                    radial-gradient(ellipse at bottom, hsl(var(--primary) / 0.2), transparent);
+  background-size: 200% 200%;
+  animation: cosmos-bg 90s linear infinite;
+}
+
+.theme-selva .main-container::before {
+  background: radial-gradient(farthest-corner at 5% 5%, hsl(var(--primary)/0.2) 0%, transparent 50%),
+              radial-gradient(farthest-corner at 95% 90%, hsl(var(--primary)/0.15) 0%, transparent 60%);
+  background-size: 100% 200%;
+  animation: selva-bg 45s ease-in-out infinite alternate;
+}
+
+.theme-oceano .main-container::before {
+  background: radial-gradient(circle at 20% 30%, hsl(var(--primary)/0.15), transparent 40%),
+              radial-gradient(circle at 80% 70%, hsl(var(--primary)/0.15), transparent 40%);
+  animation: oceano-bg 30s ease-in-out infinite;
+}
 
 .glass-card {
     @apply bg-secondary/40 backdrop-blur-lg border border-white/10 rounded-2xl shadow-2xl shadow-black/20;
