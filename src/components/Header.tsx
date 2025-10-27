@@ -1,4 +1,4 @@
-import { Bell, User, Menu } from "lucide-react";
+import { Bell, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -8,7 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Header = () => {
   return (
@@ -25,8 +25,11 @@ const Header = () => {
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="rounded-full hover:bg-primary/10">
-              <User className="h-6 w-6 text-muted-foreground hover:text-primary" />
+            <Button variant="ghost" size="icon" className="rounded-full h-10 w-10">
+              <Avatar className="h-10 w-10 border-2 border-primary/50">
+                <AvatarImage src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="Avatar" />
+                <AvatarFallback>A</AvatarFallback>
+              </Avatar>
               <span className="sr-only">Menu do Usuário</span>
             </Button>
           </DropdownMenuTrigger>
