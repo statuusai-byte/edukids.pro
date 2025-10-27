@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { subjectsData } from "@/data/activitiesData";
 import { TiltCard } from "@/components/TiltCard";
 import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Icon } from "@/components/Icon";
 
 const Activities = () => {
   const { ageGroup } = useAge();
@@ -23,7 +24,7 @@ const Activities = () => {
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-2xl font-bold">{subject.name}</CardTitle>
                 <div className="p-3 bg-secondary rounded-full transition-transform duration-300 group-hover:scale-110">
-                  {subject.icon}
+                  <Icon name={subject.icon} className={`h-12 w-12 text-${subject.color}-400`} />
                 </div>
               </CardHeader>
               <CardContent>

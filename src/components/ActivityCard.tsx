@@ -4,6 +4,7 @@ import { Activity } from "@/data/activitiesData";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { TiltCard } from "./TiltCard";
+import { Icon } from "./Icon";
 
 interface ActivityCardProps {
   activity: Activity;
@@ -11,10 +12,12 @@ interface ActivityCardProps {
 }
 
 export const ActivityCard = ({ activity, subjectSlug }: ActivityCardProps) => {
+  const iconClass = "h-8 w-8 text-primary";
+  
   return (
     <TiltCard className="flex flex-col h-full p-6 text-center items-center group">
       <div className="mb-4 bg-primary/20 p-4 rounded-full border border-primary/50 transition-transform duration-300 group-hover:scale-110">
-        {activity.icon}
+        <Icon name={activity.icon} className={iconClass} />
       </div>
       <CardTitle className="text-xl font-bold">{activity.title}</CardTitle>
       <p className="text-muted-foreground text-sm mt-2 flex-grow">{activity.description}</p>
