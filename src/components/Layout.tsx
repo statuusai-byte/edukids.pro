@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import {
   Home,
   BookOpen,
@@ -12,6 +12,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import Header from "./Header";
 import { useAge } from "@/context/AgeContext";
 import { AgeGateModal } from "./AgeGateModal";
+import { AnimatePresence } from "framer-motion";
+import PageTransition from "./PageTransition";
 
 const navItems = [
   { to: "/", icon: <Home className="h-6 w-6" />, label: "Home" },
@@ -24,6 +26,7 @@ const navItems = [
 
 const Layout = () => {
   const { isLoading } = useAge();
+  const location = useLocation();
 
   if (isLoading) {
     return (
@@ -66,7 +69,11 @@ const Layout = () => {
         <div className="flex flex-1 flex-col pl-20 main-container relative">
           <Header />
           <main className="flex-1 p-4 sm:p-6 md:p-8">
-            <Outlet />
+            <AnimatePresence mode="wait">
+              <PageTransition key={location.pathname}>
+                <Outlet />
+              </PageTransition>
+            </AnimatePresence>
           </main>
         </div>
       </div>
