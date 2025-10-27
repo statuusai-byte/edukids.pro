@@ -11,7 +11,7 @@ import {
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import Header from "./Header";
 import { useAge } from "@/context/AgeContext";
-import { AgeGateModal } from "./AgeGateModal";
+import AgeGateModal from "./AgeGateModal"; // Importação corrigida
 import { AnimatePresence } from "framer-motion";
 import PageTransition from "./PageTransition";
 import { playSound } from "@/utils/sound";
