@@ -6,8 +6,9 @@ export const allCourses = [
     duration: "3h 45m",
     imageUrl: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop",
     ageGroups: ['4-6', '7-9', '10-12'],
-    description: "Um curso divertido e interativo para introduzir os pequenos ao mundo da língua inglesa, com músicas, jogos e atividades práticas que ensinam o vocabulário essencial de cores, números, animais e saudações.",
-    videoUrl: "https://www.youtube.com/embed/hdhQk_DBp-E"
+    description: "Curso interativo com músicas, jogos e vocabulário para ensinar cores, números, animais e cumprimentos em inglês.",
+    videoUrl: "https://www.youtube.com/embed/hdhQk_DBp-E",
+    premium: false
   },
   {
     id: "violao-para-iniciantes",
@@ -16,8 +17,9 @@ export const allCourses = [
     duration: "4h 20m",
     imageUrl: "https://images.unsplash.com/photo-1558020245-70c1a53218a9?q=80&w=2070&auto=format&fit=crop",
     ageGroups: ['7-9', '10-12'],
-    description: "Aprenda os primeiros acordes e ritmos no violão. Este curso ensina a postura correta, como afinar o instrumento e a tocar as primeiras músicas infantis de forma fácil e divertida.",
-    videoUrl: "https://www.youtube.com/embed/APa-t_H3_e4"
+    description: "Aprenda postura, acordes básicos e ritmos para tocar canções infantis.",
+    videoUrl: "https://www.youtube.com/embed/APa-t_H3_e4",
+    premium: true
   },
   {
     id: "desenho-e-pintura-digital",
@@ -26,8 +28,9 @@ export const allCourses = [
     duration: "5h 00m",
     imageUrl: "https://images.unsplash.com/photo-1589150306321-458c3d39c37a?q=80&w=1974&auto=format&fit=crop",
     ageGroups: ['7-9', '10-12'],
-    description: "Solte a imaginação e aprenda a criar desenhos incríveis no computador ou tablet. O curso aborda desde as ferramentas básicas até técnicas de sombreamento e cor para criar personagens e cenários.",
-    videoUrl: "https://www.youtube.com/embed/u-46ksm_Y2I"
+    description: "Técnicas de esboço, cor e sombreamento para criar personagens e cenários digitais.",
+    videoUrl: "https://www.youtube.com/embed/u-46ksm_Y2I",
+    premium: true
   },
   {
     id: "pequenos-cientistas",
@@ -36,8 +39,9 @@ export const allCourses = [
     duration: "2h 15m",
     imageUrl: "https://images.unsplash.com/photo-1576086213369-97a306d36557?q=80&w=2080&auto=format&fit=crop",
     ageGroups: ['4-6', '7-9'],
-    description: "Explore o mundo da ciência com experimentos seguros e divertidos que podem ser feitos em casa. Aprenda sobre vulcões de bicarbonato, plantas que crescem e os mistérios da eletricidade estática.",
-    videoUrl: "https://www.youtube.com/embed/p5n2x0-nL-E"
+    description: "Experimentos seguros e explicações fáceis sobre fenômenos do nosso dia a dia.",
+    videoUrl: "https://www.youtube.com/embed/p5n2x0-nL-E",
+    premium: false
   },
   {
     id: "robotica-com-lego",
@@ -46,8 +50,9 @@ export const allCourses = [
     duration: "6h 30m",
     imageUrl: "https://images.unsplash.com/photo-1678922619217-061b7a23b0e1?q=80&w=2070&auto=format&fit=crop",
     ageGroups: ['10-12'],
-    description: "Construa e programe seus próprios robôs com LEGO! Este curso introduz os conceitos básicos de mecânica e programação em blocos para dar vida às suas criações.",
-    videoUrl: "https://www.youtube.com/embed/j2Q-hG5dyGk"
+    description: "Construção e programação de robôs simples com blocos LEGO e lógica por blocos.",
+    videoUrl: "https://www.youtube.com/embed/j2Q-hG5dyGk",
+    premium: true
   },
   {
     id: "teclado-magico",
@@ -56,7 +61,185 @@ export const allCourses = [
     duration: "4h 00m",
     imageUrl: "https://images.unsplash.com/photo-1612021459339-39989c23165a?q=80&w=2070&auto=format&fit=crop",
     ageGroups: ['4-6', '7-9', '10-12'],
-    description: "Descubra o mundo da música através do teclado. Este curso ensina a identificar as notas musicais, a posição das mãos e a tocar melodias simples de cantigas populares.",
-    videoUrl: "https://www.youtube.com/embed/g-5-YI6t-8k"
+    description: "Noções de notas, posição das mãos e melodias simples para tocar cantigas populares.",
+    videoUrl: "https://www.youtube.com/embed/g-5-YI6t-8k",
+    premium: false
+  },
+  // Additional courses to fill the page
+  {
+    id: "matematica-fundamental-1",
+    title: "Matemática Fundamental: Número e Operações",
+    instructor: "Prof. Marta",
+    duration: "3h 00m",
+    imageUrl: "https://images.unsplash.com/photo-1555949963-aa79dcee981d?q=80&w=2070&auto=format&fit=crop",
+    ageGroups: ['7-9', '10-12'],
+    description: "Entenda adição, subtração e uso de problemas do mundo real para praticar operações.",
+    videoUrl: "https://www.youtube.com/embed/3P7Q2v3k6nQ",
+    premium: false
+  },
+  {
+    id: "matematica-fundamental-2",
+    title: "Matemática: Frações e Decimais",
+    instructor: "Prof. Júlio",
+    duration: "2h 50m",
+    imageUrl: "https://images.unsplash.com/photo-1523580846011-d3a5bc25702f?q=80&w=2070&auto=format&fit=crop",
+    ageGroups: ['7-9', '10-12'],
+    description: "Conceitos de frações, decimais e exercícios práticos com figuras e comida.",
+    videoUrl: "https://www.youtube.com/embed/OBk7r0m6S1M",
+    premium: true
+  },
+  {
+    id: "portugues-leitura",
+    title: "Português: Leitura e Compreensão",
+    instructor: "Profª. Carla",
+    duration: "3h 20m",
+    imageUrl: "https://images.unsplash.com/photo-1515169067865-5387ec356754?q=80&w=2070&auto=format&fit=crop",
+    ageGroups: ['7-9', '10-12'],
+    description: "Leitura guiada, técnicas de interpretação e perguntas para treinar compreensão.",
+    videoUrl: "https://www.youtube.com/embed/ezjJc6nq3C8",
+    premium: false
+  },
+  {
+    id: "portugues-escrita",
+    title: "Português: Produção de Texto",
+    instructor: "Profª. Lúcia",
+    duration: "2h 40m",
+    imageUrl: "https://images.unsplash.com/photo-1516979187457-637abb4f9353?q=80&w=2070&auto=format&fit=crop",
+    ageGroups: ['10-12'],
+    description: "Planejamento, estrutura e revisão de textos para criar pequenas histórias e descrições.",
+    videoUrl: "https://www.youtube.com/embed/57sH3Z6X3fE",
+    premium: true
+  },
+  {
+    id: "ciencias-planta-e-animal",
+    title: "Ciências: Plantas e Animais",
+    instructor: "Dr. Marina",
+    duration: "1h 45m",
+    imageUrl: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?q=80&w=2070&auto=format&fit=crop",
+    ageGroups: ['7-9'],
+    description: "Características básicas de plantas e animais, ciclo de vida e adaptações.",
+    videoUrl: "https://www.youtube.com/embed/5a0D3kJw8FI",
+    premium: false
+  },
+  {
+    id: "historia-brasil",
+    title: "História do Brasil: Linha do Tempo",
+    instructor: "Prof. Renato",
+    duration: "2h 10m",
+    imageUrl: "https://images.unsplash.com/photo-1504198453319-5ce911bafcde?q=80&w=2070&auto=format&fit=crop",
+    ageGroups: ['7-9', '10-12'],
+    description: "Eventos principais da história do Brasil organizados em uma linha do tempo interativa.",
+    videoUrl: "https://www.youtube.com/embed/8N1z7v7u2bI",
+    premium: false
+  },
+  {
+    id: "geografia-mapas",
+    title: "Geografia: Mapas e Regiões",
+    instructor: "Profª. Paula",
+    duration: "1h 30m",
+    imageUrl: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=2070&auto=format&fit=crop",
+    ageGroups: ['7-9', '10-12'],
+    description: "Como ler mapas, símbolos e entender escalas e localização.",
+    videoUrl: "https://www.youtube.com/embed/BVbU8gJ9dW4",
+    premium: false
+  },
+  {
+    id: "artes-desenho",
+    title: "Artes: Técnicas de Desenho",
+    instructor: "Artista Nina",
+    duration: "2h 00m",
+    imageUrl: "https://images.unsplash.com/photo-1496317556649-f930d733eea2?q=80&w=2070&auto=format&fit=crop",
+    ageGroups: ['7-9', '10-12'],
+    description: "Sombreamento, proporção e uso de materiais simples para criar ilustrações.",
+    videoUrl: "https://www.youtube.com/embed/Wd8eF3X1b0s",
+    premium: true
+  },
+  {
+    id: "musica-ritmo",
+    title: "Música: Ritmo e Percepção",
+    instructor: "Maestro Tom",
+    duration: "1h 20m",
+    imageUrl: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=2070&auto=format&fit=crop",
+    ageGroups: ['4-6', '7-9'],
+    description: "Exercícios rítmicos simples para desenvolver percepção musical e coordenação.",
+    videoUrl: "https://www.youtube.com/embed/1G4isv_Fylg",
+    premium: false
+  },
+  {
+    id: "programacao-inicial",
+    title: "Programação: Pensamento Computacional",
+    instructor: "Eng. Sofia",
+    duration: "3h 10m",
+    imageUrl: "https://images.unsplash.com/photo-1517433456452-f9633a875f6f?q=80&w=2070&auto=format&fit=crop",
+    ageGroups: ['10-12'],
+    description: "Conceitos de algoritmo, lógica, e como transformar problemas em instruções simples.",
+    videoUrl: "https://www.youtube.com/embed/7Yk5t8f4u1o",
+    premium: true
+  },
+  {
+    id: "educacao-financeira",
+    title: "Educação Financeira para Crianças",
+    instructor: "Prof. Marina",
+    duration: "1h 50m",
+    imageUrl: "https://images.unsplash.com/photo-1520975913231-4d8f72f8a0a3?q=80&w=2070&auto=format&fit=crop",
+    ageGroups: ['10-12'],
+    description: "Noções de poupança, orçamento e objetivos financeiros de forma lúdica.",
+    videoUrl: "https://www.youtube.com/embed/2X6q8bXbQ1I",
+    premium: false
+  },
+  {
+    id: "laboratorio-caseiro",
+    title: "Laboratório Caseiro: Experimentos Seguros",
+    instructor: "Dr. Hélio",
+    duration: "2h 25m",
+    imageUrl: "https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=2070&auto=format&fit=crop",
+    ageGroups: ['7-9', '10-12'],
+    description: "Experimentos simples usando materiais domésticos com explicações científicas.",
+    videoUrl: "https://www.youtube.com/embed/6f2dSwcQK6M",
+    premium: false
+  },
+  {
+    id: "cultura-popular",
+    title: "Cultura Popular e Tradições",
+    instructor: "Profª. Clara",
+    duration: "1h 10m",
+    imageUrl: "https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?q=80&w=2070&auto=format&fit=crop",
+    ageGroups: ['7-9', '10-12'],
+    description: "Festividades, músicas e histórias populares do Brasil e de outras culturas.",
+    videoUrl: "https://www.youtube.com/embed/0pXYp72XMMI",
+    premium: false
+  },
+  {
+    id: "quimica-basica",
+    title: "Química Básica: Materiais e Reações",
+    instructor: "Prof. Raul",
+    duration: "2h 45m",
+    imageUrl: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop",
+    ageGroups: ['10-12'],
+    description: "Introdução a materiais, estados da matéria e reações simples (teoria e demonstração segura).",
+    videoUrl: "https://www.youtube.com/embed/9bZkp7q19f0",
+    premium: true
+  },
+  {
+    id: "filosofia-para-criancas",
+    title: "Filosofia para Crianças: Perguntas e Ideias",
+    instructor: "Profª. Helena",
+    duration: "1h 40m",
+    imageUrl: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=2070&auto=format&fit=crop",
+    ageGroups: ['10-12'],
+    description: "Debates simples e exercícios para pensar criticamente e argumentar com respeito.",
+    videoUrl: "https://www.youtube.com/embed/4rKsv3d0z_A",
+    premium: false
+  },
+  {
+    id: "fotografia-crianca",
+    title: "Fotografia Criativa para Crianças",
+    instructor: "Fotógrafa Sara",
+    duration: "2h 05m",
+    imageUrl: "https://images.unsplash.com/photo-1504198453319-5ce911bafcde?q=80&w=2070&auto=format&fit=crop",
+    ageGroups: ['7-9', '10-12'],
+    description: "Composição, enquadramento e como usar um celular para fazer fotos criativas.",
+    videoUrl: "https://www.youtube.com/embed/NLQ2M7q88DI",
+    premium: true
   }
 ];
