@@ -13,7 +13,7 @@ export default defineConfig(() => ({
     dyadComponentTagger(), 
     react(),
     VitePWA({
-      registerType: 'prompt',
+      registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'placeholder.svg'],
       manifest: {
         name: 'EduKids+',
