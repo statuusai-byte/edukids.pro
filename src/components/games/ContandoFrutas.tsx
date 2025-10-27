@@ -2,7 +2,8 @@ import { useState, useMemo, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { CheckCircle, XCircle } from 'lucide-react';
-import { toast } from "sonner";
+import { showSuccess, showError } from '@/utils/toast';
+import { cn } from '@/lib/utils';
 
 const MAX_FRUITS = 10;
 
@@ -11,6 +12,23 @@ const ContandoFrutas = () => {
   const [options, setOptions] = useState<number[]>([]);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [animationClass, setAnimationClass] = useState('');
+
+  useEffect(() => {
+    if (isCorrect === null) return;
+
+    const newAnimationClass = isCorrect
+      ? 'animate-correct-answer-pop'
+      : 'animate-incorrect-answer-shake';
+    
+    setAnimationClass(newAnimationClass);
+
+    const timer = setTimeout(() => {
+      setAnimationClass('');
+    }, 500); // Duração da animação
+
+    return () => clearTimeout(timer);
+  }, [isCorrect, selectedAnswer]);
 
   const generateProblem = () => {
     setSelectedAnswer(null);
@@ -39,17 +57,17 @@ const ContandoFrutas = () => {
     setSelectedAnswer(answer);
     if (answer === correctAnswer) {
       setIsCorrect(true);
-      toast.success("Muito bem! Resposta correta!");
+      showSuccess("Muito bem! Resposta correta!");
     } else {
       setIsCorrect(false);
-      toast.error("Ops! Tente novamente.");
+      showError("Ops! Tente novamente.");
     }
   };
 
   const fruits = useMemo(() => Array(correctAnswer).fill('🍎'), [correctAnswer]);
 
   return (
-    <Card className="glass-card p-6">
+    <Card className={cn("glass-card p-6", animationClass)}>
       <CardContent>
         <p className="text-xl text-center text-muted-foreground mb-6">Quantas maçãs você vê?</p>
         <div className="flex justify-center items-center flex-wrap gap-4 text-6xl min-h-[150px] mb-8">

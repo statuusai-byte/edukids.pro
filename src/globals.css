@@ -72,9 +72,9 @@
   to { background-position: 350% 50%, 350% 50%; }
 }
 
-@keyframes cosmos-bg {
+@keyframes space-pan {
   0% { background-position: 0% 50%; }
-  100% { background-position: 200% 50%; }
+  100% { background-position: 100% 50%; }
 }
 
 @keyframes selva-bg {
@@ -93,7 +93,8 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  transition: background-image 0.5s ease-in-out;
+  transition: background-image 0.5s ease-in-out, background-size 0.5s ease-in-out;
+  background-attachment: fixed;
 }
 
 .theme-nebula .main-container::before {
@@ -102,10 +103,9 @@
 }
 
 .theme-cosmos .main-container::before {
-  background-image: radial-gradient(ellipse at top, transparent 50%, hsl(var(--primary) / 0.2)),
-                    radial-gradient(ellipse at bottom, hsl(var(--primary) / 0.2), transparent);
-  background-size: 200% 200%;
-  animation: cosmos-bg 90s linear infinite;
+  background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop');
+  background-size: 120%;
+  animation: space-pan 120s linear infinite alternate;
 }
 
 .theme-selva .main-container::before {
