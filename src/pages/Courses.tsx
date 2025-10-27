@@ -5,6 +5,7 @@ import { useAge } from "@/context/AgeContext";
 import { useMemo } from "react";
 import { allCourses } from "@/data/coursesData";
 import { Link } from "react-router-dom";
+import AdBanner from "@/components/AdBanner";
 
 const Courses = () => {
   const { ageGroup } = useAge();
@@ -19,6 +20,11 @@ const Courses = () => {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-4xl font-bold tracking-tighter">Cursos</h1>
         <p className="text-sm text-muted-foreground">Mostrando cursos para a faixa etária selecionada</p>
+      </div>
+
+      {/* Placeholder para Banner de Anúncio */}
+      <div className="mb-8">
+        <AdBanner adUnitId="ca-app-pub-1234567890/banner-cursos" />
       </div>
 
       {courses.length > 0 ? (
