@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useLocation, Navigate } from "react-router-dom";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import {
   Home,
   BookOpen,
@@ -17,6 +17,7 @@ import PageTransition from "./PageTransition";
 import { playSound } from "@/utils/sound";
 import { useSupabase } from "@/context/SupabaseContext";
 import InterstitialAdManager from "./InterstitialAdManager";
+import MobileBottomNav from "./MobileBottomNav";
 
 const navItems = [
   { to: "/", icon: <Home className="h-6 w-6" />, label: "Home" },
@@ -41,7 +42,7 @@ const Layout = () => {
     );
   }
 
-  // Se estiver na home, não mostra o layout completo (Header/Sidebar)
+  // If on the home page we render without the full app chrome
   if (isHomePage) {
     return (
       <AnimatePresence mode="wait">
@@ -56,7 +57,7 @@ const Layout = () => {
     <TooltipProvider>
       <AgeGateModal />
       <div className="flex min-h-screen w-full text-foreground">
-        {/* Sidebar: Oculta em telas pequenas (sm:hidden) e aparece em md (md:flex) */}
+        {/* Sidebar for md+ */}
         <aside className="fixed inset-y-0 left-0 z-20 hidden md:flex w-20 flex-col items-center border-r border-white/10 bg-secondary/30 backdrop-blur-xl py-6">
           <div className="mb-10 flex items-center justify-center">
             <Sparkles size={32} className="text-primary" />
@@ -84,10 +85,11 @@ const Layout = () => {
             ))}
           </nav>
         </aside>
-        {/* Conteúdo Principal: Sem padding à esquerda em telas pequenas, pl-20 em md+ */}
+
+        {/* Main content area: no left padding on small screens, padded on md+ */}
         <div className="flex flex-1 flex-col md:pl-20 main-container relative">
           <Header />
-          <main className={`flex-1 p-4 sm:p-6 md:p-8`}>
+          <main className="flex-1 p-4 sm:p-6 md:p-8">
             <InterstitialAdManager>
               <AnimatePresence mode="wait">
                 <PageTransition key={location.pathname}>
@@ -97,6 +99,9 @@ const Layout = () => {
             </InterstitialAdManager>
           </main>
         </div>
+
+        {/* Mobile bottom nav */}
+        <MobileBottomNav />
       </div>
     </TooltipProvider>
   );

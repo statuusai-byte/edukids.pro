@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, BookOpen, GraduationCap, Star } from "lucide-react";
+import { ArrowRight, GraduationCap, Star } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TiltCard } from "@/components/TiltCard";
 import { subjectsData } from "@/data/activitiesData";
@@ -12,7 +12,6 @@ import { Icon } from "@/components/Icon";
 
 const Home = () => {
   const { isPremium } = usePremium();
-  const { user } = useSupabase();
 
   const ageGroups = [
     { id: '3-5', label: '3 a 5 Anos', description: 'Foco em coordenação motora, cores e introdução a números e letras.', icon: 'Baby' },
@@ -168,7 +167,6 @@ const Home = () => {
               <Card className="glass-card p-4 h-full flex flex-col">
                 <CardHeader className="p-0 pb-3">
                   <div className="flex items-center gap-3">
-                    {/* O ícone do curso não está definido no objeto course, então vou usar um ícone genérico ou removê-lo */}
                     <GraduationCap className="h-6 w-6 text-primary" />
                     <CardTitle className="text-xl">{course.title}</CardTitle>
                   </div>

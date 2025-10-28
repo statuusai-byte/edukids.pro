@@ -63,7 +63,8 @@ const Store = () => {
     }, 1500);
   };
 
-  const handleBuyHints = (amount: number, price: string) => {
+  // Removed unused 'price' parameter here
+  const handleBuyHints = (amount: number) => {
     if (!user) {
       showError("Você precisa estar logado para comprar dicas.");
       return;
@@ -184,7 +185,7 @@ const Store = () => {
               </CardContent>
               <CardFooter className="pt-0">
                 <Button 
-                  onClick={() => handleBuyHints(pkg.amount, pkg.price)} 
+                  onClick={() => handleBuyHints(pkg.amount)} 
                   className="w-full bg-yellow-600 hover:bg-yellow-700 text-black font-bold"
                   disabled={isPremium}
                 >
