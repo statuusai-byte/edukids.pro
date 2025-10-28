@@ -58,6 +58,7 @@ export default function TestAccount() {
         });
 
         if (signUp.error && signUp.error.message && !/already registered/i.test(signUp.error.message)) {
+          // sign-up errored with a real problem (not "already registered")
           dismissToast(loadingToast);
           showError("Falha ao criar usuário: " + signUp.error.message);
           setLoading(false);
@@ -71,24 +72,42 @@ export default function TestAccount() {
         });
 
         if (signIn2.error) {
-          // If sign-in still fails (e.g., email needs confirmation), notify but still allow local activation option
+          // Authentication still failed (invalid credentials or other).
+          // Prompt the tester to optionally activate Premium locally as a fallback.
           dismissToast(loadingToast);
-          showError("Falha ao autenticar usuário de teste: " + signIn2.error.message + ". Use 'Ativar Premium localmente' se desejar testar sem autenticação.");
-          setLoading(false);
-          return;
+
+          const confirmLocal = window.confirm(
+            "Autenticação falhou (credenciais inválidas ou confirmação necessária). Deseja ativar Premium localmente neste dispositivo para continuar os testes?"
+          );
+
+          if (confirmLocal) {
+            try {
+              await seedLocalPremium();
+              showSuccess("Premium ativado localmente. Você será redirecionado(a).");
+              navigate("/dashboard", { replace: true });
+            } catch (e) {
+              showError("Falha ao ativar Premium localmente.");
+            }
+            setLoading(false);
+            return;
+          } else {
+            showError("Autenticação falhou. Você pode tentar novamente ou ativar Premium localmente.");
+            setLoading(false);
+            return;
+          }
         }
 
-        // success
+        // signIn2 succeeded -> proceed below
       } else {
         // signIn succeeded; nothing further needed
       }
 
-      // If initial signIn succeeded or signIn2 succeeded
-      // seed local premium and profile
+      // If initial signIn succeeded or signIn2 succeeded, seed local premium/profile
       await seedLocalPremium();
 
       dismissToast(loadingToast);
       showSuccess("Conta de teste pronta com Premium ativado. Você será redirecionado(a).");
+
       // small delay to let the toaster show
       setTimeout(() => {
         navigate("/dashboard", { replace: true });
@@ -96,7 +115,21 @@ export default function TestAccount() {
     } catch (error: any) {
       dismissToast(loadingToast);
       console.error("Test account flow error:", error);
-      showError("Erro ao criar/entrar conta de teste.");
+      // Offer local fallback if there's any failure
+      const confirmLocal = window.confirm(
+        "Ocorreu um erro durante autenticação. Deseja ativar Premium localmente neste dispositivo para continuar os testes?"
+      );
+      if (confirmLocal) {
+        try {
+          await seedLocalPremium();
+          showSuccess("Premium ativado localmente. Você será redirecionado(a).");
+          navigate("/dashboard", { replace: true });
+        } catch (e) {
+          showError("Falha ao ativar Premium localmente.");
+        }
+      } else {
+        showError("Erro ao criar/entrar conta de teste.");
+      }
     } finally {
       setLoading(false);
     }
