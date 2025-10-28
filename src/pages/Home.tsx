@@ -5,7 +5,7 @@ import { ArrowRight, BookOpen, GraduationCap, Star } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TiltCard } from "@/components/TiltCard";
 import { subjectsData } from "@/data/activitiesData";
-import { allCourses } from "@/data/coursesData"; // Importar allCourses
+import { allCourses } from "@/data/coursesData"; // Importação CORRETA
 import { usePremium } from "@/context/PremiumContext";
 import { useSupabase } from "@/context/SupabaseContext";
 import { Icon, IconName } from "@/components/Icon";
@@ -179,8 +179,7 @@ const Home = () => {
               <Card className="glass-card p-4 h-full flex flex-col">
                 <CardHeader className="p-0 pb-3">
                   <div className="flex items-center gap-3">
-                    {/* Usando um ícone padrão, pois o tipo Course não tem 'icon' */}
-                    <GraduationCap className="h-6 w-6 text-primary" /> 
+                    <Icon name={course.icon} className="h-6 w-6 text-primary" /> 
                     <CardTitle className="text-xl">{course.title}</CardTitle>
                   </div>
                 </CardHeader>
