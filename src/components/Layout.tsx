@@ -29,13 +29,9 @@ const navItems = [
 
 const Layout = () => {
   const { isLoading: isAgeLoading } = useAge();
-  const { isLoading: isAuthLoading } = useSupabase(); // Mantemos o hook para o Header, mas removemos a lógica de proteção
+  const { isLoading: isAuthLoading } = useSupabase();
   const location = useLocation();
   const isHomePage = location.pathname === '/';
-  const isLoginPage = location.pathname === '/login';
-
-  // Removendo a lógica de proteção de rotas.
-  // const protectedRoutes = navItems.map(item => item.to).filter(path => path !== '/');
 
   if (isAgeLoading || isAuthLoading) {
     return (
@@ -44,11 +40,6 @@ const Layout = () => {
       </div>
     );
   }
-
-  // REMOVIDO: Redirecionamento se a rota for protegida e o usuário não estiver logado
-  // if (!user && protectedRoutes.includes(location.pathname) && !isLoginPage) {
-  //   return <Navigate to="/login" replace />;
-  // }
 
   // Se estiver na home, não mostra o layout completo (Header/Sidebar)
   if (isHomePage) {
@@ -65,7 +56,8 @@ const Layout = () => {
     <TooltipProvider>
       <AgeGateModal />
       <div className="flex min-h-screen w-full text-foreground">
-        <aside className="fixed inset-y-0 left-0 z-20 flex w-20 flex-col items-center border-r border-white/10 bg-secondary/30 backdrop-blur-xl py-6">
+        {/* Sidebar: Oculta em telas pequenas (sm:hidden) e aparece em md (md:flex) */}
+        <aside className="fixed inset-y-0 left-0 z-20 hidden md:flex w-20 flex-col items-center border-r border-white/10 bg-secondary/30 backdrop-blur-xl py-6">
           <div className="mb-10 flex items-center justify-center">
             <Sparkles size={32} className="text-primary" />
           </div>
@@ -92,7 +84,8 @@ const Layout = () => {
             ))}
           </nav>
         </aside>
-        <div className="flex flex-1 flex-col pl-20 main-container relative">
+        {/* Conteúdo Principal: Sem padding à esquerda em telas pequenas, pl-20 em md+ */}
+        <div className="flex flex-1 flex-col md:pl-20 main-container relative">
           <Header />
           <main className={`flex-1 p-4 sm:p-6 md:p-8`}>
             <InterstitialAdManager>
