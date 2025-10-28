@@ -1,24 +1,35 @@
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, BookOpen, GraduationCap, Star } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TiltCard } from "@/components/TiltCard";
 import { subjectsData } from "@/data/activitiesData";
-import { coursesData } from "@/data/coursesData";
+import { allCourses } from "@/data/coursesData"; // Importar allCourses
 import { usePremium } from "@/context/PremiumContext";
 import { useSupabase } from "@/context/SupabaseContext";
-import { Icon } from "@/components/Icon";
+import { Icon, IconName } from "@/components/Icon";
+import { useAge } from "@/context/AgeContext"; // Importar useAge
+
+// Definindo o tipo de grupo de idade para uso local
+type AgeGroupKey = '4-6' | '7-9' | '10-12';
 
 const Home = () => {
   const { isPremium } = usePremium();
   const { user } = useSupabase();
+  const { setAgeGroup } = useAge(); // Usar useAge
+  const navigate = useNavigate();
 
-  const ageGroups = [
-    { id: '3-5', label: '3 a 5 Anos', description: 'Foco em coordenação motora, cores e introdução a números e letras.', icon: 'Baby' },
-    { id: '6-8', label: '6 a 8 Anos', description: 'Alfabetização, matemática básica e desenvolvimento do raciocínio lógico.', icon: 'School' },
-    { id: '9-12', label: '9 a 12 Anos', description: 'Aprofundamento em matérias, pensamento crítico e resolução de problemas complexos.', icon: 'GraduationCap' },
+  const ageGroups: { id: AgeGroupKey; label: string; description: string; icon: IconName }[] = [
+    { id: '4-6', label: '4 a 6 Anos', description: 'Foco em coordenação motora, cores e introdução a números e letras.', icon: 'Apple' },
+    { id: '7-9', label: '7 a 9 Anos', description: 'Alfabetização, matemática básica e desenvolvimento do raciocínio lógico.', icon: 'BookOpen' },
+    { id: '10-12', label: '10 a 12 Anos', description: 'Aprofundamento em matérias, pensamento crítico e resolução de problemas complexos.', icon: 'GraduationCap' },
   ];
+
+  const handleSelectAge = (group: AgeGroupKey) => {
+    setAgeGroup(group);
+    navigate('/activities');
+  };
 
   return (
     <motion.div
@@ -89,11 +100,11 @@ const Home = () => {
               viewport={{ once: true }}
             >
               <TiltCard className="p-6 h-full">
-                <Icon name={group.icon as any} className="h-10 w-10 text-primary mb-4 mx-auto" />
+                <Icon name={group.icon} className="h-10 w-10 text-primary mb-4 mx-auto" />
                 <h3 className="text-xl font-semibold mb-2">{group.label}</h3>
                 <p className="text-muted-foreground text-sm">{group.description}</p>
-                <Button asChild variant="link" className="mt-4">
-                  <Link to={`/activities?age=${group.id}`}>Explorar Conteúdo</Link>
+                <Button variant="link" className="mt-4" onClick={() => handleSelectAge(group.id)}>
+                  Explorar Conteúdo
                 </Button>
               </TiltCard>
             </motion.div>
@@ -127,7 +138,7 @@ const Home = () => {
                 viewport={{ once: true }}
               >
                 <Card className="glass-card p-4 text-center h-full hover:shadow-primary/30 transition-shadow">
-                  <Icon name={subject.icon as any} className="h-8 w-8 text-primary mb-2 mx-auto" />
+                  <Icon name={subject.icon} className="h-8 w-8 text-primary mb-2 mx-auto" />
                   <h3 className="text-sm font-medium">{subject.name}</h3>
                 </Card>
               </motion.div>
@@ -157,7 +168,7 @@ const Home = () => {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {coursesData.slice(0, 3).map((course, index) => (
+          {allCourses.slice(0, 3).map((course, index) => (
             <motion.div
               key={course.id}
               initial={{ opacity: 0, y: 20 }}
@@ -168,7 +179,8 @@ const Home = () => {
               <Card className="glass-card p-4 h-full flex flex-col">
                 <CardHeader className="p-0 pb-3">
                   <div className="flex items-center gap-3">
-                    <Icon name={course.icon as any} className="h-6 w-6 text-primary" />
+                    {/* Usando um ícone padrão, pois o tipo Course não tem 'icon' */}
+                    <GraduationCap className="h-6 w-6 text-primary" /> 
                     <CardTitle className="text-xl">{course.title}</CardTitle>
                   </div>
                 </CardHeader>
