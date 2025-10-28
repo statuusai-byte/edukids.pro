@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, Star, Bot, BookOpen, Users, BarChart3, Loader2, Lightbulb } from "lucide-react";
+import { Check, Star, Bot, Users, BarChart3, Loader2 } from "lucide-react";
 import { usePremium } from "@/context/PremiumContext";
 import { useState } from "react";
 import { showLoading, showError, dismissToast, showSuccess } from "@/utils/toast";
