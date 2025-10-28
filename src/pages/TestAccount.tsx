@@ -51,58 +51,38 @@ export default function TestAccount() {
       });
 
       if (signIn.error) {
-        // If sign-in failed due to not existing, attempt sign up
+        // If sign-in failed, attempt sign up
         const signUp = await supabase.auth.signUp({
           email,
           password,
         });
 
+        // If signUp produced an error that is not "already registered", continue to fallback
         if (signUp.error && signUp.error.message && !/already registered/i.test(signUp.error.message)) {
-          // sign-up errored with a real problem (not "already registered")
-          dismissToast(loadingToast);
-          showError("Falha ao criar usuário: " + signUp.error.message);
-          setLoading(false);
-          return;
+          // We'll fallback to local premium immediately below
+          console.warn("Sign up returned an error; continuing to local fallback:", signUp.error.message);
         }
 
-        // After signUp, try sign in again
+        // Try sign in after sign up attempt
         const signIn2 = await supabase.auth.signInWithPassword({
           email,
           password,
         });
 
         if (signIn2.error) {
-          // Authentication still failed (invalid credentials or other).
-          // Prompt the tester to optionally activate Premium locally as a fallback.
+          // Authentication still failed — automatically fallback to local premium
           dismissToast(loadingToast);
-
-          const confirmLocal = window.confirm(
-            "Autenticação falhou (credenciais inválidas ou confirmação necessária). Deseja ativar Premium localmente neste dispositivo para continuar os testes?"
-          );
-
-          if (confirmLocal) {
-            try {
-              await seedLocalPremium();
-              showSuccess("Premium ativado localmente. Você será redirecionado(a).");
-              navigate("/dashboard", { replace: true });
-            } catch (e) {
-              showError("Falha ao ativar Premium localmente.");
-            }
-            setLoading(false);
-            return;
-          } else {
-            showError("Autenticação falhou. Você pode tentar novamente ou ativar Premium localmente.");
-            setLoading(false);
-            return;
-          }
+          await seedLocalPremium();
+          showSuccess("Autenticação online falhou; Premium ativado localmente para testes.");
+          navigate("/dashboard", { replace: true });
+          setLoading(false);
+          return;
         }
 
-        // signIn2 succeeded -> proceed below
-      } else {
-        // signIn succeeded; nothing further needed
+        // signIn2 succeeded -> proceed further
       }
 
-      // If initial signIn succeeded or signIn2 succeeded, seed local premium/profile
+      // If initial signIn succeeded or signIn2 succeeded, seed local premium/profile for immediate access
       await seedLocalPremium();
 
       dismissToast(loadingToast);
@@ -111,24 +91,17 @@ export default function TestAccount() {
       // small delay to let the toaster show
       setTimeout(() => {
         navigate("/dashboard", { replace: true });
-      }, 800);
+      }, 700);
     } catch (error: any) {
       dismissToast(loadingToast);
       console.error("Test account flow error:", error);
-      // Offer local fallback if there's any failure
-      const confirmLocal = window.confirm(
-        "Ocorreu um erro durante autenticação. Deseja ativar Premium localmente neste dispositivo para continuar os testes?"
-      );
-      if (confirmLocal) {
-        try {
-          await seedLocalPremium();
-          showSuccess("Premium ativado localmente. Você será redirecionado(a).");
-          navigate("/dashboard", { replace: true });
-        } catch (e) {
-          showError("Falha ao ativar Premium localmente.");
-        }
-      } else {
-        showError("Erro ao criar/entrar conta de teste.");
+      // Automatic fallback on any unexpected error
+      try {
+        await seedLocalPremium();
+        showSuccess("Ocorreu um erro, mas Premium foi ativado localmente para permitir testes.");
+        navigate("/dashboard", { replace: true });
+      } catch (e) {
+        showError("Falha ao ativar Premium localmente.");
       }
     } finally {
       setLoading(false);
@@ -154,8 +127,8 @@ export default function TestAccount() {
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-sm text-muted-foreground">
-            Informe as credenciais do usuário que você deseja ativar com Premium. Os campos foram pré-preenchidos com o email que você solicitou.
-            Ao criar/entrar com o usuário, o Premium será ativado localmente neste dispositivo (armazenamento local).
+            Os campos estão pré-preenchidos com o email solicitado. Se a autenticação online falhar,
+            o aplicativo fará automaticamente um fallback e ativará uma conta Premium local para testes.
           </p>
 
           <div className="space-y-2">
