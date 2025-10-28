@@ -39,18 +39,27 @@ const CourseDetail = () => {
 
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
-          <div className="aspect-video rounded-2xl overflow-hidden border border-primary/50 shadow-lg shadow-primary/20">
-            <iframe
-              width="100%"
-              height="100%"
-              src={course.videoUrl}
-              title="YouTube video player"
-              frameBorder="0"
-              loading="lazy"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            ></iframe>
-          </div>
+          {course.videoUrl ? (
+            <div className="aspect-video rounded-2xl overflow-hidden border border-primary/50 shadow-lg shadow-primary/20">
+              <iframe
+                width="100%"
+                height="100%"
+                src={course.videoUrl}
+                title={course.title}
+                frameBorder="0"
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            </div>
+          ) : (
+            <div className="aspect-video rounded-2xl overflow-hidden border border-primary/50 shadow-lg shadow-primary/20 flex items-center justify-center bg-secondary/20">
+              <div className="text-center p-6">
+                <div className="text-xl font-semibold mb-2">Pré-visualização não disponível</div>
+                <div className="text-sm text-muted-foreground">Este curso não possui vídeo de prévia. Leia a descrição ao lado para mais detalhes.</div>
+              </div>
+            </div>
+          )}
         </div>
         <div>
           <Card className="glass-card">
