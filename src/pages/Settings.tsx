@@ -10,11 +10,18 @@ import { useProfile } from "@/context/ProfileContext";
 import { AvatarUploader } from "@/components/AvatarUploader";
 import { useProgress } from "@/hooks/use-progress";
 import { showSuccess } from "@/utils/toast";
+import { useEffect, useState } from "react";
+import { getSoundEnabled, setSoundEnabled } from "@/utils/sound";
 
 const Settings = () => {
   const { ageGroup, setAgeGroup } = useAge();
   const { name, setName, avatarUrl, setAvatarUrl } = useProfile();
   const { clearAll } = useProgress();
+  const [uiSounds, setUiSounds] = useState(true);
+
+  useEffect(() => {
+    setUiSounds(getSoundEnabled());
+  }, []);
 
   const handleAvatarChange = (file: File) => {
     const reader = new FileReader();
@@ -29,6 +36,12 @@ const Settings = () => {
       clearAll();
       showSuccess("Progresso resetado com sucesso! Comece a contar de novo.");
     }
+  };
+
+  const handleToggleSounds = (enabled: boolean) => {
+    setUiSounds(enabled);
+    setSoundEnabled(enabled);
+    showSuccess(enabled ? "Sons da interface ativados." : "Sons da interface desativados.");
   };
 
   return (
@@ -94,6 +107,10 @@ const Settings = () => {
             <div className="flex items-center justify-between">
               <Label htmlFor="in-app-notifications">Notificações no aplicativo</Label>
               <Switch id="in-app-notifications" defaultChecked />
+            </div>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="ui-sounds">Sons da interface</Label>
+              <Switch id="ui-sounds" checked={uiSounds} onCheckedChange={handleToggleSounds} />
             </div>
             <div className="pt-4 border-t border-white/10">
               <Button 

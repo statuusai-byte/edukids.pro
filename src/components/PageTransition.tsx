@@ -1,5 +1,6 @@
 import { motion, Transition } from 'framer-motion';
 import { ReactNode } from 'react';
+import { usePrefersReducedMotion } from '@/hooks/use-reduced-motion';
 
 const pageVariants = {
   initial: {
@@ -23,6 +24,12 @@ const pageTransition: Transition = {
 };
 
 const PageTransition = ({ children }: { children: ReactNode }) => {
+  const reduceMotion = usePrefersReducedMotion();
+
+  if (reduceMotion) {
+    return <div>{children}</div>;
+  }
+
   return (
     <motion.div
       initial="initial"

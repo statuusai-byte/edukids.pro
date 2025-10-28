@@ -1,5 +1,6 @@
 import { useRef, useState, MouseEvent, ReactNode } from 'react';
 import { cn } from '@/lib/utils';
+import { usePrefersReducedMotion } from '@/hooks/use-reduced-motion';
 
 interface TiltCardProps {
   children: ReactNode;
@@ -9,9 +10,10 @@ interface TiltCardProps {
 export const TiltCard = ({ children, className }: TiltCardProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const [rotate, setRotate] = useState({ x: 0, y: 0 });
+  const reduceMotion = usePrefersReducedMotion();
 
   const onMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    if (!ref.current) return;
+    if (reduceMotion || !ref.current) return;
 
     const rect = ref.current.getBoundingClientRect();
     const width = rect.width;
@@ -22,7 +24,7 @@ export const TiltCard = ({ children, className }: TiltCardProps) => {
     const yPct = mouseY / height - 0.5;
 
     setRotate({
-      x: yPct * -12, // Invert for natural feel
+      x: yPct * -12,
       y: xPct * 12,
     });
 
@@ -31,6 +33,7 @@ export const TiltCard = ({ children, className }: TiltCardProps) => {
   };
 
   const onMouseLeave = () => {
+    if (reduceMotion) return;
     setRotate({ x: 0, y: 0 });
     if (ref.current) {
       ref.current.style.setProperty('--glow-x', `-100%`);
@@ -38,17 +41,25 @@ export const TiltCard = ({ children, className }: TiltCardProps) => {
     }
   };
 
-  return (
-    <div
-      ref={ref}
-      onMouseMove={onMouseMove}
-      onMouseLeave={onMouseLeave}
-      style={{
+  const style = reduceMotion
+    ? undefined
+    : {
         transform: `perspective(1000px) rotateX(${rotate.x}deg) rotateY(${rotate.y}deg) scale3d(1.05, 1.05, 1.05)`,
         transition: 'transform 0.1s ease-out',
         transformStyle: 'preserve-3d',
-      }}
-      className={cn("glass-card will-change-transform interactive-glow", className)}
+      } as React.CSSProperties;
+
+  return (
+    <div
+      ref={ref}
+      onMouseMove={reduceMotion ? undefined : onMouseMove}
+      onMouseLeave={reduceMotion ? undefined : onMouseLeave}
+      style={style}
+      className={cn(
+        "glass-card",
+        reduceMotion ? "" : "will-change-transform interactive-glow",
+        className
+      )}
     >
       {children}
     </div>

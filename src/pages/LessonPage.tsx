@@ -21,8 +21,8 @@ const LessonPage = () => {
   const { isPremium } = usePremium();
   const { hasPackage } = useHelpPackages();
   
-  const [hintsAvailable, setHintsAvailable] = useState(0); // Estado para gerenciar dicas
-  const [showHelpContent, setShowHelpContent] = useState(false); // Estado para mostrar o conteúdo do pacote
+  const [hintsAvailable, setHintsAvailable] = useState(0);
+  const [showHelpContent, setShowHelpContent] = useState(false);
 
   const { subject, activity, module, lesson, lessonIndex, moduleIndex } = useMemo(() => {
     const s = subjectsData.find(sub => sub.slug === subjectSlug);
@@ -52,15 +52,12 @@ const LessonPage = () => {
   const hasHelpAccess = hasPackage(subject.slug, isPremium);
 
   const goNext = () => {
-    // Next lesson in the same module
     const nextIndex = lessonIndex + 1;
     if (nextIndex < module.lessons.length) {
       const next = module.lessons[nextIndex];
       navigate(`/activities/${subject.slug}/${activity.id}/modules/${module.id}/lessons/${next.id}`);
       return;
     }
-
-    // Move to the next module's first lesson
     const nextModuleIndex = moduleIndex + 1;
     if (nextModuleIndex < activity.modules.length) {
       const nextModule = activity.modules[nextModuleIndex];
@@ -68,8 +65,6 @@ const LessonPage = () => {
       navigate(`/activities/${subject.slug}/${activity.id}/modules/${nextModule.id}/lessons/${nextLesson.id}`);
       return;
     }
-
-    // If nothing left, stay and maybe show a message (for now we just stay)
   };
 
   const goPrev = () => {
@@ -79,22 +74,17 @@ const LessonPage = () => {
       navigate(`/activities/${subject.slug}/${activity.id}/modules/${module.id}/lessons/${prev.id}`);
       return;
     }
-
-    // go back to activity page
     navigate(`/activities/${subject.slug}/${activity.id}`);
   };
 
   const markCompleted = () => {
     markLessonCompleted(subject.slug, activity.id, module.id, lesson.id);
-
-    // Automatically navigate to next after marking complete (if exists)
     const nextIndex = lessonIndex + 1;
     if (nextIndex < module.lessons.length) {
       const next = module.lessons[nextIndex];
       navigate(`/activities/${subject.slug}/${activity.id}/modules/${module.id}/lessons/${next.id}`);
       return;
     }
-
     const nextModuleIndex = moduleIndex + 1;
     if (nextModuleIndex < activity.modules.length) {
       const nextModule = activity.modules[nextModuleIndex];
@@ -102,8 +92,6 @@ const LessonPage = () => {
       navigate(`/activities/${subject.slug}/${activity.id}/modules/${nextModule.id}/lessons/${nextLesson.id}`);
       return;
     }
-
-    // If no next, remain on current (user finished the activity)
   };
 
   const handleReward = () => {
@@ -112,14 +100,11 @@ const LessonPage = () => {
 
   const handleUseHint = () => {
     if (hasHelpAccess) {
-      // Se tiver acesso ao pacote, mostra o conteúdo da ajuda
       setShowHelpContent(true);
       showSuccess(`Pacote de Ajuda de ${subject.name} ativado!`);
     } else if (hintsAvailable > 0) {
-      // Se não tiver acesso ao pacote, mas tiver dicas de anúncio
       setHintsAvailable(prev => prev - 1);
       showSuccess("Dica de anúncio usada! Pense bem na sua próxima resposta.");
-      // Aqui você implementaria a lógica real da dica (ex: revelar uma letra, eliminar uma opção)
     } else {
       showError(`Você precisa do Pacote de Ajuda de ${subject.name} ou de uma Dica de Anúncio.`);
     }
@@ -127,16 +112,12 @@ const LessonPage = () => {
 
   const renderLessonContent = () => {
     if (lesson.type === 'game') {
-      // Renderiza o jogo correto baseado no ID da atividade
       if (activity.id === 'm1') {
-        // Matemática: Contando Frutas
         return <ContandoFrutas />;
       }
       if (activity.id === 'p2') {
-        // Português: Formando Palavras
         return <FormandoPalavras />;
       }
-      // Se for um jogo genérico ou não implementado, permite marcar como concluído
       return (
         <Card className="glass-card p-6">
           <CardTitle className="text-xl mb-4">Jogo Interativo</CardTitle>
@@ -153,7 +134,6 @@ const LessonPage = () => {
         }
       } catch (e) {
         console.error("Failed to parse quiz content:", e);
-        // Fallback to display raw content if JSON parsing fails
         return <p className="text-foreground/90 mb-4">{lesson.content}</p>;
       }
     }
@@ -167,6 +147,7 @@ const LessonPage = () => {
             src={lesson.videoUrl}
             title={lesson.title}
             frameBorder="0"
+            loading="lazy"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
           ></iframe>
@@ -179,9 +160,7 @@ const LessonPage = () => {
     );
   };
 
-  // Se for um quiz, o botão de 'Marcar como Concluída' será gerenciado pelo QuizComponent.
   const isQuiz = lesson.type === 'exercise' && lesson.content && lesson.content.startsWith('[');
-  // Se for um jogo, o botão de 'Marcar como Concluída' deve ser manual, a menos que o jogo gerencie isso internamente.
   const isGame = lesson.type === 'game';
 
   return (
@@ -200,8 +179,6 @@ const LessonPage = () => {
 
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
-          
-          {/* Exibir Conteúdo de Ajuda se ativado */}
           {showHelpContent && (
             <HelpPackageContent subjectSlug={subject.slug} lessonTitle={lesson.title} />
           )}
@@ -213,7 +190,6 @@ const LessonPage = () => {
             <Button onClick={goNext}>Próxima</Button>
             
             <div className="ml-auto flex items-center gap-4">
-              {/* Botão de Dica/Ajuda */}
               <div className="flex items-center gap-2">
                 <Button 
                   onClick={handleUseHint} 
@@ -232,7 +208,6 @@ const LessonPage = () => {
                 )}
               </div>
 
-              {/* O botão de conclusão é manual para jogos e conteúdo de leitura/vídeo */}
               {(!isQuiz || isGame) && (
                 <Button className="bg-green-600 hover:bg-green-700" onClick={markCompleted}>
                   {completed ? "Revisar (Concluído)" : "Marcar como Concluída"}

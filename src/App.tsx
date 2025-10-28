@@ -2,26 +2,36 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import NotFound from "./pages/NotFound";
-import Layout from "./components/Layout";
-import Home from "./pages/Home";
-import Activities from "./pages/Activities";
-import Courses from "./pages/Courses";
-import Store from "./pages/Store";
-import Dashboard from "./pages/Dashboard";
-import Settings from "./pages/Settings";
+import { Suspense, lazy } from "react";
 import { AgeProvider } from "./context/AgeContext";
-import ActivityDetail from "./pages/ActivityDetail";
-import ActivityContentPage from "./pages/ActivityContentPage"; // Importação atualizada
-import CourseDetail from "./pages/CourseDetail";
-import LessonPage from "./pages/LessonPage";
 import { ProfileProvider } from "./context/ProfileContext";
 import { SupabaseProvider } from "./context/SupabaseContext";
-import { PremiumProvider } from "./context/PremiumContext"; // Importar PremiumProvider
-import Login from "./pages/Login";
-import SuccessPayment from "./pages/SuccessPayment"; // Importar SuccessPayment
+import { PremiumProvider } from "./context/PremiumContext";
+import { Sparkles } from "lucide-react";
+
+// Lazy pages/components
+const NotFound = lazy(() => import("./pages/NotFound"));
+const Layout = lazy(() => import("./components/Layout"));
+const Home = lazy(() => import("./pages/Home"));
+const Activities = lazy(() => import("./pages/Activities"));
+const Courses = lazy(() => import("./pages/Courses"));
+const Store = lazy(() => import("./pages/Store"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Settings = lazy(() => import("./pages/Settings"));
+const ActivityDetail = lazy(() => import("./pages/ActivityDetail"));
+const ActivityContentPage = lazy(() => import("./pages/ActivityContentPage"));
+const CourseDetail = lazy(() => import("./pages/CourseDetail"));
+const LessonPage = lazy(() => import("./pages/LessonPage"));
+const Login = lazy(() => import("./pages/Login"));
+const SuccessPayment = lazy(() => import("./pages/SuccessPayment"));
 
 const queryClient = new QueryClient();
+
+const Fallback = () => (
+  <div className="flex h-screen w-full items-center justify-center">
+    <Sparkles className="h-12 w-12 animate-spin text-primary" />
+  </div>
+);
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -32,23 +42,25 @@ const App = () => (
             <PremiumProvider>
               <Toaster />
               <Sonner />
-              <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route path="/success-payment" element={<SuccessPayment />} /> {/* Nova Rota */}
-                <Route element={<Layout />}>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/activities" element={<Activities />} />
-                  <Route path="/activities/:subject" element={<ActivityDetail />} />
-                  <Route path="/activities/:subject/:activityId" element={<ActivityContentPage />} />
-                  <Route path="/activities/:subject/:activityId/modules/:moduleId/lessons/:lessonId" element={<LessonPage />} />
-                  <Route path="/courses" element={<Courses />} />
-                  <Route path="/courses/:courseId" element={<CourseDetail />} />
-                  <Route path="/store" element={<Store />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/settings" element={<Settings />} />
-                </Route>
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+              <Suspense fallback={<Fallback />}>
+                <Routes>
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/success-payment" element={<SuccessPayment />} />
+                  <Route element={<Layout />}>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/activities" element={<Activities />} />
+                    <Route path="/activities/:subject" element={<ActivityDetail />} />
+                    <Route path="/activities/:subject/:activityId" element={<ActivityContentPage />} />
+                    <Route path="/activities/:subject/:activityId/modules/:moduleId/lessons/:lessonId" element={<LessonPage />} />
+                    <Route path="/courses" element={<Courses />} />
+                    <Route path="/courses/:courseId" element={<CourseDetail />} />
+                    <Route path="/store" element={<Store />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/settings" element={<Settings />} />
+                  </Route>
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
             </PremiumProvider>
           </ProfileProvider>
         </AgeProvider>

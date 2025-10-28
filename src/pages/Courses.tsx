@@ -33,7 +33,15 @@ const Courses = () => {
             <div key={course.id} className="group">
               <Card className="glass-card h-full flex flex-col overflow-hidden transition-transform duration-300 hover:-translate-y-2">
                 <div className="relative h-40">
-                  <img src={course.imageUrl} alt={course.title} className="w-full h-full object-cover" />
+                  <img
+                    src={course.imageUrl}
+                    alt={course.title}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
+                    sizes="(min-width:1280px) 25vw, (min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
+                    fetchPriority="low"
+                  />
                   <div className="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-semibold"
                     style={{ background: course.premium ? 'linear-gradient(90deg,#f43f5e,#8b5cf6)' : 'rgba(255,255,255,0.06)' , color: course.premium ? 'white' : 'var(--foreground)'}}>
                     {course.premium ? 'Premium' : 'Gratuito'}
