@@ -14,8 +14,6 @@ interface SupabaseContextType {
 const SupabaseContext = createContext<SupabaseContextType | undefined>(undefined);
 
 function makeLocalUserFromProfile(profile: any): User {
-  // Create a minimal synthetic User object to satisfy app expectations.
-  // Cast to User because building every field precisely is unnecessary for local fallback.
   return {
     id: profile?.email ? `local:${profile.email}` : `local:${Math.random().toString(36).slice(2)}`,
     app_metadata: {},
@@ -31,9 +29,11 @@ function makeLocalUserFromProfile(profile: any): User {
     email: profile?.email ?? undefined,
     phone: null,
     role: 'authenticated',
-    // supabase User has many optional fields; use type assertion for local fallback
   } as unknown as User;
 }
+
+const TEST_EMAIL = "eduki.teste@gmail.com";
+const FORCE_APPLIED_KEY = "edukids_force_premium_applied";
 
 export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
@@ -50,11 +50,9 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
 
         if (event === 'SIGNED_IN') {
           showSuccess('Login realizado com sucesso!');
-          // Redirecionar para o dashboard após o login
           navigate('/dashboard');
         } else if (event === 'SIGNED_OUT') {
           showSuccess('Sessão encerrada.');
-          // Redirecionar para a home/login após o logout
           navigate('/');
         }
       }
@@ -73,10 +71,45 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
       try {
         const localPremium = localStorage.getItem('edukids_is_premium');
         const localProfileRaw = localStorage.getItem('edukids_profile');
+
         if (localPremium === 'true' && localProfileRaw) {
           const profile = JSON.parse(localProfileRaw);
           const localUser = makeLocalUserFromProfile(profile);
-          setSession(null); // no real session, but app can treat as logged in
+          setSession(null);
+          setUser(localUser);
+          setIsLoading(false);
+          return;
+        }
+
+        // If no profile/premium present, but the test email hasn't been auto-applied yet,
+        // create a local test profile and grant premium for that email so the tester
+        // can access protected routes immediately after signup.
+        const forceApplied = localStorage.getItem(FORCE_APPLIED_KEY);
+        if (!localProfileRaw && !forceApplied) {
+          // seed a minimal profile for the test email
+          const profile = {
+            name: "EDUKIDS Test",
+            avatarUrl: "https://i.pravatar.cc/150?u=edukids-test",
+            email: TEST_EMAIL,
+          };
+          localStorage.setItem('edukids_profile', JSON.stringify(profile));
+          localStorage.setItem('edukids_is_premium', 'true');
+
+          // give all help packages for the tester
+          const allPackages = [
+            "matematica",
+            "portugues",
+            "ciencias",
+            "historia",
+            "geografia",
+            "ingles",
+          ];
+          localStorage.setItem('edukids_help_packages', JSON.stringify(allPackages));
+
+          localStorage.setItem(FORCE_APPLIED_KEY, 'true');
+
+          const localUser = makeLocalUserFromProfile(profile);
+          setSession(null);
           setUser(localUser);
           setIsLoading(false);
           return;
@@ -100,8 +133,9 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
     // Clear local fallback data when signing out as well
     try {
       localStorage.removeItem('edukids_is_premium');
-      // keep profile if you want; remove help packages and premium flag at least
       localStorage.removeItem('edukids_help_packages');
+      localStorage.removeItem('edukids_profile');
+      localStorage.removeItem(FORCE_APPLIED_KEY);
     } catch (e) {
       // ignore
     }
@@ -110,7 +144,6 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
     if (error) {
       showError('Falha ao sair: ' + error.message);
     } else {
-      // Ensure local user state is cleared immediately
       setUser(null);
       setSession(null);
     }
