@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { showSuccess, showError, showLoading, dismissToast } from "@/utils/toast";
 import { useNavigate } from "react-router-dom";
 
-const DEFAULT_EMAIL = "ekteste.@edukids.test";
+const DEFAULT_EMAIL = "eduk.premium@gmail.com";
 const DEFAULT_PASSWORD = "12121212";
 
 export default function TestAccount() {
@@ -21,6 +21,7 @@ export default function TestAccount() {
       const profile = {
         name: "Test User",
         avatarUrl: "https://i.pravatar.cc/150?u=test-user-edukids",
+        email,
       };
       localStorage.setItem("edukids_profile", JSON.stringify(profile));
       // give all help packages (so testers can see content)
@@ -35,6 +36,7 @@ export default function TestAccount() {
       localStorage.setItem("edukids_help_packages", JSON.stringify(allPackages));
     } catch (e) {
       console.error("Failed to seed local premium:", e);
+      throw e;
     }
   };
 
@@ -69,8 +71,9 @@ export default function TestAccount() {
         });
 
         if (signIn2.error) {
+          // If sign-in still fails (e.g., email needs confirmation), notify but still allow local activation option
           dismissToast(loadingToast);
-          showError("Falha ao autenticar usuário de teste: " + signIn2.error.message);
+          showError("Falha ao autenticar usuário de teste: " + signIn2.error.message + ". Use 'Ativar Premium localmente' se desejar testar sem autenticação.");
           setLoading(false);
           return;
         }
@@ -99,6 +102,17 @@ export default function TestAccount() {
     }
   };
 
+  const handleActivateLocalOnly = async () => {
+    try {
+      await seedLocalPremium();
+      showSuccess("Premium ativado localmente para este dispositivo.");
+      // Redirect to dashboard so user can check premium areas
+      navigate("/dashboard", { replace: true });
+    } catch (e) {
+      showError("Falha ao ativar Premium localmente.");
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <Card className="w-full max-w-md glass-card p-6">
@@ -107,7 +121,7 @@ export default function TestAccount() {
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-sm text-muted-foreground">
-            Informe as credenciais do usuário que você deseja ativar com Premium. As credenciais fornecidas foram pré-preenchidas.
+            Informe as credenciais do usuário que você deseja ativar com Premium. Os campos foram pré-preenchidos com o email que você solicitou.
             Ao criar/entrar com o usuário, o Premium será ativado localmente neste dispositivo (armazenamento local).
           </p>
 
@@ -144,6 +158,10 @@ export default function TestAccount() {
               }
             }}>
               Limpar estado local de teste
+            </Button>
+
+            <Button onClick={handleActivateLocalOnly} className="bg-yellow-400 text-black">
+              Ativar Premium localmente (sem login)
             </Button>
           </div>
 
