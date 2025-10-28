@@ -16,7 +16,7 @@ import { AnimatePresence } from "framer-motion";
 import PageTransition from "./PageTransition";
 import { playSound } from "@/utils/sound";
 import { useSupabase } from "@/context/SupabaseContext";
-import InterstitialAdManager from "./InterstitialAdManager"; // Importar o novo componente
+import InterstitialAdManager from "./InterstitialAdManager";
 
 const navItems = [
   { to: "/", icon: <Home className="h-6 w-6" />, label: "Home" },
@@ -29,12 +29,13 @@ const navItems = [
 
 const Layout = () => {
   const { isLoading: isAgeLoading } = useAge();
-  const { user, isLoading: isAuthLoading } = useSupabase();
+  const { isLoading: isAuthLoading } = useSupabase(); // Mantemos o hook para o Header, mas removemos a lógica de proteção
   const location = useLocation();
   const isHomePage = location.pathname === '/';
   const isLoginPage = location.pathname === '/login';
 
-  const protectedRoutes = navItems.map(item => item.to).filter(path => path !== '/');
+  // Removendo a lógica de proteção de rotas.
+  // const protectedRoutes = navItems.map(item => item.to).filter(path => path !== '/');
 
   if (isAgeLoading || isAuthLoading) {
     return (
@@ -44,10 +45,10 @@ const Layout = () => {
     );
   }
 
-  // Redirecionar se a rota for protegida e o usuário não estiver logado
-  if (!user && protectedRoutes.includes(location.pathname) && !isLoginPage) {
-    return <Navigate to="/login" replace />;
-  }
+  // REMOVIDO: Redirecionamento se a rota for protegida e o usuário não estiver logado
+  // if (!user && protectedRoutes.includes(location.pathname) && !isLoginPage) {
+  //   return <Navigate to="/login" replace />;
+  // }
 
   // Se estiver na home, não mostra o layout completo (Header/Sidebar)
   if (isHomePage) {
