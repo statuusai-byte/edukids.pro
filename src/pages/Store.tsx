@@ -53,12 +53,12 @@ const Store = () => {
       return;
     }
     
-    showLoading(`Comprando pacote ${packageName}...`);
+    const loading = showLoading(`Comprando pacote ${packageName}...`);
     setTimeout(() => {
       purchasePackage(subjectSlug);
-      dismissToast(0); // Dismiss loading
+      dismissToast(loading);
       showSuccess(`Pacote de Ajuda '${packageName}' comprado com sucesso!`);
-    }, 1500);
+    }, 1200);
   };
 
   const helpPackages = [
@@ -71,103 +71,104 @@ const Store = () => {
   ];
 
   return (
-    <div>
-      <h1 className="text-4xl font-bold tracking-tighter mb-2 text-center">Explore todos os recursos Premium</h1>
-      <p className="text-muted-foreground text-center mb-12">
-        {isPremium ? "Você é Premium! Aproveite o acesso total." : "Assine o Premium para desbloquear tudo."}
-      </p>
-      
-      {/* Planos de Assinatura */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto mb-12">
-        <Card className="glass-card p-4 flex flex-col opacity-60">
-          <CardHeader>
-            <CardTitle className="text-2xl">Plano Gratuito</CardTitle>
-            <CardDescription>Acesso a atividades e recursos básicos.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3 flex-grow">
-            <ul className="space-y-3 text-muted-foreground">
-              <li className="flex items-center"><Check className="mr-3 h-5 w-5 text-primary" /> Acesso a atividades básicas</li>
-              <li className="flex items-center"><Check className="mr-3 h-5 w-5 text-primary" /> IA de texto para ajuda simples</li>
-              <li className="flex items-center"><Check className="mr-3 h-5 w-5 text-primary" /> Suporte da comunidade</li>
-            </ul>
-          </CardContent>
-          <CardFooter>
-            <Button variant="ghost" className="w-full" disabled>Plano Anterior</Button>
-          </CardFooter>
-        </Card>
-        <div className="relative">
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-pink-600 to-purple-600 rounded-2xl blur opacity-75"></div>
-          <Card className="relative glass-card p-4 border-primary/50 flex flex-col h-full">
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <CardTitle className="text-2xl text-primary">Plano Premium</CardTitle>
-                {isPremium && (
-                  <div className="flex items-center gap-1 text-sm bg-primary/20 text-primary px-2 py-1 rounded-full">
-                    <Star className="h-4 w-4" /> Ativo
+    <div className="space-y-10">
+      {/* Hero */}
+      <section className="relative rounded-2xl overflow-hidden bg-gradient-to-r from-purple-700 via-indigo-600 to-pink-600 p-8 text-white shadow-lg">
+        <div className="flex flex-col lg:flex-row items-center gap-6">
+          <div className="flex-1">
+            <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight">Loja EDUKIDS+</h1>
+            <p className="mt-2 text-lg text-white/90 max-w-2xl">
+              Desbloqueie conteúdos exclusivos, pacotes de ajuda por matéria e recursos Premium para potencializar o aprendizado.
+            </p>
+
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Button onClick={handleCheckout} className="bg-white text-black font-bold shadow-md hover:scale-[1.02] transform transition" disabled={isCheckingOut}>
+                {isCheckingOut ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Processando...</> : 'Assinar Premium (R$ 19,90/mês)'}
+              </Button>
+              <Button variant="ghost" className="border border-white/20 text-white/90" onClick={() => window.scrollTo({ top: 600, behavior: 'smooth' })}>
+                Ver Pacotes de Ajuda
+              </Button>
+            </div>
+          </div>
+
+          <div className="w-full lg:w-96">
+            <Card className="p-6 bg-white/10 border-white/20">
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <Star className="h-5 w-5 text-yellow-300" />
+                    <div className="text-sm text-yellow-100">Mais Popular</div>
                   </div>
-                )}
+                  <h3 className="text-2xl font-bold mt-3">Plano Premium</h3>
+                  <p className="text-sm text-white/90 mt-1">Acesso completo a tudo: atividades, pacotes, relatórios e IA premium.</p>
+                </div>
+                <div className="text-right">
+                  <div className="text-3xl font-extrabold">R$ 19,90</div>
+                  <div className="text-sm text-white/80">/ mês</div>
+                </div>
               </div>
-              <CardDescription>Desbloqueie todo o potencial do EDUKIDS+.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3 flex-grow">
-              <ul className="space-y-3 text-foreground">
-                <li className="flex items-center"><BookOpen className="mr-3 h-5 w-5 text-primary" /> Acesso ilimitado a todas as atividades</li>
-                <li className="flex items-center"><Users className="mr-3 h-5 w-5 text-primary" /> Todos os cursos e vídeo aulas</li>
-                <li className="flex items-center"><Bot className="mr-3 h-5 w-5 text-primary" /> IA Premium interativa e avançada</li>
-                <li className="flex items-center"><BarChart3 className="mr-3 h-5 w-5 text-primary" /> Painel dos Pais completo</li>
-                <li className="flex items-center"><Lightbulb className="mr-3 h-5 w-5 text-primary" /> Acesso Ilimitado a todos os Pacotes de Ajuda</li>
+
+              <ul className="mt-5 space-y-3">
+                <li className="flex items-center gap-2 text-sm"><Check className="h-4 w-4 text-green-400" /> Acesso ilimitado a todas as atividades</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="h-4 w-4 text-green-400" /> Relatórios avançados dos alunos</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="h-4 w-4 text-green-400" /> Pacotes de Ajuda inclusos</li>
               </ul>
-            </CardContent>
-            <CardFooter>
-              {isPremium ? (
-                <Button variant="outline" className="w-full border-primary/50 text-primary" disabled>Seu Plano Atual</Button>
-              ) : (
-                <Button 
-                  onClick={handleCheckout} 
-                  className="w-full bg-primary hover:bg-primary/90"
-                  disabled={isCheckingOut}
-                >
-                  {isCheckingOut ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processando...
-                    </>
-                  ) : (
-                    "Assinar Agora (R$ 19,90/mês)"
-                  )}
-                </Button>
-              )}
-            </CardFooter>
-          </Card>
+
+              <CardFooter className="pt-4">
+                {isPremium ? (
+                  <Button variant="outline" className="w-full border-white/30 text-white/90" disabled>
+                    Seu Plano Atual
+                  </Button>
+                ) : (
+                  <Button onClick={handleCheckout} className="w-full bg-yellow-400 text-black font-bold hover:brightness-95">
+                    Assinar Agora
+                  </Button>
+                )}
+              </CardFooter>
+            </Card>
+          </div>
         </div>
-      </div>
+      </section>
 
-      {/* Seção de Pacotes de Ajuda por Matéria */}
-      <div className="max-w-4xl mx-auto space-y-8">
-        <h2 className="text-3xl font-bold tracking-tighter mt-12 mb-6 flex items-center gap-2">
-          <Lightbulb className="h-6 w-6 text-primary" /> Pacotes de Ajuda por Matéria
-        </h2>
-        <p className="text-muted-foreground mb-6">
-          Compre pacotes individuais para obter dicas e soluções avançadas em matérias específicas, ou assine o Premium para ter acesso a todos.
-        </p>
+      {/* Pacotes */}
+      <section className="max-w-7xl mx-auto px-4">
+        <h2 className="text-3xl font-bold mb-2">Pacotes de Ajuda por Matéria</h2>
+        <p className="text-muted-foreground mb-6">Compre pacotes individuais para obter dicas e soluções avançadas em matérias específicas, ou assine o Premium para ter acesso a todos.</p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {helpPackages.map(pkg => {
             const isPurchased = hasPackage(pkg.slug, isPremium);
             
             return (
-              <Card key={pkg.id} className="glass-card flex flex-col h-full">
-                <CardHeader className="pb-2">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg">{pkg.name.split(': ')[1]}</CardTitle>
-                    <Icon name={pkg.icon as any} className="h-6 w-6 text-primary" />
+              <Card key={pkg.id} className="glass-card p-4 flex flex-col h-full hover:scale-[1.01] transform transition">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-3 bg-white/6 rounded-lg">
+                      <Icon name={pkg.icon as any} className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <div className="font-semibold">{pkg.name.split(': ')[1]}</div>
+                      <div className="text-xs text-muted-foreground">{pkg.description}</div>
+                    </div>
                   </div>
-                </CardHeader>
-                <CardContent className="flex-grow">
-                  <p className="text-sm text-muted-foreground line-clamp-3">{pkg.description}</p>
+                  <div className="text-right">
+                    <div className="text-lg font-bold">{pkg.price}</div>
+                    <div className="text-xs text-muted-foreground">Pagamento único</div>
+                  </div>
+                </div>
+
+                <CardContent className="mt-4 flex-grow">
+                  <div className="text-sm text-muted-foreground line-clamp-3">{pkg.description}</div>
+
+                  <div className="mt-4 flex items-center gap-3 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-1"><Check className="h-4 w-4 text-primary" /> Dicas passo-a-passo</div>
+                    <div className="flex items-center gap-1"><Users className="h-4 w-4 text-primary" /> Conteúdos extras</div>
+                  </div>
                 </CardContent>
-                <CardFooter className="pt-0">
+
+                <CardFooter className="pt-4">
                   {isPurchased ? (
-                    <Button variant="outline" className="w-full bg-green-600/20 text-green-400 border-green-600/50" disabled>
+                    <Button variant="outline" className="w-full bg-green-600/10 text-green-300 border-green-600/30" disabled>
                       {isPremium ? 'Acesso Premium' : 'Pacote Ativo'}
                     </Button>
                   ) : (
@@ -183,26 +184,36 @@ const Store = () => {
             );
           })}
         </div>
-      </div>
 
-      {/* Seção de Recursos Premium (mantida) */}
-      <div className="max-w-4xl mx-auto space-y-8">
-        <h2 className="text-3xl font-bold tracking-tighter mt-12 mb-6">Recursos Exclusivos</h2>
-        
-        <Card className="glass-card p-4">
-          <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5 text-primary" /> Relatórios Avançados
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">Acompanhe o progresso detalhado, tempo de tela por matéria e identifique áreas que precisam de mais atenção com relatórios semanais e mensais.</p>
-            <div className="h-32 bg-secondary/50 rounded-lg mt-4 flex items-center justify-center">
-              <p className="text-muted-foreground text-sm">Pré-visualização do gráfico de desempenho.</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+        {/* Recursos Premium */}
+        <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card className="glass-card p-4">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="h-5 w-5 text-primary" /> Relatórios Avançados
+              </CardTitle>
+              <CardDescription>Visualize progresso, tempo de tela por matéria e recomendações.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-40 bg-secondary/50 rounded-lg mt-4 flex items-center justify-center">
+                <p className="text-muted-foreground text-sm">Pré-visualização do gráfico de desempenho.</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="glass-card p-4">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2">
+                <Bot className="h-5 w-5 text-primary" /> IA Premium
+              </CardTitle>
+              <CardDescription>Assistente avançado para explicações passo-a-step e suporte contextual.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">Responda dúvidas, gere exercícios e obtenha explicações adaptativas para cada lição.</p>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
     </div>
   );
 };
