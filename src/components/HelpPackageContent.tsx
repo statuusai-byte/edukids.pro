@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Lightbulb, Zap, CheckCircle, BookOpen, FlaskConical, Landmark, Globe, SpellCheck } from 'lucide-react';
+import { Lightbulb, Zap, CheckCircle } from 'lucide-react';
 
 interface HelpPackageContentProps {
   subjectSlug: string;

@@ -1,6 +1,0 @@
-/**
- * Chave pública RSA codificada em Base64.
- * Usada para verificar assinaturas de compra/licenciamento (ex: Google Play Billing).
- * Os espaços foram removidos conforme solicitado.
- */
-export const RSA_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAudwwOK5hH4zDkYbp3FN1yxKugR76tPC3l0+DsJEkbFoR3R5RyLALltN8ekn6IjiE6NMMLZnv3DvXsxMHwfQeSj75Yc3vYxSceQ0i1IYVXJ/saEMxE5S4Gpdy5AlK7VdbV/pYxOuIvlk5XoyaOFI8ACItsGBdPNj8Q1aE4cwwGxLLt3mVQoI9HtdXXnfMR0+ZH7l6kron1JugQ5UFFuWRhSLZuJL9CtdKxRJ1/XAGfqSwwFc/WIdjWZInLWeQ8DvA7XaykDoWaTKyP6jz/EZeDxdAwXbPUGX19L6mn6eHsOOOhzaz0jUpWZ2m4x7dmgvxuvJBxNWE7zqYuaYXWF9d3QIDAQAB";

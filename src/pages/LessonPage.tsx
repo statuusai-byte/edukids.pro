@@ -13,7 +13,6 @@ import { showSuccess, showError } from "@/utils/toast";
 import { usePremium } from "@/context/PremiumContext";
 import { useHelpPackages } from "@/hooks/useHelpPackages";
 import { HelpPackageContent } from "@/components/HelpPackageContent";
-import { useHintBalance } from "@/hooks/useHintBalance"; // Importando o novo hook
 
 const LessonPage = () => {
   const { subject: subjectSlug, activityId, moduleId, lessonId } = useParams();
@@ -21,9 +20,8 @@ const LessonPage = () => {
   const { isLessonCompleted, markLessonCompleted } = useProgress();
   const { isPremium } = usePremium();
   const { hasPackage } = useHelpPackages();
-  const { balance: hintBalance, useHint: usePurchasedHint } = useHintBalance(); // Usando o novo hook
   
-  const [hintsAvailable, setHintsAvailable] = useState(0); // Estado para gerenciar dicas de anúncio
+  const [hintsAvailable, setHintsAvailable] = useState(0); // Estado para gerenciar dicas
   const [showHelpContent, setShowHelpContent] = useState(false); // Estado para mostrar o conteúdo do pacote
 
   const { subject, activity, module, lesson, lessonIndex, moduleIndex } = useMemo(() => {
@@ -114,20 +112,16 @@ const LessonPage = () => {
 
   const handleUseHint = () => {
     if (hasHelpAccess) {
-      // 1. Acesso Premium/Pacote: Mostra o conteúdo da ajuda
+      // Se tiver acesso ao pacote, mostra o conteúdo da ajuda
       setShowHelpContent(true);
       showSuccess(`Pacote de Ajuda de ${subject.name} ativado!`);
-    } else if (hintBalance > 0) {
-      // 2. Dicas Compradas: Usa uma dica comprada
-      usePurchasedHint();
-      showSuccess("Dica comprada usada! Pense bem na sua próxima resposta.");
-      // Aqui você implementaria a lógica real da dica (ex: revelar uma letra, eliminar uma opção)
     } else if (hintsAvailable > 0) {
-      // 3. Dicas de Anúncio: Usa uma dica de anúncio
+      // Se não tiver acesso ao pacote, mas tiver dicas de anúncio
       setHintsAvailable(prev => prev - 1);
       showSuccess("Dica de anúncio usada! Pense bem na sua próxima resposta.");
+      // Aqui você implementaria a lógica real da dica (ex: revelar uma letra, eliminar uma opção)
     } else {
-      showError(`Você precisa do Pacote de Ajuda de ${subject.name} ou de uma Dica.`);
+      showError(`Você precisa do Pacote de Ajuda de ${subject.name} ou de uma Dica de Anúncio.`);
     }
   };
 
@@ -190,8 +184,6 @@ const LessonPage = () => {
   // Se for um jogo, o botão de 'Marcar como Concluída' deve ser manual, a menos que o jogo gerencie isso internamente.
   const isGame = lesson.type === 'game';
 
-  const totalHints = hintBalance + hintsAvailable;
-
   return (
     <div>
       <div className="flex items-center gap-4 mb-6">
@@ -225,12 +217,11 @@ const LessonPage = () => {
               <div className="flex items-center gap-2">
                 <Button 
                   onClick={handleUseHint} 
-                  variant={hasHelpAccess || totalHints > 0 ? "default" : "secondary"}
+                  variant={hasHelpAccess ? "default" : "secondary"}
                   className={hasHelpAccess ? "bg-yellow-600 hover:bg-yellow-700 text-black" : "bg-primary/20 text-primary hover:bg-primary/30"}
-                  disabled={!hasHelpAccess && totalHints === 0}
                 >
                   <Lightbulb className="mr-2 h-4 w-4" />
-                  {hasHelpAccess ? `Ajuda ${subject.name}` : `Dica (${totalHints})`}
+                  {hasHelpAccess ? `Ajuda ${subject.name}` : `Dica (${hintsAvailable})`}
                 </Button>
                 
                 {!hasHelpAccess && (

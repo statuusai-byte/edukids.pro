@@ -12,13 +12,14 @@ import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
 import { AgeProvider } from "./context/AgeContext";
 import ActivityDetail from "./pages/ActivityDetail";
-import ActivityContentPage from "./pages/ActivityContentPage";
+import ActivityContentPage from "./pages/ActivityContentPage"; // Importação atualizada
 import CourseDetail from "./pages/CourseDetail";
 import LessonPage from "./pages/LessonPage";
 import { ProfileProvider } from "./context/ProfileContext";
 import { SupabaseProvider } from "./context/SupabaseContext";
-import { PremiumProvider } from "./context/PremiumContext";
-import SuccessPayment from "./pages/SuccessPayment";
+import { PremiumProvider } from "./context/PremiumContext"; // Importar PremiumProvider
+import Login from "./pages/Login";
+import SuccessPayment from "./pages/SuccessPayment"; // Importar SuccessPayment
 
 const queryClient = new QueryClient();
 
@@ -32,8 +33,8 @@ const App = () => (
               <Toaster />
               <Sonner />
               <Routes>
-                {/* Rota de Login removida */}
-                <Route path="/success-payment" element={<SuccessPayment />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/success-payment" element={<SuccessPayment />} /> {/* Nova Rota */}
                 <Route element={<Layout />}>
                   <Route path="/" element={<Home />} />
                   <Route path="/activities" element={<Activities />} />

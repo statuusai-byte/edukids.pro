@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, Star, Bot, BookOpen, Users, BarChart3, Loader2, Lightbulb, Zap, Gift } from "lucide-react";
+import { Check, Star, Bot, BookOpen, Users, BarChart3, Loader2, Lightbulb } from "lucide-react";
 import { usePremium } from "@/context/PremiumContext";
 import { useState } from "react";
 import { showLoading, showError, dismissToast, showSuccess } from "@/utils/toast";
@@ -8,13 +8,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSupabase } from "@/context/SupabaseContext";
 import { Icon } from "@/components/Icon";
 import { useHelpPackages } from "@/hooks/useHelpPackages";
-import { useHintBalance } from "@/hooks/useHintBalance"; // Importando o hook de saldo de dicas
 
 const Store = () => {
   const { isPremium } = usePremium();
   const { user } = useSupabase();
   const { purchasePackage, hasPackage } = useHelpPackages();
-  const { balance: hintBalance, addHints } = useHintBalance();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   const handleCheckout = async () => {
@@ -63,21 +61,6 @@ const Store = () => {
     }, 1500);
   };
 
-  // Removed unused 'price' parameter here
-  const handleBuyHints = (amount: number) => {
-    if (!user) {
-      showError("Você precisa estar logado para comprar dicas.");
-      return;
-    }
-    
-    showLoading(`Processando compra de ${amount} dicas...`);
-    setTimeout(() => {
-      addHints(amount);
-      dismissToast(0); // Dismiss loading
-      showSuccess(`Parabéns! Você adicionou ${amount} dicas ao seu saldo.`);
-    }, 1500);
-  };
-
   const helpPackages = [
     { id: 'matematica', name: 'Pacote de Ajuda: Matemática', price: 'R$ 9,90', icon: 'Sigma', description: 'Dicas e soluções detalhadas para todos os exercícios de Matemática.', slug: 'matematica' },
     { id: 'portugues', name: 'Pacote de Ajuda: Português', price: 'R$ 9,90', icon: 'BookOpen', description: 'Acesso a gabaritos e explicações de gramática e interpretação.', slug: 'portugues' },
@@ -85,12 +68,6 @@ const Store = () => {
     { id: 'historia', name: 'Pacote de Ajuda: História', price: 'R$ 9,90', icon: 'Landmark', description: 'Linhas do tempo interativas e resumos de eventos históricos.', slug: 'historia' },
     { id: 'geografia', name: 'Pacote de Ajuda: Geografia', price: 'R$ 9,90', icon: 'Globe', description: 'Mapas interativos e informações detalhadas sobre regiões e capitais.', slug: 'geografia' },
     { id: 'ingles', name: 'Pacote de Ajuda: Inglês', price: 'R$ 9,90', icon: 'SpellCheck', description: 'Traduções, pronúncias e exercícios extras para vocabulário.', slug: 'ingles' },
-  ];
-
-  const hintPackages = [
-    { amount: 5, price: 'R$ 4,90', description: 'Pacote inicial de dicas para começar a usar a ajuda imediata.' },
-    { amount: 15, price: 'R$ 9,90', description: 'Pacote intermediário, ideal para quem precisa de ajuda ocasional.' },
-    { amount: 30, price: 'R$ 14,90', description: 'Pacote avançado, o melhor custo-benefício para suporte contínuo.' },
   ];
 
   return (
@@ -164,42 +141,9 @@ const Store = () => {
         </div>
       </div>
 
-      {/* Seção de Itens Avulsos (Dicas) */}
-      <div className="max-w-4xl mx-auto space-y-8 mt-12">
-        <h2 className="text-3xl font-bold tracking-tighter mb-6 flex items-center gap-2">
-          <Zap className="h-6 w-6 text-yellow-400" /> Dicas Avulsas (Saldo: {hintBalance})
-        </h2>
-        <p className="text-muted-foreground mb-6">
-          Use dicas para obter ajuda imediata em qualquer lição, sem precisar de um pacote completo.
-        </p>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {hintPackages.map(pkg => (
-            <Card key={pkg.amount} className="glass-card flex flex-col h-full text-center">
-              <CardHeader className="pb-2">
-                <Gift className="h-8 w-8 text-yellow-500 mx-auto mb-2" />
-                <CardTitle className="text-2xl">{pkg.amount} Dicas</CardTitle>
-              </CardHeader>
-              <CardContent className="flex-grow">
-                <p className="text-sm text-muted-foreground line-clamp-3">{pkg.description}</p>
-              </CardContent>
-              <CardFooter className="pt-0">
-                <Button 
-                  onClick={() => handleBuyHints(pkg.amount)} 
-                  className="w-full bg-yellow-600 hover:bg-yellow-700 text-black font-bold"
-                  disabled={isPremium}
-                >
-                  {isPremium ? 'Incluído no Premium' : `Comprar (${pkg.price})`}
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
-      </div>
-
       {/* Seção de Pacotes de Ajuda por Matéria */}
-      <div className="max-w-4xl mx-auto space-y-8 mt-12">
-        <h2 className="text-3xl font-bold tracking-tighter mb-6 flex items-center gap-2">
+      <div className="max-w-4xl mx-auto space-y-8">
+        <h2 className="text-3xl font-bold tracking-tighter mt-12 mb-6 flex items-center gap-2">
           <Lightbulb className="h-6 w-6 text-primary" /> Pacotes de Ajuda por Matéria
         </h2>
         <p className="text-muted-foreground mb-6">
@@ -230,9 +174,8 @@ const Store = () => {
                     <Button 
                       onClick={() => handleBuyPackage(pkg.slug, pkg.name)} 
                       className="w-full bg-secondary hover:bg-secondary/80 text-foreground"
-                      disabled={isPremium}
                     >
-                      {isPremium ? 'Incluído no Premium' : `Comprar (${pkg.price})`}
+                      Comprar ({pkg.price})
                     </Button>
                   )}
                 </CardFooter>

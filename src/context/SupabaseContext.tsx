@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
 import { showSuccess, showError } from '@/utils/toast';
 
 interface SupabaseContextType {
@@ -16,7 +17,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  // Removido: const navigate = useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
@@ -27,10 +28,12 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
 
         if (event === 'SIGNED_IN') {
           showSuccess('Login realizado com sucesso!');
-          // REMOVIDO: Redirecionamento para o dashboard após o login
+          // Redirecionar para o dashboard após o login
+          navigate('/dashboard');
         } else if (event === 'SIGNED_OUT') {
           showSuccess('Sessão encerrada.');
-          // REMOVIDO: Redirecionamento para a home/login após o logout
+          // Redirecionar para a home/login após o logout
+          navigate('/');
         }
       }
     );
@@ -45,7 +48,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
     return () => {
       authListener.subscription.unsubscribe();
     };
-  }, []); // Dependências ajustadas
+  }, [navigate]);
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
