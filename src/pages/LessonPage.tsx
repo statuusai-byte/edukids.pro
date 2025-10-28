@@ -65,6 +65,7 @@ const LessonPage = () => {
       navigate(`/activities/${subject.slug}/${activity.id}/modules/${nextModule.id}/lessons/${nextLesson.id}`);
       return;
     }
+    showSuccess("Você chegou ao fim desta atividade.");
   };
 
   const goPrev = () => {
@@ -74,24 +75,13 @@ const LessonPage = () => {
       navigate(`/activities/${subject.slug}/${activity.id}/modules/${module.id}/lessons/${prev.id}`);
       return;
     }
+    // voltar para página da atividade se não houver lição anterior
     navigate(`/activities/${subject.slug}/${activity.id}`);
   };
 
   const markCompleted = () => {
     markLessonCompleted(subject.slug, activity.id, module.id, lesson.id);
-    const nextIndex = lessonIndex + 1;
-    if (nextIndex < module.lessons.length) {
-      const next = module.lessons[nextIndex];
-      navigate(`/activities/${subject.slug}/${activity.id}/modules/${module.id}/lessons/${next.id}`);
-      return;
-    }
-    const nextModuleIndex = moduleIndex + 1;
-    if (nextModuleIndex < activity.modules.length) {
-      const nextModule = activity.modules[nextModuleIndex];
-      const nextLesson = nextModule.lessons[0];
-      navigate(`/activities/${subject.slug}/${activity.id}/modules/${nextModule.id}/lessons/${nextLesson.id}`);
-      return;
-    }
+    showSuccess("Lição marcada como concluída.");
   };
 
   const handleReward = () => {
@@ -160,8 +150,11 @@ const LessonPage = () => {
     );
   };
 
-  const isQuiz = lesson.type === 'exercise' && lesson.content && lesson.content.startsWith('[');
+  const isQuiz = lesson.type === 'exercise' && lesson.content && lesson.content.trim().startsWith('[');
   const isGame = lesson.type === 'game';
+
+  const hasPrev = lessonIndex > 0 || moduleIndex > 0;
+  const hasNext = (lessonIndex < module.lessons.length - 1) || (moduleIndex < activity.modules.length - 1);
 
   return (
     <div>
@@ -186,8 +179,8 @@ const LessonPage = () => {
           {renderLessonContent()}
 
           <div className="flex gap-4 mt-4 items-center">
-            <Button variant="outline" onClick={goPrev}>Anterior</Button>
-            <Button onClick={goNext}>Próxima</Button>
+            <Button variant="outline" onClick={goPrev} disabled={!hasPrev}>Anterior</Button>
+            <Button onClick={goNext} disabled={!hasNext}>Próxima</Button>
             
             <div className="ml-auto flex items-center gap-4">
               <div className="flex items-center gap-2">
