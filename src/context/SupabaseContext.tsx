@@ -40,8 +40,42 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
 
     // Fetch initial session
     supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
-      setSession(initialSession);
-      setUser(initialSession?.user ?? null);
+      if (initialSession) {
+        setSession(initialSession);
+        setUser(initialSession.user ?? null);
+        setIsLoading(false);
+        return;
+      }
+
+      // No remote session — check for a local test override.
+      try {
+        const localTestRaw = localStorage.getItem('edukids_local_test_user');
+        if (localTestRaw) {
+          const parsed = JSON.parse(localTestRaw);
+          // Build a minimal fake User object that satisfies checks in the app.
+          const fakeUser: User = {
+            id: parsed.id || 'local-test-user',
+            aud: 'authenticated',
+            app_metadata: {},
+            user_metadata: { name: parsed.name || 'Local Tester', email: parsed.email || parsed?.email },
+            created_at: new Date().toISOString(),
+            role: 'authenticated',
+            email: parsed.email || null,
+          } as unknown as User;
+
+          setSession(null);
+          setUser(fakeUser);
+          setIsLoading(false);
+          // Note: we intentionally do NOT attempt to call supabase.auth.setSession here.
+          return;
+        }
+      } catch (e) {
+        console.error('Failed to parse local test user override:', e);
+      }
+
+      // Default: no session and no local override
+      setSession(null);
+      setUser(null);
       setIsLoading(false);
     });
 
@@ -51,9 +85,22 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   }, [navigate]);
 
   const signOut = async () => {
+    // Clear local test override if present
+    try {
+      localStorage.removeItem('edukids_local_test_user');
+    } catch {}
+
     const { error } = await supabase.auth.signOut();
     if (error) {
       showError('Falha ao sair: ' + error.message);
+    } else {
+      // Also clear local profile/flags when sign out is successful
+      try {
+        localStorage.removeItem('edukids_profile');
+        // keep other local test artifacts if needed, but remove premium override on sign out
+        localStorage.removeItem('edukids_is_premium');
+        localStorage.removeItem('edukids_help_packages');
+      } catch {}
     }
   };
 
