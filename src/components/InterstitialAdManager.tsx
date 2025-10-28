@@ -1,4 +1,4 @@
-import { useEffect, useState, ReactNode } from 'react';
+import { useEffect, useState, ReactNode, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { showSuccess } from '@/utils/toast';
 
@@ -14,6 +14,7 @@ interface InterstitialAdManagerProps {
 const InterstitialAdManager = ({ children }: InterstitialAdManagerProps) => {
   const location = useLocation();
   const [isAdShowing, setIsAdShowing] = useState(false);
+  const timerRef = useRef<number | null>(null);
 
   useEffect(() => {
     // Apenas rodar a lógica se não estiver na página inicial ou de login
@@ -25,25 +26,40 @@ const InterstitialAdManager = ({ children }: InterstitialAdManagerProps) => {
     const nextCount = currentCount + 1;
 
     if (nextCount >= AD_DISPLAY_FREQUENCY) {
+      // Se já existir um timer anterior, limpamos antes de criar outro
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+
       // Simular a exibição do anúncio
       setIsAdShowing(true);
-      
-      // Em um app real, aqui você chamaria o SDK do AdMob para mostrar o anúncio.
-      // Após o anúncio ser fechado pelo usuário, você resetaria o contador.
-      
-      const adTimer = setTimeout(() => {
+
+      // Agendamos o fechamento do anúncio — guardado em ref para não ser perdido entre re-renders.
+      timerRef.current = window.setTimeout(() => {
+        timerRef.current = null;
         setIsAdShowing(false);
         showSuccess(`Anúncio Intersticial (ID: ${INTERSTITIAL_AD_UNIT_ID}) exibido. Continuando...`);
         localStorage.setItem('ad_counter', '0'); // Resetar contador
       }, 1500); // Simula 1.5s de exibição do anúncio
 
+      // Garantimos que o contador fique registrado enquanto o anúncio está exibido
       localStorage.setItem('ad_counter', nextCount.toString());
-      return () => clearTimeout(adTimer);
-
+      return;
     } else {
       localStorage.setItem('ad_counter', nextCount.toString());
     }
   }, [location.pathname]);
+
+  // Limpar timer apenas quando o componente desmontar para evitar o overlay preso
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, []);
 
   if (isAdShowing) {
     return (
