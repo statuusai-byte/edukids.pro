@@ -17,6 +17,7 @@ import PageTransition from "./PageTransition";
 import { playSound } from "@/utils/sound";
 import { useSupabase } from "@/context/SupabaseContext";
 import InterstitialAdManager from "./InterstitialAdManager"; // Importar o novo componente
+import StudyAssistant from "./StudyAssistant";
 
 const navItems = [
   { to: "/", icon: <Home className="h-6 w-6" />, label: "Home" },
@@ -103,6 +104,9 @@ const Layout = () => {
             </InterstitialAdManager>
           </main>
         </div>
+
+        {/* Global Study Assistant (floating button + panel) */}
+        <StudyAssistant />
       </div>
     </TooltipProvider>
   );
