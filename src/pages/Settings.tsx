@@ -10,13 +10,11 @@ import { useProfile } from "@/context/ProfileContext";
 import { AvatarUploader } from "@/components/AvatarUploader";
 import { useProgress } from "@/hooks/use-progress";
 import { showSuccess } from "@/utils/toast";
-import { usePremium } from "@/context/PremiumContext";
 
 const Settings = () => {
   const { ageGroup, setAgeGroup } = useAge();
   const { name, setName, avatarUrl, setAvatarUrl } = useProfile();
   const { clearAll } = useProgress();
-  const { isPremium } = usePremium(); // Mantido para referência futura, mas não usado para temas
 
   const handleAvatarChange = (file: File) => {
     const reader = new FileReader();
