@@ -2,92 +2,186 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root, .theme-nebula {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 262.1 83.3% 57.8%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 3.7% 11.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 262.1 83.3% 57.8%;
-    --radius: 0.75rem;
-  }
+/* Typography: use premium fonts loaded from Google Fonts */
+:root {
+  --edu-primary: #4caf50;
+  --edu-accent: #2196f3;
+  --edu-gold: #ffd966;
+  --edu-bg-dark: #060818;
+  --edu-bg-dark-2: #0b1221;
+  --edu-card: rgba(255,255,255,0.04);
+  --radius-lg: 12px;
+  --max-home-height: 80vh;
 }
 
+/* Set default font and dark theme look */
 @layer base {
-  * {
-    @apply border-border;
+  html, body {
+    height: 100%;
   }
   body {
-    @apply text-foreground bg-background;
-    font-feature-settings: "rlig" 1, "calt" 1;
-    transition: background 0.5s ease, color 0.5s ease;
+    font-family: "Poppins", "Fredoka", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    color: rgb(255 255 255 / 0.98);
+    background: linear-gradient(180deg, rgba(5,10,20,1) 0%, rgba(10,12,28,1) 100%);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
+
+  /* Make sure images have alt text (accessibility reminder) */
+  img { max-width: 100%; height: auto; display: block; }
 }
 
-@keyframes aurora {
-  from { background-position: 50% 50%, 50% 50%; }
-  to { background-position: 350% 50%, 350% 50%; }
+/* Starry background (image fallback + gradient + subtle animated particles) */
+.main-starry {
+  position: relative;
+  overflow: hidden;
+  background-image: url('/starry-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100%;
 }
 
-.main-container::before {
+/* Fallback gradient if image missing */
+.main-starry::before {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: -1;
-  background-attachment: fixed;
-  /* Aplicando o fundo Nebula padrão */
-  background-image: radial-gradient(ellipse 80% 80% at 50% -20%, rgba(120, 119, 198, 0.3), transparent);
-  animation: aurora 60s linear infinite;
+  z-index: -2;
+  background: radial-gradient(ellipse at 10% 10%, rgba(63,94,251,0.06), transparent 10%),
+              radial-gradient(ellipse at 90% 70%, rgba(139,92,246,0.06), transparent 20%),
+              linear-gradient(180deg, rgba(2,6,23,0.7), rgba(10,12,28,0.85));
+  mix-blend-mode: normal;
 }
 
-.glass-card {
-    @apply bg-secondary/40 backdrop-blur-lg border border-white/10 rounded-2xl shadow-2xl shadow-black/20;
-}
-
-.interactive-glow {
-  position: relative;
-  overflow: hidden;
-}
-
-.interactive-glow::before {
-  content: "";
+/* Particle layer: lightweight CSS animated dots (no canvas) */
+.starry-particles {
   position: absolute;
-  left: var(--glow-x, -100%);
-  top: var(--glow-y, -100%);
-  width: 150px;
-  height: 150px;
-  background: radial-gradient(circle closest-side, rgba(255, 255, 255, 0.1), transparent);
-  transform: translate(-50%, -50%);
-  transition: left 0.2s ease-out, top 0.2s ease-out;
+  inset: 0;
+  z-index: -1;
   pointer-events: none;
-  z-index: 1;
+  background-image:
+    radial-gradient(rgba(255,255,255,0.9) 1px, transparent 1px),
+    radial-gradient(rgba(255,255,255,0.6) 1px, transparent 1px),
+    radial-gradient(rgba(255,255,255,0.4) 1px, transparent 1px);
+  background-size: 120px 120px, 80px 80px, 200px 200px;
+  background-position: 0 0, 40px 20px, 80px 70px;
+  opacity: 0.25;
+  animation: particle-flicker 6s linear infinite;
+  filter: blur(0.25px);
 }
 
-@layer utilities {
-  .text-shadow {
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
-  }
-  .text-shadow-md {
-    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-  }
-  .text-shadow-lg {
-    text-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
-  }
-  .text-shadow-none {
-    text-shadow: none;
-  }
+@keyframes particle-flicker {
+  0% { opacity: 0.18; transform: translateY(0); }
+  50% { opacity: 0.28; transform: translateY(-3px); }
+  100% { opacity: 0.18; transform: translateY(0); }
 }
+
+/* Compact home container: max 80% viewport height on mobile */
+.home-compact {
+  max-height: var(--max-home-height);
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 16px;
+}
+
+/* Card style for game buttons and dashboard items */
+.edu-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: var(--radius-lg);
+  padding: 12px;
+  box-shadow: 0 6px 18px rgba(2,6,23,0.6);
+}
+
+/* Avatar style (larger and centered) */
+.home-avatar {
+  width: 84px;
+  height: 84px;
+  border-radius: 9999px;
+  border: 3px solid rgba(255,255,255,0.12);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+}
+
+/* Points bar */
+.points-bar {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 10px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.04);
+}
+
+/* Buttons premium */
+.btn-game {
+  background: linear-gradient(180deg, var(--edu-primary), color-mix(in srgb, var(--edu-primary) 85%, black 10%));
+  color: #031204;
+  font-weight:600;
+  border-radius: 12px;
+  padding: 12px 14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.btn-game:hover { transform: scale(1.03); box-shadow: 0 8px 24px rgba(76,175,80,0.18); }
+
+/* Dashboard buttons */
+.btn-dash {
+  background: linear-gradient(180deg, var(--edu-accent), color-mix(in srgb, var(--edu-accent) 85%, black 10%));
+  color: white;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+/* Mobile bottom nav */
+.mobile-bottom-nav {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 28px);
+  max-width: 720px;
+  background: rgba(6,8,24,0.6);
+  border-radius: 16px;
+  padding: 8px;
+  display:flex;
+  gap:8px;
+  justify-content:space-around;
+  align-items:center;
+  box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+  border: 1px solid rgba(255,255,255,0.06);
+  z-index: 60;
+}
+
+/* Confetti helper (canvas will be used programmatically) */
+.confetti-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 70;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  :root {
+    --radius-lg: 10px;
+  }
+  .home-avatar { width: 72px; height: 72px; }
+  .edu-card { padding: 10px; border-radius: 10px; }
+  h1 { font-size: 24px; }
+  p, button, .points-bar { font-size: 14px; }
+  .mobile-bottom-nav { bottom: 8px; padding: 6px; }
+  .home-compact { padding: 10px; max-height: 80vh; }
+}
+
+/* Ensure no horizontal scroll */
+html, body, #root { overflow-x: hidden; }
