@@ -1,34 +1,38 @@
 import { useEffect, useState, ReactNode, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { showSuccess } from '@/utils/toast';
+import { usePremium } from '@/context/PremiumContext';
 
-const INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-472017295403326f"; // keep existing id (displayed)
-const AD_DISPLAY_FREQUENCY = 8; // Much less frequent than before (was 3)
+const INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-472017295403326f";
+const AD_DISPLAY_FREQUENCY = 8;
+const AD_DISPLAY_TIME_MS = 1000; // tempo reduzido
 
 interface InterstitialAdManagerProps {
   children: ReactNode;
 }
 
-// This component simulates interstitial ad display.
-// It now respects a user preference stored at 'edukids_show_interstitials'.
-// If that key is set to "false", interstitials are skipped entirely.
+// Exibe um card pequeno e não bloqueante no canto inferior direito para usuários FREE.
+// Usuários premium não veem intersticiais.
 const InterstitialAdManager = ({ children }: InterstitialAdManagerProps) => {
   const location = useLocation();
   const [isAdShowing, setIsAdShowing] = useState(false);
   const timerRef = useRef<number | null>(null);
+  const { isPremium } = usePremium();
 
   useEffect(() => {
-    // If user disabled interstitials, skip everything
+    if (isPremium) return; // Premium não vê anúncios
+
+    // Permissão do usuário para exibir intersticiais (padrão: true)
     try {
       const showInterstitials = localStorage.getItem('edukids_show_interstitials');
       if (showInterstitials === 'false') {
         return;
       }
     } catch (e) {
-      // ignore localStorage errors and proceed
+      // ignore
     }
 
-    // Don't show on home or login
+    // Não mostrar nas rotas iniciais
     if (location.pathname === '/' || location.pathname === '/login') {
       return;
     }
@@ -37,7 +41,7 @@ const InterstitialAdManager = ({ children }: InterstitialAdManagerProps) => {
     const nextCount = currentCount + 1;
 
     if (nextCount >= AD_DISPLAY_FREQUENCY) {
-      // If an existing timer exists, clear it first (prevents overlap)
+      // limpa timers anteriores
       if (timerRef.current) {
         clearTimeout(timerRef.current);
         timerRef.current = null;
@@ -45,7 +49,7 @@ const InterstitialAdManager = ({ children }: InterstitialAdManagerProps) => {
 
       setIsAdShowing(true);
 
-      // Schedule hiding the ad and reset counter
+      // agendar esconder o card e resetar contador
       timerRef.current = window.setTimeout(() => {
         timerRef.current = null;
         setIsAdShowing(false);
@@ -55,9 +59,8 @@ const InterstitialAdManager = ({ children }: InterstitialAdManagerProps) => {
         } catch (e) {
           // ignore
         }
-      }, 1500); // simulated display time
+      }, AD_DISPLAY_TIME_MS);
 
-      // record the counter while the ad is showing
       try {
         localStorage.setItem('ad_counter', String(nextCount));
       } catch (e) {
@@ -71,9 +74,8 @@ const InterstitialAdManager = ({ children }: InterstitialAdManagerProps) => {
         // ignore
       }
     }
-  }, [location.pathname]);
+  }, [location.pathname, isPremium]);
 
-  // Clean up timer on unmount only
   useEffect(() => {
     return () => {
       if (timerRef.current) {
@@ -83,19 +85,24 @@ const InterstitialAdManager = ({ children }: InterstitialAdManagerProps) => {
     };
   }, []);
 
-  if (isAdShowing) {
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-sm">
-        <div className="text-center p-8 glass-card">
-          <h2 className="text-3xl font-bold text-primary mb-4">Anúncio Intersticial</h2>
-          <p className="text-muted-foreground">O conteúdo será carregado em breve...</p>
-          <p className="text-xs mt-4">ID da Unidade: {INTERSTITIAL_AD_UNIT_ID}</p>
+  // Renderiza um card flutuante pequeno no canto inferior direito (não bloqueante)
+  return (
+    <>
+      {children}
+      {isAdShowing && (
+        <div className="fixed z-50 bottom-6 right-6 pointer-events-none">
+          <div className="pointer-events-auto w-80 glass-card p-4 shadow-2xl border-white/10">
+            <h3 className="text-lg font-bold text-primary mb-1">Anúncio Patrocinado</h3>
+            <p className="text-sm text-muted-foreground mb-2">Obrigado ao nosso patrocinador — o conteúdo aparecerá em breve.</p>
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-muted-foreground">ID: {INTERSTITIAL_AD_UNIT_ID}</span>
+              <span className="text-xs text-muted-foreground">⏱️</span>
+            </div>
+          </div>
         </div>
-      </div>
-    );
-  }
-
-  return <>{children}</>;
+      )}
+    </>
+  );
 };
 
 export default InterstitialAdManager;
