@@ -5,19 +5,18 @@ import { ArrowRight, BookOpen, GraduationCap, Star } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TiltCard } from "@/components/TiltCard";
 import { subjectsData } from "@/data/activitiesData";
-import { allCourses } from "@/data/coursesData"; // Importação CORRETA
+import { allCourses } from "@/data/coursesData";
 import { usePremium } from "@/context/PremiumContext";
 import { useSupabase } from "@/context/SupabaseContext";
 import { Icon, IconName } from "@/components/Icon";
-import { useAge } from "@/context/AgeContext"; // Importar useAge
+import { useAge } from "@/context/AgeContext";
 
-// Definindo o tipo de grupo de idade para uso local
 type AgeGroupKey = '4-6' | '7-9' | '10-12';
 
 const Home = () => {
   const { isPremium } = usePremium();
   const { user } = useSupabase();
-  const { setAgeGroup } = useAge(); // Usar useAge
+  const { setAgeGroup } = useAge();
   const navigate = useNavigate();
 
   const ageGroups: { id: AgeGroupKey; label: string; description: string; icon: IconName }[] = [
@@ -38,13 +37,13 @@ const Home = () => {
       transition={{ duration: 0.5 }}
     >
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-16 sm:py-24 bg-gradient-to-b from-background to-primary/5">
+      <section className="relative overflow-hidden py-12 sm:py-16 bg-gradient-to-b from-background to-primary/5">
         <div className="container mx-auto px-4 text-center">
           <motion.h1
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="text-4xl sm:text-6xl font-extrabold tracking-tighter mb-4 text-foreground"
+            className="text-4xl sm:text-5xl font-extrabold tracking-tighter mb-4 text-foreground"
           >
             O Futuro da Educação Infantil
           </motion.h1>
@@ -76,8 +75,8 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Age Selection Section (Adjusted Padding) */}
-      <section id="age-selection" className="container mx-auto px-4 text-center py-12 sm:py-24">
+      {/* Age Selection Section */}
+      <section id="age-selection" className="container mx-auto px-4 text-center py-12 sm:py-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -85,8 +84,8 @@ const Home = () => {
           viewport={{ once: true }}
         >
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tighter mb-4">Escolha a Idade do Seu Filho(a)</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto mb-12">
-            Nosso conteúdo é adaptado para garantir o desenvolvimento cognitivo e motor ideal em cada fase.
+          <p className="text-muted-foreground max-w-2xl mx-auto mb-10">
+            Nosso conteúdo é adaptado para garantir o desenvolvimento ideal em cada fase.
           </p>
         </motion.div>
 
@@ -113,18 +112,18 @@ const Home = () => {
       </section>
 
       {/* Subjects/Activities Section */}
-      <section id="subjects" className="bg-secondary/30 py-16 sm:py-24">
+      <section id="subjects" className="bg-secondary/30 py-12 sm:py-16">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="text-center mb-12"
+            className="text-center mb-10"
           >
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tighter mb-4">Matérias Interativas</h2>
             <p className="text-muted-foreground max-w-3xl mx-auto">
-              De matemática a artes, cobrimos todas as áreas essenciais do desenvolvimento infantil com atividades lúdicas e envolventes.
+              De matemática a artes, cobrimos todas as áreas essenciais do desenvolvimento infantil.
             </p>
           </motion.div>
 
@@ -144,7 +143,7 @@ const Home = () => {
               </motion.div>
             ))}
           </div>
-          <div className="text-center mt-10">
+          <div className="text-center mt-8">
             <Button asChild variant="link" size="lg">
               <Link to="/activities">Ver todas as atividades <ArrowRight className="ml-2 h-4 w-4" /></Link>
             </Button>
@@ -153,17 +152,17 @@ const Home = () => {
       </section>
 
       {/* Courses Section */}
-      <section id="courses" className="container mx-auto px-4 py-16 sm:py-24">
+      <section id="courses" className="container mx-auto px-4 py-12 sm:py-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-12"
+          className="text-center mb-10"
         >
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tighter mb-4">Cursos de Habilidades Essenciais</h2>
           <p className="text-muted-foreground max-w-3xl mx-auto">
-            Cursos focados em habilidades socioemocionais, criatividade e desenvolvimento motor, complementando o currículo escolar.
+            Cursos focados em habilidades socioemocionais, criatividade e desenvolvimento motor.
           </p>
         </motion.div>
 
@@ -199,7 +198,7 @@ const Home = () => {
 
       {/* Premium CTA Section */}
       {!isPremium && (
-        <section id="premium-cta" className="bg-primary/10 py-16 sm:py-24">
+        <section id="premium-cta" className="bg-primary/10 py-12 sm:py-16">
           <div className="container mx-auto px-4 text-center">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
@@ -211,7 +210,7 @@ const Home = () => {
               <Star className="h-10 w-10 text-primary mx-auto mb-4" />
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tighter mb-4">Desbloqueie o Acesso Total</h2>
               <p className="text-lg text-muted-foreground mb-8">
-                Torne-se Premium e garanta acesso ilimitado a todos os jogos, cursos, relatórios avançados e suporte de IA.
+                Acesso ilimitado a todos os jogos, cursos, relatórios avançados e suporte de IA.
               </p>
               <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/30">
                 <Link to="/store">
