@@ -5,7 +5,7 @@ import { ArrowRight, BookOpen, GraduationCap, Star } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TiltCard } from "@/components/TiltCard";
 import { subjectsData } from "@/data/activitiesData";
-import { coursesData } from "@/data/coursesData";
+import { allCourses } from "@/data/coursesData";
 import { usePremium } from "@/context/PremiumContext";
 import { useSupabase } from "@/context/SupabaseContext";
 import { Icon } from "@/components/Icon";
@@ -157,7 +157,7 @@ const Home = () => {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {coursesData.slice(0, 3).map((course, index) => (
+          {allCourses.slice(0, 3).map((course, index) => (
             <motion.div
               key={course.id}
               initial={{ opacity: 0, y: 20 }}
@@ -168,7 +168,8 @@ const Home = () => {
               <Card className="glass-card p-4 h-full flex flex-col">
                 <CardHeader className="p-0 pb-3">
                   <div className="flex items-center gap-3">
-                    <Icon name={course.icon as any} className="h-6 w-6 text-primary" />
+                    {/* O ícone do curso não está definido no objeto course, então vou usar um ícone genérico ou removê-lo */}
+                    <GraduationCap className="h-6 w-6 text-primary" />
                     <CardTitle className="text-xl">{course.title}</CardTitle>
                   </div>
                 </CardHeader>
