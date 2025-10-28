@@ -36,99 +36,156 @@ export interface Subject {
 }
 
 // Conteúdo de Quiz para reuso (melhorando a qualidade das perguntas)
+// Algumas arrays foram expandidas; mantive o padrão e completei o arquivo.
+
 const quizM1L1: QuizQuestion[] = [
   { question: "Quantas maçãs 🍎🍎 você vê?", options: ["1", "2", "3"], correctAnswer: "2" },
   { question: "Qual número vem imediatamente depois do 1?", options: ["3", "2", "4"], correctAnswer: "2" },
+  { question: "Se você tem 1 bola e ganha mais 1, quantas bolas tem?", options: ["1", "2", "3"], correctAnswer: "2" },
+  { question: "Qual número é menor: 1 ou 2?", options: ["1", "2", "ambos iguais"], correctAnswer: "1" },
 ];
+
 const quizM1L2: QuizQuestion[] = [
   { question: "Se você tem 3 bolas e ganha mais 1, quantas tem no total?", options: ["4", "3", "5"], correctAnswer: "4" },
   { question: "Qual número está entre 4 e 6?", options: ["5", "7", "3"], correctAnswer: "5" },
+  { question: "Se somarmos 2 + 2, qual é o resultado?", options: ["3", "4", "5"], correctAnswer: "4" },
+  { question: "Quantos dedos temos em uma mão (comum)?", options: ["4", "5", "6"], correctAnswer: "5" },
 ];
+
 const quizM1L4: QuizQuestion[] = [
   { question: "Se você tem 2 laranjas e 2 bananas, quantas frutas são?", options: ["3", "4", "5"], correctAnswer: "4" },
   { question: "Qual número é maior que 5, mas menor que 7?", options: ["5", "6", "7"], correctAnswer: "6" },
+  { question: "Se você tirar 1 de 4, quantas sobram?", options: ["2", "3", "4"], correctAnswer: "3" },
+  { question: "Complete: 1, 2, __, 4", options: ["3", "5", "6"], correctAnswer: "3" },
 ];
+
 const quizM1L5: QuizQuestion[] = [
   { question: "Se você tem 5 doces e come 2, quantos sobram?", options: ["3", "4", "2"], correctAnswer: "3" },
   { question: "Qual é o maior número: 1, 5 ou 3?", options: ["1", "5", "3"], correctAnswer: "5" },
+  { question: "Quantas unidades tem o número 5?", options: ["Cinco", "Quatro", "Seis"], correctAnswer: "Cinco" },
+  { question: "Se juntar 2 e 3, qual número obtém?", options: ["4", "5", "6"], correctAnswer: "5" },
 ];
+
 const quizM1L6: QuizQuestion[] = [
   { question: "Conte os círculos: ⭕⭕⭕", options: ["2", "3", "4"], correctAnswer: "3" },
   { question: "Qual número vem antes do 5?", options: ["6", "4", "3"], correctAnswer: "4" },
+  { question: "Se você começa no 1 e conta até 5, qual é o último número que fala?", options: ["4", "5", "6"], correctAnswer: "5" },
+  { question: "Qual número é par: 2 ou 3?", options: ["2", "3", "ambos"], correctAnswer: "2" },
 ];
 
 const quizM2L1: QuizQuestion[] = [
   { question: "Qual forma é redonda como uma bola?", options: ["Quadrado", "Círculo", "Triângulo"], correctAnswer: "Círculo" },
   { question: "Quantos lados tem um triângulo?", options: ["4", "3", "2"], correctAnswer: "3" },
+  { question: "Qual forma não tem lados?", options: ["Quadrado", "Círculo", "Triângulo"], correctAnswer: "Círculo" },
+  { question: "Quantos cantos tem um quadrado?", options: ["3", "4", "5"], correctAnswer: "4" },
 ];
+
 const quizM2L2: QuizQuestion[] = [
   { question: "Qual forma tem 4 lados iguais?", options: ["Círculo", "Triângulo", "Quadrado"], correctAnswer: "Quadrado" },
   { question: "Uma fatia de pizza tem formato de:", options: ["Círculo", "Triângulo", "Quadrado"], correctAnswer: "Triângulo" },
+  { question: "Qual forma parece uma janela retangular?", options: ["Quadrado", "Retângulo", "Círculo"], correctAnswer: "Retângulo" },
+  { question: "Um losango tem quantos lados?", options: ["3", "4", "5"], correctAnswer: "4" },
 ];
+
 const quizM2L3: QuizQuestion[] = [
   { question: "Uma porta geralmente tem formato de:", options: ["Círculo", "Retângulo", "Triângulo"], correctAnswer: "Retângulo" },
   { question: "Um relógio de parede redondo tem formato de:", options: ["Quadrado", "Círculo", "Estrela"], correctAnswer: "Círculo" },
+  { question: "Qual dessas formas tem pontos (vértices)?", options: ["Círculo", "Quadrado", "Nenhuma"], correctAnswer: "Quadrado" },
+  { question: "Qual forma tem três lados?", options: ["Triângulo", "Quadrado", "Círculo"], correctAnswer: "Triângulo" },
 ];
 
 const quizM3L1: QuizQuestion[] = [
   { question: "Quanto é 1 + 1?", options: ["3", "2", "1"], correctAnswer: "2" },
   { question: "Quanto é 2 + 1?", options: ["4", "3", "2"], correctAnswer: "3" },
+  { question: "Se você tem 2 maçãs e ganha 2, quantas tem agora?", options: ["2", "3", "4"], correctAnswer: "4" },
+  { question: "Qual é a soma de 1 + 2 + 1?", options: ["3", "4", "2"], correctAnswer: "4" },
 ];
+
 const quizM3L2: QuizQuestion[] = [
   { question: "Você tem 3 carrinhos e 2 bonecas. Quantos brinquedos no total?", options: ["5", "6", "4"], correctAnswer: "5" },
   { question: "Se você tem 4 lápis e perde 1, quantos sobram?", options: ["3", "5", "2"], correctAnswer: "3" },
+  { question: "João tinha 2 bolinhas e ganhou 3. Quantas agora?", options: ["4", "5", "6"], correctAnswer: "5" },
+  { question: "Se dividir 6 em 2 grupos iguais, quantos em cada grupo?", options: ["2", "3", "4"], correctAnswer: "3" },
 ];
+
 const quizM3L3: QuizQuestion[] = [
   { question: "Quanto é 4 + 3?", options: ["6", "7", "8"], correctAnswer: "7" },
   { question: "Quanto é 5 + 5?", options: ["9", "10", "11"], correctAnswer: "10" },
+  { question: "Se você tem 7 e soma 2, qual o resultado?", options: ["8", "9", "10"], correctAnswer: "9" },
+  { question: "Qual soma é igual a 9?", options: ["4+5", "3+3", "2+2"], correctAnswer: "4+5" },
 ];
+
 const quizM3L4: QuizQuestion[] = [
   { question: "Havia 5 pássaros na árvore. 2 voaram. Quantos restaram?", options: ["3", "7", "2"], correctAnswer: "3" },
   { question: "João tem 6 adesivos. Maria tem 3. Quantos adesivos eles têm juntos?", options: ["8", "9", "10"], correctAnswer: "9" },
+  { question: "Se você tira 1 de 9, quanto fica?", options: ["8", "7", "9"], correctAnswer: "8" },
+  { question: "Se somar 2 + 2 + 2, qual o total?", options: ["4", "6", "8"], correctAnswer: "6" },
 ];
 
 const quizM4L1: QuizQuestion[] = [
   { question: "Quanto é 3 x 4?", options: ["7", "12", "10"], correctAnswer: "12" },
   { question: "Quanto é 5 x 5?", options: ["20", "25", "30"], correctAnswer: "25" },
+  { question: "3 x 2 é igual a:", options: ["5", "6", "7"], correctAnswer: "6" },
+  { question: "Se você tem 4 grupos de 3, quantos no total?", options: ["7", "12", "9"], correctAnswer: "12" },
 ];
+
 const quizM4L2: QuizQuestion[] = [
   { question: "Qual é o resultado de 2 x 7?", options: ["14", "9", "12"], correctAnswer: "14" },
   { question: "Quanto é 4 x 8?", options: ["32", "28", "36"], correctAnswer: "32" },
+  { question: "5 x 3 é:", options: ["15", "12", "10"], correctAnswer: "15" },
+  { question: "2 x 10 é igual a:", options: ["20", "12", "22"], correctAnswer: "20" },
 ];
+
 const quizM4L3: QuizQuestion[] = [
   { question: "Quanto é 8 x 9?", options: ["72", "81", "64"], correctAnswer: "72" },
   { question: "Quanto é 6 x 6?", options: ["30", "36", "42"], correctAnswer: "36" },
+  { question: "7 x 7 é:", options: ["49", "42", "56"], correctAnswer: "49" },
+  { question: "9 x 5 é:", options: ["45", "40", "35"], correctAnswer: "45" },
 ];
+
 const quizM4L4: QuizQuestion[] = [
   { question: "Quanto é 7 x 7?", options: ["49", "56", "42"], correctAnswer: "49" },
   { question: "Quanto é 9 x 10?", options: ["90", "100", "80"], correctAnswer: "90" },
+  { question: "8 x 4 é:", options: ["28", "32", "24"], correctAnswer: "32" },
+  { question: "3 x 9 é:", options: ["27", "26", "21"], correctAnswer: "27" },
 ];
 
 const quizM5L2: QuizQuestion[] = [
   { question: "Se você dividir uma maçã em 4 partes iguais, cada parte é chamada de:", options: ["Um meio", "Um quarto", "Um terço"], correctAnswer: "Um quarto" },
   { question: "Qual fração representa metade de um bolo?", options: ["1/4", "1/2", "2/3"], correctAnswer: "1/2" },
+  { question: "2/4 é equivalente a:", options: ["1/4", "1/2", "2/2"], correctAnswer: "1/2" },
+  { question: "Qual fração representa 3 de 4 partes?", options: ["3/4", "1/4", "2/4"], correctAnswer: "3/4" },
 ];
+
 const quizM5L3: QuizQuestion[] = [
   { question: "Qual fração é igual a 1/2?", options: ["2/4", "1/3", "3/5"], correctAnswer: "2/4" },
   { question: "Qual é maior: 1/4 ou 3/4?", options: ["1/4", "3/4", "São iguais"], correctAnswer: "3/4" },
+  { question: "Se você pegar metade de 8, qual o resultado?", options: ["4", "2", "6"], correctAnswer: "4" },
+  { question: "1/3 é maior ou menor que 1/2?", options: ["Maior", "Menor", "Iguais"], correctAnswer: "Menor" },
 ];
+
 const quizM5L4: QuizQuestion[] = [
   { question: "Se 2/8 da pizza foi comida, qual fração equivalente sobrou?", options: ["1/4", "3/4", "1/2"], correctAnswer: "3/4" },
   { question: "Quantos 1/8 cabem em 1/2?", options: ["2", "4", "8"], correctAnswer: "4" },
+  { question: "Qual fração representa duas fatias de um total de oito?", options: ["2/8", "1/4", "1/2"], correctAnswer: "2/8" },
+  { question: "Se a pizza foi dividida em 4 e você comeu 1, qual fração você comeu?", options: ["1/4", "2/4", "3/4"], correctAnswer: "1/4" },
 ];
 
 const quizM6L1: QuizQuestion[] = [
   { question: "Se um trem sai às 8h e viaja por 3 horas, a que horas ele chega?", options: ["10h", "11h", "12h"], correctAnswer: "11h" },
   { question: "Um pato, dois patos, quantos pés no total?", options: ["2", "4", "6"], correctAnswer: "4" },
 ];
+
 const quizM6L2: QuizQuestion[] = [
   { question: "Um fazendeiro tem 10 galinhas. Se ele vender 4 e comprar 2, quantas galinhas ele tem agora?", options: ["6", "8", "12"], correctAnswer: "8" },
   { question: "Se hoje é terça-feira, que dia será depois de amanhã?", options: ["Quarta", "Quinta", "Sexta"], correctAnswer: "Quinta" },
 ];
+
 const quizM6L3: QuizQuestion[] = [
   { question: "Se o preço de um livro é R$ 20 e você tem um desconto de 10%, quanto você paga?", options: ["R$ 18", "R$ 19", "R$ 10"], correctAnswer: "R$ 18" },
   { question: "Um quadrado tem 4 lados. Se o perímetro é 24cm, qual é o tamanho de cada lado?", options: ["4cm", "6cm", "8cm"], correctAnswer: "6cm" },
 ];
+
 const quizM6L4: QuizQuestion[] = [
   { question: "Qual é o próximo número na sequência: 1, 4, 9, 16, ...?", options: ["20", "25", "30"], correctAnswer: "25" },
   { question: "Se 5 máquinas fazem 5 produtos em 5 minutos, quanto tempo 100 máquinas levam para fazer 100 produtos?", options: ["100 minutos", "5 minutos", "1 minuto"], correctAnswer: "5 minutos" },
@@ -138,10 +195,12 @@ const quizM7L2: QuizQuestion[] = [
   { question: "Qual é o perímetro de um quadrado com lados de 5cm?", options: ["10cm", "20cm", "25cm"], correctAnswer: "20cm" },
   { question: "O que é perímetro?", options: ["A área interna", "A soma dos lados", "O centro da figura"], correctAnswer: "A soma dos lados" },
 ];
+
 const quizM7L3: QuizQuestion[] = [
   { question: "Qual é a área de um retângulo com 4cm de largura e 6cm de comprimento?", options: ["10cm²", "24cm²", "12cm²"], correctAnswer: "24cm²" },
   { question: "A fórmula da área do retângulo é:", options: ["Lado + Lado", "Largura x Comprimento", "Lado x 4"], correctAnswer: "Largura x Comprimento" },
 ];
+
 const quizM7L4: QuizQuestion[] = [
   { question: "Se você precisa pintar uma parede de 3m x 4m, qual é a área total a ser pintada?", options: ["7m²", "12m²", "14m²"], correctAnswer: "12m²" },
   { question: "Se um tapete tem 2m x 3m, qual é a área dele?", options: ["5m²", "6m²", "9m²"], correctAnswer: "6m²" },
@@ -151,14 +210,17 @@ const quizP1L1: QuizQuestion[] = [
   { question: "Qual letra começa a palavra 'BOLA'?", options: ["P", "B", "D"], correctAnswer: "B" },
   { question: "Qual letra faz o som de 'M' de 'MACACO'?", options: ["N", "M", "P"], correctAnswer: "M" },
 ];
+
 const quizP1L2: QuizQuestion[] = [
   { question: "Qual é a primeira letra da palavra 'CASA'?", options: ["S", "C", "A"], correctAnswer: "C" },
   { question: "Qual é a última letra da palavra 'PATO'?", options: ["O", "A", "T"], correctAnswer: "O" },
 ];
+
 const quizP1L3: QuizQuestion[] = [
   { question: "Junte as letras L-U-A. Qual palavra você formou?", options: ["SOL", "LUA", "RUA"], correctAnswer: "LUA" },
   { question: "Qual palavra tem 3 letras?", options: ["CASA", "PÉ", "JANELA"], correctAnswer: "PÉ" },
 ];
+
 const quizP1L4: QuizQuestion[] = [
   { question: "Na frase 'O gato comeu o peixe.', quantas vezes a letra 'O' aparece?", options: ["1", "2", "3"], correctAnswer: "3" },
   { question: "Qual palavra na frase 'A menina é feliz' é um nome (substantivo)?", options: ["A", "menina", "feliz"], correctAnswer: "menina" },
@@ -168,6 +230,7 @@ const quizP2L1: QuizQuestion[] = [
   { question: "Quantas sílabas tem a palavra 'PATO'?", options: ["1", "2", "3"], correctAnswer: "2" },
   { question: "Qual sílaba falta para formar 'CA___LO'?", options: ["SA", "VA", "VA"], correctAnswer: "VA" },
 ];
+
 const quizP2L2: QuizQuestion[] = [
   { question: "Junte as sílabas 'CA' e 'LO'. Qual palavra você formou?", options: ["CALO", "CASA", "COLA"], correctAnswer: "CALO" },
   { question: "Qual palavra é formada por 'MA' e 'LÁ'?", options: ["MALA", "LAMA", "MOLA"], correctAnswer: "MALA" },
@@ -177,6 +240,7 @@ const quizP3L1: QuizQuestion[] = [
   { question: "Qual palavra rima com 'PÃO'?", options: ["GATO", "MÃO", "BOLA"], correctAnswer: "MÃO" },
   { question: "Qual palavra rima com 'FOGUETE'?", options: ["PLANETA", "CHICLETE", "ESTRELA"], correctAnswer: "CHICLETE" },
 ];
+
 const quizP3L2: QuizQuestion[] = [
   { question: "Qual palavra rima com 'CÃO'?", options: ["PÉ", "BALÃO", "SOL"], correctAnswer: "BALÃO" },
   { question: "Complete a frase: 'O sapo pulou no _____' (Sugestão: RIO)", options: ["LAGO", "RIO", "MAR"], correctAnswer: "RIO" },
@@ -186,6 +250,7 @@ const quizP4L1: QuizQuestion[] = [
   { question: "O cachorro Rex gosta de correr no parque. Ele é marrom e muito rápido. Pergunta: De que cor é o cachorro Rex?", options: ["Preto", "Branco", "Marrom"], correctAnswer: "Marrom" },
   { question: "Qual é a ideia principal do texto: 'O sol nasceu, os pássaros cantaram e o dia começou feliz'?", options: ["O sol é quente", "O dia começou", "Os pássaros cantam"], correctAnswer: "O dia começou" },
 ];
+
 const quizP4L2: QuizQuestion[] = [
   { question: "A tartaruga e o coelho fizeram uma corrida. O coelho parou para dormir e a tartaruga, devagar, ganhou. Pergunta: Quem ganhou a corrida?", options: ["O coelho", "A tartaruga", "Ninguém"], correctAnswer: "A tartaruga" },
   { question: "Qual lição podemos tirar da história da tartaruga e do coelho?", options: ["Correr é melhor", "A pressa é inimiga da perfeição", "Coelhos dormem muito"], correctAnswer: "A pressa é inimiga da perfeição" },
@@ -195,6 +260,7 @@ const quizP5L1: QuizQuestion[] = [
   { question: "Qual palavra precisa de acento: 'cafe' ou 'mesa'?", options: ["MESA", "CAFÉ", "BOLO"], correctAnswer: "CAFÉ" },
   { question: "Qual é o acento usado na palavra 'VÔO'?", options: ["Agudo", "Circunflexo", "Til"], correctAnswer: "Circunflexo" },
 ];
+
 const quizP5L2: QuizQuestion[] = [
   { question: "Acentue corretamente: 'voce'", options: ["VOCE", "VOCÊ", "VOCÊS"], correctAnswer: "VOCÊ" },
   { question: "Acentue corretamente: 'arvore'", options: ["ARVORE", "ÁRVORE", "ARVORE"], correctAnswer: "ÁRVORE" },
@@ -204,6 +270,7 @@ const quizP6L1: QuizQuestion[] = [
   { question: "Na frase 'O menino comeu a maçã', qual é o substantivo?", options: ["comeu", "menino", "a"], correctAnswer: "menino" },
   { question: "Qual palavra é um verbo (ação)?", options: ["CASA", "CORRER", "AZUL"], correctAnswer: "CORRER" },
 ];
+
 const quizP6L2: QuizQuestion[] = [
   { question: "Qual palavra é um adjetivo (qualidade)?", options: ["PULAR", "FELIZ", "MESA"], correctAnswer: "FELIZ" },
   { question: "Na frase 'O carro é rápido', qual é o adjetivo?", options: ["carro", "é", "rápido"], correctAnswer: "rápido" },
@@ -213,6 +280,7 @@ const quizP7L1: QuizQuestion[] = [
   { question: "Qual é a primeira parte de uma história?", options: ["Meio", "Fim", "Início/Introdução"], correctAnswer: "Início/Introdução" },
   { question: "O que define o 'conflito' de uma história?", options: ["O final feliz", "O problema principal", "A descrição do personagem"], correctAnswer: "O problema principal" },
 ];
+
 const quizP7L2: QuizQuestion[] = [
   { question: "Qual verbo é mais forte que 'andou rápido'?", options: ["Caminhou", "Disparou", "Parou"], correctAnswer: "Disparou" },
   { question: "O que um adjetivo faz?", options: ["Indica uma ação", "Dá nome a algo", "Dá qualidade a um substantivo"], correctAnswer: "Dá qualidade a um substantivo" },
@@ -222,6 +290,7 @@ const quizC1L2: QuizQuestion[] = [
   { question: "Qual órgão usamos para respirar?", options: ["Coração", "Pulmões", "Estômago"], correctAnswer: "Pulmões" },
   { question: "O que o corpo absorve do ar?", options: ["Gás carbônico", "Oxigênio", "Água"], correctAnswer: "Oxigênio" },
 ];
+
 const quizC1L3: QuizQuestion[] = [
   { question: "Por que é importante lavar as mãos antes de comer?", options: ["Para secar as mãos", "Para remover germes", "Para esfriar as mãos"], correctAnswer: "Para remover germes" },
   { question: "Qual alimento é bom para os ossos?", options: ["Refrigerante", "Leite", "Doce"], correctAnswer: "Leite" },
@@ -231,6 +300,7 @@ const quizH1L2: QuizQuestion[] = [
   { question: "Quem liderou a frota portuguesa que chegou ao Brasil em 1500?", options: ["Cristóvão Colombo", "Pedro Álvares Cabral", "Vasco da Gama"], correctAnswer: "Pedro Álvares Cabral" },
   { question: "Em que ano o Brasil foi 'descoberto' pelos portugueses?", options: ["1492", "1500", "1600"], correctAnswer: "1500" },
 ];
+
 const quizH1L3: QuizQuestion[] = [
   { question: "Qual foi um grande impacto da chegada dos portugueses para os indígenas?", options: ["Aumento da população", "Perda de terras", "Novos animais de estimação"], correctAnswer: "Perda de terras" },
   { question: "O que os portugueses buscavam nas novas terras?", options: ["Ouro e especiarias", "Novos amigos", "Livros"], correctAnswer: "Ouro e especiarias" },
@@ -265,6 +335,7 @@ const quizPr1L1: QuizQuestion[] = [
   { question: "Se você der os comandos 'Andar', 'Virar Esquerda', 'Andar', onde você termina?", options: ["No mesmo lugar", "Virado para a direita", "2 passos à frente, virado para a esquerda"], correctAnswer: "2 passos à frente, virado para a esquerda" },
   { question: "O que é um algoritmo?", options: ["Um tipo de robô", "Uma sequência de passos para resolver um problema", "Um código secreto"], correctAnswer: "Uma sequência de passos para resolver um problema" },
 ];
+
 const quizPr1L2: QuizQuestion[] = [
   { question: "O que acontece se você usar o comando 'Repetir 5 vezes: Pular'?", options: ["Você pula 1 vez", "Você pula 5 vezes", "O programa trava"], correctAnswer: "Você pula 5 vezes" },
   { question: "Um 'loop' serve para:", options: ["Parar o programa", "Repetir uma ação", "Mudar a cor"], correctAnswer: "Repetir uma ação" },
@@ -279,11 +350,11 @@ const quizF1L1: QuizQuestion[] = [
   { question: "Se você ganha R$ 10 (renda) e gasta R$ 3 em doces (despesa), quanto sobra?", options: ["R$ 13", "R$ 7", "R$ 3"], correctAnswer: "R$ 7" },
   { question: "O que é 'renda'?", options: ["Dinheiro que você gasta", "Dinheiro que você recebe", "Dinheiro que você economiza"], correctAnswer: "Dinheiro que você recebe" },
 ];
+
 const quizF1L2: QuizQuestion[] = [
   { question: "Se você quer comprar um brinquedo de R$ 50 e economiza R$ 10 por semana, em quantas semanas você consegue comprar?", options: ["4 semanas", "5 semanas", "10 semanas"], correctAnswer: "5 semanas" },
   { question: "O que significa 'poupar'?", options: ["Gastar tudo", "Guardar dinheiro para o futuro", "Comprar doces"], correctAnswer: "Guardar dinheiro para o futuro" },
 ];
-
 
 export const subjectsData: Subject[] = [
   {
