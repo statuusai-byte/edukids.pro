@@ -13,14 +13,27 @@ import { showSuccess } from "@/utils/toast";
 import { useEffect, useState } from "react";
 import { getSoundEnabled, setSoundEnabled } from "@/utils/sound";
 
+const INTERSTITIALS_KEY = 'edukids_show_interstitials';
+
 const Settings = () => {
   const { ageGroup, setAgeGroup } = useAge();
   const { name, setName, avatarUrl, setAvatarUrl } = useProfile();
   const { clearAll } = useProgress();
   const [uiSounds, setUiSounds] = useState(true);
+  const [interstitialsEnabled, setInterstitialsEnabled] = useState(true);
 
   useEffect(() => {
     setUiSounds(getSoundEnabled());
+    try {
+      const raw = localStorage.getItem(INTERSTITIALS_KEY);
+      if (raw === null) {
+        setInterstitialsEnabled(true); // default: enabled
+      } else {
+        setInterstitialsEnabled(raw === 'true');
+      }
+    } catch (e) {
+      setInterstitialsEnabled(true);
+    }
   }, []);
 
   const handleAvatarChange = (file: File) => {
@@ -42,6 +55,16 @@ const Settings = () => {
     setUiSounds(enabled);
     setSoundEnabled(enabled);
     showSuccess(enabled ? "Sons da interface ativados." : "Sons da interface desativados.");
+  };
+
+  const handleToggleInterstitials = (enabled: boolean) => {
+    try {
+      localStorage.setItem(INTERSTITIALS_KEY, String(enabled));
+      setInterstitialsEnabled(enabled);
+      showSuccess(enabled ? "Anúncios intersticiais ativados." : "Anúncios intersticiais desativados.");
+    } catch (e) {
+      console.error("Failed to save interstitial preference", e);
+    }
   };
 
   return (
@@ -112,6 +135,12 @@ const Settings = () => {
               <Label htmlFor="ui-sounds">Sons da interface</Label>
               <Switch id="ui-sounds" checked={uiSounds} onCheckedChange={handleToggleSounds} />
             </div>
+
+            <div className="flex items-center justify-between">
+              <Label htmlFor="interstitial-ads">Anúncios Intersticiais (tela cheia)</Label>
+              <Switch id="interstitial-ads" checked={interstitialsEnabled} onCheckedChange={handleToggleInterstitials} />
+            </div>
+
             <div className="pt-4 border-t border-white/10">
               <Button 
                 variant="destructive" 
