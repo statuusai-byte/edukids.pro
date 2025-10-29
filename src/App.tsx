@@ -1,5 +1,5 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Toaster as RadixToaster } from "@/components/ui/toaster";
+import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Suspense, lazy } from "react";
@@ -44,16 +44,21 @@ const App = () => (
           <ProfileProvider>
             <PremiumProvider>
               <HintsProvider>
-                <Toaster />
-                <Sonner />
+                {/* Radix-style Toaster (for Radix/Custom toasts) */}
+                <RadixToaster />
+                {/* Sonner Toaster (used by sonner toast utility) */}
+                <SonnerToaster />
                 <ErrorBoundary>
                   <Suspense fallback={<Fallback />}>
                     <Routes>
+                      {/* Top-level routes that should not be wrapped by the main Layout */}
+                      <Route path="/" element={<Home />} />
                       <Route path="/login" element={<Login />} />
                       <Route path="/success-payment" element={<SuccessPayment />} />
                       <Route path="/test-account" element={<TestAccount />} />
+
+                      {/* All other routes use the main Layout */}
                       <Route element={<Layout />}>
-                        <Route path="/" element={<Home />} />
                         <Route path="/activities" element={<Activities />} />
                         <Route path="/activities/:subject" element={<ActivityDetail />} />
                         <Route path="/activities/:subject/:activityId" element={<ActivityContentPage />} />
@@ -64,6 +69,7 @@ const App = () => (
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/settings" element={<Settings />} />
                       </Route>
+
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </Suspense>
