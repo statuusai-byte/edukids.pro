@@ -14,17 +14,36 @@ export interface QuizQuestion {
 interface QuizComponentProps {
   questions: QuizQuestion[];
   onQuizComplete?: (score: number) => void;
+  triggerHint?: boolean;
 }
 
-const QuizComponent = ({ questions, onQuizComplete }: QuizComponentProps) => {
+const QuizComponent = ({ questions, onQuizComplete, triggerHint }: QuizComponentProps) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [score, setScore] = useState(0);
   const [animationClass, setAnimationClass] = useState('');
+  const [eliminatedOptions, setEliminatedOptions] = useState<string[]>([]);
 
   const currentQuestion = useMemo(() => questions[currentQuestionIndex], [questions, currentQuestionIndex]);
   const isQuizFinished = currentQuestionIndex >= questions.length;
+
+  // Reset hint when question changes
+  useEffect(() => {
+    setEliminatedOptions([]);
+  }, [currentQuestionIndex]);
+
+  // Logic to eliminate two wrong answers when hint is triggered
+  useEffect(() => {
+    if (triggerHint && eliminatedOptions.length === 0) {
+      const incorrectOptions = currentQuestion.options.filter(
+        (option) => option !== currentQuestion.correctAnswer
+      );
+      // Shuffle and pick two to eliminate
+      const toEliminate = incorrectOptions.sort(() => 0.5 - Math.random()).slice(0, 2);
+      setEliminatedOptions(toEliminate);
+    }
+  }, [triggerHint, currentQuestion, eliminatedOptions]);
 
   const handleAnswer = (answer: string) => {
     if (selectedAnswer !== null) return;
@@ -48,27 +67,18 @@ const QuizComponent = ({ questions, onQuizComplete }: QuizComponentProps) => {
       setIsCorrect(null);
       setAnimationClass('');
     } else {
-      // Quiz finished
       if (onQuizComplete) {
-        onQuizComplete(score + (isCorrect ? 1 : 0)); // Ensure final score is passed
+        onQuizComplete(score + (isCorrect ? 1 : 0));
       }
-      setCurrentQuestionIndex(questions.length); // Set index past the end
+      setCurrentQuestionIndex(questions.length);
     }
   }, [currentQuestionIndex, questions.length, onQuizComplete, score, isCorrect]);
 
   useEffect(() => {
     if (isCorrect === null) return;
-
-    const newAnimationClass = isCorrect
-      ? 'animate-correct-answer-pop'
-      : 'animate-incorrect-answer-shake';
-    
+    const newAnimationClass = isCorrect ? 'animate-correct-answer-pop' : 'animate-incorrect-answer-shake';
     setAnimationClass(newAnimationClass);
-
-    const timer = setTimeout(() => {
-      setAnimationClass('');
-    }, 500);
-
+    const timer = setTimeout(() => setAnimationClass(''), 500);
     return () => clearTimeout(timer);
   }, [isCorrect]);
 
@@ -96,6 +106,7 @@ const QuizComponent = ({ questions, onQuizComplete }: QuizComponentProps) => {
           {currentQuestion.options.map((option, index) => {
             const isSelected = selectedAnswer === option;
             const isCorrectOption = currentQuestion.correctAnswer === option;
+            const isEliminated = eliminatedOptions.includes(option);
             
             let variant: 'default' | 'outline' | 'destructive' = 'outline';
             let icon = null;
@@ -104,7 +115,6 @@ const QuizComponent = ({ questions, onQuizComplete }: QuizComponentProps) => {
               variant = isCorrect ? 'default' : 'destructive';
               icon = isCorrect ? <CheckCircle className="ml-3 h-5 w-5" /> : <XCircle className="ml-3 h-5 w-5" />;
             } else if (selectedAnswer !== null && isCorrectOption) {
-              // Highlight correct answer after selection
               variant = 'default';
               icon = <CheckCircle className="ml-3 h-5 w-5" />;
             }
@@ -113,12 +123,13 @@ const QuizComponent = ({ questions, onQuizComplete }: QuizComponentProps) => {
               <Button
                 key={index}
                 onClick={() => handleAnswer(option)}
-                disabled={selectedAnswer !== null}
+                disabled={selectedAnswer !== null || isEliminated}
                 className={cn(
                   "h-16 text-lg justify-start transition-all duration-200",
                   variant === 'default' && 'bg-green-600 hover:bg-green-700',
                   variant === 'destructive' && 'bg-red-600 hover:bg-red-700',
-                  variant === 'outline' && selectedAnswer !== null && 'opacity-50'
+                  variant === 'outline' && selectedAnswer !== null && 'opacity-50',
+                  isEliminated && 'opacity-30 pointer-events-none'
                 )}
                 variant={variant === 'default' || variant === 'destructive' ? 'default' : 'outline'}
               >

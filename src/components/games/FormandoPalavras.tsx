@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 interface WordData {
   word: string;
   syllables: string[];
-  image: string; // Placeholder for image URL
+  image: string;
 }
 
 const WORDS: WordData[] = [
@@ -19,12 +19,17 @@ const WORDS: WordData[] = [
   { word: "FOCA", syllables: ["FO", "CA"], image: "🦭" },
 ];
 
-const FormandoPalavras = () => {
+interface FormandoPalavrasProps {
+  triggerHint?: boolean;
+}
+
+const FormandoPalavras = ({ triggerHint }: FormandoPalavrasProps) => {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [selectedSyllables, setSelectedSyllables] = useState<string[]>([]);
   const [shuffledOptions, setShuffledOptions] = useState<string[]>([]);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [animationClass, setAnimationClass] = useState('');
+  const [hintUsed, setHintUsed] = useState(false);
 
   const currentWordData = useMemo(() => WORDS[currentWordIndex], [currentWordIndex]);
 
@@ -32,18 +37,27 @@ const FormandoPalavras = () => {
     setSelectedSyllables([]);
     setIsCorrect(null);
     setAnimationClass('');
+    setHintUsed(false);
     
-    // Shuffle syllables for options
     const options = [...currentWordData.syllables].sort(() => Math.random() - 0.5);
     setShuffledOptions(options);
   }, [currentWordData]);
 
   useEffect(() => {
     setupGame();
-  }, [setupGame]);
+  }, [currentWordIndex, setupGame]);
+
+  // Logic to reveal the first syllable when hint is triggered
+  useEffect(() => {
+    if (triggerHint && !hintUsed) {
+      const firstSyllable = currentWordData.syllables[0];
+      setSelectedSyllables([firstSyllable]);
+      setHintUsed(true);
+    }
+  }, [triggerHint, hintUsed, currentWordData.syllables]);
 
   const handleSyllableClick = (syllable: string) => {
-    if (isCorrect !== null) return; // Game over for this round
+    if (isCorrect !== null) return;
 
     const nextSelection = [...selectedSyllables, syllable];
     setSelectedSyllables(nextSelection);
@@ -62,9 +76,7 @@ const FormandoPalavras = () => {
   };
 
   const handleNext = () => {
-    const nextIndex = (currentWordIndex + 1) % WORDS.length;
-    setCurrentWordIndex(nextIndex);
-    setupGame();
+    setCurrentWordIndex((prev) => (prev + 1) % WORDS.length);
   };
 
   const handleReset = () => {
@@ -72,23 +84,15 @@ const FormandoPalavras = () => {
     setIsCorrect(null);
   };
 
-  const currentAttempt = selectedSyllables.join('');
-
   useEffect(() => {
     if (isCorrect === null) return;
-
-    const newAnimationClass = isCorrect
-      ? 'animate-correct-answer-pop'
-      : 'animate-incorrect-answer-shake';
-    
+    const newAnimationClass = isCorrect ? 'animate-correct-answer-pop' : 'animate-incorrect-answer-shake';
     setAnimationClass(newAnimationClass);
-
-    const timer = setTimeout(() => {
-      setAnimationClass('');
-    }, 500);
-
+    const timer = setTimeout(() => setAnimationClass(''), 500);
     return () => clearTimeout(timer);
   }, [isCorrect]);
+
+  const currentAttempt = selectedSyllables.join('');
 
   return (
     <Card className={cn("glass-card p-6", animationClass)}>
@@ -96,28 +100,20 @@ const FormandoPalavras = () => {
         <CardTitle className="text-2xl">Forme a palavra: {currentWordData.image}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        
-        {/* Display Area */}
         <div className="min-h-[80px] flex justify-center items-center border-b-2 border-primary/50 pb-4">
           <div className="text-5xl font-extrabold tracking-widest text-primary">
             {currentAttempt || '...'}
           </div>
         </div>
-
-        {/* Syllable Options */}
         <div className="flex justify-center gap-4 flex-wrap">
           {shuffledOptions.map((syllable, index) => {
             const isUsed = selectedSyllables.includes(syllable);
-            
             return (
               <Button
                 key={index}
                 onClick={() => handleSyllableClick(syllable)}
                 disabled={isUsed || isCorrect !== null}
-                className={cn(
-                  "h-16 text-2xl transition-all duration-200",
-                  isUsed ? "opacity-50 cursor-default" : "hover:scale-105"
-                )}
+                className={cn("h-16 text-2xl transition-all duration-200", isUsed ? "opacity-50 cursor-default" : "hover:scale-105")}
                 variant="outline"
               >
                 {syllable}
@@ -125,8 +121,6 @@ const FormandoPalavras = () => {
             );
           })}
         </div>
-
-        {/* Feedback and Navigation */}
         <div className="mt-6 flex justify-center gap-4">
           {isCorrect === false && (
             <Button onClick={handleReset} variant="destructive">

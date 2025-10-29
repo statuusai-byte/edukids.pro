@@ -1,6 +1,6 @@
 import { useParams, Link as RouterLink, useNavigate } from "react-router-dom";
 import { subjectsData } from "@/data/activitiesData";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Lightbulb } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,7 +12,6 @@ import RewardButton from "@/components/RewardButton";
 import { showSuccess, showError } from "@/utils/toast";
 import { usePremium } from "@/context/PremiumContext";
 import { useHintsContext } from "@/context/HintsContext";
-import { HelpPackageContent } from "@/components/HelpPackageContent";
 
 const LessonPage = () => {
   const { subject: subjectSlug, activityId, moduleId, lessonId } = useParams();
@@ -21,7 +20,7 @@ const LessonPage = () => {
   const { isPremium } = usePremium();
   const { hints, useHint, addHints } = useHintsContext();
   
-  const [showHelpContent, setShowHelpContent] = useState(false);
+  const [hintTriggered, setHintTriggered] = useState(false);
 
   const { subject, activity, module, lesson, lessonIndex, moduleIndex } = useMemo(() => {
     const s = subjectsData.find(sub => sub.slug === subjectSlug);
@@ -35,6 +34,11 @@ const LessonPage = () => {
     const l = li >= 0 ? m.lessons[li] : null;
     return { subject: s, activity: a, module: m, lesson: l, lessonIndex: li, moduleIndex: mi };
   }, [subjectSlug, activityId, moduleId, lessonId]);
+
+  // Reset hint trigger when the lesson changes
+  useEffect(() => {
+    setHintTriggered(false);
+  }, [lessonId]);
 
   if (!subject || !activity || !module || !lesson) {
     return (
@@ -50,29 +54,24 @@ const LessonPage = () => {
   const completed = isLessonCompleted(subject.slug, activity.id, module.id, lesson.id);
 
   const goNext = () => {
-    setShowHelpContent(false);
     const nextIndex = lessonIndex + 1;
     if (nextIndex < module.lessons.length) {
-      const next = module.lessons[nextIndex];
-      navigate(`/activities/${subject.slug}/${activity.id}/modules/${module.id}/lessons/${next.id}`);
+      navigate(`/activities/${subject.slug}/${activity.id}/modules/${module.id}/lessons/${module.lessons[nextIndex].id}`);
       return;
     }
     const nextModuleIndex = moduleIndex + 1;
     if (nextModuleIndex < activity.modules.length) {
       const nextModule = activity.modules[nextModuleIndex];
-      const nextLesson = nextModule.lessons[0];
-      navigate(`/activities/${subject.slug}/${activity.id}/modules/${nextModule.id}/lessons/${nextLesson.id}`);
+      navigate(`/activities/${subject.slug}/${activity.id}/modules/${nextModule.id}/lessons/${nextModule.lessons[0].id}`);
       return;
     }
     showSuccess("Você chegou ao fim desta atividade.");
   };
 
   const goPrev = () => {
-    setShowHelpContent(false);
     const prevIndex = lessonIndex - 1;
     if (prevIndex >= 0) {
-      const prev = module.lessons[prevIndex];
-      navigate(`/activities/${subject.slug}/${activity.id}/modules/${module.id}/lessons/${prev.id}`);
+      navigate(`/activities/${subject.slug}/${activity.id}/modules/${module.id}/lessons/${module.lessons[prevIndex].id}`);
       return;
     }
     navigate(`/activities/${subject.slug}/${activity.id}`);
@@ -84,19 +83,14 @@ const LessonPage = () => {
   };
 
   const handleUseHint = () => {
-    if (showHelpContent) {
-      setShowHelpContent(false);
-      return;
-    }
-    
     if (isPremium) {
-      setShowHelpContent(true);
+      setHintTriggered(true);
       showSuccess("Dica de Assinante Premium ativada!");
       return;
     }
     if (hints > 0) {
       if (useHint()) {
-        setShowHelpContent(true);
+        setHintTriggered(true);
         showSuccess("Dica usada! Seu saldo foi atualizado.");
       }
     } else {
@@ -106,14 +100,14 @@ const LessonPage = () => {
 
   const renderLessonContent = () => {
     if (lesson.type === 'game') {
-      if (lesson.title.includes("Contando")) return <ContandoFrutas />;
-      if (lesson.title.includes("Formando") || lesson.title.includes("Montagem")) return <FormandoPalavras />;
+      if (lesson.title.includes("Contando")) return <ContandoFrutas triggerHint={hintTriggered} />;
+      if (lesson.title.includes("Formando") || lesson.title.includes("Montagem")) return <FormandoPalavras triggerHint={hintTriggered} />;
       return <Card className="glass-card p-6"><CardTitle className="text-xl mb-4">Jogo Interativo</CardTitle><p className="text-muted-foreground">O jogo para esta lição está em desenvolvimento.</p></Card>;
     }
     if (lesson.type === 'exercise' && lesson.content) {
       try {
         const questions: QuizQuestion[] = JSON.parse(lesson.content);
-        if (questions.length > 0) return <QuizComponent questions={questions} onQuizComplete={markCompleted} />;
+        if (questions.length > 0) return <QuizComponent questions={questions} onQuizComplete={markCompleted} triggerHint={hintTriggered} />;
       } catch (e) { console.error("Failed to parse quiz content:", e); }
     }
     if (lesson.videoUrl) {
@@ -122,8 +116,7 @@ const LessonPage = () => {
     return <p className="text-foreground/90 mb-4">{lesson.content}</p>;
   };
 
-  const isQuiz = lesson.type === 'exercise' && lesson.content?.trim().startsWith('[');
-  const isGame = lesson.type === 'game';
+  const isQuizOrGame = (lesson.type === 'exercise' && lesson.content?.trim().startsWith('[')) || lesson.type === 'game';
   const hasPrev = lessonIndex > 0 || moduleIndex > 0;
   const hasNext = (lessonIndex < module.lessons.length - 1) || (moduleIndex < activity.modules.length - 1);
 
@@ -135,20 +128,21 @@ const LessonPage = () => {
       </div>
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
-          {showHelpContent && <HelpPackageContent subjectSlug={subject.slug} lesson={lesson} />}
           {renderLessonContent()}
           <div className="flex gap-4 mt-4 items-center">
             <Button variant="outline" onClick={goPrev} disabled={!hasPrev}>Anterior</Button>
             <Button onClick={goNext} disabled={!hasNext}>Próxima</Button>
             <div className="ml-auto flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <Button onClick={handleUseHint} className="bg-yellow-600 hover:bg-yellow-700 text-black">
-                  <Lightbulb className="mr-2 h-4 w-4" />
-                  {isPremium ? "Usar Dica Premium" : `Usar 1 Dica (Saldo: ${hints})`}
-                </Button>
-                {!isPremium && <RewardButton onReward={() => addHints(1)} label="Ganhar Dica (Anúncio)" />}
-              </div>
-              {(!isQuiz || isGame) && <Button className="bg-green-600 hover:bg-green-700" onClick={markCompleted}>{completed ? "Revisar (Concluído)" : "Marcar como Concluída"}</Button>}
+              {isQuizOrGame && (
+                <div className="flex items-center gap-2">
+                  <Button onClick={handleUseHint} className="bg-yellow-600 hover:bg-yellow-700 text-black" disabled={hintTriggered}>
+                    <Lightbulb className="mr-2 h-4 w-4" />
+                    {isPremium ? "Usar Dica Premium" : `Usar 1 Dica (Saldo: ${hints})`}
+                  </Button>
+                  {!isPremium && <RewardButton onReward={() => addHints(1)} label="Ganhar Dica (Anúncio)" />}
+                </div>
+              )}
+              {!isQuizOrGame && <Button className="bg-green-600 hover:bg-green-700" onClick={markCompleted}>{completed ? "Revisar (Concluído)" : "Marcar como Concluída"}</Button>}
             </div>
           </div>
         </div>

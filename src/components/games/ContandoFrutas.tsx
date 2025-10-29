@@ -7,32 +7,22 @@ import { cn } from '@/lib/utils';
 
 const MAX_FRUITS = 10;
 
-const ContandoFrutas = () => {
+interface ContandoFrutasProps {
+  triggerHint?: boolean;
+}
+
+const ContandoFrutas = ({ triggerHint }: ContandoFrutasProps) => {
   const [correctAnswer, setCorrectAnswer] = useState(0);
   const [options, setOptions] = useState<number[]>([]);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [animationClass, setAnimationClass] = useState('');
-
-  useEffect(() => {
-    if (isCorrect === null) return;
-
-    const newAnimationClass = isCorrect
-      ? 'animate-correct-answer-pop'
-      : 'animate-incorrect-answer-shake';
-    
-    setAnimationClass(newAnimationClass);
-
-    const timer = setTimeout(() => {
-      setAnimationClass('');
-    }, 500); // Duração da animação
-
-    return () => clearTimeout(timer);
-  }, [isCorrect, selectedAnswer]);
+  const [eliminatedOptions, setEliminatedOptions] = useState<number[]>([]);
 
   const generateProblem = () => {
     setSelectedAnswer(null);
     setIsCorrect(null);
+    setEliminatedOptions([]);
     
     const answer = Math.floor(Math.random() * MAX_FRUITS) + 1;
     setCorrectAnswer(answer);
@@ -53,6 +43,17 @@ const ContandoFrutas = () => {
     generateProblem();
   }, []);
 
+  // Logic to eliminate two wrong answers when hint is triggered
+  useEffect(() => {
+    if (triggerHint && eliminatedOptions.length === 0) {
+      const incorrectOptions = options.filter(
+        (option) => option !== correctAnswer
+      );
+      const toEliminate = incorrectOptions.sort(() => 0.5 - Math.random()).slice(0, 2);
+      setEliminatedOptions(toEliminate);
+    }
+  }, [triggerHint, options, correctAnswer, eliminatedOptions]);
+
   const handleAnswer = (answer: number) => {
     setSelectedAnswer(answer);
     if (answer === correctAnswer) {
@@ -63,6 +64,14 @@ const ContandoFrutas = () => {
       showError("Ops! Tente novamente.");
     }
   };
+
+  useEffect(() => {
+    if (isCorrect === null) return;
+    const newAnimationClass = isCorrect ? 'animate-correct-answer-pop' : 'animate-incorrect-answer-shake';
+    setAnimationClass(newAnimationClass);
+    const timer = setTimeout(() => setAnimationClass(''), 500);
+    return () => clearTimeout(timer);
+  }, [isCorrect, selectedAnswer]);
 
   const fruits = useMemo(() => Array(correctAnswer).fill('🍎'), [correctAnswer]);
 
@@ -78,14 +87,18 @@ const ContandoFrutas = () => {
         <div className="grid grid-cols-2 gap-4">
           {options.map(option => {
             const isSelected = selectedAnswer === option;
+            const isEliminated = eliminatedOptions.includes(option);
             const buttonVariant = isSelected ? (isCorrect ? 'default' : 'destructive') : 'outline';
             
             return (
               <Button
                 key={option}
                 onClick={() => handleAnswer(option)}
-                disabled={selectedAnswer !== null}
-                className="h-20 text-3xl"
+                disabled={selectedAnswer !== null || isEliminated}
+                className={cn(
+                  "h-20 text-3xl",
+                  isEliminated && 'opacity-30 pointer-events-none'
+                )}
                 variant={buttonVariant}
               >
                 {option}
