@@ -24,8 +24,7 @@ const Home = () => {
     setModalOpen(true);
   };
 
-  // Visual background assets
-  const heroImage = "/screenshots/screen-1.svg";
+  // Decorative stars layer (kept) and a subtle nebula gradient background to replace placeholder image
   const starsUrl =
     "https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?q=80&w=1920&auto=format&fit=crop";
   const earthUrl =
@@ -33,38 +32,44 @@ const Home = () => {
 
   return (
     <div className="h-screen w-screen overflow-hidden">
-      <section className="relative h-full w-full flex items-center justify-center text-center bg-black">
-        {/* Background layers (visual only, behind content) */}
+      <section className="relative h-full w-full flex items-center justify-center text-center">
+        {/* Nebula gradient background (no placeholder text) */}
         <div
           aria-hidden
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0"
           style={{
-            backgroundImage: `url(${heroImage})`,
-            filter: "saturate(1.06) contrast(0.98) brightness(0.7)",
-            zIndex: 1,
+            background:
+              "radial-gradient(ellipse at 10% 10%, rgba(124,58,237,0.18), transparent 20%), radial-gradient(ellipse at 90% 90%, rgba(236,72,153,0.10), transparent 30%), linear-gradient(180deg, rgba(6,7,26,0.9), rgba(9,10,25,0.95))",
+            zIndex: 0,
           }}
         />
+
+        {/* Stars overlay for depth */}
         <div
           aria-hidden
           className="absolute inset-0"
           style={{
             backgroundImage: `url(${starsUrl})`,
-            opacity: 0.42,
+            opacity: 0.18,
             mixBlendMode: "screen",
-            zIndex: 2,
+            zIndex: 1,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
           }}
         />
+
+        {/* Decorative earth/asset (keeps design richness) */}
         <img
           src={earthUrl}
           alt=""
           aria-hidden
-          className="absolute right-8 top-8 opacity-28 pointer-events-none w-64 lg:w-[420px] z-20"
+          className="absolute right-8 top-8 opacity-28 pointer-events-none w-64 lg:w-[420px] z-10"
           style={{ zIndex: 2 }}
         />
 
         {/* Foreground content */}
         <motion.div
-          className="relative z-40 flex flex-col items-center justify-center px-6"
+          className="relative z-20 flex flex-col items-center justify-center px-6"
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, ease: "easeOut" }}
