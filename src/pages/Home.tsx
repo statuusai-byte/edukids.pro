@@ -11,25 +11,31 @@ const Home = () => {
     setAgeGroup(null);
   }, [setAgeGroup]);
 
-  const desktopBg = "url('https://images.pexels.com/photos/325185/pexels-photo-325185.jpeg')";
-  const mobileBg = "url('https://images.pexels.com/photos/1624496/pexels-photo-1624496.jpeg')";
+  // Use local feature graphic placed in /public
+  const heroImage = "/feature-graphic.png";
 
   return (
     <div>
-      <section className="relative w-full h-screen flex items-center justify-center text-center text-white overflow-hidden">
-        {/* Background Image Container */}
+      <section
+        className="relative w-full h-screen flex items-center justify-center text-center text-white overflow-hidden"
+        aria-label="Hero do EduKids Plus"
+      >
+        {/* Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: mobileBg }}
+          style={{
+            backgroundImage: `url(${heroImage})`,
+            filter: 'saturate(1.05)',
+            transformOrigin: 'center',
+          }}
           aria-hidden="true"
         />
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat hidden md:block"
-          style={{ backgroundImage: desktopBg }}
-          aria-hidden="true"
-        />
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-black/50" aria-hidden="true" />
+
+        {/* Overlay for premium look & legibility */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/25 to-black/40" aria-hidden="true" />
+
+        {/* Accessible fallback image (for social crawlers / semantics) */}
+        <img src={heroImage} alt="Ilustração EduKids+ com crianças e texto 'Aprendizagem Lúdica para Crianças' sobre fundo degradê" className="sr-only" />
 
         {/* Content */}
         <motion.div
@@ -44,8 +50,8 @@ const Home = () => {
           <p className="mt-4 text-lg md:text-xl text-gray-200 max-w-2xl text-shadow">
             A plataforma onde a aprendizagem se transforma numa aventura emocionante. Explore, jogue e cresça connosco!
           </p>
-          <Button asChild size="lg" className="mt-8 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/30">
-            <a href="#age-selection">Começar Aventura</a>
+          <Button asChild size="lg" className="mt-8 bg-gradient-to-r from-primary to-fuchsia-500 hover:opacity-95 shadow-2xl shadow-primary/30">
+            <a href="#age-selection" aria-label="Começar Aventura">Começar Aventura</a>
           </Button>
         </motion.div>
       </section>
