@@ -14,6 +14,12 @@ const Home = () => {
   // Use local feature graphic placed in /public (matches uploaded filename)
   const heroImage = "/feature-graphic.png.png";
 
+  // External assets for starry sky and planet
+  const starsUrl =
+    "https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?q=80&w=1920&auto=format&fit=crop";
+  const earthUrl =
+    "https://images.unsplash.com/photo-1531206715517-5c0ba8f1d6d8?q=80&w=1200&auto=format&fit=crop";
+
   return (
     <div>
       <section
@@ -21,6 +27,36 @@ const Home = () => {
         className="relative w-full min-h-[62vh] md:min-h-[68vh] flex items-center justify-center text-center overflow-hidden main-container"
         aria-label="Hero do EduKids Plus"
       >
+        {/* Starry sky layer (subtle, repeated) */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: `url(${starsUrl})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            opacity: 0.12,
+            mixBlendMode: 'screen',
+            filter: 'blur(0.6px) contrast(1.05)',
+            zIndex: 2,
+          }}
+        />
+
+        {/* Planet / Earth — decorative, low opacity and behind content */}
+        <img
+          src={earthUrl}
+          alt=""
+          aria-hidden="true"
+          className="hidden md:block absolute right-4 top-6 w-64 md:w-96 lg:w-[520px] pointer-events-none"
+          style={{
+            opacity: 0.12,
+            transform: 'translateZ(0)',
+            mixBlendMode: 'screen',
+            zIndex: 3,
+            filter: 'saturate(0.9) contrast(0.95)',
+          }}
+        />
+
         {/* Blended background layers: hero image + subtle color overlay to keep a premium look */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -29,12 +65,13 @@ const Home = () => {
             // Slightly lift saturation/contrast without overpowering the nebula beneath
             filter: 'saturate(1.05) contrast(1.02)',
             transformOrigin: 'center',
+            zIndex: 1,
           }}
           aria-hidden="true"
         />
 
         {/* Subtle soft vignette + light color wash for premium mood (keeps text legible but not fully dark) */}
-        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div className="absolute inset-0 pointer-events-none" aria-hidden="true" style={{ zIndex: 4 }}>
           <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/6 to-black/10 mix-blend-multiply" />
           {/* Use inline style for the radial gradient to avoid Tailwind arbitrary-class parsing errors,
               but keep the aurora animation via the animate-aurora utility. */}
@@ -54,7 +91,7 @@ const Home = () => {
           className="sr-only"
         />
 
-        {/* Foreground content */}
+        {/* Foreground content (top layer) */}
         <motion.div
           className="relative z-10 flex max-w-5xl flex-col items-center px-6 text-center"
           initial={{ opacity: 0, y: 18 }}
