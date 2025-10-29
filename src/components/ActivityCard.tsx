@@ -5,7 +5,7 @@ import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { TiltCard } from "./TiltCard";
 import { Icon } from "./Icon";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 
 interface ActivityCardProps {
   activity: Activity;
