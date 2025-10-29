@@ -17,8 +17,8 @@ const Home = () => {
   return (
     <div>
       <section
-        // Adding `main-container` applies the nebula/aurora pseudo background defined in globals.css
-        className="relative w-full h-screen flex items-center justify-center text-center overflow-hidden main-container"
+        // Reduced hero height so the age-selection can sit inside initial viewport
+        className="relative w-full min-h-[62vh] md:min-h-[68vh] flex items-center justify-center text-center overflow-hidden main-container"
         aria-label="Hero do EduKids Plus"
       >
         {/* Blended background layers: hero image + subtle color overlay to keep a premium look */}
@@ -84,7 +84,11 @@ const Home = () => {
         </motion.div>
       </section>
 
-      <section id="age-selection" className="container mx-auto px-4 text-center py-24">
+      <section
+        id="age-selection"
+        // Pull the section up so it's visible on initial load; responsive negative margin
+        className="container mx-auto px-4 text-center py-12 -mt-20 md:-mt-32 relative z-20"
+      >
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
