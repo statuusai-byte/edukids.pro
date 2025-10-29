@@ -27,7 +27,7 @@ const Home = () => {
         className="relative w-full min-h-[62vh] md:min-h-[68vh] flex items-center justify-center text-center overflow-hidden main-container"
         aria-label="Hero do EduKids Plus"
       >
-        {/* Starry sky layer (subtle, repeated) */}
+        {/* Starry sky layer (more visible) */}
         <div
           aria-hidden="true"
           className="absolute inset-0 pointer-events-none"
@@ -35,21 +35,21 @@ const Home = () => {
             backgroundImage: `url(${starsUrl})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            opacity: 0.12,
+            opacity: 0.32,
             mixBlendMode: 'screen',
             filter: 'blur(0.6px) contrast(1.05)',
             zIndex: 2,
           }}
         />
 
-        {/* Planet / Earth — decorative, low opacity and behind content */}
+        {/* Planet / Earth — decorative and responsive (visible on small screens too) */}
         <img
           src={earthUrl}
           alt=""
           aria-hidden="true"
-          className="hidden md:block absolute right-4 top-6 w-64 md:w-96 lg:w-[520px] pointer-events-none"
+          className="absolute right-3 top-6 w-40 sm:w-64 md:w-96 lg:w-[520px] pointer-events-none"
           style={{
-            opacity: 0.12,
+            opacity: 0.22,
             transform: 'translateZ(0)',
             mixBlendMode: 'screen',
             zIndex: 3,
@@ -57,12 +57,11 @@ const Home = () => {
           }}
         />
 
-        {/* Blended background layers: hero image + subtle color overlay to keep a premium look */}
+        {/* Blended background layers: hero image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: `url(${heroImage})`,
-            // Slightly lift saturation/contrast without overpowering the nebula beneath
             filter: 'saturate(1.05) contrast(1.02)',
             transformOrigin: 'center',
             zIndex: 1,
@@ -70,11 +69,9 @@ const Home = () => {
           aria-hidden="true"
         />
 
-        {/* Subtle soft vignette + light color wash for premium mood (keeps text legible but not fully dark) */}
+        {/* Vignette + aurora */}
         <div className="absolute inset-0 pointer-events-none" aria-hidden="true" style={{ zIndex: 4 }}>
           <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/6 to-black/10 mix-blend-multiply" />
-          {/* Use inline style for the radial gradient to avoid Tailwind arbitrary-class parsing errors,
-              but keep the aurora animation via the animate-aurora utility. */}
           <div
             className="absolute inset-0 animate-aurora"
             style={{
@@ -84,7 +81,7 @@ const Home = () => {
           />
         </div>
 
-        {/* Accessible fallback image (for crawlers / semantics) */}
+        {/* Accessible fallback image */}
         <img
           src={heroImage}
           alt="Ilustração EduKids+ com crianças e texto 'Aprendizagem Lúdica para Crianças' sobre fundo degradê"
