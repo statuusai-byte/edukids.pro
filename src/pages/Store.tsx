@@ -138,13 +138,22 @@ const Store = () => {
                 </div>
               </CardContent>
               <CardFooter className="pt-0">
-                <Button onClick={() => handleBuyHints(pkg.amount, pkg.name)} className="w-full bg-secondary hover:bg-secondary/80 text-foreground">
-                  Comprar ({pkg.price})
+                <Button
+                  onClick={() => handleBuyHints(pkg.amount, pkg.name)}
+                  className="w-full bg-secondary hover:bg-secondary/80 text-foreground"
+                  disabled={isPremium}
+                >
+                  {isPremium ? "Dicas Ilimitadas" : `Comprar (${pkg.price})`}
                 </Button>
               </CardFooter>
             </Card>
           ))}
         </div>
+        {isPremium && (
+          <p className="text-center text-sm text-yellow-400 mt-4">
+            Você é um assinante Premium e já possui dicas ilimitadas!
+          </p>
+        )}
       </section>
 
       <div className="text-center text-xs text-muted-foreground mt-6">
