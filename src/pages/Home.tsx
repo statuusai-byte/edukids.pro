@@ -17,50 +17,83 @@ const Home = () => {
   return (
     <div>
       <section
-        className="relative w-full h-screen flex items-center justify-center text-center text-white overflow-hidden"
+        // Adding `main-container` applies the nebula/aurora pseudo background defined in globals.css
+        className="relative w-full h-screen flex items-center justify-center text-center overflow-hidden main-container"
         aria-label="Hero do EduKids Plus"
       >
-        {/* Background Image */}
+        {/* Blended background layers: hero image + subtle color overlay to keep a premium look */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: `url(${heroImage})`,
-            filter: 'saturate(1.05)',
+            // Slightly lift saturation/contrast without overpowering the nebula beneath
+            filter: 'saturate(1.05) contrast(1.02)',
             transformOrigin: 'center',
           }}
           aria-hidden="true"
         />
 
-        {/* Overlay for premium look & legibility */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/25 to-black/40" aria-hidden="true" />
+        {/* Subtle soft vignette + light color wash for premium mood (keeps text legible but not fully dark) */}
+        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+          <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/6 to-black/10 mix-blend-multiply" />
+          {/* Use inline style for the radial gradient to avoid Tailwind arbitrary-class parsing errors,
+              but keep the aurora animation via the animate-aurora utility. */}
+          <div
+            className="absolute inset-0 animate-aurora"
+            style={{
+              background:
+                'radial-gradient(ellipse at top left, rgba(124,58,237,0.12), transparent 30%)',
+            }}
+          />
+        </div>
 
-        {/* Accessible fallback image (for social crawlers / semantics) */}
-        <img src={heroImage} alt="Ilustração EduKids+ com crianças e texto 'Aprendizagem Lúdica para Crianças' sobre fundo degradê" className="sr-only" />
+        {/* Accessible fallback image (for crawlers / semantics) */}
+        <img
+          src={heroImage}
+          alt="Ilustração EduKids+ com crianças e texto 'Aprendizagem Lúdica para Crianças' sobre fundo degradê"
+          className="sr-only"
+        />
 
-        {/* Content */}
+        {/* Foreground content */}
         <motion.div
-          className="relative z-10 flex flex-col items-center px-4"
-          initial={{ opacity: 0, y: 20 }}
+          className="relative z-10 flex max-w-5xl flex-col items-center px-6 text-center"
+          initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.9, ease: 'easeOut' }}
         >
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-shadow-lg">
+          <div className="mb-6 inline-flex items-center gap-3 rounded-full bg-white/6 px-4 py-2 backdrop-blur-sm border border-white/6">
+            <span className="rounded-full bg-gradient-to-r from-pink-500 via-fuchsia-600 to-indigo-500 px-3 py-1 text-xs font-semibold text-white shadow">Premium</span>
+            <span className="text-sm text-white/85">Novo visual otimizado para Play Store</span>
+          </div>
+
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary via-fuchsia-500 to-yellow-400 drop-shadow-lg">
             EduKids+
           </h1>
-          <p className="mt-4 text-lg md:text-xl text-gray-200 max-w-2xl text-shadow">
-            A plataforma onde a aprendizagem se transforma numa aventura emocionante. Explore, jogue e cresça connosco!
+
+          <p className="mt-4 max-w-3xl text-base md:text-lg text-white/85 leading-relaxed">
+            A plataforma onde a aprendizagem se transforma numa aventura emocionante — conteúdo pedagógico, jogos interativos e ferramentas parentais para apoiar o crescimento.
           </p>
-          <Button asChild size="lg" className="mt-8 bg-gradient-to-r from-primary to-fuchsia-500 hover:opacity-95 shadow-2xl shadow-primary/30">
-            <a href="#age-selection" aria-label="Começar Aventura">Começar Aventura</a>
-          </Button>
+
+          <div className="mt-8 flex w-full max-w-md gap-3">
+            <Button asChild size="lg" className="flex-1 bg-gradient-to-r from-primary to-fuchsia-500 text-white shadow-2xl">
+              <Link to="/dashboard" onClick={() => setAgeGroup('4-6')}>Começar Aventura</Link>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="hidden sm:inline-flex">
+              <Link to="/store">Ver Planos</Link>
+            </Button>
+          </div>
+
+          <div className="mt-6 text-sm text-white/75">
+            <span>Explore atividades gratuitas ou experimente o Premium por assinatura — pronto para publicar na Play Store.</span>
+          </div>
         </motion.div>
       </section>
 
       <section id="age-selection" className="container mx-auto px-4 text-center py-24">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.5 }}
+          viewport={{ once: true, amount: 0.45 }}
           transition={{ duration: 0.8 }}
         >
           <h2 className="text-3xl md:text-4xl font-bold">Para Começar a Aventura...</h2>
