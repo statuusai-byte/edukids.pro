@@ -159,7 +159,7 @@ const Settings = () => {
       }
     };
 
-    if (!window.confirm("Tem certeza que deseja deletar a conta deste dispositivo? Isso limpará dados locais e encerrará a sessão.")) {
+    if (!window.confirm("Tem certeza que deseja remover a conta deste dispositivo? Todos os dados locais, como progresso e perfil, serão apagados e sua sessão será encerrada.")) {
       return;
     }
 
@@ -275,11 +275,13 @@ const Settings = () => {
         <Card className="glass-card">
           <CardHeader>
             <CardTitle>Conta</CardTitle>
-            <CardDescription>Remover esta conta deste dispositivo.</CardDescription>
+            <CardDescription>
+              Esta ação limpará todos os dados locais (progresso, perfil) e encerrará a sessão neste dispositivo. A conta não será excluída do sistema.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <Button variant="destructive" className="w-full" onClick={deleteAccount}>
-              <Trash2 className="mr-2 h-4 w-4" /> Deletar conta (limpa dados locais e faz logout)
+              <Trash2 className="mr-2 h-4 w-4" /> Remover Conta Deste Dispositivo
             </Button>
           </CardContent>
         </Card>
