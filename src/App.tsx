@@ -25,6 +25,7 @@ const ActivityContentPage = lazy(() => import("./pages/ActivityContentPage"));
 const CourseDetail = lazy(() => import("./pages/CourseDetail"));
 const LessonPage = lazy(() => import("./pages/LessonPage"));
 const Login = lazy(() => import("./pages/Login"));
+const Register = lazy(() => import("./pages/Register"));
 const SuccessPayment = lazy(() => import("./pages/SuccessPayment"));
 const TestAccount = lazy(() => import("./pages/TestAccount"));
 
@@ -54,6 +55,7 @@ const App = () => (
                       {/* Top-level routes that should not be wrapped by the main Layout */}
                       <Route path="/" element={<Home />} />
                       <Route path="/login" element={<Login />} />
+                      <Route path="/register" element={<Register />} />
                       <Route path="/success-payment" element={<SuccessPayment />} />
                       <Route path="/test-account" element={<TestAccount />} />
 
