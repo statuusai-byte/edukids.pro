@@ -23,8 +23,8 @@ const Home = () => {
   return (
     <div>
       <section
-        // Reduced hero height so the age-selection can sit inside initial viewport
-        className="relative w-full min-h-[62vh] md:min-h-[68vh] flex items-center justify-center text-center overflow-hidden main-container"
+        // Added bottom padding to create space so the following section doesn't overlap
+        className="relative w-full min-h-[62vh] md:min-h-[68vh] flex items-center justify-center text-center overflow-hidden main-container pb-20 md:pb-32"
         aria-label="Hero do EduKids Plus"
       >
         {/* Starry sky layer (made more visible) */}
@@ -139,8 +139,8 @@ const Home = () => {
 
       <section
         id="age-selection"
-        // Pull the section up so it's visible on initial load; responsive negative margin
-        className="container mx-auto px-4 text-center py-12 -mt-20 md:-mt-32 relative z-20"
+        // Removed negative margin and added top margin so it doesn't overlap the hero on small screens
+        className="container mx-auto px-4 text-center py-12 mt-8 md:mt-16 relative z-20"
       >
         <motion.div
           initial={{ opacity: 0, y: 18 }}
