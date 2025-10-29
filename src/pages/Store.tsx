@@ -25,18 +25,24 @@ const Store = () => {
     const loadingToast = showLoading("Iniciando checkout...");
 
     try {
-      const { data, error } = await supabase.functions.invoke("create-checkout", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${await supabase.auth.getSession().then((s) => s.data.session?.access_token)}`,
-        },
-      });
+      // Get token first in a clear, debuggable step
+      const sessionRes = await supabase.auth.getSession();
+      const token = sessionRes.data.session?.access_token;
 
-      if (error) throw new Error(error.message);
+      const invokeOptions: any = {
+        method: "POST",
+      };
+      if (token) {
+        invokeOptions.headers = { Authorization: `Bearer ${token}` };
+      }
+
+      const { data, error } = await supabase.functions.invoke("create-checkout", invokeOptions);
+
+      if (error) throw new Error(error.message || "Erro ao criar sessão de checkout.");
       if (!data || !data.checkout_url) throw new Error("Falha ao obter URL de checkout.");
 
       window.location.href = data.checkout_url;
-    } catch (error) {
+    } catch (error: any) {
       console.error("Checkout failed:", error);
       dismissToast(loadingToast);
       showError("Erro ao processar a assinatura. Tente novamente.");
@@ -83,11 +89,17 @@ const Store = () => {
             <Card className="p-6 bg-white/10 border-white/20">
               <div className="flex items-start justify-between">
                 <div>
-                  <div className="flex items-center gap-2"><Star className="h-5 w-5 text-yellow-300" /><div className="text-sm text-yellow-100">Plano Premium</div></div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Star className="h-5 w-5 text-yellow-300" />
+                    <div className="text-sm text-yellow-100">Plano Premium</div>
+                  </div>
                   <h3 className="text-2xl font-bold mt-3">Acesso Total</h3>
                   <p className="text-sm text-white/90 mt-1">Atividades, relatórios e dicas ilimitadas.</p>
                 </div>
-                <div className="text-right"><div className="text-3xl font-extrabold">R$ 19,90</div><div className="text-sm text-white/80">/ mês</div></div>
+                <div className="text-right">
+                  <div className="text-3xl font-extrabold">R$ 19,90</div>
+                  <div className="text-sm text-white/80">/ mês</div>
+                </div>
               </div>
               <ul className="mt-5 space-y-3">
                 <li className="flex items-center gap-2 text-sm"><Check className="h-4 w-4 text-green-400" /> Acesso ilimitado a todas as atividades</li>
@@ -125,7 +137,7 @@ const Store = () => {
                   <div className="text-lg text-muted-foreground">Dicas</div>
                 </div>
               </CardContent>
-              <CardFooter>
+              <CardFooter className="pt-0">
                 <Button onClick={() => handleBuyHints(pkg.amount, pkg.name)} className="w-full bg-secondary hover:bg-secondary/80 text-foreground">
                   Comprar ({pkg.price})
                 </Button>
