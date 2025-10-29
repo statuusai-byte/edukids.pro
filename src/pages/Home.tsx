@@ -27,7 +27,7 @@ const Home = () => {
         className="relative w-full min-h-[62vh] md:min-h-[68vh] flex items-center justify-center text-center overflow-hidden main-container"
         aria-label="Hero do EduKids Plus"
       >
-        {/* Starry sky layer (more visible) */}
+        {/* Starry sky layer (made more visible) */}
         <div
           aria-hidden="true"
           className="absolute inset-0 pointer-events-none"
@@ -35,25 +35,44 @@ const Home = () => {
             backgroundImage: `url(${starsUrl})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            opacity: 0.32,
+            opacity: 0.56,
             mixBlendMode: 'screen',
-            filter: 'blur(0.6px) contrast(1.05)',
+            filter: 'contrast(1.06) saturate(0.95) blur(0.4px)',
             zIndex: 2,
           }}
         />
 
-        {/* Planet / Earth — decorative and responsive (visible on small screens too) */}
+        {/* Soft radial wash behind planet to increase contrast */}
+        <div
+          aria-hidden="true"
+          className="absolute pointer-events-none"
+          style={{
+            right: '3rem',
+            top: '3.5rem',
+            width: '520px',
+            height: '520px',
+            borderRadius: '50%',
+            background:
+              'radial-gradient(circle at 30% 30%, rgba(124,58,237,0.14), rgba(124,58,237,0.06) 25%, transparent 40%)',
+            transform: 'translateZ(0)',
+            zIndex: 2,
+            mixBlendMode: 'screen',
+            pointerEvents: 'none',
+          }}
+        />
+
+        {/* Planet / Earth — larger and with drop shadow to stand out; visible on all sizes */}
         <img
           src={earthUrl}
           alt=""
           aria-hidden="true"
-          className="absolute right-3 top-6 w-40 sm:w-64 md:w-96 lg:w-[520px] pointer-events-none"
+          className="absolute right-3 top-6 w-56 sm:w-72 md:w-96 lg:w-[520px] pointer-events-none"
           style={{
-            opacity: 0.22,
-            transform: 'translateZ(0)',
+            opacity: 0.36,
+            transform: 'translateZ(0) rotate(-6deg)',
             mixBlendMode: 'screen',
             zIndex: 3,
-            filter: 'saturate(0.9) contrast(0.95)',
+            filter: 'saturate(0.95) contrast(0.98) drop-shadow(0 30px 60px rgba(0,0,0,0.45))',
           }}
         />
 
@@ -62,7 +81,7 @@ const Home = () => {
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: `url(${heroImage})`,
-            filter: 'saturate(1.05) contrast(1.02)',
+            filter: 'saturate(1.07) contrast(1.03) brightness(0.98)',
             transformOrigin: 'center',
             zIndex: 1,
           }}
@@ -71,12 +90,12 @@ const Home = () => {
 
         {/* Vignette + aurora */}
         <div className="absolute inset-0 pointer-events-none" aria-hidden="true" style={{ zIndex: 4 }}>
-          <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/6 to-black/10 mix-blend-multiply" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/12 via-black/6 to-black/12 mix-blend-multiply" />
           <div
             className="absolute inset-0 animate-aurora"
             style={{
               background:
-                'radial-gradient(ellipse at top left, rgba(124,58,237,0.12), transparent 30%)',
+                'radial-gradient(ellipse at top left, rgba(124,58,237,0.14), transparent 30%)',
             }}
           />
         </div>
@@ -99,7 +118,7 @@ const Home = () => {
             EduKids+
           </h1>
 
-          <p className="mt-4 max-w-3xl text-base md:text-lg text-white/85 leading-relaxed">
+          <p className="mt-4 max-w-3xl text-base md:text-lg text-white/90 leading-relaxed">
             A plataforma onde a aprendizagem se transforma numa aventura emocionante — conteúdo pedagógico, jogos interativos e ferramentas parentais para apoiar o crescimento.
           </p>
 
@@ -112,7 +131,7 @@ const Home = () => {
             </Button>
           </div>
 
-          <div className="mt-6 text-sm text-white/75">
+          <div className="mt-6 text-sm text-white/80">
             <span>Explore atividades gratuitas ou experimente o Premium por assinatura — pronto para publicar na Play Store.</span>
           </div>
         </motion.div>
