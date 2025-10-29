@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { showSuccess, showError, showLoading, dismissToast } from "@/utils/toast";
 import { useNavigate } from "react-router-dom";
 
-const DEFAULT_EMAIL = "eduk.premium@gmail.com";
+const DEFAULT_EMAIL = "eduki.teste@gmail.com";
 const DEFAULT_PASSWORD = "12121212";
 
 export default function TestAccount() {

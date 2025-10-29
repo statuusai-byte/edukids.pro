@@ -50,6 +50,26 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
 
         if (event === 'SIGNED_IN') {
           showSuccess('Login realizado com sucesso!');
+          
+          // Grant premium for the test account
+          if (currentSession?.user?.email === TEST_EMAIL) {
+            try {
+              localStorage.setItem("edukids_is_premium", "true");
+              const profile = {
+                name: "Usuário Teste",
+                avatarUrl: "https://i.pravatar.cc/150?u=edukids-test",
+                email: TEST_EMAIL,
+              };
+              localStorage.setItem("edukids_profile", JSON.stringify(profile));
+              const allPackages = ["matematica", "portugues", "ciencias", "historia", "geografia", "ingles"];
+              localStorage.setItem('edukids_help_packages', JSON.stringify(allPackages));
+              showSuccess("Conta de teste Premium ativada!");
+            } catch (e) {
+              console.error("Failed to activate premium test mode:", e);
+              showError("Falha ao ativar o modo de teste Premium.");
+            }
+          }
+          
           navigate('/dashboard');
         } else if (event === 'SIGNED_OUT') {
           showSuccess('Sessão encerrada.');
