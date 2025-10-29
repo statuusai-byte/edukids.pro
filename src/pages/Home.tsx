@@ -11,8 +11,8 @@ const Home = () => {
     setAgeGroup(null);
   }, [setAgeGroup]);
 
-  // Use local feature graphic placed in /public
-  const heroImage = "/feature-graphic.png";
+  // Use local feature graphic placed in /public (matches uploaded filename)
+  const heroImage = "/feature-graphic.png.png";
 
   return (
     <div>
