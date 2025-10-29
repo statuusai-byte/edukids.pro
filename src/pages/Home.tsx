@@ -5,13 +5,26 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AgeSelectionModal from "@/components/AgeSelectionModal";
 
+const SKIP_REDIRECT_KEY = "edukids_skip_auto_redirect";
+
 const Home = () => {
   const { ageGroup, isLoading } = useAge();
   const navigate = useNavigate();
 
-  // If the user already selected an age on a previous run, open the app directly.
+  // If the user already selected an age on a previous run, open the app directly,
+  // but allow a short-lived flag to prevent auto-redirect (used when navigating to register/login).
   useEffect(() => {
     if (!isLoading && ageGroup) {
+      try {
+        const skip = localStorage.getItem(SKIP_REDIRECT_KEY);
+        if (skip === "true") {
+          // Clear flag and do NOT redirect (caller intended to navigate elsewhere)
+          localStorage.removeItem(SKIP_REDIRECT_KEY);
+          return;
+        }
+      } catch (e) {
+        // ignore storage errors and fall back to normal behavior
+      }
       navigate("/dashboard", { replace: true });
     }
   }, [isLoading, ageGroup, navigate]);
