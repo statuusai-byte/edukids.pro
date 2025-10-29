@@ -46,7 +46,7 @@ export const ActivityCard = ({ activity, subjectSlug }: ActivityCardProps) => {
 
         {/* Link secundário para ver a pasta/modulos (navegação completa) */}
         <div className="text-sm text-muted-foreground mt-2">
-          <Link to={`/activities/${subjectSlug}`} className="underline hover:text-primary">
+          <Link to={`/activities/${subjectSlug}/${activity.id}`} className="underline hover:text-primary">
             Ver Pasta e Módulos
           </Link>
         </div>
