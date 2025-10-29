@@ -2,24 +2,18 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, Star, Bot, Loader2, Lightbulb, Send, X } from "lucide-react";
+import { Check, Star, Loader2, Lightbulb } from "lucide-react";
 import { usePremium } from "@/context/PremiumContext";
 import { showLoading, showError, dismissToast, showSuccess } from "@/utils/toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useSupabase } from "@/context/SupabaseContext";
 import { useHintsContext } from "@/context/HintsContext";
-import { Input } from "@/components/ui/input";
 
 const Store = () => {
   const { isPremium } = usePremium();
   const { user } = useSupabase();
   const { addHints } = useHintsContext();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
-
-  const [aiQuery, setAiQuery] = useState("");
-  const [aiResponse, setAiResponse] = useState<string | null>(null);
-  const [isAiProcessing, setIsAiProcessing] = useState(false);
-  const [aiOpen, setAiOpen] = useState(false);
 
   const handleCheckout = async () => {
     if (!user) {
@@ -70,33 +64,6 @@ const Store = () => {
     { amount: 15, name: "Pacote Explorador", price: "R$ 5,00", description: "O melhor valor! Dicas de sobra para os maiores exploradores." },
   ];
 
-  const simulateAiResponse = (q: string) => {
-    const text = q.trim().toLowerCase();
-    if (!text) return "Tente escrever sua pergunta com palavras simples, por exemplo: 'Como eu resolvo 2+2?'.";
-    if (/\b(soma|adicion|somar|\+)\b/.test(text)) return "Para somar, faça pequenos grupos e una-os: por exemplo, 3 + 2 = (1,2,3) + (1,2) → total 5.";
-    return "Legal! Tente dividir a pergunta em passos curtinhos. Se não funcionar, peça ajuda a um adulto ou use uma dica para ver explicações detalhadas.";
-  };
-
-  const handleAiAsk = async () => {
-    if (isPremium) {
-      showError("IA Premium com voz estará disponível em breve para assinantes.");
-      return;
-    }
-    if (!aiQuery.trim()) {
-      showError("Digite uma pergunta para receber ajuda.");
-      return;
-    }
-    setIsAiProcessing(true);
-    const loading = showLoading("Pensando...");
-    setTimeout(() => {
-      const resp = simulateAiResponse(aiQuery);
-      setAiResponse(resp);
-      dismissToast(loading);
-      showSuccess("Aqui vai uma dica rápida!");
-      setIsAiProcessing(false);
-    }, 900);
-  };
-
   return (
     <div className="space-y-10">
       <section className="relative rounded-2xl overflow-hidden bg-gradient-to-r from-purple-700 via-indigo-600 to-pink-600 p-8 text-white shadow-lg">
@@ -127,9 +94,13 @@ const Store = () => {
                 <li className="flex items-center gap-2 text-sm"><Check className="h-4 w-4 text-green-400" /> Dicas de ajuda ilimitadas</li>
                 <li className="flex items-center gap-2 text-sm"><Check className="h-4 w-4 text-green-400" /> Relatórios avançados dos pais</li>
               </ul>
-              <CardFooter className="pt-4">
-                {isPremium ? <Button variant="outline" className="w-full border-white/30 text-white/90" disabled>Seu Plano Atual</Button> : <Button onClick={handleCheckout} className="w-full bg-yellow-400 text-black font-bold hover:brightness-95">Assinar Agora</Button>}
-              </CardFooter>
+              <div className="pt-4">
+                {isPremium ? (
+                  <Button variant="outline" className="w-full border-white/30 text-white/90" disabled>Seu Plano Atual</Button>
+                ) : (
+                  <Button onClick={handleCheckout} className="w-full bg-yellow-400 text-black font-bold hover:brightness-95">Assinar Agora</Button>
+                )}
+              </div>
             </Card>
           </div>
         </div>
@@ -141,13 +112,13 @@ const Store = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {hintPackages.map((pkg) => (
             <Card key={pkg.name} className="glass-card p-4 flex flex-col h-full hover:scale-[1.01] transform transition">
-              <CardHeader>
+              <div className="mb-2">
                 <div className="flex items-center gap-3 mb-2">
                   <div className="p-3 bg-white/6 rounded-lg"><Lightbulb className="h-6 w-6 text-yellow-400" /></div>
-                  <CardTitle>{pkg.name}</CardTitle>
+                  <div className="text-lg font-semibold">{pkg.name}</div>
                 </div>
-                <CardDescription>{pkg.description}</CardDescription>
-              </CardHeader>
+                <div className="text-sm text-muted-foreground">{pkg.description}</div>
+              </div>
               <CardContent className="flex-grow flex items-center justify-center">
                 <div className="text-center">
                   <div className="text-5xl font-extrabold text-yellow-400">{pkg.amount}</div>
