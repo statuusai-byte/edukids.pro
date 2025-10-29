@@ -1,167 +1,107 @@
-import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { useAge } from '@/context/AgeContext';
-import { useEffect } from 'react';
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { useAge } from "@/context/AgeContext";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import AgeSelectionModal from "@/components/AgeSelectionModal";
 
 const Home = () => {
-  const { setAgeGroup } = useAge();
+  const { ageGroup, isLoading } = useAge();
+  const navigate = useNavigate();
 
+  // If the user already selected an age on a previous run, open the app directly.
   useEffect(() => {
-    setAgeGroup(null);
-  }, [setAgeGroup]);
+    if (!isLoading && ageGroup) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [isLoading, ageGroup, navigate]);
 
-  // Use an existing screenshot from public to avoid missing-file 404s
+  const [modalOpen, setModalOpen] = useState(false);
+  const [action, setAction] = useState<"entrar" | "cadastrar" | null>(null);
+
+  const openFor = (a: "entrar" | "cadastrar") => {
+    setAction(a);
+    setModalOpen(true);
+  };
+
+  // Visual background assets
   const heroImage = "/screenshots/screen-1.svg";
-
-  // External assets for starry sky and planet
   const starsUrl =
     "https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?q=80&w=1920&auto=format&fit=crop";
   const earthUrl =
     "https://images.unsplash.com/photo-1531206715517-5c0ba8f1d6d8?q=80&w=1200&auto=format&fit=crop";
 
   return (
-    <div>
-      <section
-        // Added bottom padding to create space so the following section doesn't overlap
-        className="relative w-full min-h-[62vh] md:min-h-[68vh] flex items-center justify-center text-center overflow-hidden main-container pb-20 md:pb-32"
-        aria-label="Hero do EduKids Plus"
-      >
-        {/* Starry sky layer (made more visible) */}
+    <div className="h-screen w-screen overflow-hidden">
+      <section className="relative h-full w-full flex items-center justify-center text-center bg-black">
+        {/* Background layers (visual only, behind content) */}
         <div
-          aria-hidden="true"
-          className="absolute inset-0 pointer-events-none"
+          aria-hidden
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: `url(${heroImage})`,
+            filter: "saturate(1.06) contrast(0.98) brightness(0.7)",
+            zIndex: 1,
+          }}
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0"
           style={{
             backgroundImage: `url(${starsUrl})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            opacity: 0.56,
-            mixBlendMode: 'screen',
-            filter: 'contrast(1.06) saturate(0.95) blur(0.4px)',
+            opacity: 0.42,
+            mixBlendMode: "screen",
             zIndex: 2,
           }}
         />
-
-        {/* Soft radial wash behind planet to increase contrast */}
-        <div
-          aria-hidden="true"
-          className="absolute pointer-events-none"
-          style={{
-            right: '3rem',
-            top: '3.5rem',
-            width: '520px',
-            height: '520px',
-            borderRadius: '50%',
-            background:
-              'radial-gradient(circle at 30% 30%, rgba(124,58,237,0.14), rgba(124,58,237,0.06) 25%, transparent 40%)',
-            transform: 'translateZ(0)',
-            zIndex: 2,
-            mixBlendMode: 'screen',
-            pointerEvents: 'none',
-          }}
-        />
-
-        {/* Planet / Earth — larger and with drop shadow to stand out; visible on all sizes */}
         <img
           src={earthUrl}
           alt=""
-          aria-hidden="true"
-          className="absolute right-3 top-6 w-56 sm:w-72 md:w-96 lg:w-[520px] pointer-events-none"
-          style={{
-            opacity: 0.36,
-            transform: 'translateZ(0) rotate(-6deg)',
-            mixBlendMode: 'screen',
-            zIndex: 3,
-            filter: 'saturate(0.95) contrast(0.98) drop-shadow(0 30px 60px rgba(0,0,0,0.45))',
-          }}
+          aria-hidden
+          className="absolute right-8 top-8 opacity-28 pointer-events-none w-64 lg:w-[420px] z-20"
+          style={{ zIndex: 2 }}
         />
 
-        {/* Blended background layers: hero image */}
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `url(${heroImage})`,
-            filter: 'saturate(1.07) contrast(1.03) brightness(0.98)',
-            transformOrigin: 'center',
-            zIndex: 1,
-          }}
-          aria-hidden="true"
-        />
-
-        {/* Vignette + aurora */}
-        <div className="absolute inset-0 pointer-events-none" aria-hidden="true" style={{ zIndex: 4 }}>
-          <div className="absolute inset-0 bg-gradient-to-b from-black/12 via-black/6 to-black/12 mix-blend-multiply" />
-          <div
-            className="absolute inset-0 animate-aurora"
-            style={{
-              background:
-                'radial-gradient(ellipse at top left, rgba(124,58,237,0.14), transparent 30%)',
-            }}
-          />
-        </div>
-
-        {/* Accessible fallback image */}
-        <img
-          src={heroImage}
-          alt="Ilustração EduKids+ com crianças e texto 'Aprendizagem Lúdica para Crianças' sobre fundo degradê"
-          className="sr-only"
-        />
-
-        {/* Foreground content (top layer) */}
+        {/* Foreground content */}
         <motion.div
-          className="relative z-10 flex max-w-5xl flex-col items-center px-6 text-center"
+          className="relative z-40 flex flex-col items-center justify-center px-6"
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, ease: 'easeOut' }}
+          transition={{ duration: 0.9, ease: "easeOut" }}
         >
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary via-fuchsia-500 to-yellow-400 drop-shadow-lg">
-            EduKids+
+            EDUKIDS+
           </h1>
 
-          <p className="mt-4 max-w-3xl text-base md:text-lg text-white/90 leading-relaxed">
-            A plataforma onde a aprendizagem se transforma numa aventura emocionante — conteúdo pedagógico, jogos interativos e ferramentas parentais para apoiar o crescimento.
+          <p className="mt-3 max-w-2xl text-sm sm:text-base text-white/90 leading-relaxed">
+            Aprendizagem lúdica e segura para crianças — jogos, quizzes e conteúdo pedagógico para todas as idades.
           </p>
 
-          <div className="mt-8 flex w-full max-w-md gap-3">
-            <Button asChild size="lg" className="flex-1 bg-gradient-to-r from-primary to-fuchsia-500 text-white shadow-2xl">
-              <Link to="/dashboard" onClick={() => setAgeGroup('4-6')}>Começar Aventura</Link>
+          <div className="mt-6 flex gap-3 w-full max-w-md">
+            <Button
+              onClick={() => openFor("entrar")}
+              className="flex-1 bg-white text-black font-bold py-3"
+              aria-label="Entrar"
+            >
+              Entrar
             </Button>
-            <Button asChild variant="outline" size="lg" className="hidden sm:inline-flex">
-              <Link to="/store">Ver Planos</Link>
+
+            <Button
+              onClick={() => openFor("cadastrar")}
+              className="flex-1 border border-white/20 text-white/90 py-3 bg-secondary/30 hover:bg-secondary/40"
+              aria-label="Cadastrar"
+            >
+              Cadastrar
             </Button>
           </div>
 
-          <div className="mt-6 text-sm text-white/80">
-            <span>Explore atividades gratuitas ou experimente o Premium por assinatura — pronto para publicar na Play Store.</span>
+          <div className="mt-4 text-xs text-white/70">
+            <span>Selecione Entrar ou Cadastrar — em seguida escolha a faixa etária do explorador.</span>
           </div>
         </motion.div>
-      </section>
 
-      <section
-        id="age-selection"
-        // Removed negative margin and added top margin so it doesn't overlap the hero on small screens
-        className="container mx-auto px-4 text-center py-12 mt-8 md:mt-16 relative z-20"
-      >
-        <motion.div
-          initial={{ opacity: 0, y: 18 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.45 }}
-          transition={{ duration: 0.8 }}
-        >
-          <h2 className="text-3xl md:text-4xl font-bold">Para Começar a Aventura...</h2>
-          <p className="mt-2 text-lg text-muted-foreground">Qual é a idade do nosso explorador?</p>
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <Button asChild variant="outline" size="lg" className="h-16 px-8 text-xl">
-              <Link to="/dashboard" onClick={() => setAgeGroup('4-6')}>4-6 anos</Link>
-            </Button>
-            <Button asChild variant="outline" size="lg" className="h-16 px-8 text-xl">
-              <Link to="/dashboard" onClick={() => setAgeGroup('7-9')}>7-9 anos</Link>
-            </Button>
-            <Button asChild variant="outline" size="lg" className="h-16 px-8 text-xl">
-              <Link to="/dashboard" onClick={() => setAgeGroup('10-12')}>10-12 anos</Link>
-            </Button>
-          </div>
-        </motion.div>
+        {/* Modal that opens when Entrar/Cadastrar is pressed */}
+        <AgeSelectionModal open={modalOpen} onOpenChange={setModalOpen} action={action} />
       </section>
     </div>
   );
