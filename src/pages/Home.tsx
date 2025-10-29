@@ -11,8 +11,8 @@ const Home = () => {
     setAgeGroup(null);
   }, [setAgeGroup]);
 
-  // Use local feature graphic placed in /public (matches uploaded filename)
-  const heroImage = "/feature-graphic.png.png";
+  // Use an existing screenshot from public to avoid missing-file 404s
+  const heroImage = "/screenshots/screen-1.svg";
 
   // External assets for starry sky and planet
   const starsUrl =
