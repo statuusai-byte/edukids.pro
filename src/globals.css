@@ -43,15 +43,21 @@
   to { background-position: 350% 50%, 350% 50%; }
 }
 
+/* Improve performance and avoid flicker by not using background-attachment: fixed on animated backgrounds.
+   Use will-change and transform hints to push rendering to the GPU where appropriate. */
 .main-container::before {
   content: "";
   position: absolute;
   inset: 0;
   z-index: -1;
-  background-attachment: fixed;
+  /* Avoid `fixed` which causes expensive repaints on some browsers when combined with animations */
+  background-attachment: scroll;
   /* Aplicando o fundo Nebula padrão */
   background-image: radial-gradient(ellipse 80% 80% at 50% -20%, rgba(120, 119, 198, 0.3), transparent);
   animation: aurora 60s linear infinite;
+  will-change: background-position, transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 .glass-card {
