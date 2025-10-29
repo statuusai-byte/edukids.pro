@@ -61,11 +61,6 @@ const Home = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, ease: 'easeOut' }}
         >
-          <div className="mb-6 inline-flex items-center gap-3 rounded-full bg-white/6 px-4 py-2 backdrop-blur-sm border border-white/6">
-            <span className="rounded-full bg-gradient-to-r from-pink-500 via-fuchsia-600 to-indigo-500 px-3 py-1 text-xs font-semibold text-white shadow">Premium</span>
-            <span className="text-sm text-white/85">Novo visual otimizado para Play Store</span>
-          </div>
-
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary via-fuchsia-500 to-yellow-400 drop-shadow-lg">
             EduKids+
           </h1>
