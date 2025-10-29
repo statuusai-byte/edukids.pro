@@ -84,6 +84,11 @@ const LessonPage = () => {
   };
 
   const handleUseHint = () => {
+    if (showHelpContent) {
+      setShowHelpContent(false);
+      return;
+    }
+    
     if (isPremium) {
       setShowHelpContent(true);
       showSuccess("Dica de Assinante Premium ativada!");
@@ -101,8 +106,8 @@ const LessonPage = () => {
 
   const renderLessonContent = () => {
     if (lesson.type === 'game') {
-      if (activity.id === 'm1') return <ContandoFrutas />;
-      if (activity.id === 'p2') return <FormandoPalavras />;
+      if (lesson.title.includes("Contando")) return <ContandoFrutas />;
+      if (lesson.title.includes("Formando") || lesson.title.includes("Montagem")) return <FormandoPalavras />;
       return <Card className="glass-card p-6"><CardTitle className="text-xl mb-4">Jogo Interativo</CardTitle><p className="text-muted-foreground">O jogo para esta lição está em desenvolvimento.</p></Card>;
     }
     if (lesson.type === 'exercise' && lesson.content) {
@@ -130,7 +135,7 @@ const LessonPage = () => {
       </div>
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
-          {showHelpContent && <HelpPackageContent subjectSlug={subject.slug} lessonTitle={lesson.title} />}
+          {showHelpContent && <HelpPackageContent subjectSlug={subject.slug} lesson={lesson} />}
           {renderLessonContent()}
           <div className="flex gap-4 mt-4 items-center">
             <Button variant="outline" onClick={goPrev} disabled={!hasPrev}>Anterior</Button>
