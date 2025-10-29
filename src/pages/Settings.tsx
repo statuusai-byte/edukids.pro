@@ -10,7 +10,7 @@ import { Trash2, ShieldCheck, ShieldX } from "lucide-react";
 import { useProfile } from "@/context/ProfileContext";
 import { AvatarUploader } from "@/components/AvatarUploader";
 import { useProgress } from "@/hooks/use-progress";
-import { showSuccess, showError } from "@/utils/toast";
+import { showSuccess, showError, showLoading, dismissToast } from "@/utils/toast";
 import { getSoundEnabled, setSoundEnabled } from "@/utils/sound";
 import ParentalPinModal from "@/components/ParentalPinModal";
 import {
@@ -19,6 +19,7 @@ import {
   requirePinForPurchasesSet,
 } from "@/utils/parental";
 import { useSupabase } from "@/context/SupabaseContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const INTERSTITIALS_KEY = "edukids_show_interstitials";
 
@@ -125,34 +126,17 @@ const Settings = () => {
     }
   };
 
-  // Delete account: verify PIN if set, then clear local data and sign out
-  const deleteAccount = async () => {
-    const runDeletion = async () => {
+  const removeAccountFromDevice = async () => {
+    const runRemoval = async () => {
       try {
         const keysToRemove = [
-          "edukids_age_group",
-          "edukids_profile",
-          "edukids_is_premium",
-          "edukids_help_packages",
-          "edukids_show_interstitials",
-          "ad_counter",
-          "edukids_parent_pin_hash",
-          "edukids_require_parent_pin",
-          "edukids_screen_time_limit_minutes",
-          "edukids_screen_time_block_enabled",
-          "edukids_screen_time_today_minutes",
-          "edukids_screen_time_last_day",
-          "edukids_sound_enabled",
+          "edukids_age_group", "edukids_profile", "edukids_is_premium", "edukids_help_packages",
+          "edukids_show_interstitials", "ad_counter", "edukids_parent_pin_hash", "edukids_require_parent_pin",
+          "edukids_screen_time_limit_minutes", "edukids_screen_time_block_enabled", "edukids_screen_time_today_minutes",
+          "edukids_screen_time_last_day", "edukids_sound_enabled",
         ];
-        keysToRemove.forEach((k) => {
-          try {
-            localStorage.removeItem(k);
-          } catch {}
-        });
-
-        // sign out via supabase context
+        keysToRemove.forEach((k) => { try { localStorage.removeItem(k); } catch {} });
         await signOut();
-
         showSuccess("Conta removida deste dispositivo e sessão encerrada.");
       } catch (e) {
         showError("Falha ao remover conta local.");
@@ -162,8 +146,28 @@ const Settings = () => {
     if (!window.confirm("Tem certeza que deseja remover a conta deste dispositivo? Todos os dados locais, como progresso e perfil, serão apagados e sua sessão será encerrada.")) {
       return;
     }
+    onVerifyThenRun(runRemoval);
+  };
 
-    onVerifyThenRun(runDeletion);
+  const handlePermanentDelete = () => {
+    const runPermanentDeletion = async () => {
+      const loadingToast = showLoading("Excluindo sua conta permanentemente...");
+      try {
+        const { error } = await supabase.functions.invoke("delete-user");
+        if (error) throw new Error(error.message);
+        await signOut();
+        dismissToast(loadingToast);
+        showSuccess("Sua conta foi excluída permanentemente.");
+      } catch (error: any) {
+        dismissToast(loadingToast);
+        showError(`Falha ao excluir a conta: ${error.message}`);
+      }
+    };
+
+    if (!window.confirm("ATENÇÃO: Esta ação é PERMANENTE e IRREVERSÍVEL. Todos os seus dados, incluindo perfil, progresso e compras, serão excluídos para sempre. Deseja continuar?")) {
+      return;
+    }
+    onVerifyThenRun(runPermanentDeletion);
   };
 
   return (
@@ -187,18 +191,9 @@ const Settings = () => {
             <div className="space-y-2">
               <Label>Faixa Etária</Label>
               <RadioGroup value={ageGroup ?? ""} onValueChange={(value) => setAgeGroup(value as "4-6" | "7-9" | "10-12")} className="flex space-x-4">
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="4-6" id="r1" />
-                  <Label htmlFor="r1">4-6 anos</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="7-9" id="r2" />
-                  <Label htmlFor="r2">7-9 anos</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="10-12" id="r3" />
-                  <Label htmlFor="r3">10-12 anos</Label>
-                </div>
+                <div className="flex items-center space-x-2"><RadioGroupItem value="4-6" id="r1" /><Label htmlFor="r1">4-6 anos</Label></div>
+                <div className="flex items-center space-x-2"><RadioGroupItem value="7-9" id="r2" /><Label htmlFor="r2">7-9 anos</Label></div>
+                <div className="flex items-center space-x-2"><RadioGroupItem value="10-12" id="r3" /><Label htmlFor="r3">10-12 anos</Label></div>
               </RadioGroup>
             </div>
           </CardContent>
@@ -206,83 +201,52 @@ const Settings = () => {
 
         {/* Dados e notificações */}
         <Card className="glass-card">
-          <CardHeader>
-            <CardTitle>Gerenciamento de Dados</CardTitle>
-            <CardDescription>Opções avançadas de dados e progresso.</CardDescription>
-          </CardHeader>
+          <CardHeader><CardTitle>Gerenciamento de Dados</CardTitle><CardDescription>Opções avançadas de dados e progresso.</CardDescription></CardHeader>
           <CardContent className="space-y-6">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="progress-reports">Relatórios de progresso por e-mail</Label>
-              <Switch id="progress-reports" defaultChecked />
-            </div>
-            <div className="flex items-center justify-between">
-              <Label htmlFor="in-app-notifications">Notificações no aplicativo</Label>
-              <Switch id="in-app-notifications" defaultChecked />
-            </div>
-            <div className="flex items-center justify-between">
-              <Label htmlFor="ui-sounds">Sons da interface</Label>
-              <Switch id="ui-sounds" checked={uiSounds} onCheckedChange={handleToggleSounds} />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <Label htmlFor="interstitial-ads">Anúncios Intersticiais (tela cheia)</Label>
-              <Switch id="interstitial-ads" checked={interstitialsEnabled} onCheckedChange={handleToggleInterstitials} />
-            </div>
-
-            <div className="pt-4 border-t border-white/10">
-              <Button variant="destructive" onClick={handleResetProgress} className="w-full">
-                <Trash2 className="mr-2 h-4 w-4" /> Resetar Todo o Progresso
-              </Button>
-              <p className="text-xs text-muted-foreground mt-2">Isso apagará todas as lições marcadas como concluídas.</p>
-            </div>
+            <div className="flex items-center justify-between"><Label htmlFor="progress-reports">Relatórios de progresso por e-mail</Label><Switch id="progress-reports" defaultChecked /></div>
+            <div className="flex items-center justify-between"><Label htmlFor="in-app-notifications">Notificações no aplicativo</Label><Switch id="in-app-notifications" defaultChecked /></div>
+            <div className="flex items-center justify-between"><Label htmlFor="ui-sounds">Sons da interface</Label><Switch id="ui-sounds" checked={uiSounds} onCheckedChange={handleToggleSounds} /></div>
+            <div className="flex items-center justify-between"><Label htmlFor="interstitial-ads">Anúncios Intersticiais (tela cheia)</Label><Switch id="interstitial-ads" checked={interstitialsEnabled} onCheckedChange={handleToggleInterstitials} /></div>
+            <div className="pt-4 border-t border-white/10"><Button variant="destructive" onClick={handleResetProgress} className="w-full"><Trash2 className="mr-2 h-4 w-4" /> Resetar Todo o Progresso</Button><p className="text-xs text-muted-foreground mt-2">Isso apagará todas as lições marcadas como concluídas.</p></div>
           </CardContent>
         </Card>
 
         {/* Controle Parental */}
         <Card className="glass-card">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <ShieldCheck className="h-5 w-5 text-primary" />
-              Controle Parental
-            </CardTitle>
-            <CardDescription>Defina um PIN para compras e ações sensíveis.</CardDescription>
-          </CardHeader>
+          <CardHeader><CardTitle className="flex items-center gap-2"><ShieldCheck className="h-5 w-5 text-primary" />Controle Parental</CardTitle><CardDescription>Defina um PIN para compras e ações sensíveis.</CardDescription></CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
-              <div>
-                <div className="font-medium">Status do PIN</div>
-                <div className="text-xs text-muted-foreground">{parentPinExists ? "PIN configurado neste dispositivo." : "Nenhum PIN definido."}</div>
-              </div>
-              {parentPinExists ? (
-                <Button variant="secondary" onClick={openRemovePin}>
-                  <ShieldX className="mr-2 h-4 w-4" /> Remover PIN
-                </Button>
-              ) : (
-                <Button onClick={openSetPin}>
-                  <ShieldCheck className="mr-2 h-4 w-4" /> Definir PIN
-                </Button>
-              )}
+              <div><div className="font-medium">Status do PIN</div><div className="text-xs text-muted-foreground">{parentPinExists ? "PIN configurado neste dispositivo." : "Nenhum PIN definido."}</div></div>
+              {parentPinExists ? <Button variant="secondary" onClick={openRemovePin}><ShieldX className="mr-2 h-4 w-4" /> Remover PIN</Button> : <Button onClick={openSetPin}><ShieldCheck className="mr-2 h-4 w-4" /> Definir PIN</Button>}
             </div>
-
-            <div className="flex items-center justify-between">
-              <Label htmlFor="require-pin">Exigir PIN para compras</Label>
-              <Switch id="require-pin" checked={requirePinForPurchases} onCheckedChange={requirePinChanged} />
-            </div>
+            <div className="flex items-center justify-between"><Label htmlFor="require-pin">Exigir PIN para compras</Label><Switch id="require-pin" checked={requirePinForPurchases} onCheckedChange={requirePinChanged} /></div>
           </CardContent>
         </Card>
 
         {/* Conta */}
         <Card className="glass-card">
+          <CardHeader><CardTitle>Conta</CardTitle><CardDescription>Esta ação limpará todos os dados locais (progresso, perfil) e encerrará a sessão neste dispositivo. A conta não será excluída do sistema.</CardDescription></CardHeader>
+          <CardContent><Button variant="destructive" className="w-full" onClick={removeAccountFromDevice}><Trash2 className="mr-2 h-4 w-4" /> Remover Conta Deste Dispositivo</Button></CardContent>
+        </Card>
+
+        {/* Exclusão Permanente da Conta */}
+        <Card className="glass-card border-red-500/50">
           <CardHeader>
-            <CardTitle>Conta</CardTitle>
-            <CardDescription>
-              Esta ação limpará todos os dados locais (progresso, perfil) e encerrará a sessão neste dispositivo. A conta não será excluída do sistema.
-            </CardDescription>
+            <CardTitle className="text-red-400">Zona de Perigo</CardTitle>
+            <CardDescription>Ações irreversíveis relacionadas à sua conta.</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button variant="destructive" className="w-full" onClick={deleteAccount}>
-              <Trash2 className="mr-2 h-4 w-4" /> Remover Conta Deste Dispositivo
-            </Button>
+            <div className="flex items-center justify-between">
+              <div>
+                <Label className="font-bold text-foreground">Excluir Conta Permanentemente</Label>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Esta ação removerá permanentemente sua conta e todos os dados associados do nosso sistema. Esta ação não pode ser desfeita.
+                </p>
+              </div>
+              <Button variant="destructive" onClick={handlePermanentDelete}>
+                <Trash2 className="mr-2 h-4 w-4" /> Excluir Minha Conta
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
@@ -290,19 +254,7 @@ const Settings = () => {
       </div>
 
       {/* Modal PIN */}
-      <ParentalPinModal
-        open={pinModalOpen}
-        mode={pinMode}
-        onOpenChange={(o) => {
-          afterPinModalChange(o);
-        }}
-        onVerified={() => {
-          // Executa a ação pendente (se houver) após verificação bem-sucedida
-          const fn = pendingActionRef.current;
-          pendingActionRef.current = null;
-          if (fn) fn();
-        }}
-      />
+      <ParentalPinModal open={pinModalOpen} mode={pinMode} onOpenChange={afterPinModalChange} onVerified={() => { const fn = pendingActionRef.current; pendingActionRef.current = null; if (fn) fn(); }} />
     </div>
   );
 };
