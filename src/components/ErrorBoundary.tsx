@@ -15,9 +15,9 @@ export class ErrorBoundary extends React.Component<React.PropsWithChildren<{}>, 
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, info: any) {
+  componentDidCatch(error: Error, _info: any) {
     // Aqui poderíamos reportar o erro para um serviço externo
-    // console.error("ErrorBoundary caught:", error, info);
+    console.error("ErrorBoundary caught:", error, _info);
   }
 
   handleReload = () => {

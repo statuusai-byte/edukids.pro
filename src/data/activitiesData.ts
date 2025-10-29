@@ -1,12 +1,163 @@
-const prog_pr1_l1 = genSimpleMultiple([
-  { q: "O que é um algoritmo?", correct: "Sequência de passos", extras: ["Um tipo de robô","Um número"] },
-  { q: "Um loop serve para:", correct: "Repetir uma ação", extras: ["Parar o programa","Mudar cor"] },
-  ...Array.from({ length: 8 * MULTIPLIER }).map((_, i) => ({
-    q: `Pergunta de programação #${i+1}`,
-    correct: "Repetir uma ação",
-    extras: ["Errado1","Errado2"]
-  }))
-]);
+/**
+ * activitiesData.ts
+ * Complete and self-contained data file that exports types and subjectsData used across the app.
+ */
+
+import type { QuizQuestion } from '@/components/QuizComponent';
+import type { IconName } from '@/components/Icon';
+
+export interface Lesson {
+  id: string;
+  title: string;
+  description?: string;
+  videoUrl?: string;
+  content?: string; // JSON.stringify([...]) for quizzes or plain text
+  type?: 'video' | 'reading' | 'exercise' | 'game';
+}
+
+export interface Module {
+  id: string;
+  title: string;
+  description?: string;
+  lessons: Lesson[];
+}
+
+export interface Activity {
+  id: string;
+  title: string;
+  description?: string;
+  ageGroups: ('4-6' | '7-9' | '10-12')[];
+  icon: IconName;
+  modules: Module[];
+}
+
+export interface Subject {
+  name: string;
+  slug: string;
+  icon: IconName;
+  color: string;
+  ageGroups: ('4-6' | '7-9' | '10-12')[];
+  activities: Activity[];
+}
+
+/* ---------- Simple quiz generators ---------- */
+
+function shuffle<T>(arr: T[]) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function makeOptions(correct: string, extras: string[]) {
+  const opts = [correct, ...extras.slice(0, 2)];
+  const unique = Array.from(new Set(opts));
+  while (unique.length < 3) {
+    unique.push(String(Number(correct || 0) + unique.length));
+  }
+  return shuffle(unique);
+}
+
+function genAdd(count: number): QuizQuestion[] {
+  const out: QuizQuestion[] = [];
+  for (let i = 1; i <= count; i++) {
+    const a = (i % 10) + 1;
+    const b = ((i * 3) % 9) + 1;
+    const correct = a + b;
+    out.push({
+      question: `Quanto é ${a} + ${b}?`,
+      options: makeOptions(String(correct), [String(correct + 1), String(Math.max(0, correct - 1))]),
+      correctAnswer: String(correct),
+    });
+  }
+  return out;
+}
+
+function genSub(count: number): QuizQuestion[] {
+  const out: QuizQuestion[] = [];
+  for (let i = 1; i <= count; i++) {
+    const a = 5 + (i % 10);
+    const b = (i % 4) + 1;
+    const correct = a - b;
+    out.push({
+      question: `Quanto é ${a} - ${b}?`,
+      options: makeOptions(String(correct), [String(correct + 1), String(Math.max(0, correct - 1))]),
+      correctAnswer: String(correct),
+    });
+  }
+  return out;
+}
+
+function genMul(count: number): QuizQuestion[] {
+    const out: QuizQuestion[] = [];
+    for (let i = 1; i <= count; i++) {
+        const a = 1 + (i % 9);
+        const b = 1 + ((i * 2) % 9);
+        const correct = a * b;
+        out.push({
+            question: `Quanto é ${a} × ${b}?`,
+            options: makeOptions(String(correct), [String(correct + 1), String(Math.max(1, correct - 1))]),
+            correctAnswer: String(correct),
+        });
+    }
+    return out;
+}
+
+function genNumberRecognition(count: number): QuizQuestion[] {
+  const out: QuizQuestion[] = [];
+  for (let i = 1; i <= count; i++) {
+    const n = i <= 12 ? i : (i % 12) + 1;
+    out.push({
+      question: `Quantos objetos você vê: ${'●'.repeat(Math.min(8, n))}${n > 8 ? ` (+${n - 8})` : ''}`,
+      options: makeOptions(String(n), [String(n + 1), String(Math.max(1, n - 1))]),
+      correctAnswer: String(n),
+    });
+  }
+  return out;
+}
+
+function genEnglishNumbers(count = 12): QuizQuestion[] {
+  const words = ['one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve'];
+  const out: QuizQuestion[] = [];
+  for (let i = 0; i < count; i++) {
+    const n = i % words.length;
+    const correct = words[n];
+    const wrong1 = words[(n + 1) % words.length];
+    const wrong2 = words[(n + 2) % words.length];
+    out.push({
+      question: `How do you say the number ${n + 1} in English?`,
+      options: makeOptions(correct, [wrong1, wrong2]),
+      correctAnswer: correct,
+    });
+  }
+  return out;
+}
+
+/* ---------- Example lesson payloads (stringified where needed) ---------- */
+
+const math_m1_l1 = genNumberRecognition(6);
+const math_m1_l2 = genAdd(6);
+const math_m1_l4 = genAdd(6);
+const math_m1_l5 = genSub(6);
+const math_m1_l6 = genAdd(8);
+
+const math_m4_l1 = genMul(6);
+const math_m4_l2 = genAdd(6);
+
+const port_p1_l1 = genEnglishNumbers(6);
+const port_p1_l2 = genEnglishNumbers(6);
+const port_p2_l1 = genEnglishNumbers(4);
+
+const eng_i1_l1 = genEnglishNumbers(6);
+
+const sci_c1_l2 = genAdd(6);
+
+const hist_h1_l2 = genNumberRecognition(4);
+const geo_g1_l1 = genNumberRecognition(4);
+
+const arts_a1_l2 = genNumberRecognition(4);
+const prog_pr1_l1 = genAdd(6);
 
 /* ---------- subjectsData export (compact) ---------- */
 
@@ -179,7 +330,4 @@ export const subjectsData: Subject[] = [
       { id: "pr1", title: "Fundamentos", description: "Algoritmos e loops", ageGroups: ['10-12'], icon: "Code", modules: [{ id: "pr1-mod-1", title: "Sequência e Repetição", lessons: [{ id: "pr1-l1", title: "Algoritmos", description: "Sequência de passos.", content: JSON.stringify(prog_pr1_l1), type: "exercise" }] }] }
     ]
   },
-
-  // você pode expandir com mais subjects seguindo o padrão acima
 ];
-/* fim de activitiesData */

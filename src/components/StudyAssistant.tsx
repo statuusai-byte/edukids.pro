@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { X, Bot, Smile, Sparkles } from "lucide-react";
+import { X, Bot, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { showLoading, dismissToast, showSuccess, showError } from "@/utils/toast";
 

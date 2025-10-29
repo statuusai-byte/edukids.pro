@@ -1,5 +1,5 @@
 import { useParams, Link as RouterLink } from "react-router-dom";
-import { subjectsData } from "@/data/activitiesData";
+import { subjectsData, Lesson } from "@/data/activitiesData";
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Folder } from "lucide-react";
@@ -44,7 +44,7 @@ const ActivityContentPage = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {activity.modules.map((mod) => {
             const total = mod.lessons.length;
-            const completed = mod.lessons.reduce((acc, l) => {
+            const completed = mod.lessons.reduce((acc: number, l: Lesson) => {
               if (isLessonCompleted(subject.slug, activity.id, mod.id, l.id)) return acc + 1;
               return acc;
             }, 0);
