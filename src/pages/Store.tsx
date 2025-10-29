@@ -66,8 +66,8 @@ const Store = () => {
 
   const hintPackages = [
     { amount: 3, name: "Pacote Básico", price: "R$ 1,00", description: "Para começar a desvendar os desafios." },
-    { amount: 10, name: "Pacote Padrão", price: "R$ 3,00", description: "Um bom suprimento de ajuda para continuar a aventura." },
-    { amount: 20, name: "Pacote Explorador", price: "R$ 5,00", description: "O melhor valor! Dicas de sobra para os maiores exploradores." },
+    { amount: 8, name: "Pacote Padrão", price: "R$ 3,00", description: "Um bom suprimento de ajuda para continuar a aventura." },
+    { amount: 15, name: "Pacote Explorador", price: "R$ 5,00", description: "O melhor valor! Dicas de sobra para os maiores exploradores." },
   ];
 
   const simulateAiResponse = (q: string) => {
