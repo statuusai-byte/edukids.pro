@@ -1,5 +1,6 @@
 import {
-  Apple, Sigma, BookOpen, FlaskConical, Globe, Palette, Music, Brain, Code, Bot, PiggyBank, Landmark, SpellCheck
+  Apple, Sigma, BookOpen, FlaskConical, Globe, Palette, Music, Brain, Code, Bot, PiggyBank, Landmark, SpellCheck,
+  PlaySquare, Store, User, Settings
 } from 'lucide-react';
 import React from 'react';
 
@@ -17,6 +18,10 @@ const iconMap = {
   PiggyBank,
   Landmark,
   SpellCheck,
+  PlaySquare,
+  Store,
+  User,
+  Settings,
 };
 
 export type IconName = keyof typeof iconMap;

@@ -28,7 +28,7 @@ const settingsItem: NavItem = {
 };
 
 const Layout = () => {
-  const { profile } = useProfile();
+  const { name, avatarUrl } = useProfile();
 
   return (
     <div className="flex min-h-screen w-full text-foreground">
@@ -92,8 +92,8 @@ const Layout = () => {
             )}
           </NavLink>
           <Avatar>
-            <AvatarImage src={profile?.avatar_url ?? undefined} />
-            <AvatarFallback>{getInitials(profile?.full_name ?? "Anônimo")}</AvatarFallback>
+            <AvatarImage src={avatarUrl ?? undefined} />
+            <AvatarFallback>{getInitials(name ?? "Anônimo")}</AvatarFallback>
           </Avatar>
         </div>
       </aside>
