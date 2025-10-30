@@ -1,76 +1,78 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { showSuccess, showError, showLoading, dismissToast } from "@/utils/toast";
 import { useNavigate } from "react-router-dom";
+import { useSupabase } from "@/context/SupabaseContext";
 
 const DEFAULT_EMAIL = "eduki.teste@gmail.com";
 const DEFAULT_PASSWORD = "12121212";
+const PREMIUM_LOCAL_FLAG = "edukids_is_premium";
 
 export default function TestAccount() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState(DEFAULT_EMAIL);
   const [password, setPassword] = useState(DEFAULT_PASSWORD);
   const navigate = useNavigate();
+  const { user, syncPremiumFromProfile } = useSupabase();
 
+  // Helper para definir o status premium local
   const seedLocalPremium = async () => {
     try {
-      localStorage.setItem("edukids_is_premium", "true");
-      // mark profile
+      localStorage.setItem(PREMIUM_LOCAL_FLAG, "true");
       const profile = {
         name: "Test User",
         avatarUrl: "https://i.pravatar.cc/150?u=test-user-edukids",
         email,
       };
       localStorage.setItem("edukids_profile", JSON.stringify(profile));
-      // give all help packages (so testers can see content)
       const allPackages = [
-        "matematica",
-        "portugues",
-        "ciencias",
-        "historia",
-        "geografia",
-        "ingles",
+        "matematica", "portugues", "ciencias", "historia", "geografia", "ingles",
       ];
       localStorage.setItem("edukids_help_packages", JSON.stringify(allPackages));
     } catch (e) {
-      console.error("Failed to seed local premium:", e);
+      console.error("Falha ao semear premium local:", e);
       throw e;
     }
   };
 
+  // Limpa o status premium local ao desmontar o componente para garantir um estado limpo para testes
+  useEffect(() => {
+    return () => {
+      try {
+        localStorage.removeItem(PREMIUM_LOCAL_FLAG);
+        localStorage.removeItem("edukids_profile");
+        localStorage.removeItem("edukids_help_packages");
+      } catch (e) {
+        console.error("Falha ao limpar dados de teste locais ao desmontar:", e);
+      }
+    };
+  }, []);
+
   const handleCreateAndLogin = async () => {
     setLoading(true);
     const loadingToast = showLoading("Processando conta de teste...");
+    let authenticatedUser = user;
+
     try {
-      // 1) Try to sign in (if user already exists)
-      const signIn = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      // 1) Garante que o usuário esteja autenticado com o Supabase
+      if (!authenticatedUser) {
+        let authResult = await supabase.auth.signInWithPassword({ email, password });
 
-      if (signIn.error) {
-        // If sign-in failed, attempt sign up
-        const signUp = await supabase.auth.signUp({
-          email,
-          password,
-        });
+        if (authResult.error) {
+          // Se o login falhou, tenta o registro
+          const signUpResult = await supabase.auth.signUp({ email, password });
 
-        // If signUp produced an error that is not "already registered", continue to fallback
-        if (signUp.error && signUp.error.message && !/already registered/i.test(signUp.error.message)) {
-          // We'll fallback to local premium immediately below
-          console.warn("Sign up returned an error; continuing to local fallback:", signUp.error.message);
+          if (signUpResult.error && !/already registered/i.test(signUpResult.error.message)) {
+            console.warn("O registro retornou um erro; tentando prosseguir:", signUpResult.error.message);
+          }
+          // Após a tentativa de registro, tenta fazer login novamente para obter a sessão
+          authResult = await supabase.auth.signInWithPassword({ email, password });
         }
 
-        // Try sign in after sign up attempt
-        const signIn2 = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (signIn2.error) {
-          // Authentication still failed — automatically fallback to local premium
+        if (authResult.error || !authResult.data.user) {
+          // Se a autenticação ainda falhou, fallback para premium local
           dismissToast(loadingToast);
           await seedLocalPremium();
           showSuccess("Autenticação online falhou; Premium ativado localmente para testes.");
@@ -78,27 +80,48 @@ export default function TestAccount() {
           setLoading(false);
           return;
         }
-
-        // signIn2 succeeded -> proceed further
+        authenticatedUser = authResult.data.user;
       }
 
-      // If initial signIn succeeded or signIn2 succeeded, seed local premium/profile for immediate access
-      await seedLocalPremium();
+      // 2) Usuário autenticado, agora concede premium via função Edge
+      const invokeOptions: any = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      };
+
+      const { data: grantData, error: grantError } = await supabase.functions.invoke("grant-premium", invokeOptions);
+
+      if (grantError) {
+        console.error("Erro na função de concessão de premium:", grantError);
+        // Se a concessão de premium via função falhar, fallback para premium local
+        dismissToast(loadingToast);
+        await seedLocalPremium();
+        showError("Falha ao conceder Premium via sistema; Premium ativado localmente para testes.");
+        navigate("/dashboard", { replace: true });
+        setLoading(false);
+        return;
+      }
+
+      // 3) Sincroniza explicitamente o status premium do perfil após a concessão
+      // Isso garante que o estado local seja atualizado imediatamente após o banco de dados.
+      await syncPremiumFromProfile(authenticatedUser.id);
 
       dismissToast(loadingToast);
       showSuccess("Conta de teste pronta com Premium ativado. Você será redirecionado(a).");
 
-      // small delay to let the toaster show
+      // Pequeno atraso para o toaster aparecer e o contexto ser atualizado
       setTimeout(() => {
         navigate("/dashboard", { replace: true });
       }, 700);
+
     } catch (error: any) {
       dismissToast(loadingToast);
-      console.error("Test account flow error:", error);
-      // Automatic fallback on any unexpected error
+      console.error("Erro no fluxo da conta de teste:", error);
+      // Fallback automático em qualquer erro inesperado
       try {
         await seedLocalPremium();
-        showSuccess("Ocorreu um erro, mas Premium foi ativado localmente para permitir testes.");
+        showError("Ocorreu um erro, mas Premium foi ativado localmente para permitir testes.");
         navigate("/dashboard", { replace: true });
       } catch (e) {
         showError("Falha ao ativar Premium localmente.");
@@ -112,7 +135,6 @@ export default function TestAccount() {
     try {
       await seedLocalPremium();
       showSuccess("Premium ativado localmente para este dispositivo.");
-      // Redirect to dashboard so user can check premium areas
       navigate("/dashboard", { replace: true });
     } catch (e) {
       showError("Falha ao ativar Premium localmente.");
@@ -153,9 +175,9 @@ export default function TestAccount() {
             </Button>
 
             <Button variant="outline" onClick={() => {
-              // helper: clear test local state
+              // helper: limpar estado local de teste
               try {
-                localStorage.removeItem("edukids_is_premium");
+                localStorage.removeItem(PREMIUM_LOCAL_FLAG);
                 localStorage.removeItem("edukids_profile");
                 localStorage.removeItem("edukids_help_packages");
                 showSuccess("Dados locais de teste removidos.");

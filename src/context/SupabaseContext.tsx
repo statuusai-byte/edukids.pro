@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
@@ -9,6 +9,7 @@ interface SupabaseContextType {
   user: User | null;
   isLoading: boolean;
   signOut: () => Promise<void>;
+  syncPremiumFromProfile: (userId: string | undefined) => Promise<void>;
 }
 
 const SupabaseContext = createContext<SupabaseContextType | undefined>(undefined);
@@ -23,7 +24,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
 
   // Lê public.profiles.is_premium e aplica a flag localmente (para o cliente)
-  const syncPremiumFromProfile = async (userId: string | undefined) => {
+  const syncPremiumFromProfile = useCallback(async (userId: string | undefined) => {
     if (!userId) return;
     try {
       const { data, error } = await supabase
@@ -39,11 +40,18 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
           // ignore localStorage errors
         }
         showSuccess('Acesso Premium aplicado para sua conta.');
+      } else {
+        // Se não for premium no DB ou houver erro, garante que a flag local seja removida
+        try {
+          localStorage.removeItem(PREMIUM_LOCAL_FLAG);
+        } catch (e) {
+          // ignore localStorage errors
+        }
       }
     } catch (e) {
-      console.error('Failed to sync premium from profile:', e);
+      console.error('Falha ao sincronizar premium do perfil:', e);
     }
-  };
+  }, []);
 
   useEffect(() => {
     // Ouve mudanças de autenticação
@@ -56,7 +64,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
         if (event === 'SIGNED_IN') {
           showSuccess('Login realizado com sucesso!');
 
-          // Fallback legacy: conta de teste
+          // Fallback legado: conta de teste
           if (currentSession?.user?.email === TEST_EMAIL) {
             try {
               localStorage.setItem(PREMIUM_LOCAL_FLAG, "true");
@@ -70,7 +78,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
               localStorage.setItem('edukids_help_packages', JSON.stringify(allPackages));
               showSuccess("Conta de teste Premium ativada!");
             } catch (e) {
-              console.error("Failed to activate premium test mode:", e);
+              console.error("Falha ao ativar o modo de teste Premium:", e);
               showError("Falha ao ativar o modo de teste Premium.");
             }
           }
@@ -96,7 +104,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
         syncPremiumFromProfile(initialSession.user.id);
       }
     }).catch((err) => {
-      console.error('Failed to get initial session:', err);
+      console.error('Falha ao obter a sessão inicial:', err);
       setIsLoading(false);
     });
 
@@ -104,7 +112,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
       authListener.subscription.unsubscribe();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [navigate]);
+  }, [navigate, syncPremiumFromProfile]);
 
   const signOut = async () => {
     // Limpa dados locais de fallback
@@ -127,7 +135,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <SupabaseContext.Provider value={{ session, user, isLoading, signOut }}>
+    <SupabaseContext.Provider value={{ session, user, isLoading, signOut, syncPremiumFromProfile }}>
       {children}
     </SupabaseContext.Provider>
   );
