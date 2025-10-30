@@ -2,11 +2,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import { subjectsData } from "@/data/activitiesData";
 import { ArrowLeft, BookOpen, ClipboardCheck, Gamepad2, Play, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { showError } from "@/utils/toast";
 import type { Lesson } from "@/data/activitiesData";
-import Icon from "@/components/Icon";
+import { Icon } from "@/components/Icon"; // Corrigido: importação nomeada
 
 const getLessonActionDetails = (type: Lesson['type']) => {
   switch (type) {
@@ -44,7 +44,7 @@ const ActivityPage = () => {
 
   return (
     <div className="container mx-auto p-4 sm:p-6 md:p-8">
-      <Button variant="ghost" onClick={() => navigate(`/subjects/${slug}`)} className="mb-6">
+      <Button variant="ghost" onClick={() => navigate(`/activities/${slug}`)} className="mb-6">
         <ArrowLeft className="mr-2 h-4 w-4" />
         Voltar para {subject.name}
       </Button>
@@ -88,7 +88,7 @@ const ActivityPage = () => {
                         <Button
                           onClick={() => {
                             if (isAvailable) {
-                              navigate(`/subjects/${subject.slug}/${activity.id}/${lesson.id}`);
+                              navigate(`/activities/${subject.slug}/${activity.id}/modules/${module.id}/lessons/${lesson.id}`);
                             } else {
                               showError("Conteúdo indisponível no momento.");
                             }

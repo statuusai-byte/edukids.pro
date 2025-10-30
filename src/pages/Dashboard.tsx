@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, Clock, Zap, TrendingUp, CheckCircle, BookOpen, Gauge, Heart } from "lucide-react";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Activity, Clock, TrendingUp, CheckCircle, Gauge, Heart } from "lucide-react";
 import { TiltCard } from "@/components/TiltCard";
 import { allCourses } from "@/data/coursesData";
 import { subjectsData } from "@/data/activitiesData";
