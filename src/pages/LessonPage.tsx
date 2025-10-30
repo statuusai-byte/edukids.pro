@@ -39,7 +39,7 @@ const LessonPage = () => {
     if (!m) return { subject: s, activity: a, module: null, lesson: null, lessonIndex: -1, moduleIndex: mi };
     const li = m.lessons.findIndex(l => l.id === lessonId);
     const l = li >= 0 ? m.lessons[li] : null;
-    return { subject: s, activity: a, module: m, lesson: l, lessonIndex: li, moduleIndex: mi };
+    return { subject: s, activity: a, module: m, lesson: l, lessonIndex: li, moduleIndex: li };
   }, [subjectSlug, activityId, moduleId, lessonId]);
 
   // Screen Time Tracking: Start session when entering lesson, stop when leaving
@@ -189,7 +189,13 @@ const LessonPage = () => {
                       <Lightbulb className="mr-2 h-4 w-4" />
                       {isPremium ? "Pedir Dica Premium" : `Pedir Dica (Saldo: ${hints})`}
                     </Button>
-                    {!isPremium && <RewardButton onReward={() => addHints(1)} label="Ganhar Dica (Anúncio)" />}
+                    {!isPremium && hints <= 0 && (
+                      <Button onClick={() => showError("Você está sem dicas! Compre mais na loja ou assista a um vídeo para ganhar uma.")} className="bg-blue-600 hover:bg-blue-700 text-white">
+                        <Lightbulb className="mr-2 h-4 w-4" />
+                        Obter Dica
+                      </Button>
+                    )}
+                    {!isPremium && hints > 0 && <RewardButton onReward={() => addHints(1)} label="Ganhar Dica (Anúncio)" />}
                   </div>
                 )}
                 {!isQuizOrGame && <Button className="bg-green-600 hover:bg-green-700" onClick={markCompleted}>{completed ? "Revisar (Concluído)" : "Marcar como Concluída"}</Button>}
