@@ -2,7 +2,7 @@ import { useParams, Link as RouterLink, useNavigate } from "react-router-dom";
 import { subjectsData } from "@/data/activitiesData";
 import { useMemo, useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Lightbulb, Lock } from "lucide-react";
+import { ArrowLeft, Lightbulb, Lock, BookOpen } from "lucide-react"; // Adicionado BookOpen
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ContandoFrutas from "@/components/games/ContandoFrutas";
 import FormandoPalavras from "@/components/games/FormandoPalavras";
@@ -12,7 +12,6 @@ import RewardButton from "@/components/RewardButton";
 import { showSuccess, showError } from "@/utils/toast";
 import { usePremium } from "@/context/PremiumContext";
 import { useHintsContext } from "@/context/HintsContext";
-import VideoPlayer from "@/components/VideoPlayer";
 import { useScreenTime } from "@/hooks/use-screen-time";
 import PageTransition from "@/components/PageTransition";
 import { useStudyAssistant } from "@/context/StudyAssistantContext"; // Import useStudyAssistant
@@ -22,12 +21,11 @@ const LessonPage = () => {
   const navigate = useNavigate();
   const { isLessonCompleted, markLessonCompleted } = useProgress();
   const { isPremium } = usePremium();
-  const { hints, addHints } = useHintsContext(); // Removed useHint
+  const { hints, addHints } = useHintsContext();
   const { isBlocked, limitMinutes, startSession, stopSession } = useScreenTime();
-  const { requestLessonHint } = useStudyAssistant(); // Use the study assistant context
+  const { requestLessonHint } = useStudyAssistant();
   
   const [hintTriggered, setHintTriggered] = useState(false);
-  // Removed quizHintSuggested as it was not directly read in this component
 
   const { subject, activity, module, lesson, lessonIndex, moduleIndex } = useMemo(() => {
     const s = subjectsData.find(sub => sub.slug === subjectSlug);
@@ -55,7 +53,6 @@ const LessonPage = () => {
   // Reset hint trigger when the lesson changes
   useEffect(() => {
     setHintTriggered(false);
-    // setQuizHintSuggested(false); // Removed as quizHintSuggested is removed
   }, [lessonId]);
 
   if (!subject || !activity || !module || !lesson) {
@@ -138,12 +135,12 @@ const LessonPage = () => {
 
     requestLessonHint(questionText, () => {
       setHintTriggered(true);
-      // setQuizHintSuggested(false); // Removed as quizHintSuggested is removed
     });
   }, [lesson, requestLessonHint]);
 
   const handleQuizHintSuggested = useCallback(() => {
-    // setQuizHintSuggested(true); // Removed as quizHintSuggested is removed
+    // This callback is still needed by QuizComponent, even if it doesn't set state here.
+    // It could be used for analytics or other side effects.
   }, []);
 
   const renderLessonContent = () => {
@@ -158,10 +155,23 @@ const LessonPage = () => {
         if (questions.length > 0) return <QuizComponent questions={questions} onQuizComplete={markCompleted} triggerHint={hintTriggered} onHintSuggested={handleQuizHintSuggested} />;
       } catch (e) { console.error("Failed to parse quiz content:", e); }
     }
-    if (lesson.videoUrl) {
-      return <VideoPlayer src={lesson.videoUrl} title={lesson.title} />;
-    }
-    return <p className="text-foreground/90 mb-4">{lesson.content}</p>;
+    // Render content for 'reading' type or if videoUrl is absent
+    return (
+      <Card className="glass-card p-6">
+        <CardHeader>
+          <CardTitle className="text-2xl flex items-center gap-2">
+            <BookOpen className="h-6 w-6 text-primary" />
+            {lesson.title}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-foreground/90 mb-4 whitespace-pre-wrap">{lesson.content}</p>
+          <p className="text-sm text-muted-foreground">
+            Esperamos que você goste de aprender com este ebook ilustrado!
+          </p>
+        </CardContent>
+      </Card>
+    );
   };
 
   const isQuizOrGame = (lesson.type === 'exercise' && lesson.content?.trim().startsWith('[')) || lesson.type === 'game';

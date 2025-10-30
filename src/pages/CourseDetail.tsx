@@ -2,10 +2,9 @@ import { useParams, Link as RouterLink } from "react-router-dom";
 import { allCourses } from "@/data/coursesData";
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Clock, Lock } from "lucide-react";
+import { ArrowLeft, Clock, Lock, BookOpen } from "lucide-react"; // Adicionado BookOpen
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { usePremium } from "@/context/PremiumContext";
-import VideoPlayer from "@/components/VideoPlayer";
 
 const CourseDetail = () => {
   const { courseId } = useParams();
@@ -26,8 +25,7 @@ const CourseDetail = () => {
     );
   }
 
-  const canWatch = !course.premium || isPremium;
-  const hasVideo = !!course.videoUrl;
+  const canAccess = !course.premium || isPremium;
 
   return (
     <div>
@@ -45,9 +43,18 @@ const CourseDetail = () => {
 
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
-          {canWatch && hasVideo ? (
-            <VideoPlayer src={course.videoUrl!} title={course.title} />
-          ) : !canWatch ? (
+          {canAccess ? (
+            <Card className="aspect-video rounded-2xl overflow-hidden border border-primary/50 shadow-lg shadow-primary/20 flex items-center justify-center bg-secondary/20 flex-col gap-4 p-6 text-center">
+              <BookOpen className="h-12 w-12 text-primary" />
+              <h2 className="text-2xl font-bold">Ebook Interativo</h2>
+              <p className="text-muted-foreground">
+                Este curso está disponível em formato de ebook com ilustrações e texto para uma experiência de leitura envolvente.
+              </p>
+              <Button asChild>
+                <RouterLink to="/activities">Começar a Ler</RouterLink> {/* Redireciona para atividades ou uma página de leitura genérica */}
+              </Button>
+            </Card>
+          ) : (
              <div className="aspect-video rounded-2xl overflow-hidden border border-primary/50 shadow-lg shadow-primary/20 flex items-center justify-center bg-secondary/20 flex-col gap-4 p-6 text-center">
               <Lock className="h-12 w-12 text-primary" />
               <h2 className="text-2xl font-bold">Conteúdo Premium</h2>
@@ -55,13 +62,6 @@ const CourseDetail = () => {
               <Button asChild>
                 <RouterLink to="/store">Ver Planos de Assinatura</RouterLink>
               </Button>
-            </div>
-          ) : (
-            <div className="aspect-video rounded-2xl overflow-hidden border border-primary/50 shadow-lg shadow-primary/20 flex items-center justify-center bg-secondary/20">
-              <div className="text-center p-6">
-                <div className="text-xl font-semibold mb-2">Vídeo indisponível</div>
-                <div className="text-sm text-muted-foreground">Este curso não possui vídeo. Leia a descrição ao lado para mais detalhes.</div>
-              </div>
             </div>
           )}
         </div>
