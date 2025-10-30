@@ -79,43 +79,46 @@ const AgeSelectionModal = ({ open, onOpenChange, action }: AgeSelectionModalProp
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md text-center p-6">
-        <DialogHeader>
-          <div className="mx-auto mb-3 rounded-full bg-primary/20 p-3 border border-primary/50 w-fit">
-            <Rocket className="h-6 w-6 text-primary" />
-          </div>
-          <DialogTitle className="text-2xl font-bold">
-            {getTitle()}
-          </DialogTitle>
-          <DialogDescription className="text-muted-foreground">
-            Antes de continuar, selecione a faixa etária do explorador.
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {AGE_OPTIONS.map((opt) => (
-            <button
-              key={opt.id}
-              onClick={() => setSelected(opt.id)}
-              className={`py-3 rounded-lg border transition-colors ${
-                selected === opt.id
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "bg-secondary/20 border-white/6 hover:bg-secondary/30"
-              }`}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="mt-6">
-          <DialogFooter>
-            <div className="flex w-full justify-between items-center gap-3">
-              <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
-              <Button onClick={handleConfirm} disabled={!selected} className="bg-primary">
-                {getButtonText()}
-              </Button>
+        {/* Wrap all direct children of DialogContent in a single div */}
+        <div>
+          <DialogHeader>
+            <div className="mx-auto mb-3 rounded-full bg-primary/20 p-3 border border-primary/50 w-fit">
+              <Rocket className="h-6 w-6 text-primary" />
             </div>
-          </DialogFooter>
+            <DialogTitle className="text-2xl font-bold">
+              {getTitle()}
+            </DialogTitle>
+            <DialogDescription className="text-muted-foreground">
+              Antes de continuar, selecione a faixa etária do explorador.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {AGE_OPTIONS.map((opt) => (
+              <button
+                key={opt.id}
+                onClick={() => setSelected(opt.id)}
+                className={`py-3 rounded-lg border transition-colors ${
+                  selected === opt.id
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-secondary/20 border-white/6 hover:bg-secondary/30"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="mt-6">
+            <DialogFooter>
+              <div className="flex w-full justify-between items-center gap-3">
+                <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
+                <Button onClick={handleConfirm} disabled={!selected} className="bg-primary">
+                  {getButtonText()}
+                </Button>
+              </div>
+            </DialogFooter>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

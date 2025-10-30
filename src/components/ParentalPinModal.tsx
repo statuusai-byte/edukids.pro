@@ -80,54 +80,57 @@ const ParentalPinModal = ({ open, mode = "verify", onOpenChange, onVerified, tit
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>{title ?? (mode === "set" ? "Definir PIN Parental" : mode === "remove" ? "Remover PIN Parental" : "Verificar PIN Parental")}</DialogTitle>
-        </DialogHeader>
+        {/* Wrap all direct children of DialogContent in a single div */}
+        <div>
+          <DialogHeader>
+            <DialogTitle>{title ?? (mode === "set" ? "Definir PIN Parental" : mode === "remove" ? "Remover PIN Parental" : "Verificar PIN Parental")}</DialogTitle>
+          </DialogHeader>
 
-        <div className="space-y-4 mt-2">
-          {mode === "set" ? (
-            <>
-              <div>
-                <Label>PIN (4+ dígitos)</Label>
-                <Input value={pin} onChange={(e) => setPin(e.target.value)} type="password" />
-              </div>
-              <div>
-                <Label>Confirme o PIN</Label>
-                <Input value={pinConfirm} onChange={(e) => setPinConfirm(e.target.value)} type="password" />
-              </div>
-              <div className="text-sm text-muted-foreground">O PIN é armazenado localmente (hash). Ele será necessário para aprovar compras e ações sensíveis.</div>
-            </>
-          ) : mode === "remove" ? (
-            <>
-              <div>
-                <Label>Digite seu PIN atual</Label>
-                <Input value={pin} onChange={(e) => setPin(e.target.value)} type="password" />
-              </div>
-              <div className="text-sm text-muted-foreground">Ao confirmar, o PIN será removido e a exigência de verificação local será desativada.</div>
-            </>
-          ) : (
-            <>
-              <div>
-                <Label>Digite seu PIN</Label>
-                <Input value={pin} onChange={(e) => setPin(e.target.value)} type="password" />
-              </div>
-              {!existingPinExists && <div className="text-sm text-muted-foreground">Nenhum PIN configurado — você pode defini-lo nas configurações.</div>}
-            </>
-          )}
-        </div>
-
-        <DialogFooter>
-          <div className="flex w-full justify-end gap-2">
-            <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
+          <div className="space-y-4 mt-2">
             {mode === "set" ? (
-              <Button onClick={handleSet} disabled={loading}>{loading ? "Salvando..." : "Definir PIN"}</Button>
+              <>
+                <div>
+                  <Label>PIN (4+ dígitos)</Label>
+                  <Input value={pin} onChange={(e) => setPin(e.target.value)} type="password" />
+                </div>
+                <div>
+                  <Label>Confirme o PIN</Label>
+                  <Input value={pinConfirm} onChange={(e) => setPinConfirm(e.target.value)} type="password" />
+                </div>
+                <div className="text-sm text-muted-foreground">O PIN é armazenado localmente (hash). Ele será necessário para aprovar compras e ações sensíveis.</div>
+              </>
             ) : mode === "remove" ? (
-              <Button variant="destructive" onClick={handleRemove} disabled={loading}>{loading ? "Removendo..." : "Remover PIN"}</Button>
+              <>
+                <div>
+                  <Label>Digite seu PIN atual</Label>
+                  <Input value={pin} onChange={(e) => setPin(e.target.value)} type="password" />
+                </div>
+                <div className="text-sm text-muted-foreground">Ao confirmar, o PIN será removido e a exigência de verificação local será desativada.</div>
+              </>
             ) : (
-              <Button onClick={handleVerify} disabled={loading || !existingPinExists}>{loading ? "Verificando..." : "Verificar"}</Button>
+              <>
+                <div>
+                  <Label>Digite seu PIN</Label>
+                  <Input value={pin} onChange={(e) => setPin(e.target.value)} type="password" />
+                </div>
+                {!existingPinExists && <div className="text-sm text-muted-foreground">Nenhum PIN configurado — você pode defini-lo nas configurações.</div>}
+              </>
             )}
           </div>
-        </DialogFooter>
+
+          <DialogFooter>
+            <div className="flex w-full justify-end gap-2">
+              <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
+              {mode === "set" ? (
+                <Button onClick={handleSet} disabled={loading}>{loading ? "Salvando..." : "Definir PIN"}</Button>
+              ) : mode === "remove" ? (
+                <Button variant="destructive" onClick={handleRemove} disabled={loading}>{loading ? "Removendo..." : "Remover PIN"}</Button>
+              ) : (
+                <Button onClick={handleVerify} disabled={loading || !existingPinExists}>{loading ? "Verificando..." : "Verificar"}</Button>
+              )}
+            </div>
+          </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );
