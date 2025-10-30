@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { showSuccess, showError, showLoading, dismissToast } from "@/utils/toast";
@@ -41,7 +41,7 @@ export default function IconExport() {
 
       await new Promise<void>((resolve, reject) => {
         img.onload = () => resolve();
-        img.onerror = (e) => reject(new Error("Falha ao carregar imagem SVG"));
+        img.onerror = () => reject(new Error("Falha ao carregar imagem SVG"));
       });
 
       // Draw on canvas at requested size
