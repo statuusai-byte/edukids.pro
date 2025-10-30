@@ -86,8 +86,8 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
           // Sincroniza o is_premium do profile (se existir)
           syncPremiumFromProfile(currentSession?.user?.id);
 
-          // Redireciona para activities por padrão
-          navigate('/activities');
+          // Redireciona para o dashboard por padrão
+          navigate('/dashboard');
         } else if (event === 'SIGNED_OUT') {
           showSuccess('Sessão encerrada.');
           navigate('/');
