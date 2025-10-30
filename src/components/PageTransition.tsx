@@ -1,5 +1,5 @@
 import { motion, Transition } from 'framer-motion';
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import { usePrefersReducedMotion } from '@/hooks/use-reduced-motion';
 
 const pageVariants = {
@@ -31,9 +31,7 @@ const PageTransition = ({ children }: { children: ReactNode }) => {
     return <>{children}</>;
   }
 
-  // Aplica motion.div diretamente aos filhos.
-  // Como em todos os usos atuais, 'children' é um único elemento React (um div),
-  // esta abordagem é mais direta e segura.
+  // Envolve os filhos em um div para garantir que motion.div sempre receba um único elemento.
   return (
     <motion.div
       initial="initial"
@@ -42,7 +40,7 @@ const PageTransition = ({ children }: { children: ReactNode }) => {
       variants={pageVariants}
       transition={pageTransition}
     >
-      {children}
+      <div>{children}</div>
     </motion.div>
   );
 };
