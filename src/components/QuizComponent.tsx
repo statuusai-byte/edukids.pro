@@ -16,16 +16,19 @@ interface QuizComponentProps {
   questions: QuizQuestion[];
   onQuizComplete?: (score: number) => void;
   triggerHint?: boolean;
+  onHintSuggested?: () => void; // New prop to notify parent when a hint is suggested
 }
 
-const QuizComponent = ({ questions, onQuizComplete, triggerHint }: QuizComponentProps) => {
+const QuizComponent = ({ questions, onQuizComplete, triggerHint, onHintSuggested }: QuizComponentProps) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [confirmedAnswer, setConfirmedAnswer] = useState<string | null>(null); // New state for confirmed answer
+  const [confirmedAnswer, setConfirmedAnswer] = useState<string | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [score, setScore] = useState(0);
   const [animationClass, setAnimationClass] = useState('');
   const [eliminatedOptions, setEliminatedOptions] = useState<string[]>([]);
+  const [incorrectAttempts, setIncorrectAttempts] = useState(0); // New state
+  const [showHintSuggestion, setShowHintSuggestion] = useState(false); // New state
 
   const currentQuestion = useMemo(() => questions[currentQuestionIndex], [questions, currentQuestionIndex]);
   const isQuizFinished = currentQuestionIndex >= questions.length;
@@ -36,6 +39,8 @@ const QuizComponent = ({ questions, onQuizComplete, triggerHint }: QuizComponent
     setConfirmedAnswer(null);
     setIsCorrect(null);
     setSelectedAnswer(null);
+    setIncorrectAttempts(0); // Reset attempts on new question
+    setShowHintSuggestion(false); // Reset hint suggestion
   }, [currentQuestionIndex]);
 
   // Logic to eliminate two wrong answers when hint is triggered
@@ -68,10 +73,17 @@ const QuizComponent = ({ questions, onQuizComplete, triggerHint }: QuizComponent
     if (correct) {
       setScore(prev => prev + 1);
       showSuccess("Resposta correta! Muito bem!");
+      setIncorrectAttempts(0); // Reset attempts on correct answer
+      setShowHintSuggestion(false);
     } else {
       showError("Ops! Resposta incorreta. Tente a próxima.");
+      setIncorrectAttempts(prev => prev + 1); // Increment attempts
+      if (incorrectAttempts + 1 >= 2 && !showHintSuggestion) { // Suggest hint after 2 incorrect attempts
+        setShowHintSuggestion(true);
+        onHintSuggested?.(); // Notify parent
+      }
     }
-  }, [selectedAnswer, currentQuestion.correctAnswer]);
+  }, [selectedAnswer, currentQuestion.correctAnswer, incorrectAttempts, onHintSuggested, showHintSuggestion]);
 
   const handleNextQuestion = useCallback(() => {
     if (currentQuestionIndex < questions.length - 1) {
@@ -185,6 +197,21 @@ const QuizComponent = ({ questions, onQuizComplete, triggerHint }: QuizComponent
               {currentQuestionIndex < questions.length - 1 ? 'Próxima Pergunta' : 'Finalizar Quiz'}
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
+          )}
+
+          {/* Hint suggestion */}
+          {showHintSuggestion && confirmedAnswer === null && (
+            <div className="mt-4 p-3 bg-yellow-600/20 border border-yellow-500/50 rounded-lg text-yellow-200 text-sm flex items-center justify-between">
+              <span>Parece que você precisa de uma dica!</span>
+              <Button 
+                variant="secondary" 
+                size="sm" 
+                onClick={() => { onHintSuggested?.(); setShowHintSuggestion(false); }} // Trigger hint and hide suggestion
+                className="bg-yellow-500 text-black hover:bg-yellow-600"
+              >
+                Usar Dica
+              </Button>
+            </div>
           )}
         </div>
       </CardContent>

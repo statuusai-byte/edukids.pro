@@ -8,6 +8,7 @@ import { showLoading, showError, dismissToast, showSuccess } from "@/utils/toast
 import { supabase } from "@/integrations/supabase/client";
 import { useSupabase } from "@/context/SupabaseContext";
 import { useHintsContext } from "@/context/HintsContext";
+import { cn } from "@/lib/utils"; // Import cn for conditional classNames
 
 const Store = () => {
   const { isPremium } = usePremium();
@@ -65,9 +66,9 @@ const Store = () => {
   };
 
   const hintPackages = [
-    { amount: 3, name: "Pacote Básico", price: "R$ 1,00", description: "Para começar a desvendar os desafios." },
-    { amount: 8, name: "Pacote Padrão", price: "R$ 3,00", description: "Um bom suprimento de ajuda para continuar a aventura." },
-    { amount: 15, name: "Pacote Explorador", price: "R$ 5,00", description: "O melhor valor! Dicas de sobra para os maiores exploradores." },
+    { amount: 3, name: "Pacote Básico", price: "R$ 1,00", description: "Para começar a desvendar os desafios.", popular: false },
+    { amount: 8, name: "Pacote Padrão", price: "R$ 3,00", description: "Um bom suprimento de ajuda para continuar a aventura.", popular: true },
+    { amount: 15, name: "Pacote Explorador", price: "R$ 5,00", description: "O melhor valor! Dicas de sobra para os maiores exploradores.", popular: false },
   ];
 
   return (
@@ -123,7 +124,16 @@ const Store = () => {
         <p className="text-muted-foreground mb-6">Ficou preso em um desafio? Compre dicas que podem ser usadas em qualquer matéria. Assinantes Premium têm dicas ilimitadas.</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {hintPackages.map((pkg) => (
-            <Card key={pkg.name} className="glass-card p-4 flex flex-col h-full hover:scale-[1.01] transform transition">
+            <Card key={pkg.name} className={cn(
+              "glass-card p-4 flex flex-col h-full relative", // Added relative for badge positioning
+              pkg.popular ? "border-2 border-primary/50 shadow-primary/20" : "border-white/10", // Highlight popular
+              "hover:scale-[1.01] transform transition"
+            )}>
+              {pkg.popular && (
+                <div className="absolute -top-3 right-4 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full shadow-md">
+                  Mais Popular
+                </div>
+              )}
               <div className="mb-2">
                 <div className="flex items-center gap-3 mb-2">
                   <div className="p-3 bg-white/6 rounded-lg"><Lightbulb className="h-6 w-6 text-yellow-400" /></div>

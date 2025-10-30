@@ -1,6 +1,6 @@
 import { useParams, Link as RouterLink, useNavigate } from "react-router-dom";
 import { subjectsData } from "@/data/activitiesData";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react"; // Added useCallback
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Lightbulb, Lock } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,6 +24,7 @@ const LessonPage = () => {
   const { isBlocked, limitMinutes, startSession, stopSession } = useScreenTime();
   
   const [hintTriggered, setHintTriggered] = useState(false);
+  const [quizHintSuggested, setQuizHintSuggested] = useState(false); // New state
 
   const { subject, activity, module, lesson, lessonIndex, moduleIndex } = useMemo(() => {
     const s = subjectsData.find(sub => sub.slug === subjectSlug);
@@ -51,6 +52,7 @@ const LessonPage = () => {
   // Reset hint trigger when the lesson changes
   useEffect(() => {
     setHintTriggered(false);
+    setQuizHintSuggested(false); // Reset quiz hint suggestion
   }, [lessonId]);
 
   if (!subject || !activity || !module || !lesson) {
@@ -111,21 +113,27 @@ const LessonPage = () => {
     showSuccess("Lição marcada como concluída.");
   };
 
-  const handleUseHint = () => {
+  const handleUseHint = useCallback(() => {
     if (isPremium) {
       setHintTriggered(true);
       showSuccess("Dica de Assinante Premium ativada!");
+      setQuizHintSuggested(false); // Hide suggestion after hint is used
       return;
     }
     if (hints > 0) {
       if (useHint()) {
         setHintTriggered(true);
         showSuccess("Dica usada! Seu saldo foi atualizado.");
+        setQuizHintSuggested(false); // Hide suggestion after hint is used
       }
     } else {
       showError("Você não tem dicas. Compre mais na loja ou assista a um anúncio para ganhar uma.");
     }
-  };
+  }, [isPremium, hints, useHint]);
+
+  const handleQuizHintSuggested = useCallback(() => {
+    setQuizHintSuggested(true);
+  }, []);
 
   const renderLessonContent = () => {
     if (lesson.type === 'game') {
@@ -136,7 +144,7 @@ const LessonPage = () => {
     if (lesson.type === 'exercise' && lesson.content) {
       try {
         const questions: QuizQuestion[] = JSON.parse(lesson.content);
-        if (questions.length > 0) return <QuizComponent questions={questions} onQuizComplete={markCompleted} triggerHint={hintTriggered} />;
+        if (questions.length > 0) return <QuizComponent questions={questions} onQuizComplete={markCompleted} triggerHint={hintTriggered} onHintSuggested={handleQuizHintSuggested} />; // Pass new prop
       } catch (e) { console.error("Failed to parse quiz content:", e); }
     }
     if (lesson.videoUrl) {
@@ -164,10 +172,13 @@ const LessonPage = () => {
             <div className="ml-auto flex items-center gap-4">
               {isQuizOrGame && (
                 <div className="flex items-center gap-2">
-                  <Button onClick={handleUseHint} className="bg-yellow-600 hover:bg-yellow-700 text-black" disabled={hintTriggered}>
-                    <Lightbulb className="mr-2 h-4 w-4" />
-                    {isPremium ? "Usar Dica Premium" : `Usar 1 Dica (Saldo: ${hints})`}
-                  </Button>
+                  {/* Only show the main hint button if not already suggested by quiz or if quizHintSuggested is false */}
+                  {(!quizHintSuggested || isPremium) && (
+                    <Button onClick={handleUseHint} className="bg-yellow-600 hover:bg-yellow-700 text-black" disabled={hintTriggered}>
+                      <Lightbulb className="mr-2 h-4 w-4" />
+                      {isPremium ? "Usar Dica Premium" : `Usar 1 Dica (Saldo: ${hints})`}
+                    </Button>
+                  )}
                   {!isPremium && <RewardButton onReward={() => addHints(1)} label="Ganhar Dica (Anúncio)" />}
                 </div>
               )}
