@@ -26,27 +26,13 @@ const pageTransition: Transition = {
 const PageTransition = ({ children }: { children: ReactNode }) => {
   const reduceMotion = usePrefersReducedMotion();
 
-  // Garante que 'contentToRender' seja sempre um único elemento React.
-  // Se 'children' for nulo/indefinido, uma string, um número ou múltiplos elementos,
-  // ele é envolvido em um 'div'. Caso contrário, é passado diretamente.
-  let contentToRender: React.ReactElement;
-
-  if (React.Children.count(children) === 0) {
-    // Se não houver filhos, renderiza um div vazio para satisfazer a exigência de um único elemento.
-    contentToRender = <div />;
-  } else if (React.Children.count(children) > 1 || typeof children === 'string' || typeof children === 'number') {
-    // Se houver múltiplos filhos ou um tipo primitivo, envolve-os em um div.
-    contentToRender = <div>{children}</div>;
-  } else {
-    // Se for um único elemento React, usa-o diretamente.
-    contentToRender = children as React.ReactElement;
-  }
-
   if (reduceMotion) {
-    // Se a animação for reduzida, apenas renderiza o conteúdo sem motion.div.
-    return contentToRender;
+    // Se a animação for reduzida, apenas renderiza os filhos diretamente dentro de um fragmento.
+    return <>{children}</>;
   }
 
+  // Sempre envolve os filhos em um div para motion.div para garantir que ele sempre receba um único elemento.
+  // Isso lida com casos em que 'children' pode ser uma string, número ou múltiplos elementos.
   return (
     <motion.div
       initial="initial"
@@ -55,7 +41,7 @@ const PageTransition = ({ children }: { children: ReactNode }) => {
       variants={pageVariants}
       transition={pageTransition}
     >
-      {contentToRender}
+      <div>{children}</div>
     </motion.div>
   );
 };
