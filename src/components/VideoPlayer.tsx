@@ -5,44 +5,44 @@ import { ExternalLink } from "lucide-react";
 function toEmbedUrl(raw: string): { embed: string; external: string } {
   try {
     const url = new URL(raw);
+    let videoId: string | null = null;
+    let embedUrl: string | null = null;
+    let externalUrl: string | null = null;
 
-    // YouTube
-    if (url.hostname.includes("youtube.com")) {
-      // watch?v=ID -> embed/ID
-      const v = url.searchParams.get("v");
-      if (v) {
-        const embed = `https://www.youtube.com/embed/${v}?rel=0&modestbranding=1`;
-        return { embed, external: `https://www.youtube.com/watch?v=${v}` };
+    // Handle YouTube URLs
+    if (url.hostname.includes("youtube.com") || url.hostname === "youtu.be") {
+      if (url.hostname === "youtu.be") {
+        videoId = url.pathname.replace("/", "");
+      } else if (url.searchParams.has("v")) {
+        videoId = url.searchParams.get("v");
+      } else if (url.pathname.startsWith("/embed/")) {
+        videoId = url.pathname.split("/").pop();
       }
-      // already embed or other formats
-      if (url.pathname.startsWith("/embed/")) {
-        const embed = `${url.origin}${url.pathname}${url.search || ""}`;
-        // Try to extract id for external
-        const id = url.pathname.split("/").pop() ?? "";
-        return { embed, external: `https://www.youtube.com/watch?v=${id}` };
+
+      if (videoId) {
+        embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`;
+        externalUrl = `https://www.youtube.com/watch?v=${videoId}`;
       }
     }
-
-    if (url.hostname === "youtu.be") {
-      const id = url.pathname.replace("/", "");
-      const embed = `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1`;
-      return { embed, external: `https://www.youtube.com/watch?v=${id}` };
-    }
-
-    // Vimeo
-    if (url.hostname.includes("vimeo.com")) {
-      // vimeo.com/ID -> player.vimeo.com/video/ID
+    // Handle Vimeo URLs
+    else if (url.hostname.includes("vimeo.com")) {
       const parts = url.pathname.split("/").filter(Boolean);
       const id = parts[0];
       if (id && /^\d+$/.test(id)) {
-        const embed = `https://player.vimeo.com/video/${id}`;
-        return { embed, external: `https://vimeo.com/${id}` };
+        embedUrl = `https://player.vimeo.com/video/${id}`;
+        externalUrl = `https://vimeo.com/${id}`;
       }
     }
 
-    // Default: return raw as embed and external the same
+    // If we successfully parsed an embeddable URL, use it.
+    if (embedUrl && externalUrl) {
+      return { embed: embedUrl, external: externalUrl };
+    }
+
+    // Fallback for unrecognized or unparseable URLs
     return { embed: raw, external: raw };
   } catch {
+    // If URL parsing fails, return raw URLs
     return { embed: raw, external: raw };
   }
 }
