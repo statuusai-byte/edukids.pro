@@ -2,11 +2,13 @@ import { useParams, Link as RouterLink } from "react-router-dom";
 import { allCourses } from "@/data/coursesData";
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Clock } from "lucide-react";
+import { ArrowLeft, Clock, Lock } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { usePremium } from "@/context/PremiumContext";
 
 const CourseDetail = () => {
   const { courseId } = useParams();
+  const { isPremium } = usePremium();
 
   const course = useMemo(() => {
     return allCourses.find(c => c.id === courseId);
@@ -22,6 +24,8 @@ const CourseDetail = () => {
       </div>
     );
   }
+
+  const canWatch = !course.premium || isPremium;
 
   return (
     <div>
@@ -39,7 +43,7 @@ const CourseDetail = () => {
 
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
-          {course.videoUrl ? (
+          {canWatch && course.videoUrl ? (
             <div className="aspect-video rounded-2xl overflow-hidden border border-primary/50 shadow-lg shadow-primary/20">
               <iframe
                 width="100%"
@@ -51,6 +55,15 @@ const CourseDetail = () => {
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               ></iframe>
+            </div>
+          ) : !canWatch ? (
+             <div className="aspect-video rounded-2xl overflow-hidden border border-primary/50 shadow-lg shadow-primary/20 flex items-center justify-center bg-secondary/20 flex-col gap-4 p-6 text-center">
+              <Lock className="h-12 w-12 text-primary" />
+              <h2 className="text-2xl font-bold">Conteúdo Premium</h2>
+              <p className="text-muted-foreground">Este curso faz parte da assinatura EDUKIDS+ para desbloquear todo o conteúdo.</p>
+              <Button asChild>
+                <RouterLink to="/store">Ver Planos de Assinatura</RouterLink>
+              </Button>
             </div>
           ) : (
             <div className="aspect-video rounded-2xl overflow-hidden border border-primary/50 shadow-lg shadow-primary/20 flex items-center justify-center bg-secondary/20">
