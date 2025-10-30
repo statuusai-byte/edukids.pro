@@ -4,11 +4,10 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useAge } from "@/context/AgeContext";
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import AgeSelectionModal from "@/components/AgeSelectionModal";
 import PageTransition from "@/components/PageTransition";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Sparkles, Gift, Lightbulb, Play } from "lucide-react";
+import { Play } from "lucide-react"; // Import Play icon
 
 const SKIP_REDIRECT_KEY = "edukids_skip_auto_redirect";
 

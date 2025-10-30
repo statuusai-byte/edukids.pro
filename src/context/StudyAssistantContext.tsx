@@ -1,6 +1,4 @@
-"use client";
-
-import React, { createContext, useContext, useState, ReactNode, useCallback, useRef } from 'react';
+import { createContext, useContext, useState, ReactNode, useCallback, useRef } from 'react';
 import { showLoading, dismissToast, showSuccess, showError } from '@/utils/toast';
 import { useHintsContext } from '@/context/HintsContext';
 import { usePremium } from '@/context/PremiumContext';
@@ -126,7 +124,7 @@ export const StudyAssistantProvider = ({ children }: { children: ReactNode }) =>
       await new Promise((r) => setTimeout(r, 800)); // Simulate AI call
 
       if (questionToHint) {
-        dismissToast(toastId);
+        if (toastId) dismissToast(toastId); // Dismiss previous toast if it exists
         toastId = showLoading(`Lendo a pergunta: "${questionToHint.substring(0, 50)}..."`);
         await new Promise((r) => setTimeout(r, 1500)); // Simulate reading time
       }
@@ -134,7 +132,7 @@ export const StudyAssistantProvider = ({ children }: { children: ReactNode }) =>
       const resp = simulateStudyHelp(currentQuery, directHint);
       const encouragement = pickEncouragement();
       setResponse(`${resp}\n\n${encouragement}`);
-      dismissToast(toastId);
+      if (toastId) dismissToast(toastId); // Dismiss current toast
       showSuccess("Aqui está uma dica!");
 
       if (directHint && !isPremium) {
@@ -145,7 +143,7 @@ export const StudyAssistantProvider = ({ children }: { children: ReactNode }) =>
         onLessonHintTriggeredRef.current = null; // Clear after use
       }
     } catch (e) {
-      dismissToast(toastId);
+      if (toastId) dismissToast(toastId); // Dismiss toast on error
       showError("Desculpe, tente novamente mais tarde.");
     } finally {
       setProcessing(false);
