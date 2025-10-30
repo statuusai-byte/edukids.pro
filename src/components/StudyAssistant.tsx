@@ -88,7 +88,7 @@ const StudyAssistant = () => {
       <div className="fixed z-50 right-6 bottom-6 flex items-end">
         {/* Panel */}
         {open && (
-          <div className="mr-4 w-96 max-w-[90vw] glass-card p-4 shadow-2xl border-white/10">
+          <div className="mr-4 w-full max-w-sm md:w-96 glass-card p-4 shadow-2xl border-white/10">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
                 <Bot className="h-6 w-6 text-primary" />
