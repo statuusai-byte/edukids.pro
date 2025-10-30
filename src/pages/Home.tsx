@@ -6,6 +6,7 @@ import { useAge } from "@/context/AgeContext";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AgeSelectionModal from "@/components/AgeSelectionModal";
+import { Play } from "lucide-react"; // Import Play icon
 
 const SKIP_REDIRECT_KEY = "edukids_skip_auto_redirect";
 
