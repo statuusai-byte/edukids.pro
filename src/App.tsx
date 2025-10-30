@@ -20,8 +20,7 @@ const Courses = lazy(() => import("./pages/Courses"));
 const Store = lazy(() => import("./pages/Store"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Settings = lazy(() => import("./pages/Settings"));
-const ActivityDetail = lazy(() => import("./pages/ActivityDetail"));
-const ActivityContentPage = lazy(() => import("./pages/ActivityContentPage"));
+const SubjectPage = lazy(() => import("./pages/SubjectPage"));
 const CourseDetail = lazy(() => import("./pages/CourseDetail"));
 const LessonPage = lazy(() => import("./pages/LessonPage"));
 const Login = lazy(() => import("./pages/Login"));
@@ -62,8 +61,7 @@ const App = () => (
                       {/* All other routes use the main Layout */}
                       <Route element={<Layout />}>
                         <Route path="/activities" element={<Activities />} />
-                        <Route path="/activities/:subject" element={<ActivityDetail />} />
-                        <Route path="/activities/:subject/:activityId" element={<ActivityContentPage />} />
+                        <Route path="/activities/:subject" element={<SubjectPage />} />
                         <Route path="/activities/:subject/:activityId/modules/:moduleId/lessons/:lessonId" element={<LessonPage />} />
                         <Route path="/courses" element={<Courses />} />
                         <Route path="/courses/:courseId" element={<CourseDetail />} />
