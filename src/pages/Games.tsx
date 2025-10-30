@@ -6,7 +6,7 @@ import { TiltCard } from "@/components/TiltCard";
 import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Icon } from "@/components/Icon";
 import { useScreenTime } from "@/hooks/use-screen-time";
-import { Lock, Gamepad2 } from "lucide-react";
+import { Lock } from "lucide-react"; // Removido Gamepad2 daqui
 import PageTransition from "@/components/PageTransition";
 
 const iconColorClass: Record<string, string> = {
