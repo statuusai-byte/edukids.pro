@@ -1,3 +1,5 @@
+"use client";
+
 import { Toaster as RadixToaster } from "@/components/ui/toaster";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -14,7 +16,7 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 // Lazy pages/components
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Layout = lazy(() => import("./components/Layout"));
-const Home = lazy(() => import("./pages/Home"));
+const IndexPage = lazy(() => import("./pages/Index")); // Root presentation page
 const Activities = lazy(() => import("./pages/Activities"));
 const Courses = lazy(() => import("./pages/Courses"));
 const Store = lazy(() => import("./pages/Store"));
@@ -53,14 +55,16 @@ const App = () => (
                 <ErrorBoundary>
                   <Suspense fallback={<Fallback />}>
                     <Routes>
+                      {/* Root presentation page */}
+                      <Route path="/" element={<IndexPage />} />
+
                       {/* Top-level routes that should not be wrapped by the main Layout */}
-                      <Route path="/" element={<Home />} />
                       <Route path="/login" element={<Login />} />
                       <Route path="/register" element={<Register />} />
                       <Route path="/success-payment" element={<SuccessPayment />} />
                       <Route path="/test-account" element={<TestAccount />} />
                       <Route path="/admin/grant-premium" element={<AdminGrantPremium />} />
-                      <Route path="/icon-export" element={<IconExport />} /> {/* New route */}
+                      <Route path="/icon-export" element={<IconExport />} />
 
                       {/* All other routes use the main Layout */}
                       <Route element={<Layout />}>
