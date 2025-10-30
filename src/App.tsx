@@ -8,24 +8,27 @@ import Settings from "./pages/Settings";
 import { ProfileProvider } from "./context/ProfileContext";
 import { ParentAuthProvider } from "./context/ParentAuthContext";
 import ParentDashboard from "./pages/ParentDashboard";
+import { AgeProvider } from "./context/AgeContext";
 
 function App() {
   return (
     <ProfileProvider>
       <ParentAuthProvider>
-        <Router>
-          <Routes>
-            <Route path="/" element={<Layout />}>
-              <Route index element={<Activities />} />
-              <Route path="activities" element={<Activities />} />
-              <Route path="courses" element={<Courses />} />
-              <Route path="store" element={<Store />} />
-              <Route path="dashboard" element={<Dashboard />} />
-              <Route path="settings" element={<Settings />} />
-              <Route path="parents" element={<ParentDashboard />} />
-            </Route>
-          </Routes>
-        </Router>
+        <AgeProvider>
+          <Router>
+            <Routes>
+              <Route path="/" element={<Layout />}>
+                <Route index element={<Activities />} />
+                <Route path="activities" element={<Activities />} />
+                <Route path="courses" element={<Courses />} />
+                <Route path="store" element={<Store />} />
+                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="settings" element={<Settings />} />
+                <Route path="parents" element={<ParentDashboard />} />
+              </Route>
+            </Routes>
+          </Router>
+        </AgeProvider>
       </ParentAuthProvider>
     </ProfileProvider>
   );
