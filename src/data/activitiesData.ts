@@ -257,7 +257,7 @@ export const subjectsData: Subject[] = [
     activities: [
       {
         id: "m1",
-        title: "Contagem e Números",
+        title: "Matemática para Pequenos (4-6 anos)",
         description: "Aprenda a contar, somar e subtrair de forma divertida.",
         ageGroups: ['4-6'],
         icon: "Apple",
@@ -274,31 +274,39 @@ export const subjectsData: Subject[] = [
       },
       {
         id: "m2",
-        title: "Operações Básicas",
-        description: "Pratique adição e subtração com números maiores.",
+        title: "Matemática Essencial (7-9 anos)",
+        description: "Pratique as quatro operações e resolva problemas.",
         ageGroups: ['7-9'],
         icon: "Sigma",
         modules: [
           { id: "m2-mod1", title: "Somas e Subtrações", lessons: [
               { id: "m2-l1", title: "Somando até 100", content: JSON.stringify(genAdd(30, 100)), type: "exercise" },
               { id: "m2-l2", title: "Subtraindo até 100", content: JSON.stringify(genSub(30, 100)), type: "exercise" }
+          ]},
+          { id: "m2-mod2", title: "Multiplicação é Mágica", lessons: [
+              { id: "m2-l3", title: "Tabuadas Divertidas", content: JSON.stringify(genMul(30)), type: "exercise" },
+              { id: "m2-l4", title: "Resolvendo Problemas de Vezes", content: "Se você tem 3 caixas com 4 lápis cada, quantos lápis você tem no total?", type: "reading" }
+          ]},
+          { id: "m2-mod3", title: "Dividindo o Tesouro", lessons: [
+              { id: "m2-l5", title: "Dividindo em Partes Iguais", content: JSON.stringify(genDiv(30)), type: "exercise" },
+              { id: "m2-l6", title: "Divisão e Resto", content: "Se você dividir 10 por 3, cada um recebe 3 e sobra 1. Esse é o resto!", type: "reading" }
           ]}
         ]
       },
       {
         id: "m3",
-        title: "Multiplicação e Divisão",
-        description: "Descubra a tabuada e como dividir igualmente.",
-        ageGroups: ['7-9','10-12'],
-        icon: "Sigma",
+        title: "Desafios Matemáticos (10-12 anos)",
+        description: "Explore frações, decimais, geometria e problemas complexos.",
+        ageGroups: ['10-12'],
+        icon: "Brain",
         modules: [
-          { id: "m3-mod1", title: "Introdução à Multiplicação", lessons: [
-              { id: "m3-l1", title: "Tabuadas Divertidas", content: JSON.stringify(genMul(30)), type: "exercise" },
-              { id: "m3-l2", title: "Resolvendo Problemas", content: "Se você tem 3 caixas com 4 lápis cada, quantos lápis você tem no total?", type: "reading" }
+          { id: "m3-mod1", title: "Frações e Decimais", lessons: [
+              { id: "m3-l1", title: "O que são Frações?", videoUrl: "https://www.youtube.com/embed/Y2-IsyS-YpY", type: "video" },
+              { id: "m3-l2", title: "Exercícios com Frações", content: JSON.stringify(genDiv(30)), type: "exercise" }
           ]},
-          { id: "m3-mod2", title: "Introdução à Divisão", lessons: [
-              { id: "m3-l3", title: "Dividindo em Partes Iguais", content: JSON.stringify(genDiv(30)), type: "exercise" },
-              { id: "m3-l4", title: "Divisão e Resto", content: "Se você dividir 10 por 3, cada um recebe 3 e sobra 1. Esse é o resto!", type: "reading" }
+          { id: "m3-mod2", title: "Geometria Básica", lessons: [
+              { id: "m3-l3", title: "Ângulos e Formas", content: "Um círculo tem 360 graus. Um ângulo reto, como o canto de um quadrado, tem 90 graus.", type: "reading" },
+              { id: "m3-l4", title: "Calculando Áreas", content: "Para calcular a área de um retângulo, multiplique a largura pela altura.", type: "reading" }
           ]}
         ]
       }
@@ -313,9 +321,9 @@ export const subjectsData: Subject[] = [
     activities: [
       {
         id: "p1",
-        title: "Alfabetização e Sílabas",
+        title: "Primeiras Letras (4-6 anos)",
         description: "Aprenda as letras, os sons e como formar palavras.",
-        ageGroups: ['4-6', '7-9'],
+        ageGroups: ['4-6'],
         icon: "BookOpen",
         modules: [
           { id: "p1-mod1", title: "O Alfabeto", lessons: [
@@ -326,16 +334,31 @@ export const subjectsData: Subject[] = [
       },
       {
         id: "p2",
-        title: "Gramática e Vocabulário",
+        title: "Construindo Frases (7-9 anos)",
         description: "Entenda sinônimos, antônimos e a estrutura das frases.",
-        ageGroups: ['7-9','10-12'],
-        icon: "BookOpen",
+        ageGroups: ['7-9'],
+        icon: "SpellCheck",
         modules: [
-          { id: "p2-mod1", title: "Contrários", lessons: [
+          { id: "p2-mod1", title: "Vocabulário", lessons: [
               { id: "p2-l1", title: "Quiz de Antônimos", content: JSON.stringify(genPortugueseAntonyms(30)), type: "exercise" }
           ]},
           { id: "p2-mod2", title: "Tipos de Palavras", lessons: [
               { id: "p2-l2", title: "Substantivos e Adjetivos", content: "Substantivo dá nome às coisas (CASA). Adjetivo dá qualidade (CASA bonita).", type: "reading" }
+          ]}
+        ]
+      },
+      {
+        id: "p3",
+        title: "Português Avançado (10-12 anos)",
+        description: "Aprofunde-se em tempos verbais, pontuação e interpretação de texto.",
+        ageGroups: ['10-12'],
+        icon: "BookOpen",
+        modules: [
+          { id: "p3-mod1", title: "Verbos e Tempos", lessons: [
+              { id: "p3-l1", title: "Passado, Presente e Futuro", content: "Eu comi (passado), eu como (presente), eu comerei (futuro).", type: "reading" },
+          ]},
+          { id: "p3-mod2", title: "Pontuação", lessons: [
+              { id: "p3-l2", title: "Vírgula, Ponto e Interrogação", videoUrl: "https://www.youtube.com/embed/3y-6X4Y-iF4", type: "video" }
           ]}
         ]
       }
@@ -350,9 +373,9 @@ export const subjectsData: Subject[] = [
     activities: [
       {
         id: "i1",
-        title: "Primeiras Palavras",
+        title: "Primeiras Palavras (Todas as idades)",
         description: "Aprenda números, cores e animais em inglês.",
-        ageGroups: ['4-6','7-9'],
+        ageGroups: ['4-6','7-9', '10-12'],
         icon: "SpellCheck",
         modules: [
           { id: "i1-mod1", title: "Numbers and Colors", lessons: [
@@ -374,26 +397,47 @@ export const subjectsData: Subject[] = [
     activities: [
       {
         id: "c1",
-        title: "Corpo Humano",
-        description: "Conheça as partes do corpo e como elas funcionam.",
-        ageGroups: ['4-6','7-9'],
+        title: "Descobrindo o Mundo (4-6 anos)",
+        description: "Conheça os animais, as plantas e os 5 sentidos.",
+        ageGroups: ['4-6'],
         icon: "FlaskConical",
         modules: [
-          { id: "c1-mod1", title: "Sistemas Vitais", lessons: [
-              { id: "c1-l1", title: "Como o Corpo Funciona", content: reading_body_systems, type: "reading" },
-              { id: "c1-l2", title: "Quiz: Órgãos do Corpo", content: JSON.stringify(genScienceBodyParts(30)), type: "exercise" }
+          { id: "c1-mod1", title: "Seres Vivos", lessons: [
+              { id: "c1-l1", title: "Animais e seus Sons", content: "O cachorro faz 'au au', o gato faz 'miau'!", type: "reading" },
+          ]},
+          { id: "c1-mod2", title: "Os 5 Sentidos", lessons: [
+              { id: "c1-l2", title: "Ver, Ouvir, Cheirar, Tocar, Provar", content: "Usamos os olhos para ver, os ouvidos para ouvir...", type: "reading" },
           ]}
         ]
       },
       {
         id: "c2",
-        title: "Mundo Natural",
-        description: "Explore o ciclo da água, plantas e animais.",
-        ageGroups: ['7-9','10-12'],
+        title: "O Planeta Terra (7-9 anos)",
+        description: "Explore o corpo humano, o ciclo da água e os ecossistemas.",
+        ageGroups: ['7-9'],
         icon: "Globe",
         modules: [
-          { id: "c2-mod1", title: "Ciclos da Natureza", lessons: [
-              { id: "c2-l1", title: "O Ciclo da Água", content: reading_water_cycle, type: "reading" }
+          { id: "c2-mod1", title: "Corpo Humano", lessons: [
+              { id: "c2-l1", title: "Como o Corpo Funciona", content: reading_body_systems, type: "reading" },
+              { id: "c2-l2", title: "Quiz: Órgãos do Corpo", content: JSON.stringify(genScienceBodyParts(30)), type: "exercise" }
+          ]},
+          { id: "c2-mod2", title: "Ciclos da Natureza", lessons: [
+              { id: "c2-l3", title: "O Ciclo da Água", content: reading_water_cycle, type: "reading" }
+          ]}
+        ]
+      },
+      {
+        id: "c3",
+        title: "Universo e Ecologia (10-12 anos)",
+        description: "Aprenda sobre o sistema solar, ecologia e sustentabilidade.",
+        ageGroups: ['10-12'],
+        icon: "Bot",
+        modules: [
+          { id: "c3-mod1", title: "Sistema Solar", lessons: [
+              { id: "c3-l1", title: "Conhecendo os Planetas", videoUrl: "https://www.youtube.com/embed/a-z216v-R-8", type: "video" },
+          ]},
+          { id: "c3-mod2", title: "Sustentabilidade", lessons: [
+              { id: "c3-l2", title: "Reciclagem e Meio Ambiente", content: "Separar o lixo é muito importante para ajudar o planeta!", type: "reading" },
           ]}
         ]
       }
