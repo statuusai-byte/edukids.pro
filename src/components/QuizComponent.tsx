@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle, XCircle, ArrowRight } from 'lucide-react';
 import { showSuccess, showError } from '@/utils/toast';
 import { cn } from '@/lib/utils';
+import { Progress } from '@/components/ui/progress'; // Import Progress component
 
 export interface QuizQuestion {
   question: string;
@@ -20,6 +21,7 @@ interface QuizComponentProps {
 const QuizComponent = ({ questions, onQuizComplete, triggerHint }: QuizComponentProps) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [confirmedAnswer, setConfirmedAnswer] = useState<string | null>(null); // New state for confirmed answer
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [score, setScore] = useState(0);
   const [animationClass, setAnimationClass] = useState('');
@@ -28,14 +30,17 @@ const QuizComponent = ({ questions, onQuizComplete, triggerHint }: QuizComponent
   const currentQuestion = useMemo(() => questions[currentQuestionIndex], [questions, currentQuestionIndex]);
   const isQuizFinished = currentQuestionIndex >= questions.length;
 
-  // Reset hint when question changes
+  // Reset hint and confirmed answer when question changes
   useEffect(() => {
     setEliminatedOptions([]);
+    setConfirmedAnswer(null);
+    setIsCorrect(null);
+    setSelectedAnswer(null);
   }, [currentQuestionIndex]);
 
   // Logic to eliminate two wrong answers when hint is triggered
   useEffect(() => {
-    if (triggerHint && eliminatedOptions.length === 0) {
+    if (triggerHint && eliminatedOptions.length === 0 && !confirmedAnswer) {
       const incorrectOptions = currentQuestion.options.filter(
         (option) => option !== currentQuestion.correctAnswer
       );
@@ -43,13 +48,21 @@ const QuizComponent = ({ questions, onQuizComplete, triggerHint }: QuizComponent
       const toEliminate = incorrectOptions.sort(() => 0.5 - Math.random()).slice(0, 2);
       setEliminatedOptions(toEliminate);
     }
-  }, [triggerHint, currentQuestion, eliminatedOptions]);
+  }, [triggerHint, currentQuestion, eliminatedOptions, confirmedAnswer]);
 
-  const handleAnswer = (answer: string) => {
-    if (selectedAnswer !== null) return;
+  const handleOptionSelect = (option: string) => {
+    if (confirmedAnswer !== null) return; // Cannot select if already confirmed
+    setSelectedAnswer(option);
+  };
 
-    setSelectedAnswer(answer);
-    const correct = answer === currentQuestion.correctAnswer;
+  const handleConfirmAnswer = useCallback(() => {
+    if (selectedAnswer === null) {
+      showError("Por favor, selecione uma resposta antes de confirmar.");
+      return;
+    }
+
+    setConfirmedAnswer(selectedAnswer);
+    const correct = selectedAnswer === currentQuestion.correctAnswer;
     setIsCorrect(correct);
 
     if (correct) {
@@ -58,21 +71,22 @@ const QuizComponent = ({ questions, onQuizComplete, triggerHint }: QuizComponent
     } else {
       showError("Ops! Resposta incorreta. Tente a próxima.");
     }
-  };
+  }, [selectedAnswer, currentQuestion.correctAnswer]);
 
-  const handleNext = useCallback(() => {
+  const handleNextQuestion = useCallback(() => {
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(prev => prev + 1);
       setSelectedAnswer(null);
+      setConfirmedAnswer(null);
       setIsCorrect(null);
       setAnimationClass('');
     } else {
       if (onQuizComplete) {
-        onQuizComplete(score + (isCorrect ? 1 : 0));
+        onQuizComplete(score); // Pass the final score
       }
-      setCurrentQuestionIndex(questions.length);
+      setCurrentQuestionIndex(questions.length); // Mark quiz as finished
     }
-  }, [currentQuestionIndex, questions.length, onQuizComplete, score, isCorrect]);
+  }, [currentQuestionIndex, questions.length, onQuizComplete, score]);
 
   useEffect(() => {
     if (isCorrect === null) return;
@@ -92,62 +106,87 @@ const QuizComponent = ({ questions, onQuizComplete, triggerHint }: QuizComponent
     );
   }
 
+  const progressValue = ((currentQuestionIndex + (confirmedAnswer !== null ? 1 : 0)) / questions.length) * 100;
+
   return (
     <Card className={cn("glass-card p-6", animationClass)}>
-      <CardHeader>
-        <CardTitle className="text-xl">
-          Pergunta {currentQuestionIndex + 1} de {questions.length}
-        </CardTitle>
+      <CardHeader className="pb-4">
+        <div className="flex justify-between items-center mb-2">
+          <CardTitle className="text-xl text-muted-foreground">
+            Pergunta {currentQuestionIndex + 1} de {questions.length}
+          </CardTitle>
+          <span className="text-lg font-bold text-primary">{score} pontos</span>
+        </div>
+        <Progress value={progressValue} className="h-2 bg-white/10" indicatorClassName="bg-gradient-to-r from-green-400 to-yellow-400" />
       </CardHeader>
       <CardContent className="space-y-6">
-        <p className="text-2xl font-semibold text-foreground">{currentQuestion.question}</p>
+        <p className="text-2xl font-semibold text-foreground text-center">{currentQuestion.question}</p>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4"> {/* Changed to single column */}
           {currentQuestion.options.map((option, index) => {
             const isSelected = selectedAnswer === option;
             const isCorrectOption = currentQuestion.correctAnswer === option;
             const isEliminated = eliminatedOptions.includes(option);
             
-            let variant: 'default' | 'outline' | 'destructive' = 'outline';
-            let icon = null;
+            let buttonClasses = "h-16 text-lg transition-all duration-200 justify-center"; // Centered text
+            let buttonVariant: 'default' | 'outline' | 'destructive' = 'outline';
 
-            if (isSelected) {
-              variant = isCorrect ? 'default' : 'destructive';
-              icon = isCorrect ? <CheckCircle className="ml-3 h-5 w-5" /> : <XCircle className="ml-3 h-5 w-5" />;
-            } else if (selectedAnswer !== null && isCorrectOption) {
-              variant = 'default';
-              icon = <CheckCircle className="ml-3 h-5 w-5" />;
+            if (confirmedAnswer !== null) { // After confirmation
+              if (isCorrectOption) {
+                buttonVariant = 'default';
+                buttonClasses = cn(buttonClasses, 'bg-green-600 hover:bg-green-700');
+              } else if (isSelected && !isCorrectOption) {
+                buttonVariant = 'destructive';
+                buttonClasses = cn(buttonClasses, 'bg-red-600 hover:bg-red-700');
+              } else {
+                buttonClasses = cn(buttonClasses, 'opacity-50'); // Dim unselected wrong answers
+              }
+            } else { // Before confirmation
+              if (isSelected) {
+                buttonVariant = 'default';
+                buttonClasses = cn(buttonClasses, 'bg-primary hover:bg-primary/90');
+              } else {
+                buttonClasses = cn(buttonClasses, 'bg-secondary/40 hover:bg-secondary/60 border-white/10');
+              }
+            }
+
+            if (isEliminated) {
+              buttonClasses = cn(buttonClasses, 'opacity-30 pointer-events-none line-through');
             }
 
             return (
               <Button
                 key={index}
-                onClick={() => handleAnswer(option)}
-                disabled={selectedAnswer !== null || isEliminated}
-                className={cn(
-                  "h-16 text-lg justify-start transition-all duration-200",
-                  variant === 'default' && 'bg-green-600 hover:bg-green-700',
-                  variant === 'destructive' && 'bg-red-600 hover:bg-red-700',
-                  variant === 'outline' && selectedAnswer !== null && 'opacity-50',
-                  isEliminated && 'opacity-30 pointer-events-none'
-                )}
-                variant={variant === 'default' || variant === 'destructive' ? 'default' : 'outline'}
+                onClick={() => handleOptionSelect(option)}
+                disabled={confirmedAnswer !== null || isEliminated}
+                className={buttonClasses}
+                variant={buttonVariant}
               >
                 {option}
-                {icon}
+                {confirmedAnswer !== null && isCorrectOption && <CheckCircle className="ml-3 h-5 w-5" />}
+                {confirmedAnswer !== null && isSelected && !isCorrectOption && <XCircle className="ml-3 h-5 w-5" />}
               </Button>
             );
           })}
         </div>
 
-        {selectedAnswer !== null && (
-          <div className="mt-6 text-center">
-            <Button onClick={handleNext} size="lg">
+        <div className="mt-6 text-center">
+          {selectedAnswer !== null && confirmedAnswer === null && (
+            <Button 
+              onClick={handleConfirmAnswer} 
+              size="lg" 
+              className="w-full bg-gradient-to-r from-green-500 to-yellow-500 text-black font-bold hover:from-green-600 hover:to-yellow-600"
+            >
+              Confirmar Resposta
+            </Button>
+          )}
+          {confirmedAnswer !== null && (
+            <Button onClick={handleNextQuestion} size="lg" className="w-full">
               {currentQuestionIndex < questions.length - 1 ? 'Próxima Pergunta' : 'Finalizar Quiz'}
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-          </div>
-        )}
+          )}
+        </div>
       </CardContent>
     </Card>
   );
