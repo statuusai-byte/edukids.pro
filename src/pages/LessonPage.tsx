@@ -22,12 +22,12 @@ const LessonPage = () => {
   const navigate = useNavigate();
   const { isLessonCompleted, markLessonCompleted } = useProgress();
   const { isPremium } = usePremium();
-  const { hints, useHint, addHints } = useHintsContext();
+  const { hints, addHints } = useHintsContext(); // Removed useHint
   const { isBlocked, limitMinutes, startSession, stopSession } = useScreenTime();
   const { requestLessonHint } = useStudyAssistant(); // Use the study assistant context
   
   const [hintTriggered, setHintTriggered] = useState(false);
-  const [quizHintSuggested, setQuizHintSuggested] = useState(false);
+  // Removed quizHintSuggested as it was not directly read in this component
 
   const { subject, activity, module, lesson, lessonIndex, moduleIndex } = useMemo(() => {
     const s = subjectsData.find(sub => sub.slug === subjectSlug);
@@ -55,7 +55,7 @@ const LessonPage = () => {
   // Reset hint trigger when the lesson changes
   useEffect(() => {
     setHintTriggered(false);
-    setQuizHintSuggested(false);
+    // setQuizHintSuggested(false); // Removed as quizHintSuggested is removed
   }, [lessonId]);
 
   if (!subject || !activity || !module || !lesson) {
@@ -138,12 +138,12 @@ const LessonPage = () => {
 
     requestLessonHint(questionText, () => {
       setHintTriggered(true);
-      setQuizHintSuggested(false); // Hide suggestion after hint is used
+      // setQuizHintSuggested(false); // Removed as quizHintSuggested is removed
     });
   }, [lesson, requestLessonHint]);
 
   const handleQuizHintSuggested = useCallback(() => {
-    setQuizHintSuggested(true);
+    // setQuizHintSuggested(true); // Removed as quizHintSuggested is removed
   }, []);
 
   const renderLessonContent = () => {

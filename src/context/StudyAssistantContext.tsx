@@ -143,7 +143,7 @@ export const StudyAssistantProvider = ({ children }: { children: ReactNode }) =>
         onLessonHintTriggeredRef.current = null; // Clear after use
       }
     } catch (e) {
-      if (toastId) dismissToast(toastId); // Dismiss toast on error
+      if (toastId !== null) dismissToast(toastId); // Dismiss toast on error
       showError("Desculpe, tente novamente mais tarde.");
     } finally {
       setProcessing(false);
