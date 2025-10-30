@@ -31,8 +31,9 @@ const PageTransition = ({ children }: { children: ReactNode }) => {
     return <>{children}</>;
   }
 
-  // Sempre envolve os filhos em um div para motion.div para garantir que ele sempre receba um único elemento.
-  // Isso lida com casos em que 'children' pode ser uma string, número ou múltiplos elementos.
+  // Aplica motion.div diretamente aos filhos.
+  // Como em todos os usos atuais, 'children' é um único elemento React (um div),
+  // esta abordagem é mais direta e segura.
   return (
     <motion.div
       initial="initial"
@@ -41,7 +42,7 @@ const PageTransition = ({ children }: { children: ReactNode }) => {
       variants={pageVariants}
       transition={pageTransition}
     >
-      <div>{children}</div>
+      {children}
     </motion.div>
   );
 };
