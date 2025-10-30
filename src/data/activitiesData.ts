@@ -51,101 +51,101 @@ function shuffle<T>(arr: T[]) {
 }
 
 function makeOptions(correct: string, extras: string[]) {
-  const opts = [correct, ...extras.slice(0, 3)];
+  const opts = [correct, ...extras.filter(e => e !== correct).slice(0, 3)];
   const unique = Array.from(new Set(opts));
   while (unique.length < 4) {
-    unique.push(`Opção ${unique.length + 1}`);
+    unique.push(`Opção ${unique.length + 1}`); // Fallback for not enough unique options
   }
   return shuffle(unique);
 }
 
 /* ---------- Quiz Generators ---------- */
 
-function genAdd(count: number, max = 10): QuizQuestion[] {
+const QUIZ_COUNT = 1000; // Target number of questions for each quiz type
+
+function genAdd(count: number, max = 100): QuizQuestion[] {
   const out: QuizQuestion[] = [];
-  for (let i = 1; i <= count; i++) {
-    const a = (i % max) + 1;
-    const b = ((i * 3) % (max-1)) + 1;
+  for (let i = 0; i < count; i++) {
+    const a = Math.floor(Math.random() * max) + 1;
+    const b = Math.floor(Math.random() * max) + 1;
     const correct = a + b;
     out.push({
       question: `Quanto é ${a} + ${b}?`,
-      options: makeOptions(String(correct), [String(correct + 2), String(Math.max(0, correct - 1)), String(correct + 1)]),
+      options: makeOptions(String(correct), [String(correct + 1), String(Math.max(0, correct - 1)), String(correct + 2), String(a + b + 3)]),
       correctAnswer: String(correct),
     });
   }
   return out;
 }
 
-function genSub(count: number, max = 15): QuizQuestion[] {
+function genSub(count: number, max = 100): QuizQuestion[] {
   const out: QuizQuestion[] = [];
-  for (let i = 1; i <= count; i++) {
-    const a = Math.floor(max / 2) + (i % Math.floor(max / 2));
-    const b = (i % (Math.floor(max/2)-1)) + 1;
+  for (let i = 0; i < count; i++) {
+    const a = Math.floor(Math.random() * max) + 1;
+    const b = Math.floor(Math.random() * a) + 1; // Ensure b is less than or equal to a
     const correct = a - b;
     out.push({
       question: `Quanto é ${a} - ${b}?`,
-      options: makeOptions(String(correct), [String(correct + 1), String(Math.max(0, correct - 2)), String(a+b)]),
+      options: makeOptions(String(correct), [String(correct + 1), String(Math.max(0, correct - 1)), String(correct + 2), String(a + b)]),
       correctAnswer: String(correct),
     });
   }
   return out;
 }
 
-function genMul(count: number): QuizQuestion[] {
+function genMul(count: number, maxFactor = 12): QuizQuestion[] {
     const out: QuizQuestion[] = [];
-    for (let i = 1; i <= count; i++) {
-        const a = 1 + (i % 9);
-        const b = 1 + ((i * 2) % 9);
+    for (let i = 0; i < count; i++) {
+        const a = Math.floor(Math.random() * maxFactor) + 1;
+        const b = Math.floor(Math.random() * maxFactor) + 1;
         const correct = a * b;
         out.push({
             question: `Quanto é ${a} × ${b}?`,
-            options: makeOptions(String(correct), [String(correct + b), String(Math.max(1, correct - a)), String(a+b)]),
+            options: makeOptions(String(correct), [String(correct + a), String(correct + b), String(Math.max(1, correct - a)), String(a * b + 1)]),
             correctAnswer: String(correct),
         });
     }
     return out;
 }
 
-function genDiv(count: number): QuizQuestion[] {
+function genDiv(count: number, maxDivisor = 12): QuizQuestion[] {
   const out: QuizQuestion[] = [];
-  for (let i = 1; i <= count; i++) {
-    const b = 2 + (i % 8);
-    const correct = 2 + (i % 8);
+  for (let i = 0; i < count; i++) {
+    const b = Math.floor(Math.random() * maxDivisor) + 2; // Divisor from 2 to maxDivisor
+    const correct = Math.floor(Math.random() * maxDivisor) + 1; // Quotient from 1 to maxDivisor
     const a = b * correct;
     out.push({
       question: `Quanto é ${a} ÷ ${b}?`,
-      options: makeOptions(String(correct), [String(correct + 1), String(correct - 1), String(a-b)]),
+      options: makeOptions(String(correct), [String(correct + 1), String(Math.max(1, correct - 1)), String(correct + 2), String(a - b)]),
       correctAnswer: String(correct),
     });
   }
   return out;
 }
 
-function genNumberRecognition(count: number): QuizQuestion[] {
+function genNumberRecognition(count: number, maxNum = 100): QuizQuestion[] {
   const out: QuizQuestion[] = [];
-  for (let i = 1; i <= count; i++) {
-    const n = i <= 20 ? i : (i % 20) + 1;
+  for (let i = 0; i < count; i++) {
+    const n = Math.floor(Math.random() * maxNum) + 1;
     out.push({
-      question: `Quantos objetos você vê: ${'●'.repeat(Math.min(10, n))}${n > 10 ? ` (+${n - 10})` : ''}`,
-      options: makeOptions(String(n), [String(n + 1), String(Math.max(1, n - 1)), String(n+2)]),
+      question: `Quantos objetos você vê: ${'●'.repeat(Math.min(20, n))}${n > 20 ? ` (+${n - 20})` : ''}`,
+      options: makeOptions(String(n), [String(n + 1), String(Math.max(1, n - 1)), String(n+2), String(n-2)]),
       correctAnswer: String(n),
     });
   }
   return out;
 }
 
-function genEnglishNumbers(count = 30): QuizQuestion[] {
+function genEnglishNumbers(count = QUIZ_COUNT): QuizQuestion[] {
   const words = ['one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty'];
   const out: QuizQuestion[] = [];
   for (let i = 0; i < count; i++) {
-    const n = i % words.length;
+    const n = Math.floor(Math.random() * words.length);
     const correct = words[n];
-    const wrong1 = words[(n + 1) % words.length];
-    const wrong2 = words[(n + 2) % words.length];
-    const wrong3 = words[(n + 3) % words.length];
+    const wrongOptions = shuffle(words.filter(w => w !== correct)).slice(0, 3);
     out.push({
       question: `How do you say the number ${n + 1} in English?`,
-      options: makeOptions(correct, [wrong1, wrong2, wrong3]),
+      options: makeOptions(correct, wrongOptions),
       correctAnswer: correct,
     });
   }
@@ -163,7 +163,7 @@ function genPortugueseAntonyms(count: number): QuizQuestion[] {
   const allAnswers = pairs.map(p => p.a);
   const out: QuizQuestion[] = [];
   for (let i = 0; i < count; i++) {
-    const pair = pairs[i % pairs.length];
+    const pair = pairs[i % pairs.length]; // Cycle through questions
     const wrongAnswers = allAnswers.filter(a => a !== pair.a);
     out.push({ question: pair.q, options: makeOptions(pair.a, shuffle(wrongAnswers)), correctAnswer: pair.a });
   }
@@ -182,7 +182,7 @@ function genScienceBodyParts(count: number): QuizQuestion[] {
   ];
   const out: QuizQuestion[] = [];
   for (let i = 0; i < count; i++) {
-    const qData = questions[i % questions.length];
+    const qData = questions[i % questions.length]; // Cycle through questions
     out.push({ question: qData.q, options: makeOptions(qData.a, qData.options), correctAnswer: qData.a });
   }
   return out;
@@ -199,7 +199,7 @@ function genGeographyCapitals(count: number): QuizQuestion[] {
     const allCapitals = capitals.map(c => c.capital);
     const out: QuizQuestion[] = [];
     for (let i = 0; i < count; i++) {
-        const item = capitals[i % capitals.length];
+        const item = capitals[i % capitals.length]; // Cycle through questions
         const wrongOptions = allCapitals.filter(c => c !== item.capital);
         out.push({ question: `Qual é a capital de ${item.state}?`, options: makeOptions(item.capital, shuffle(wrongOptions)), correctAnswer: item.capital });
     }
@@ -215,7 +215,7 @@ function genEnglishAnimals(count: number): QuizQuestion[] {
     const allEnglish = animals.map(a => a.en);
     const out: QuizQuestion[] = [];
     for (let i = 0; i < count; i++) {
-        const item = animals[i % animals.length];
+        const item = animals[i % animals.length]; // Cycle through questions
         const wrongOptions = allEnglish.filter(en => en !== item.en);
         out.push({ question: `Como se diz "${item.pt}" em inglês?`, options: makeOptions(item.en, shuffle(wrongOptions)), correctAnswer: item.en });
     }
@@ -231,7 +231,7 @@ function genFinancialLiteracyQuiz(count: number): QuizQuestion[] {
   ];
   const out: QuizQuestion[] = [];
   for (let i = 0; i < count; i++) {
-    const qData = questions[i % questions.length];
+    const qData = questions[i % questions.length]; // Cycle through questions
     out.push({ question: qData.q, options: makeOptions(qData.a, qData.options), correctAnswer: qData.a });
   }
   return out;
@@ -263,11 +263,11 @@ export const subjectsData: Subject[] = [
         icon: "Apple",
         modules: [
           { id: "m1-mod1", title: "Números de 1 a 20", lessons: [
-              { id: "m1-l1", title: "Reconhecendo Números", content: JSON.stringify(genNumberRecognition(30)), type: "exercise" },
-              { id: "m1-l2", title: "Primeiras Somas", content: JSON.stringify(genAdd(30, 10)), type: "exercise" }
+              { id: "m1-l1", title: "Reconhecendo Números", content: JSON.stringify(genNumberRecognition(QUIZ_COUNT, 20)), type: "exercise" },
+              { id: "m1-l2", title: "Primeiras Somas", content: JSON.stringify(genAdd(QUIZ_COUNT, 10)), type: "exercise" }
           ]},
           { id: "m1-mod2", title: "Introdução à Subtração", lessons: [
-              { id: "m1-l3", title: "Tirando Objetos", content: JSON.stringify(genSub(30, 10)), type: "exercise" },
+              { id: "m1-l3", title: "Tirando Objetos", content: JSON.stringify(genSub(QUIZ_COUNT, 10)), type: "exercise" },
               { id: "m1-l4", title: "Jogo: Contando Frutas", content: "Conte as frutas na tela!", type: "game" }
           ]}
         ]
@@ -280,15 +280,15 @@ export const subjectsData: Subject[] = [
         icon: "Sigma",
         modules: [
           { id: "m2-mod1", title: "Somas e Subtrações", lessons: [
-              { id: "m2-l1", title: "Somando até 100", content: JSON.stringify(genAdd(30, 100)), type: "exercise" },
-              { id: "m2-l2", title: "Subtraindo até 100", content: JSON.stringify(genSub(30, 100)), type: "exercise" }
+              { id: "m2-l1", title: "Somando até 100", content: JSON.stringify(genAdd(QUIZ_COUNT, 100)), type: "exercise" },
+              { id: "m2-l2", title: "Subtraindo até 100", content: JSON.stringify(genSub(QUIZ_COUNT, 100)), type: "exercise" }
           ]},
           { id: "m2-mod2", title: "Multiplicação é Mágica", lessons: [
-              { id: "m2-l3", title: "Tabuadas Divertidas", content: JSON.stringify(genMul(30)), type: "exercise" },
+              { id: "m2-l3", title: "Tabuadas Divertidas", content: JSON.stringify(genMul(QUIZ_COUNT, 12)), type: "exercise" },
               { id: "m2-l4", title: "Resolvendo Problemas de Vezes", content: "Se você tem 3 caixas com 4 lápis cada, quantos lápis você tem no total?", type: "reading" }
           ]},
           { id: "m2-mod3", title: "Dividindo o Tesouro", lessons: [
-              { id: "m2-l5", title: "Dividindo em Partes Iguais", content: JSON.stringify(genDiv(30)), type: "exercise" },
+              { id: "m2-l5", title: "Dividindo em Partes Iguais", content: JSON.stringify(genDiv(QUIZ_COUNT, 12)), type: "exercise" },
               { id: "m2-l6", title: "Divisão e Resto", content: "Se você dividir 10 por 3, cada um recebe 3 e sobra 1. Esse é o resto!", type: "reading" }
           ]}
         ]
@@ -302,7 +302,7 @@ export const subjectsData: Subject[] = [
         modules: [
           { id: "m3-mod1", title: "Frações e Decimais", lessons: [
               { id: "m3-l1", title: "O que são Frações?", videoUrl: "https://www.youtube.com/embed/Y2-IsyS-YpY", type: "video" },
-              { id: "m3-l2", title: "Exercícios com Frações", content: JSON.stringify(genDiv(30)), type: "exercise" }
+              { id: "m3-l2", title: "Exercícios com Frações", content: JSON.stringify(genDiv(QUIZ_COUNT, 20)), type: "exercise" }
           ]},
           { id: "m3-mod2", title: "Geometria Básica", lessons: [
               { id: "m3-l3", title: "Ângulos e Formas", content: "Um círculo tem 360 graus. Um ângulo reto, como o canto de um quadrado, tem 90 graus.", type: "reading" },
@@ -340,7 +340,7 @@ export const subjectsData: Subject[] = [
         icon: "SpellCheck",
         modules: [
           { id: "p2-mod1", title: "Vocabulário", lessons: [
-              { id: "p2-l1", title: "Quiz de Antônimos", content: JSON.stringify(genPortugueseAntonyms(30)), type: "exercise" }
+              { id: "p2-l1", title: "Quiz de Antônimos", content: JSON.stringify(genPortugueseAntonyms(QUIZ_COUNT)), type: "exercise" }
           ]},
           { id: "p2-mod2", title: "Tipos de Palavras", lessons: [
               { id: "p2-l2", title: "Substantivos e Adjetivos", content: "Substantivo dá nome às coisas (CASA). Adjetivo dá qualidade (CASA bonita).", type: "reading" }
@@ -379,10 +379,10 @@ export const subjectsData: Subject[] = [
         icon: "SpellCheck",
         modules: [
           { id: "i1-mod1", title: "Numbers and Colors", lessons: [
-              { id: "i1-l1", title: "Quiz: Numbers 1-20", content: JSON.stringify(genEnglishNumbers(30)), type: "exercise" }
+              { id: "i1-l1", title: "Quiz: Numbers 1-20", content: JSON.stringify(genEnglishNumbers(QUIZ_COUNT)), type: "exercise" }
           ]},
           { id: "i1-mod2", title: "Animals", lessons: [
-              { id: "i1-l2", title: "Quiz: Common Animals", content: JSON.stringify(genEnglishAnimals(30)), type: "exercise" }
+              { id: "i1-l2", title: "Quiz: Common Animals", content: JSON.stringify(genEnglishAnimals(QUIZ_COUNT)), type: "exercise" }
           ]}
         ]
       }
@@ -419,7 +419,7 @@ export const subjectsData: Subject[] = [
         modules: [
           { id: "c2-mod1", title: "Corpo Humano", lessons: [
               { id: "c2-l1", title: "Como o Corpo Funciona", content: reading_body_systems, type: "reading" },
-              { id: "c2-l2", title: "Quiz: Órgãos do Corpo", content: JSON.stringify(genScienceBodyParts(30)), type: "exercise" }
+              { id: "c2-l2", title: "Quiz: Órgãos do Corpo", content: JSON.stringify(genScienceBodyParts(QUIZ_COUNT)), type: "exercise" }
           ]},
           { id: "c2-mod2", title: "Ciclos da Natureza", lessons: [
               { id: "c2-l3", title: "O Ciclo da Água", content: reading_water_cycle, type: "reading" }
@@ -453,7 +453,7 @@ export const subjectsData: Subject[] = [
       { id: "h1", title: "História do Brasil", description: "Eventos que moldaram o nosso país.", ageGroups: ['7-9','10-12'], icon: "Landmark", modules: [
           { id: "h1-mod1", title: "Descobrimento e Colonização", lessons: [
               { id: "h1-l1", title: "A Chegada dos Portugueses", content: reading_discovery_brazil, type: "reading" },
-              { id: "h1-l2", title: "Quiz de Fatos Históricos", content: JSON.stringify(genGeographyCapitals(30)), type: "exercise" }
+              { id: "h1-l2", title: "Quiz de Fatos Históricos", content: JSON.stringify(genGeographyCapitals(QUIZ_COUNT)), type: "exercise" }
           ]}
       ]}
     ]
@@ -467,7 +467,7 @@ export const subjectsData: Subject[] = [
     activities: [
       { id: "g1", title: "Mapas e Lugares", description: "Aprenda sobre estados, capitais e continentes.", ageGroups: ['7-9','10-12'], icon: "Globe", modules: [
           { id: "g1-mod1", title: "Brasil e o Mundo", lessons: [
-              { id: "g1-l1", title: "Quiz de Capitais", content: JSON.stringify(genGeographyCapitals(30)), type: "exercise" }
+              { id: "g1-l1", title: "Quiz de Capitais", content: JSON.stringify(genGeographyCapitals(QUIZ_COUNT)), type: "exercise" }
           ]}
       ]}
     ]
@@ -522,7 +522,7 @@ export const subjectsData: Subject[] = [
             title: "Primeiros Passos Financeiros",
             lessons: [
               { id: "ef1-l1", title: "O que é Poupar?", content: reading_saving_money, type: "reading" },
-              { id: "ef1-l2", title: "Quiz do Dinheirinho", content: JSON.stringify(genFinancialLiteracyQuiz(30)), type: "exercise" }
+              { id: "ef1-l2", title: "Quiz do Dinheirinho", content: JSON.stringify(genFinancialLiteracyQuiz(QUIZ_COUNT)), type: "exercise" }
             ]
           }
         ]

@@ -27,6 +27,7 @@ const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const SuccessPayment = lazy(() => import("./pages/SuccessPayment"));
 const TestAccount = lazy(() => import("./pages/TestAccount"));
+const AdminGrantPremium = lazy(() => import("./pages/AdminGrantPremium")); // New import
 
 const queryClient = new QueryClient();
 
@@ -57,6 +58,7 @@ const App = () => (
                       <Route path="/register" element={<Register />} />
                       <Route path="/success-payment" element={<SuccessPayment />} />
                       <Route path="/test-account" element={<TestAccount />} />
+                      <Route path="/admin/grant-premium" element={<AdminGrantPremium />} /> {/* New route */}
 
                       {/* All other routes use the main Layout */}
                       <Route element={<Layout />}>
