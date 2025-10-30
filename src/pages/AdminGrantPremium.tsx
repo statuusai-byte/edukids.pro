@@ -35,9 +35,11 @@ export default function AdminGrantPremium() {
         "matematica", "portugues", "ciencias", "historia", "geografia", "ingles",
       ];
       localStorage.setItem("edukids_help_packages", JSON.stringify(allPackages));
+      return true; // Indicate success
     } catch (e) {
       console.error("Failed to seed local premium:", e);
-      throw e;
+      showError("Falha ao ativar Premium localmente.");
+      return false; // Indicate failure
     }
   };
 
@@ -94,6 +96,24 @@ export default function AdminGrantPremium() {
     }
   };
 
+  const handleActivateLocalOnly = async () => {
+    setLoading(true);
+    setResult(null);
+    const toastId = showLoading("Ativando Premium localmente...");
+    const success = await seedLocalPremium();
+    dismissToast(toastId);
+    if (success) {
+      showSuccess("Premium ativado localmente para este dispositivo.");
+      setResult("Sucesso! Premium ativado localmente.");
+      setTimeout(() => {
+        navigate("/dashboard", { replace: true });
+      }, 700);
+    } else {
+      setResult("Erro: Falha ao ativar Premium localmente.");
+    }
+    setLoading(false);
+  };
+
   // Auth guard: only allow access to the admin email
   if (authLoading) {
     return (
@@ -138,7 +158,7 @@ export default function AdminGrantPremium() {
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-sm text-muted-foreground">
-            Use esta ferramenta para criar um usuário (se necessário) e conceder o status Premium.
+            Use esta ferramenta para criar um usuário (se necessário) e conceder o status Premium no sistema.
             Isso também ativará o Premium localmente para este dispositivo.
           </p>
 
@@ -161,10 +181,16 @@ export default function AdminGrantPremium() {
 
           <div className="flex flex-col gap-3">
             <Button onClick={() => handleGrantPremium(true)} disabled={loading} className="bg-primary">
-              {loading ? "Processando..." : "Criar/Entrar e Conceder Premium"}
+              {loading ? "Processando..." : "Criar/Entrar e Conceder Premium (Sistema)"}
             </Button>
             <Button variant="outline" onClick={() => handleGrantPremium(false)} disabled={loading}>
-              {loading ? "Concedendo..." : "Conceder Premium (Usuário Existente)"}
+              {loading ? "Concedendo..." : "Conceder Premium (Usuário Existente no Sistema)"}
+            </Button>
+            <div className="text-center text-xs text-muted-foreground">
+              Ou, para testes rápidos:
+            </div>
+            <Button onClick={handleActivateLocalOnly} disabled={loading} className="bg-yellow-400 text-black">
+              {loading ? "Ativando..." : "Ativar Premium Localmente (Apenas Neste Dispositivo)"}
             </Button>
           </div>
 
@@ -175,8 +201,8 @@ export default function AdminGrantPremium() {
           )}
 
           <div className="mt-3 text-xs text-muted-foreground">
-            <p>Nota: A função <code>grant-premium</code> do Supabase Edge Function é invocada para atualizar o perfil do usuário no banco de dados.</p>
-            <p className="mt-1">O status Premium também é salvo localmente para testes imediatos.</p>
+            <p>Nota: As opções "Sistema" invocam a função <code>grant-premium</code> do Supabase Edge Function para atualizar o perfil do usuário no banco de dados e também salvam o status Premium localmente.</p>
+            <p className="mt-1">A opção "Localmente" apenas salva o status Premium no armazenamento do seu navegador, ideal para testes rápidos sem afetar o backend.</p>
           </div>
         </CardContent>
       </Card>
