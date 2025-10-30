@@ -301,7 +301,7 @@ export const subjectsData: Subject[] = [
         icon: "Brain",
         modules: [
           { id: "m3-mod1", title: "Frações e Decimais", lessons: [
-              { id: "m3-l1", title: "O que são Frações?", videoUrl: "https://www.youtube.com/embed/Y2-IsyS-YpY", type: "video" },
+              { id: "m3-l1", title: "O que são Frações?", videoUrl: "https://vimeo.com/368000000", type: "video" }, // Changed to Vimeo
               { id: "m3-l2", title: "Exercícios com Frações", content: JSON.stringify(genDiv(QUIZ_COUNT, 20)), type: "exercise" }
           ]},
           { id: "m3-mod2", title: "Geometria Básica", lessons: [
@@ -358,7 +358,7 @@ export const subjectsData: Subject[] = [
               { id: "p3-l1", title: "Passado, Presente e Futuro", content: "Eu comi (passado), eu como (presente), eu comerei (futuro).", type: "reading" },
           ]},
           { id: "p3-mod2", title: "Pontuação", lessons: [
-              { id: "p3-l2", title: "Vírgula, Ponto e Interrogação", videoUrl: "https://www.youtube.com/embed/3y-6X4Y-iF4", type: "video" }
+              { id: "p3-l2", title: "Vírgula, Ponto e Interrogação", videoUrl: "https://vimeo.com/379000000", type: "video" } // Changed to Vimeo
           ]}
         ]
       }
@@ -434,7 +434,7 @@ export const subjectsData: Subject[] = [
         icon: "Bot",
         modules: [
           { id: "c3-mod1", title: "Sistema Solar", lessons: [
-              { id: "c3-l1", title: "Conhecendo os Planetas", videoUrl: "https://www.youtube.com/embed/a-z216v-R-8", type: "video" },
+              { id: "c3-l1", title: "Conhecendo os Planetas", videoUrl: "https://vimeo.com/391000000", type: "video" }, // Changed to Vimeo
           ]},
           { id: "c3-mod2", title: "Sustentabilidade", lessons: [
               { id: "c3-l2", title: "Reciclagem e Meio Ambiente", content: "Separar o lixo é muito importante para ajudar o planeta!", type: "reading" },
