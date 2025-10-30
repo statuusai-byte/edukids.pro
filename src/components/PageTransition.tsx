@@ -1,5 +1,5 @@
 import { motion, Transition } from 'framer-motion';
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { usePrefersReducedMotion } from '@/hooks/use-reduced-motion';
 
 const pageVariants = {

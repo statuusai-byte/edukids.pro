@@ -90,7 +90,7 @@ export default function TestAccount() {
         body: JSON.stringify({ email }),
       };
 
-      const { data: grantData, error: grantError } = await supabase.functions.invoke("grant-premium", invokeOptions);
+      const { data: _grantData, error: grantError } = await supabase.functions.invoke("grant-premium", invokeOptions);
 
       if (grantError) {
         console.error("Erro na função de concessão de premium:", grantError);
