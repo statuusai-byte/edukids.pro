@@ -50,7 +50,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
             }
           }
           
-          navigate('/dashboard');
+          navigate('/activities');
         } else if (event === 'SIGNED_OUT') {
           showSuccess('Sessão encerrada.');
           navigate('/');
