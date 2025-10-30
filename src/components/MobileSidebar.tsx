@@ -37,7 +37,11 @@ const MobileSidebar = () => {
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="fixed top-4 left-4 z-50 md:hidden">
+        <Button 
+          variant="default" // Changed from 'ghost'
+          size="icon" 
+          className="fixed top-4 left-4 z-50 md:hidden bg-white text-black shadow-md hover:bg-gray-100" // Added bg-white, text-black, shadow-md
+        >
           <Menu className="h-6 w-6" />
           <span className="sr-only">Abrir menu</span>
         </Button>
