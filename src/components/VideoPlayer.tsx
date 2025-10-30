@@ -16,11 +16,12 @@ function toEmbedUrl(raw: string): { embed: string; external: string } {
       } else if (url.searchParams.has("v")) {
         videoId = url.searchParams.get("v");
       } else if (url.pathname.startsWith("/embed/")) {
-        videoId = url.pathname.split("/").pop() ?? null; // Fixed: Handle undefined case
+        videoId = url.pathname.split("/").pop() ?? null;
       }
 
       if (videoId) {
-        embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`;
+        // Use a simpler embed URL, removing rel=0 and modestbranding=1 for broader compatibility
+        embedUrl = `https://www.youtube.com/embed/${videoId}`;
         externalUrl = `https://www.youtube.com/watch?v=${videoId}`;
       }
     }
@@ -60,13 +61,13 @@ export default function VideoPlayer({ src, title, className }: VideoPlayerProps)
     <div className={cn("w-full", className)}>
       <div className="relative aspect-video rounded-2xl overflow-hidden border border-primary/50 shadow-lg shadow-primary/20">
         <iframe
+          key={embed} // Add key to force re-render on src change
           width="100%"
           height="100%"
           src={embed}
           title={title ?? "Video"}
+          // Removed referrerPolicy and loading="lazy" for broader compatibility
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerPolicy="no-referrer-when-downgrade"
-          loading="lazy"
           allowFullScreen
         />
         <div className="absolute bottom-3 right-3">
