@@ -14,7 +14,7 @@ import { useAge } from "@/context/AgeContext";
 import { useNavigate } from "react-router-dom";
 import { Rocket } from "lucide-react";
 
-type ActionType = "entrar" | "cadastrar";
+type ActionType = "entrar" | "cadastrar" | "explore";
 
 interface AgeSelectionModalProps {
   open: boolean;
@@ -38,7 +38,7 @@ const AgeSelectionModal = ({ open, onOpenChange, action }: AgeSelectionModalProp
   const handleConfirm = () => {
     if (!selected) return;
 
-    // Prevent Home's auto-redirect when we intend to navigate to login/register
+    // Prevent Home's auto-redirect when we intend to navigate to login/register/activities
     try {
       localStorage.setItem(SKIP_REDIRECT_KEY, "true");
     } catch (e) {
@@ -51,8 +51,28 @@ const AgeSelectionModal = ({ open, onOpenChange, action }: AgeSelectionModalProp
     // Navigate to the appropriate route based on the requested action
     if (action === "cadastrar") {
       navigate("/register");
-    } else {
+    } else if (action === "entrar") {
       navigate("/login");
+    } else if (action === "explore") {
+      navigate("/activities");
+    }
+  };
+
+  const getTitle = () => {
+    switch (action) {
+      case "cadastrar": return "Crie a conta e comece";
+      case "entrar": return "Bem-vindo de volta!";
+      case "explore": return "Comece a Explorar!";
+      default: return "Selecione a Faixa Etária";
+    }
+  };
+
+  const getButtonText = () => {
+    switch (action) {
+      case "cadastrar": return "Continuar para Cadastro";
+      case "entrar": return "Continuar para Entrar";
+      case "explore": return "Começar a Explorar";
+      default: return "Confirmar";
     }
   };
 
@@ -64,7 +84,7 @@ const AgeSelectionModal = ({ open, onOpenChange, action }: AgeSelectionModalProp
             <Rocket className="h-6 w-6 text-primary" />
           </div>
           <DialogTitle className="text-2xl font-bold">
-            {action === "cadastrar" ? "Crie a conta e comece" : "Bem-vindo de volta!"}
+            {getTitle()}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">
             Antes de continuar, selecione a faixa etária do explorador.
@@ -92,7 +112,7 @@ const AgeSelectionModal = ({ open, onOpenChange, action }: AgeSelectionModalProp
             <div className="flex w-full justify-between items-center gap-3">
               <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
               <Button onClick={handleConfirm} disabled={!selected} className="bg-primary">
-                {action === "cadastrar" ? "Continuar para Cadastro" : "Continuar para Entrar"}
+                {getButtonText()}
               </Button>
             </div>
           </DialogFooter>

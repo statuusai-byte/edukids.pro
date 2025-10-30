@@ -1,3 +1,5 @@
+"use client";
+
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useAge } from "@/context/AgeContext";
@@ -30,9 +32,9 @@ const Home = () => {
   }, [isLoading, ageGroup, navigate]);
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [action, setAction] = useState<"entrar" | "cadastrar" | null>(null);
+  const [action, setAction] = useState<"entrar" | "cadastrar" | "explore" | null>(null);
 
-  const openFor = (a: "entrar" | "cadastrar") => {
+  const openFor = (a: "entrar" | "cadastrar" | "explore") => {
     setAction(a);
     setModalOpen(true);
   };
@@ -97,8 +99,18 @@ const Home = () => {
 
           <div className="mt-6 flex gap-3 w-full max-w-md">
             <Button
-              onClick={() => openFor("entrar")}
+              onClick={() => openFor("explore")} // Changed to open modal for exploration
               className="flex-1 bg-white text-black font-bold py-3"
+              aria-label="Começar a Explorar"
+            >
+              <Play className="h-4 w-4 mr-2" /> Começar a Explorar
+            </Button>
+          </div>
+
+          <div className="mt-4 flex gap-3 w-full max-w-md">
+            <Button
+              onClick={() => openFor("entrar")}
+              className="flex-1 border border-white/20 text-white/90 py-3 bg-secondary/30 hover:bg-secondary/40"
               aria-label="Entrar"
             >
               Entrar
