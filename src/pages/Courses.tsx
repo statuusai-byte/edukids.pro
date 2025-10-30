@@ -16,6 +16,20 @@ const Courses = () => {
     return allCourses.filter(course => course.ageGroups.includes(ageGroup));
   }, [ageGroup]);
 
+  if (!ageGroup) {
+    return (
+      <PageTransition>
+        <div className="text-center py-16 glass-card rounded-lg">
+          <h2 className="text-2xl font-bold">Selecione uma faixa etária!</h2>
+          <p className="text-muted-foreground mt-2">
+            Por favor, selecione a faixa etária do explorador nas configurações ou na página inicial para ver os cursos disponíveis.
+          </p>
+          <Link to="/settings" className="mt-4 inline-block text-primary underline">Ir para Configurações</Link>
+        </div>
+      </PageTransition>
+    );
+  }
+
   return (
     <PageTransition> {/* Wrap with PageTransition */}
       <div>

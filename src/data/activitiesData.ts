@@ -237,6 +237,23 @@ function genFinancialLiteracyQuiz(count: number): QuizQuestion[] {
   return out;
 }
 
+function genPlanetMatchingQuiz(count: number): QuizQuestion[] {
+  const questions = [
+    { q: "Qual é o planeta vermelho?", a: "Marte", options: ["Vênus", "Júpiter", "Terra"] },
+    { q: "Qual é o maior planeta do nosso sistema solar?", a: "Júpiter", options: ["Saturno", "Urano", "Netuno"] },
+    { q: "Qual planeta é conhecido por seus anéis?", a: "Saturno", options: ["Marte", "Vênus", "Terra"] },
+    { q: "Qual é o planeta mais próximo do Sol?", a: "Mercúrio", options: ["Vênus", "Terra", "Marte"] },
+    { q: "Qual planeta é o nosso lar?", a: "Terra", options: ["Marte", "Vênus", "Júpiter"] },
+  ];
+  const out: QuizQuestion[] = [];
+  for (let i = 0; i < count; i++) {
+    const qData = questions[i % questions.length]; // Cycle through questions
+    out.push({ question: qData.q, options: makeOptions(qData.a, qData.options), correctAnswer: qData.a });
+  }
+  return out;
+}
+
+
 /* ---------- Reading Content ---------- */
 const reading_body_systems = "O corpo humano é incrível! O coração bate sem parar para levar sangue a todo lugar. Os pulmões nos ajudam a respirar o ar. E o cérebro é o chefe de tudo, nos ajuda a pensar, aprender e brincar!";
 const reading_water_cycle = "A água está sempre em movimento! O sol esquenta a água dos rios e mares, que vira vapor e sobe (evaporação). Lá no céu, o vapor esfria e forma as nuvens (condensação). Quando as nuvens ficam pesadas, a água cai como chuva (precipitação) e volta para os rios, começando tudo de novo!";
@@ -285,7 +302,8 @@ export const subjectsData: Subject[] = [
           ]},
           { id: "m2-mod2", title: "Multiplicação é Mágica", lessons: [
               { id: "m2-l3", title: "Tabuadas Divertidas", content: JSON.stringify(genMul(QUIZ_COUNT, 12)), type: "exercise" },
-              { id: "m2-l4", title: "Resolvendo Problemas de Vezes", content: "Se você tem 3 caixas com 4 lápis cada, quantos lápis você tem no total?", type: "reading" }
+              { id: "m2-l4", title: "Resolvendo Problemas de Vezes", content: "Se você tem 3 caixas com 4 lápis cada, quantos lápis você tem no total?", type: "reading" },
+              { id: "m2-l7", title: "Jogo: Desafio da Multiplicação", description: "Teste suas habilidades de multiplicação em um jogo rápido!", content: JSON.stringify(genMul(QUIZ_COUNT, 10)), type: "game" }
           ]},
           { id: "m2-mod3", title: "Dividindo o Tesouro", lessons: [
               { id: "m2-l5", title: "Dividindo em Partes Iguais", content: JSON.stringify(genDiv(QUIZ_COUNT, 12)), type: "exercise" },
@@ -382,7 +400,8 @@ export const subjectsData: Subject[] = [
               { id: "i1-l1", title: "Quiz: Numbers 1-20", content: JSON.stringify(genEnglishNumbers(QUIZ_COUNT)), type: "exercise" }
           ]},
           { id: "i1-mod2", title: "Animals", lessons: [
-              { id: "i1-l2", title: "Quiz: Common Animals", content: JSON.stringify(genEnglishAnimals(QUIZ_COUNT)), type: "exercise" }
+              { id: "i1-l2", title: "Quiz: Common Animals", content: JSON.stringify(genEnglishAnimals(QUIZ_COUNT)), type: "exercise" },
+              { id: "i1-l3", title: "Jogo: Adivinhe o Animal", description: "Ouça o som e adivinhe qual animal é!", content: "Em breve: jogo de sons de animais!", type: "game" } // Placeholder for a future game
           ]}
         ]
       }
@@ -435,6 +454,7 @@ export const subjectsData: Subject[] = [
         modules: [
           { id: "c3-mod1", title: "Sistema Solar", lessons: [
               { id: "c3-l1", title: "Conhecendo os Planetas (Ebook)", content: "Embarque em uma jornada pelo sistema solar! Conheça os planetas, suas características e curiosidades, tudo com ilustrações incríveis neste ebook.", type: "reading" },
+              { id: "c3-l3", title: "Jogo: Explorador do Sistema Solar", description: "Combine os planetas com suas características!", content: JSON.stringify(genPlanetMatchingQuiz(QUIZ_COUNT)), type: "game" }
           ]},
           { id: "c3-mod2", title: "Sustentabilidade", lessons: [
               { id: "c3-l2", title: "Reciclagem e Meio Ambiente", content: "Separar o lixo é muito importante para ajudar o planeta!", type: "reading" },
@@ -481,7 +501,8 @@ export const subjectsData: Subject[] = [
     activities: [
       { id: "a1", title: "Cores e Formas", description: "Explore o mundo das cores e da criatividade.", ageGroups: ['4-6','7-9'], icon: "Palette", modules: [
           { id: "a1-mod1", title: "Teoria das Cores", lessons: [
-              { id: "a1-l1", title: "Misturando as Cores", content: reading_primary_colors, type: "reading" }
+              { id: "a1-l1", title: "Misturando as Cores", content: reading_primary_colors, type: "reading" },
+              { id: "a1-l2", title: "Jogo: Pintando com Cores Primárias", description: "Misture as cores para criar novas!", content: "Em breve: jogo de mistura de cores!", type: "game" } // Placeholder for a future game
           ]}
       ]}
     ]
@@ -498,7 +519,8 @@ export const subjectsData: Subject[] = [
               { id: "pr1-l1", title: "Passo a Passo", content: "Um algoritmo é como uma receita de bolo: uma lista de passos para resolver um problema. Ex: 1. Pegue o pão. 2. Passe manteiga. 3. Coma.", type: "reading" }
           ]},
           { id: "pr1-mod2", title: "Lógica Condicional", lessons: [
-              { id: "pr1-l2", title: "Pensando com 'SE-ENTÃO'", content: reading_if_then_logic, type: "reading" }
+              { id: "pr1-l2", title: "Pensando com 'SE-ENTÃO'", content: reading_if_then_logic, type: "reading" },
+              { id: "pr1-l3", title: "Jogo: Desafio de Lógica", description: "Resolva quebra-cabeças de lógica para avançar!", content: "Em breve: jogo de lógica!", type: "game" } // Placeholder for a future game
           ]}
       ]}
     ]
@@ -522,7 +544,8 @@ export const subjectsData: Subject[] = [
             title: "Primeiros Passos Financeiros",
             lessons: [
               { id: "ef1-l1", title: "O que é Poupar?", content: reading_saving_money, type: "reading" },
-              { id: "ef1-l2", title: "Quiz do Dinheirinho", content: JSON.stringify(genFinancialLiteracyQuiz(QUIZ_COUNT)), type: "exercise" }
+              { id: "ef1-l2", title: "Quiz do Dinheirinho", content: JSON.stringify(genFinancialLiteracyQuiz(QUIZ_COUNT)), type: "exercise" },
+              { id: "ef1-l3", title: "Jogo: O Mercado da Economia", description: "Compre e venda produtos para aprender a economizar!", content: "Em breve: jogo de economia!", type: "game" } // Placeholder for a future game
             ]
           }
         ]
