@@ -51,9 +51,9 @@ function shuffle<T>(arr: T[]) {
 }
 
 function makeOptions(correct: string, extras: string[]) {
-  const opts = [correct, ...extras.slice(0, 2)];
+  const opts = [correct, ...extras.slice(0, 3)];
   const unique = Array.from(new Set(opts));
-  while (unique.length < 3) {
+  while (unique.length < 4) {
     unique.push(`Opção ${unique.length + 1}`);
   }
   return shuffle(unique);
@@ -69,7 +69,7 @@ function genAdd(count: number, max = 10): QuizQuestion[] {
     const correct = a + b;
     out.push({
       question: `Quanto é ${a} + ${b}?`,
-      options: makeOptions(String(correct), [String(correct + 2), String(Math.max(0, correct - 1))]),
+      options: makeOptions(String(correct), [String(correct + 2), String(Math.max(0, correct - 1)), String(correct + 1)]),
       correctAnswer: String(correct),
     });
   }
@@ -84,7 +84,7 @@ function genSub(count: number, max = 15): QuizQuestion[] {
     const correct = a - b;
     out.push({
       question: `Quanto é ${a} - ${b}?`,
-      options: makeOptions(String(correct), [String(correct + 1), String(Math.max(0, correct - 2))]),
+      options: makeOptions(String(correct), [String(correct + 1), String(Math.max(0, correct - 2)), String(a+b)]),
       correctAnswer: String(correct),
     });
   }
@@ -99,7 +99,7 @@ function genMul(count: number): QuizQuestion[] {
         const correct = a * b;
         out.push({
             question: `Quanto é ${a} × ${b}?`,
-            options: makeOptions(String(correct), [String(correct + b), String(Math.max(1, correct - a))]),
+            options: makeOptions(String(correct), [String(correct + b), String(Math.max(1, correct - a)), String(a+b)]),
             correctAnswer: String(correct),
         });
     }
@@ -109,12 +109,12 @@ function genMul(count: number): QuizQuestion[] {
 function genDiv(count: number): QuizQuestion[] {
   const out: QuizQuestion[] = [];
   for (let i = 1; i <= count; i++) {
-    const b = 2 + (i % 5);
+    const b = 2 + (i % 8);
     const correct = 2 + (i % 8);
     const a = b * correct;
     out.push({
       question: `Quanto é ${a} ÷ ${b}?`,
-      options: makeOptions(String(correct), [String(correct + 1), String(correct - 1)]),
+      options: makeOptions(String(correct), [String(correct + 1), String(correct - 1), String(a-b)]),
       correctAnswer: String(correct),
     });
   }
@@ -124,27 +124,28 @@ function genDiv(count: number): QuizQuestion[] {
 function genNumberRecognition(count: number): QuizQuestion[] {
   const out: QuizQuestion[] = [];
   for (let i = 1; i <= count; i++) {
-    const n = i <= 12 ? i : (i % 12) + 1;
+    const n = i <= 20 ? i : (i % 20) + 1;
     out.push({
-      question: `Quantos objetos você vê: ${'●'.repeat(Math.min(8, n))}${n > 8 ? ` (+${n - 8})` : ''}`,
-      options: makeOptions(String(n), [String(n + 1), String(Math.max(1, n - 1))]),
+      question: `Quantos objetos você vê: ${'●'.repeat(Math.min(10, n))}${n > 10 ? ` (+${n - 10})` : ''}`,
+      options: makeOptions(String(n), [String(n + 1), String(Math.max(1, n - 1)), String(n+2)]),
       correctAnswer: String(n),
     });
   }
   return out;
 }
 
-function genEnglishNumbers(count = 12): QuizQuestion[] {
-  const words = ['one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve'];
+function genEnglishNumbers(count = 30): QuizQuestion[] {
+  const words = ['one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty'];
   const out: QuizQuestion[] = [];
   for (let i = 0; i < count; i++) {
     const n = i % words.length;
     const correct = words[n];
     const wrong1 = words[(n + 1) % words.length];
     const wrong2 = words[(n + 2) % words.length];
+    const wrong3 = words[(n + 3) % words.length];
     out.push({
       question: `How do you say the number ${n + 1} in English?`,
-      options: makeOptions(correct, [wrong1, wrong2]),
+      options: makeOptions(correct, [wrong1, wrong2, wrong3]),
       correctAnswer: correct,
     });
   }
@@ -157,6 +158,7 @@ function genPortugueseAntonyms(count: number): QuizQuestion[] {
     { q: 'O contrário de "rápido" é...', a: 'lento' }, { q: 'O contrário de "cheio" é...', a: 'vazio' },
     { q: 'O contrário de "feliz" é...', a: 'triste' }, { q: 'O contrário de "quente" é...', a: 'frio' },
     { q: 'O contrário de "claro" é...', a: 'escuro' }, { q: 'O contrário de "novo" é...', a: 'velho' },
+    { q: 'O contrário de "dia" é...', a: 'noite' }, { q: 'O contrário de "bom" é...', a: 'mau' },
   ];
   const allAnswers = pairs.map(p => p.a);
   const out: QuizQuestion[] = [];
@@ -170,12 +172,13 @@ function genPortugueseAntonyms(count: number): QuizQuestion[] {
 
 function genScienceBodyParts(count: number): QuizQuestion[] {
   const questions = [
-    { q: 'Qual órgão bombeia sangue para o corpo?', a: 'Coração', options: ['Pulmão', 'Cérebro'] },
-    { q: 'Qual órgão usamos para pensar?', a: 'Cérebro', options: ['Estômago', 'Fígado'] },
-    { q: 'Qual órgão usamos para respirar?', a: 'Pulmão', options: ['Coração', 'Rim'] },
-    { q: 'O que nos ajuda a ver o mundo?', a: 'Olhos', options: ['Ouvidos', 'Nariz'] },
-    { q: 'O que digere a comida que comemos?', a: 'Estômago', options: ['Cérebro', 'Pulmão'] },
-    { q: 'Qual o maior osso do corpo humano?', a: 'Fêmur', options: ['Crânio', 'Costela'] },
+    { q: 'Qual órgão bombeia sangue para o corpo?', a: 'Coração', options: ['Pulmão', 'Cérebro', 'Fígado'] },
+    { q: 'Qual órgão usamos para pensar?', a: 'Cérebro', options: ['Estômago', 'Coração', 'Músculo'] },
+    { q: 'Qual órgão usamos para respirar?', a: 'Pulmão', options: ['Coração', 'Rim', 'Pele'] },
+    { q: 'O que nos ajuda a ver o mundo?', a: 'Olhos', options: ['Ouvidos', 'Nariz', 'Boca'] },
+    { q: 'O que digere a comida que comemos?', a: 'Estômago', options: ['Cérebro', 'Pulmão', 'Intestino'] },
+    { q: 'Qual o maior osso do corpo humano?', a: 'Fêmur', options: ['Crânio', 'Costela', 'Coluna'] },
+    { q: 'O que protege nosso cérebro?', a: 'Crânio', options: ['Pele', 'Cabelo', 'Músculos'] },
   ];
   const out: QuizQuestion[] = [];
   for (let i = 0; i < count; i++) {
@@ -191,6 +194,7 @@ function genGeographyCapitals(count: number): QuizQuestion[] {
         { state: 'Rio de Janeiro (estado)', capital: 'Rio de Janeiro' }, { state: 'Bahia', capital: 'Salvador' },
         { state: 'Minas Gerais', capital: 'Belo Horizonte' }, { state: 'Portugal', capital: 'Lisboa' },
         { state: 'França', capital: 'Paris' }, { state: 'Japão', capital: 'Tóquio' }, { state: 'Argentina', capital: 'Buenos Aires' },
+        { state: 'Estados Unidos', capital: 'Washington D.C.' }, { state: 'Itália', capital: 'Roma' }, { state: 'China', capital: 'Pequim' },
     ];
     const allCapitals = capitals.map(c => c.capital);
     const out: QuizQuestion[] = [];
@@ -206,7 +210,7 @@ function genEnglishAnimals(count: number): QuizQuestion[] {
     const animals = [
         { en: 'dog', pt: 'cachorro' }, { en: 'cat', pt: 'gato' }, { en: 'bird', pt: 'pássaro' },
         { en: 'fish', pt: 'peixe' }, { en: 'lion', pt: 'leão' }, { en: 'monkey', pt: 'macaco' },
-        { en: 'horse', pt: 'cavalo' }, { en: 'cow', pt: 'vaca' },
+        { en: 'horse', pt: 'cavalo' }, { en: 'cow', pt: 'vaca' }, { en: 'bear', pt: 'urso' }, { en: 'snake', pt: 'cobra' },
     ];
     const allEnglish = animals.map(a => a.en);
     const out: QuizQuestion[] = [];
@@ -218,11 +222,28 @@ function genEnglishAnimals(count: number): QuizQuestion[] {
     return out;
 }
 
+function genFinancialLiteracyQuiz(count: number): QuizQuestion[] {
+  const questions = [
+    { q: 'O que é "poupar" dinheiro?', a: 'Guardar para usar depois', options: ['Gastar tudo de uma vez', 'Dar para um amigo', 'Jogar fora'] },
+    { q: 'Se um brinquedo custa R$10 e você tem R$5, o que você precisa fazer?', a: 'Poupar mais R$5', options: ['Pedir um desconto de R$5', 'Pegar o brinquedo mesmo assim', 'Esquecer o brinquedo'] },
+    { q: 'O que é um "orçamento"?', a: 'Um plano de como gastar o dinheiro', options: ['Um tipo de cofre', 'Uma nota de dinheiro', 'Um tipo de loja'] },
+    { q: 'Para que serve um cofrinho?', a: 'Para guardar moedas e notas', options: ['Para decorar o quarto', 'Para guardar brinquedos', 'Para jogar'] },
+  ];
+  const out: QuizQuestion[] = [];
+  for (let i = 0; i < count; i++) {
+    const qData = questions[i % questions.length];
+    out.push({ question: qData.q, options: makeOptions(qData.a, qData.options), correctAnswer: qData.a });
+  }
+  return out;
+}
+
 /* ---------- Reading Content ---------- */
 const reading_body_systems = "O corpo humano é incrível! O coração bate sem parar para levar sangue a todo lugar. Os pulmões nos ajudam a respirar o ar. E o cérebro é o chefe de tudo, nos ajuda a pensar, aprender e brincar!";
 const reading_water_cycle = "A água está sempre em movimento! O sol esquenta a água dos rios e mares, que vira vapor e sobe (evaporação). Lá no céu, o vapor esfria e forma as nuvens (condensação). Quando as nuvens ficam pesadas, a água cai como chuva (precipitação) e volta para os rios, começando tudo de novo!";
 const reading_discovery_brazil = "Em 1500, navegadores portugueses liderados por Pedro Álvares Cabral chegaram ao Brasil. Eles estavam tentando encontrar um novo caminho para as Índias, mas acabaram descobrindo uma nova terra, cheia de riquezas naturais e povos indígenas que já viviam aqui.";
 const reading_primary_colors = "As cores primárias são o vermelho, o amarelo e o azul. Elas são especiais porque não podem ser criadas pela mistura de outras cores. Mas, ao misturá-las, podemos criar todas as outras cores! Amarelo com azul faz verde. Vermelho com amarelo faz laranja. E azul com vermelho faz roxo. Mágico, não é?";
+const reading_if_then_logic = "Na programação, usamos a lógica 'SE-ENTÃO'. É como tomar uma decisão. SE estiver chovendo, ENTÃO eu pego um guarda-chuva. SE a luz estiver verde, ENTÃO eu posso atravessar a rua. Os computadores usam essa lógica para fazer tudo!";
+const reading_saving_money = "Guardar dinheiro é como plantar uma sementinha. Se você guarda um pouco de sua mesada toda semana em um cofrinho, com o tempo, você terá dinheiro suficiente para comprar aquele brinquedo que tanto quer. Isso se chama 'poupar'!";
 
 /* ---------- subjectsData export ---------- */
 
@@ -241,12 +262,12 @@ export const subjectsData: Subject[] = [
         ageGroups: ['4-6'],
         icon: "Apple",
         modules: [
-          { id: "m1-mod1", title: "Números de 1 a 10", lessons: [
-              { id: "m1-l1", title: "Reconhecendo Números", content: JSON.stringify(genNumberRecognition(10)), type: "exercise" },
-              { id: "m1-l2", title: "Primeiras Somas", content: JSON.stringify(genAdd(8, 10)), type: "exercise" }
+          { id: "m1-mod1", title: "Números de 1 a 20", lessons: [
+              { id: "m1-l1", title: "Reconhecendo Números", content: JSON.stringify(genNumberRecognition(30)), type: "exercise" },
+              { id: "m1-l2", title: "Primeiras Somas", content: JSON.stringify(genAdd(30, 10)), type: "exercise" }
           ]},
           { id: "m1-mod2", title: "Introdução à Subtração", lessons: [
-              { id: "m1-l3", title: "Tirando Objetos", content: JSON.stringify(genSub(8, 10)), type: "exercise" },
+              { id: "m1-l3", title: "Tirando Objetos", content: JSON.stringify(genSub(30, 10)), type: "exercise" },
               { id: "m1-l4", title: "Jogo: Contando Frutas", content: "Conte as frutas na tela!", type: "game" }
           ]}
         ]
@@ -259,8 +280,8 @@ export const subjectsData: Subject[] = [
         icon: "Sigma",
         modules: [
           { id: "m2-mod1", title: "Somas e Subtrações", lessons: [
-              { id: "m2-l1", title: "Somando até 50", content: JSON.stringify(genAdd(12, 50)), type: "exercise" },
-              { id: "m2-l2", title: "Subtraindo até 50", content: JSON.stringify(genSub(12, 50)), type: "exercise" }
+              { id: "m2-l1", title: "Somando até 100", content: JSON.stringify(genAdd(30, 100)), type: "exercise" },
+              { id: "m2-l2", title: "Subtraindo até 100", content: JSON.stringify(genSub(30, 100)), type: "exercise" }
           ]}
         ]
       },
@@ -272,11 +293,11 @@ export const subjectsData: Subject[] = [
         icon: "Sigma",
         modules: [
           { id: "m3-mod1", title: "Introdução à Multiplicação", lessons: [
-              { id: "m3-l1", title: "Tabuadas do 2, 3 e 5", content: JSON.stringify(genMul(12)), type: "exercise" },
+              { id: "m3-l1", title: "Tabuadas Divertidas", content: JSON.stringify(genMul(30)), type: "exercise" },
               { id: "m3-l2", title: "Resolvendo Problemas", content: "Se você tem 3 caixas com 4 lápis cada, quantos lápis você tem no total?", type: "reading" }
           ]},
           { id: "m3-mod2", title: "Introdução à Divisão", lessons: [
-              { id: "m3-l3", title: "Dividindo em Partes Iguais", content: JSON.stringify(genDiv(12)), type: "exercise" },
+              { id: "m3-l3", title: "Dividindo em Partes Iguais", content: JSON.stringify(genDiv(30)), type: "exercise" },
               { id: "m3-l4", title: "Divisão e Resto", content: "Se você dividir 10 por 3, cada um recebe 3 e sobra 1. Esse é o resto!", type: "reading" }
           ]}
         ]
@@ -311,7 +332,7 @@ export const subjectsData: Subject[] = [
         icon: "BookOpen",
         modules: [
           { id: "p2-mod1", title: "Contrários", lessons: [
-              { id: "p2-l1", title: "Quiz de Antônimos", content: JSON.stringify(genPortugueseAntonyms(8)), type: "exercise" }
+              { id: "p2-l1", title: "Quiz de Antônimos", content: JSON.stringify(genPortugueseAntonyms(30)), type: "exercise" }
           ]},
           { id: "p2-mod2", title: "Tipos de Palavras", lessons: [
               { id: "p2-l2", title: "Substantivos e Adjetivos", content: "Substantivo dá nome às coisas (CASA). Adjetivo dá qualidade (CASA bonita).", type: "reading" }
@@ -335,10 +356,10 @@ export const subjectsData: Subject[] = [
         icon: "SpellCheck",
         modules: [
           { id: "i1-mod1", title: "Numbers and Colors", lessons: [
-              { id: "i1-l1", title: "Quiz: Numbers 1-12", content: JSON.stringify(genEnglishNumbers(12)), type: "exercise" }
+              { id: "i1-l1", title: "Quiz: Numbers 1-20", content: JSON.stringify(genEnglishNumbers(30)), type: "exercise" }
           ]},
           { id: "i1-mod2", title: "Animals", lessons: [
-              { id: "i1-l2", title: "Quiz: Common Animals", content: JSON.stringify(genEnglishAnimals(8)), type: "exercise" }
+              { id: "i1-l2", title: "Quiz: Common Animals", content: JSON.stringify(genEnglishAnimals(30)), type: "exercise" }
           ]}
         ]
       }
@@ -360,7 +381,7 @@ export const subjectsData: Subject[] = [
         modules: [
           { id: "c1-mod1", title: "Sistemas Vitais", lessons: [
               { id: "c1-l1", title: "Como o Corpo Funciona", content: reading_body_systems, type: "reading" },
-              { id: "c1-l2", title: "Quiz: Órgãos do Corpo", content: JSON.stringify(genScienceBodyParts(6)), type: "exercise" }
+              { id: "c1-l2", title: "Quiz: Órgãos do Corpo", content: JSON.stringify(genScienceBodyParts(30)), type: "exercise" }
           ]}
         ]
       },
@@ -388,7 +409,7 @@ export const subjectsData: Subject[] = [
       { id: "h1", title: "História do Brasil", description: "Eventos que moldaram o nosso país.", ageGroups: ['7-9','10-12'], icon: "Landmark", modules: [
           { id: "h1-mod1", title: "Descobrimento e Colonização", lessons: [
               { id: "h1-l1", title: "A Chegada dos Portugueses", content: reading_discovery_brazil, type: "reading" },
-              { id: "h1-l2", title: "Quiz de Fatos Históricos", content: JSON.stringify(genGeographyCapitals(5)), type: "exercise" }
+              { id: "h1-l2", title: "Quiz de Fatos Históricos", content: JSON.stringify(genGeographyCapitals(30)), type: "exercise" }
           ]}
       ]}
     ]
@@ -402,7 +423,7 @@ export const subjectsData: Subject[] = [
     activities: [
       { id: "g1", title: "Mapas e Lugares", description: "Aprenda sobre estados, capitais e continentes.", ageGroups: ['7-9','10-12'], icon: "Globe", modules: [
           { id: "g1-mod1", title: "Brasil e o Mundo", lessons: [
-              { id: "g1-l1", title: "Quiz de Capitais", content: JSON.stringify(genGeographyCapitals(9)), type: "exercise" }
+              { id: "g1-l1", title: "Quiz de Capitais", content: JSON.stringify(genGeographyCapitals(30)), type: "exercise" }
           ]}
       ]}
     ]
@@ -431,8 +452,37 @@ export const subjectsData: Subject[] = [
       { id: "pr1", title: "Lógica e Algoritmos", description: "Dê os primeiros passos para criar jogos e apps.", ageGroups: ['10-12'], icon: "Code", modules: [
           { id: "pr1-mod1", title: "O que é um Algoritmo?", lessons: [
               { id: "pr1-l1", title: "Passo a Passo", content: "Um algoritmo é como uma receita de bolo: uma lista de passos para resolver um problema. Ex: 1. Pegue o pão. 2. Passe manteiga. 3. Coma.", type: "reading" }
+          ]},
+          { id: "pr1-mod2", title: "Lógica Condicional", lessons: [
+              { id: "pr1-l2", title: "Pensando com 'SE-ENTÃO'", content: reading_if_then_logic, type: "reading" }
           ]}
       ]}
     ]
   },
+  {
+    name: "Educação Financeira",
+    slug: "educacao-financeira",
+    icon: "PiggyBank",
+    color: "yellow",
+    ageGroups: ['7-9', '10-12'],
+    activities: [
+      {
+        id: "ef1",
+        title: "Aprendendo sobre Dinheiro",
+        description: "Entenda o que é dinheiro, como poupar e gastar com sabedoria.",
+        ageGroups: ['7-9', '10-12'],
+        icon: "PiggyBank",
+        modules: [
+          {
+            id: "ef1-mod1",
+            title: "Primeiros Passos Financeiros",
+            lessons: [
+              { id: "ef1-l1", title: "O que é Poupar?", content: reading_saving_money, type: "reading" },
+              { id: "ef1-l2", title: "Quiz do Dinheirinho", content: JSON.stringify(genFinancialLiteracyQuiz(30)), type: "exercise" }
+            ]
+          }
+        ]
+      }
+    ]
+  }
 ];
