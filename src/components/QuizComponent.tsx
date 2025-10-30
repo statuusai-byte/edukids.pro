@@ -129,7 +129,8 @@ const QuizComponent = ({ questions, onQuizComplete, triggerHint, onHintSuggested
           </CardTitle>
           <span className="text-lg font-bold text-primary">{score} pontos</span>
         </div>
-        <Progress value={progressValue} className="h-2 bg-white/10" indicatorClassName="bg-gradient-to-r from-green-400 to-yellow-400" />
+        {/* Apply gradient directly to the Progress component's indicator */}
+        <Progress value={progressValue} className="h-2 bg-white/10 [&>*]:bg-gradient-to-r [&>*]:from-green-400 [&>*]:to-yellow-400" />
       </CardHeader>
       <CardContent className="space-y-6">
         <p className="text-2xl font-semibold text-foreground text-center">{currentQuestion.question}</p>

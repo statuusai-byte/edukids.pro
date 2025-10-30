@@ -16,7 +16,7 @@ function toEmbedUrl(raw: string): { embed: string; external: string } {
       } else if (url.searchParams.has("v")) {
         videoId = url.searchParams.get("v");
       } else if (url.pathname.startsWith("/embed/")) {
-        videoId = url.pathname.split("/").pop();
+        videoId = url.pathname.split("/").pop() ?? null; // Fixed: Handle undefined case
       }
 
       if (videoId) {

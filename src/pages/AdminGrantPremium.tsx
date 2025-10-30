@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -61,7 +61,7 @@ export default function AdminGrantPremium() {
         body: JSON.stringify({ email }),
       };
 
-      const { data, error } = await supabase.functions.invoke("grant-premium", invokeOptions);
+      const { data: _data, error } = await supabase.functions.invoke("grant-premium", invokeOptions); // Fixed: Renamed 'data' to '_data'
 
       dismissToast(toastId);
 
