@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase';
-import { useProfile } from '@/context/ProfileContext';
+import { supabase } from '@/integrations/supabase/client';
+import { useSupabase } from '@/context/SupabaseContext';
 import { useParentAuth } from '@/context/ParentAuthContext';
 import { useNavigate } from 'react-router-dom';
 import SHA256 from 'crypto-js/sha256';
@@ -27,7 +27,7 @@ const ParentPinModal: React.FC<ParentPinModalProps> = ({ isOpen, onOpenChange, o
   const [pin, setPin] = useState('');
   const [mode, setMode] = useState<'loading' | 'create' | 'verify'>('loading');
   const [isLoading, setIsLoading] = useState(false);
-  const { user } = useProfile();
+  const { user } = useSupabase();
   const { unlock } = useParentAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -51,12 +51,12 @@ const ParentPinModal: React.FC<ParentPinModalProps> = ({ isOpen, onOpenChange, o
   }, [user, toast]);
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && user) {
       fetchPinStatus();
-    } else {
+    } else if (!isOpen) {
       setPin(''); // Reset PIN on close
     }
-  }, [isOpen, fetchPinStatus]);
+  }, [isOpen, user, fetchPinStatus]);
 
   const handlePinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, ''); // Only allow digits
