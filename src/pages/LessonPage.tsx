@@ -14,6 +14,7 @@ import { usePremium } from "@/context/PremiumContext";
 import { useHintsContext } from "@/context/HintsContext";
 import VideoPlayer from "@/components/VideoPlayer";
 import { useScreenTime } from "@/hooks/use-screen-time";
+import PageTransition from "@/components/PageTransition"; // Import PageTransition
 
 const LessonPage = () => {
   const { subject: subjectSlug, activityId, moduleId, lessonId } = useParams();
@@ -57,28 +58,32 @@ const LessonPage = () => {
 
   if (!subject || !activity || !module || !lesson) {
     return (
-      <div>
-        <h1 className="text-2xl font-bold">Lição não encontrada</h1>
-        <Button asChild variant="link">
-          <RouterLink to={`/activities/${subjectSlug}/${activityId}`}>Voltar para Atividade</RouterLink>
-        </Button>
-      </div>
+      <PageTransition> {/* Wrap with PageTransition */}
+        <div>
+          <h1 className="text-2xl font-bold">Lição não encontrada</h1>
+          <Button asChild variant="link">
+            <RouterLink to={`/activities/${subjectSlug}/${activityId}`}>Voltar para Atividade</RouterLink>
+          </Button>
+        </div>
+      </PageTransition>
     );
   }
 
   if (isBlocked) {
     return (
-      <div className="text-center py-16 glass-card rounded-lg">
-        <Lock className="h-12 w-12 text-red-400 mx-auto mb-4" />
-        <h2 className="text-2xl font-bold">Tempo de Tela Esgotado</h2>
-        <p className="text-muted-foreground mt-2">
-          O limite de {limitMinutes} minutos foi atingido. O acesso às atividades está bloqueado.
-        </p>
-        <p className="text-sm text-muted-foreground mt-4">
-          Para continuar, um adulto deve desativar o bloqueio ou aumentar o limite no Painel dos Pais.
-        </p>
-        <RouterLink to="/dashboard" className="mt-4 inline-block text-primary underline">Ir para Painel dos Pais</RouterLink>
-      </div>
+      <PageTransition> {/* Wrap with PageTransition */}
+        <div className="text-center py-16 glass-card rounded-lg">
+          <Lock className="h-12 w-12 text-red-400 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold">Tempo de Tela Esgotado</h2>
+          <p className="text-muted-foreground mt-2">
+            O limite de {limitMinutes} minutos foi atingido. O acesso às atividades está bloqueado.
+          </p>
+          <p className="text-sm text-muted-foreground mt-4">
+            Para continuar, um adulto deve desativar o bloqueio ou aumentar o limite no Painel dos Pais.
+          </p>
+          <RouterLink to="/dashboard" className="mt-4 inline-block text-primary underline">Ir para Painel dos Pais</RouterLink>
+        </div>
+      </PageTransition>
     );
   }
 
@@ -158,53 +163,55 @@ const LessonPage = () => {
   const hasNext = (lessonIndex < module.lessons.length - 1) || (moduleIndex < activity.modules.length - 1);
 
   return (
-    <div>
-      <div className="flex items-center gap-4 mb-6">
-        <Button asChild variant="outline" size="icon"><RouterLink to={`/activities/${subject.slug}/${activity.id}`}><ArrowLeft className="h-4 w-4" /></RouterLink></Button>
-        <div><h1 className="text-2xl font-bold">{lesson.title}</h1><p className="text-muted-foreground">{activity.title} • {module.title}</p></div>
-      </div>
-      <div className="grid lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2">
-          {renderLessonContent()}
-          <div className="flex gap-4 mt-4 items-center">
-            <Button variant="outline" onClick={goPrev} disabled={!hasPrev}>Anterior</Button>
-            <Button onClick={goNext} disabled={!hasNext}>Próxima</Button>
-            <div className="ml-auto flex items-center gap-4">
-              {isQuizOrGame && (
-                <div className="flex items-center gap-2">
-                  {/* Only show the main hint button if not already suggested by quiz or if quizHintSuggested is false */}
-                  {(!quizHintSuggested || isPremium) && (
-                    <Button onClick={handleUseHint} className="bg-yellow-600 hover:bg-yellow-700 text-black" disabled={hintTriggered}>
-                      <Lightbulb className="mr-2 h-4 w-4" />
-                      {isPremium ? "Usar Dica Premium" : `Usar 1 Dica (Saldo: ${hints})`}
-                    </Button>
-                  )}
-                  {!isPremium && <RewardButton onReward={() => addHints(1)} label="Ganhar Dica (Anúncio)" />}
-                </div>
-              )}
-              {!isQuizOrGame && <Button className="bg-green-600 hover:bg-green-700" onClick={markCompleted}>{completed ? "Revisar (Concluído)" : "Marcar como Concluída"}</Button>}
+    <PageTransition> {/* Wrap with PageTransition */}
+      <div>
+        <div className="flex items-center gap-4 mb-6">
+          <Button asChild variant="outline" size="icon"><RouterLink to={`/activities/${subject.slug}/${activity.id}`}><ArrowLeft className="h-4 w-4" /></RouterLink></Button>
+          <div><h1 className="text-2xl font-bold">{lesson.title}</h1><p className="text-muted-foreground">{activity.title} • {module.title}</p></div>
+        </div>
+        <div className="grid lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2">
+            {renderLessonContent()}
+            <div className="flex gap-4 mt-4 items-center flex-wrap"> {/* Added flex-wrap for responsiveness */}
+              <Button variant="outline" onClick={goPrev} disabled={!hasPrev}>Anterior</Button>
+              <Button onClick={goNext} disabled={!hasNext}>Próxima</Button>
+              <div className="ml-auto flex items-center gap-4 flex-wrap justify-end"> {/* Added flex-wrap and justify-end */}
+                {isQuizOrGame && (
+                  <div className="flex items-center gap-2 flex-wrap justify-end"> {/* Added flex-wrap and justify-end */}
+                    {/* Only show the main hint button if not already suggested by quiz or if quizHintSuggested is false */}
+                    {(!quizHintSuggested || isPremium) && (
+                      <Button onClick={handleUseHint} className="bg-yellow-600 hover:bg-yellow-700 text-black" disabled={hintTriggered}>
+                        <Lightbulb className="mr-2 h-4 w-4" />
+                        {isPremium ? "Usar Dica Premium" : `Usar 1 Dica (Saldo: ${hints})`}
+                      </Button>
+                    )}
+                    {!isPremium && <RewardButton onReward={() => addHints(1)} label="Ganhar Dica (Anúncio)" />}
+                  </div>
+                )}
+                {!isQuizOrGame && <Button className="bg-green-600 hover:bg-green-700" onClick={markCompleted}>{completed ? "Revisar (Concluído)" : "Marcar como Concluída"}</Button>}
+              </div>
             </div>
           </div>
+          <aside>
+            <Card className="glass-card p-4">
+              <CardHeader><CardTitle>Índice da Pasta</CardTitle></CardHeader>
+              <CardContent className="space-y-2">
+                {module.lessons.map((l, idx) => (
+                  <div key={l.id} className={`p-2 rounded-md ${l.id === lesson.id ? 'bg-primary/10 border border-primary/30' : 'hover:bg-white/5'}`}>
+                    <RouterLink to={`/activities/${subject.slug}/${activity.id}/modules/${module.id}/lessons/${l.id}`}>
+                      <div className="flex items-center justify-between">
+                        <div><div className="font-medium">{idx + 1}. {l.title}</div><div className="text-xs text-muted-foreground">{l.description}</div></div>
+                        <div className="text-xs text-muted-foreground">{isLessonCompleted(subject.slug, activity.id, module.id, l.id) ? 'Concluída' : 'Aberta'}</div>
+                      </div>
+                    </RouterLink>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </aside>
         </div>
-        <aside>
-          <Card className="glass-card p-4">
-            <CardHeader><CardTitle>Índice da Pasta</CardTitle></CardHeader>
-            <CardContent className="space-y-2">
-              {module.lessons.map((l, idx) => (
-                <div key={l.id} className={`p-2 rounded-md ${l.id === lesson.id ? 'bg-primary/10 border border-primary/30' : 'hover:bg-white/5'}`}>
-                  <RouterLink to={`/activities/${subject.slug}/${activity.id}/modules/${module.id}/lessons/${l.id}`}>
-                    <div className="flex items-center justify-between">
-                      <div><div className="font-medium">{idx + 1}. {l.title}</div><div className="text-xs text-muted-foreground">{l.description}</div></div>
-                      <div className="text-xs text-muted-foreground">{isLessonCompleted(subject.slug, activity.id, module.id, l.id) ? 'Concluída' : 'Aberta'}</div>
-                    </div>
-                  </RouterLink>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        </aside>
       </div>
-    </div>
+    </PageTransition>
   );
 };
 
