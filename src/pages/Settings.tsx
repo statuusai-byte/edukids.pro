@@ -126,29 +126,6 @@ const Settings = () => {
     }
   };
 
-  const removeAccountFromDevice = async () => {
-    const runRemoval = async () => {
-      try {
-        const keysToRemove = [
-          "edukids_age_group", "edukids_profile", "edukids_is_premium", "edukids_help_packages",
-          "edukids_show_interstitials", "ad_counter", "edukids_parent_pin_hash", "edukids_require_parent_pin",
-          "edukids_screen_time_limit_minutes", "edukids_screen_time_block_enabled", "edukids_screen_time_today_minutes",
-          "edukids_screen_time_last_day", "edukids_sound_enabled",
-        ];
-        keysToRemove.forEach((k) => { try { localStorage.removeItem(k); } catch {} });
-        await signOut();
-        showSuccess("Conta removida deste dispositivo e sessão encerrada.");
-      } catch (e) {
-        showError("Falha ao remover conta local.");
-      }
-    };
-
-    if (!window.confirm("Tem certeza que deseja remover a conta deste dispositivo? Todos os dados locais, como progresso e perfil, serão apagados e sua sessão será encerrada.")) {
-      return;
-    }
-    onVerifyThenRun(runRemoval);
-  };
-
   const handlePermanentDelete = () => {
     const runPermanentDeletion = async () => {
       const loadingToast = showLoading("Excluindo sua conta permanentemente...");
@@ -221,12 +198,6 @@ const Settings = () => {
             </div>
             <div className="flex items-center justify-between"><Label htmlFor="require-pin">Exigir PIN para compras</Label><Switch id="require-pin" checked={requirePinForPurchases} onCheckedChange={requirePinChanged} /></div>
           </CardContent>
-        </Card>
-
-        {/* Conta */}
-        <Card className="glass-card">
-          <CardHeader><CardTitle>Conta</CardTitle><CardDescription>Esta ação limpará todos os dados locais (progresso, perfil) e encerrará a sessão neste dispositivo. A conta não será excluída do sistema.</CardDescription></CardHeader>
-          <CardContent><Button variant="destructive" className="w-full" onClick={removeAccountFromDevice}><Trash2 className="mr-2 h-4 w-4" /> Remover Conta Deste Dispositivo</Button></CardContent>
         </Card>
 
         {/* Exclusão Permanente da Conta */}
