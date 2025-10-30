@@ -1,6 +1,6 @@
 import { useParams, Link as RouterLink, useNavigate } from "react-router-dom";
 import { subjectsData } from "@/data/activitiesData";
-import { useMemo, useState, useEffect, useCallback } from "react"; // Added useCallback
+import { useMemo, useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Lightbulb, Lock } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,7 +14,8 @@ import { usePremium } from "@/context/PremiumContext";
 import { useHintsContext } from "@/context/HintsContext";
 import VideoPlayer from "@/components/VideoPlayer";
 import { useScreenTime } from "@/hooks/use-screen-time";
-import PageTransition from "@/components/PageTransition"; // Import PageTransition
+import PageTransition from "@/components/PageTransition";
+import { useStudyAssistant } from "@/context/StudyAssistantContext"; // Import useStudyAssistant
 
 const LessonPage = () => {
   const { subject: subjectSlug, activityId, moduleId, lessonId } = useParams();
@@ -23,9 +24,10 @@ const LessonPage = () => {
   const { isPremium } = usePremium();
   const { hints, useHint, addHints } = useHintsContext();
   const { isBlocked, limitMinutes, startSession, stopSession } = useScreenTime();
+  const { requestLessonHint } = useStudyAssistant(); // Use the study assistant context
   
   const [hintTriggered, setHintTriggered] = useState(false);
-  const [quizHintSuggested, setQuizHintSuggested] = useState(false); // New state
+  const [quizHintSuggested, setQuizHintSuggested] = useState(false);
 
   const { subject, activity, module, lesson, lessonIndex, moduleIndex } = useMemo(() => {
     const s = subjectsData.find(sub => sub.slug === subjectSlug);
@@ -53,12 +55,12 @@ const LessonPage = () => {
   // Reset hint trigger when the lesson changes
   useEffect(() => {
     setHintTriggered(false);
-    setQuizHintSuggested(false); // Reset quiz hint suggestion
+    setQuizHintSuggested(false);
   }, [lessonId]);
 
   if (!subject || !activity || !module || !lesson) {
     return (
-      <PageTransition> {/* Wrap with PageTransition */}
+      <PageTransition>
         <div>
           <h1 className="text-2xl font-bold">Lição não encontrada</h1>
           <Button asChild variant="link">
@@ -71,7 +73,7 @@ const LessonPage = () => {
 
   if (isBlocked) {
     return (
-      <PageTransition> {/* Wrap with PageTransition */}
+      <PageTransition>
         <div className="text-center py-16 glass-card rounded-lg">
           <Lock className="h-12 w-12 text-red-400 mx-auto mb-4" />
           <h2 className="text-2xl font-bold">Tempo de Tela Esgotado</h2>
@@ -118,23 +120,27 @@ const LessonPage = () => {
     showSuccess("Lição marcada como concluída.");
   };
 
-  const handleUseHint = useCallback(() => {
-    if (isPremium) {
-      setHintTriggered(true);
-      showSuccess("Dica de Assinante Premium ativada!");
-      setQuizHintSuggested(false); // Hide suggestion after hint is used
-      return;
-    }
-    if (hints > 0) {
-      if (useHint()) {
-        setHintTriggered(true);
-        showSuccess("Dica usada! Seu saldo foi atualizado.");
-        setQuizHintSuggested(false); // Hide suggestion after hint is used
+  const handleRequestLessonHint = useCallback(() => {
+    let questionText = lesson.title; // Default to lesson title
+    if (lesson.type === 'exercise' && lesson.content) {
+      try {
+        const questions: QuizQuestion[] = JSON.parse(lesson.content);
+        if (questions.length > 0) {
+          // For quizzes, use the current question text
+          questionText = questions[0].question; // Assuming QuizComponent handles current question internally
+        }
+      } catch (e) {
+        console.error("Failed to parse quiz content for hint:", e);
       }
-    } else {
-      showError("Você não tem dicas. Compre mais na loja ou assista a um anúncio para ganhar uma.");
     }
-  }, [isPremium, hints, useHint]);
+    // For games, we might need more specific logic if the game has dynamic questions
+    // For now, lesson.title is a good fallback.
+
+    requestLessonHint(questionText, () => {
+      setHintTriggered(true);
+      setQuizHintSuggested(false); // Hide suggestion after hint is used
+    });
+  }, [lesson, requestLessonHint]);
 
   const handleQuizHintSuggested = useCallback(() => {
     setQuizHintSuggested(true);
@@ -149,7 +155,7 @@ const LessonPage = () => {
     if (lesson.type === 'exercise' && lesson.content) {
       try {
         const questions: QuizQuestion[] = JSON.parse(lesson.content);
-        if (questions.length > 0) return <QuizComponent questions={questions} onQuizComplete={markCompleted} triggerHint={hintTriggered} onHintSuggested={handleQuizHintSuggested} />; // Pass new prop
+        if (questions.length > 0) return <QuizComponent questions={questions} onQuizComplete={markCompleted} triggerHint={hintTriggered} onHintSuggested={handleQuizHintSuggested} />;
       } catch (e) { console.error("Failed to parse quiz content:", e); }
     }
     if (lesson.videoUrl) {
@@ -163,7 +169,7 @@ const LessonPage = () => {
   const hasNext = (lessonIndex < module.lessons.length - 1) || (moduleIndex < activity.modules.length - 1);
 
   return (
-    <PageTransition> {/* Wrap with PageTransition */}
+    <PageTransition>
       <div>
         <div className="flex items-center gap-4 mb-6">
           <Button asChild variant="outline" size="icon"><RouterLink to={`/activities/${subject.slug}/${activity.id}`}><ArrowLeft className="h-4 w-4" /></RouterLink></Button>
@@ -172,19 +178,17 @@ const LessonPage = () => {
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             {renderLessonContent()}
-            <div className="flex gap-4 mt-4 items-center flex-wrap"> {/* Added flex-wrap for responsiveness */}
+            <div className="flex gap-4 mt-4 items-center flex-wrap">
               <Button variant="outline" onClick={goPrev} disabled={!hasPrev}>Anterior</Button>
               <Button onClick={goNext} disabled={!hasNext}>Próxima</Button>
-              <div className="ml-auto flex items-center gap-4 flex-wrap justify-end"> {/* Added flex-wrap and justify-end */}
+              <div className="ml-auto flex items-center gap-4 flex-wrap justify-end">
                 {isQuizOrGame && (
-                  <div className="flex items-center gap-2 flex-wrap justify-end"> {/* Added flex-wrap and justify-end */}
-                    {/* Only show the main hint button if not already suggested by quiz or if quizHintSuggested is false */}
-                    {(!quizHintSuggested || isPremium) && (
-                      <Button onClick={handleUseHint} className="bg-yellow-600 hover:bg-yellow-700 text-black" disabled={hintTriggered}>
-                        <Lightbulb className="mr-2 h-4 w-4" />
-                        {isPremium ? "Usar Dica Premium" : `Usar 1 Dica (Saldo: ${hints})`}
-                      </Button>
-                    )}
+                  <div className="flex items-center gap-2 flex-wrap justify-end">
+                    {/* Dedicated hint button for the lesson */}
+                    <Button onClick={handleRequestLessonHint} className="bg-yellow-600 hover:bg-yellow-700 text-black" disabled={hintTriggered}>
+                      <Lightbulb className="mr-2 h-4 w-4" />
+                      {isPremium ? "Pedir Dica Premium" : `Pedir Dica (Saldo: ${hints})`}
+                    </Button>
                     {!isPremium && <RewardButton onReward={() => addHints(1)} label="Ganhar Dica (Anúncio)" />}
                   </div>
                 )}

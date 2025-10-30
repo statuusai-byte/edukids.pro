@@ -5,8 +5,9 @@ import { cn } from "@/lib/utils";
 import { useProfile } from "@/context/ProfileContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/get-initials";
-import { useIsMobile } from "@/hooks/use-mobile"; // Import useIsMobile
-import MobileSidebar from "@/components/MobileSidebar"; // Import MobileSidebar
+import { useIsMobile } from "@/hooks/use-mobile";
+import MobileSidebar from "@/components/MobileSidebar";
+import { StudyAssistantProvider } from "@/context/StudyAssistantContext"; // Import StudyAssistantProvider
 
 type NavItem = {
   to: string;
@@ -31,7 +32,7 @@ const settingsItem: NavItem = {
 
 const Layout = () => {
   const { name, avatarUrl } = useProfile();
-  const isMobile = useIsMobile(); // Use the hook
+  const isMobile = useIsMobile();
 
   return (
     <div className="flex min-h-screen w-full text-foreground">
@@ -132,7 +133,9 @@ const Layout = () => {
 
       <main className={cn("flex-1", !isMobile && "pl-24")}>
         <div className="container mx-auto py-8 px-4 md:px-6 lg:px-8">
-          <Outlet />
+          <StudyAssistantProvider> {/* Wrap Outlet with StudyAssistantProvider */}
+            <Outlet />
+          </StudyAssistantProvider>
         </div>
       </main>
     </div>

@@ -1,14 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { X, Bot, Sparkles } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { showLoading, dismissToast, showSuccess, showError } from "@/utils/toast";
-import { useHintsContext } from "@/context/HintsContext"; // New import
-import { usePremium } from "@/context/PremiumContext"; // New import
-import { Link } from "react-router-dom"; // New import
+import React, { createContext, useContext, useState, ReactNode, useCallback, useRef } from 'react';
+import { showLoading, dismissToast, showSuccess, showError } from '@/utils/toast';
+import { useHintsContext } from '@/context/HintsContext';
+import { usePremium } from '@/context/PremiumContext';
+import { Bot, Sparkles, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
+import { Link } from 'react-router-dom';
 
 const encouragePhrases = [
   "Você está indo muito bem! Continue assim 😊",
@@ -80,16 +80,35 @@ function simulateStudyHelp(query: string, directHint = false): string {
   return "Legal! Tente dividir a pergunta em passos curtinhos — se não funcionar, peça ajuda a um adulto ou compre o pacote de ajuda para explicações mais detalhadas.";
 }
 
-const StudyAssistant = () => {
+interface StudyAssistantContextType {
+  openAssistant: (initialQuery?: string, lessonQuestion?: string) => void;
+  requestLessonHint: (lessonQuestion: string, onHintTriggered: () => void) => void;
+  isAssistantOpen: boolean;
+}
+
+const StudyAssistantContext = createContext<StudyAssistantContextType | undefined>(undefined);
+
+export const StudyAssistantProvider = ({ children }: { children: ReactNode }) => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [response, setResponse] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
-  const { hints, useHint } = useHintsContext(); // Use hints context
-  const { isPremium } = usePremium(); // Use premium context
+  const [lessonQuestionContext, setLessonQuestionContext] = useState<string | null>(null);
+  const onLessonHintTriggeredRef = useRef<(() => void) | null>(null);
 
-  const onAsk = async (directHint = false) => {
-    if (!query.trim()) {
+  const { hints, useHint } = useHintsContext();
+  const { isPremium } = usePremium();
+
+  const openAssistant = useCallback((initialQuery = "", lessonQuestion: string | null = null) => {
+    setQuery(initialQuery);
+    setResponse(null);
+    setLessonQuestionContext(lessonQuestion);
+    setOpen(true);
+  }, []);
+
+  const onAsk = useCallback(async (directHint = false, questionToHint: string | null = null) => {
+    const currentQuery = questionToHint || query;
+    if (!currentQuery.trim()) {
       showError("Digite sua dúvida para receber ajuda.");
       return;
     }
@@ -100,18 +119,30 @@ const StudyAssistant = () => {
     }
 
     setProcessing(true);
-    const toastId = showLoading("Pensando...");
+    let toastId: string | number | null = null;
+
     try {
-      // Simulate AI call
-      await new Promise((r) => setTimeout(r, 800));
-      const resp = simulateStudyHelp(query, directHint);
+      toastId = showLoading("Pensando...");
+      await new Promise((r) => setTimeout(r, 800)); // Simulate AI call
+
+      if (questionToHint) {
+        dismissToast(toastId);
+        toastId = showLoading(`Lendo a pergunta: "${questionToHint.substring(0, 50)}..."`);
+        await new Promise((r) => setTimeout(r, 1500)); // Simulate reading time
+      }
+
+      const resp = simulateStudyHelp(currentQuery, directHint);
       const encouragement = pickEncouragement();
       setResponse(`${resp}\n\n${encouragement}`);
       dismissToast(toastId);
       showSuccess("Aqui está uma dica!");
 
       if (directHint && !isPremium) {
-        useHint(); // Consume a hint if it was a direct hint and not premium
+        useHint();
+      }
+      if (onLessonHintTriggeredRef.current) {
+        onLessonHintTriggeredRef.current();
+        onLessonHintTriggeredRef.current = null; // Clear after use
       }
     } catch (e) {
       dismissToast(toastId);
@@ -119,10 +150,18 @@ const StudyAssistant = () => {
     } finally {
       setProcessing(false);
     }
-  };
+  }, [query, hints, useHint, isPremium]);
+
+  const requestLessonHint = useCallback((lessonQuestion: string, onHintTriggered: () => void) => {
+    setLessonQuestionContext(lessonQuestion);
+    onLessonHintTriggeredRef.current = onHintTriggered;
+    openAssistant("", lessonQuestion); // Open assistant with the lesson question
+    onAsk(true, lessonQuestion); // Immediately ask for a direct hint
+  }, [openAssistant, onAsk]);
 
   return (
-    <>
+    <StudyAssistantContext.Provider value={{ openAssistant, requestLessonHint, isAssistantOpen: open }}>
+      {children}
       {/* Floating button */}
       <div className="fixed z-50 right-6 bottom-6 flex items-end">
         {/* Panel */}
@@ -138,7 +177,7 @@ const StudyAssistant = () => {
               </div>
               <button
                 aria-label="Fechar assistente"
-                onClick={() => { setOpen(false); setResponse(null); setQuery(""); }}
+                onClick={() => { setOpen(false); setResponse(null); setQuery(""); setLessonQuestionContext(null); }}
                 className="p-1 rounded-md hover:bg-white/5"
               >
                 <X className="h-4 w-4" />
@@ -159,7 +198,7 @@ const StudyAssistant = () => {
                 <Button onClick={() => onAsk(false)} className="flex-1 bg-yellow-400" disabled={processing}>
                   {processing ? "Pensando..." : "Pedir Ajuda"}
                 </Button>
-                <Button variant="ghost" onClick={() => { setQuery(""); setResponse(null); }}>
+                <Button variant="ghost" onClick={() => { setQuery(""); setResponse(null); setLessonQuestionContext(null); }}>
                   Limpar
                 </Button>
               </div>
@@ -171,7 +210,7 @@ const StudyAssistant = () => {
                   {!isPremium && hints > 0 && (
                     <div className="mt-3 text-center">
                       <Button 
-                        onClick={() => onAsk(true)} 
+                        onClick={() => onAsk(true, lessonQuestionContext)} 
                         size="sm" 
                         className="bg-primary hover:bg-primary/90 text-primary-foreground"
                         disabled={processing}
@@ -213,8 +252,14 @@ const StudyAssistant = () => {
           </div>
         </button>
       </div>
-    </>
+    </StudyAssistantContext.Provider>
   );
 };
 
-export default StudyAssistant;
+export const useStudyAssistant = (): StudyAssistantContextType => {
+  const context = useContext(StudyAssistantContext);
+  if (context === undefined) {
+    throw new Error('useStudyAssistant must be used within a StudyAssistantProvider');
+  }
+  return context;
+};
