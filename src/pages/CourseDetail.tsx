@@ -2,7 +2,7 @@ import { useParams, Link as RouterLink } from "react-router-dom";
 import { allCourses } from "@/data/coursesData";
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Clock, Lock, BookOpen } from "lucide-react"; // Adicionado BookOpen
+import { ArrowLeft, Clock, Lock, BookOpen } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { usePremium } from "@/context/PremiumContext";
 
