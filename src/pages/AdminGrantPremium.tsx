@@ -7,10 +7,13 @@ import { Input } from "@/components/ui/input";
 import { showLoading, dismissToast, showSuccess, showError } from "@/utils/toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
+import { useSupabase } from "@/context/SupabaseContext";
 
 const PREMIUM_LOCAL_FLAG = "edukids_is_premium";
+const ADMIN_EMAIL = "eduki.teste@gmail.com";
 
 export default function AdminGrantPremium() {
+  const { user, isLoading: authLoading } = useSupabase();
   const [email, setEmail] = useState("eduki.teste@gmail.com");
   const [password, setPassword] = useState("12121212");
   const [loading, setLoading] = useState(false);
@@ -91,6 +94,42 @@ export default function AdminGrantPremium() {
     }
   };
 
+  // Auth guard: only allow access to the admin email
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="glass-card p-6">
+          <div className="text-center">Verificando autenticação...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user || user.email !== ADMIN_EMAIL) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <Card className="w-full max-w-md glass-card p-6 text-center">
+          <CardHeader>
+            <CardTitle>Acesso Restrito</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground mb-4">
+              Esta página é somente para administração. Faça login com a conta administrativa para acessar.
+            </p>
+            <div className="flex justify-center gap-3">
+              <Button onClick={() => navigate("/login")}>Ir para Login</Button>
+              <Button variant="outline" onClick={() => navigate("/", { replace: true })}>Voltar para Home</Button>
+            </div>
+            <div className="mt-4 text-xs text-muted-foreground">
+              Conta exigida: <strong>{ADMIN_EMAIL}</strong>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // If we reach here, user is authenticated and is the admin
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <Card className="w-full max-w-md glass-card p-6">
@@ -135,8 +174,8 @@ export default function AdminGrantPremium() {
             </div>
           )}
 
-          <div className="text-xs text-muted-foreground mt-2">
-            <p>Nota: A função `grant-premium` do Supabase Edge Function é invocada para atualizar o perfil do usuário no banco de dados.</p>
+          <div className="mt-3 text-xs text-muted-foreground">
+            <p>Nota: A função <code>grant-premium</code> do Supabase Edge Function é invocada para atualizar o perfil do usuário no banco de dados.</p>
             <p className="mt-1">O status Premium também é salvo localmente para testes imediatos.</p>
           </div>
         </CardContent>
