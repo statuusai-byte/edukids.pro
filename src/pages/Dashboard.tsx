@@ -1,14 +1,17 @@
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, Clock, TrendingUp, CheckCircle, Gauge, Heart } from "lucide-react";
+import { Activity, Clock, TrendingUp, CheckCircle, Gauge, Heart, LogOut, ShieldCheck } from "lucide-react";
 import { TiltCard } from "@/components/TiltCard";
 import { allCourses } from "@/data/coursesData";
 import { subjectsData } from "@/data/activitiesData";
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useProgress } from "@/hooks/use-progress";
 import { useScreenTime } from "@/hooks/use-screen-time";
 import { useAge } from "@/context/AgeContext";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import ParentalPinModal from "@/components/ParentalPinModal";
+import { hasParentPin } from "@/utils/parental";
+import { useSupabase } from "@/context/SupabaseContext";
 
 const AGE_GROUPS = ['4-6', '7-9', '10-12'] as const;
 
@@ -16,6 +19,40 @@ const Dashboard = () => {
   const { progress } = useProgress();
   const { todayUsage, limitMinutes, setLimitMinutes, blockEnabled, setBlockEnabled, resetToday, addMinutes, isBlocked } = useScreenTime();
   const { ageGroup } = useAge();
+  const { signOut } = useSupabase();
+
+  // Parental PIN state
+  const [isPinVerified, setIsPinVerified] = useState(false);
+  const [pinModalOpen, setPinModalOpen] = useState(false);
+  const [pinMode, setPinMode] = useState<"set" | "verify" | "remove">("verify"); // Default to verify
+
+  useEffect(() => {
+    // Check if a PIN exists when the component mounts
+    const pinExists = hasParentPin();
+    if (!pinExists) {
+      setPinMode("set"); // If no PIN, prompt to set one
+      setPinModalOpen(true);
+    } else {
+      setPinMode("verify"); // If PIN exists, prompt to verify
+      setPinModalOpen(true);
+    }
+  }, []);
+
+  const handlePinVerified = () => {
+    setIsPinVerified(true);
+    setPinModalOpen(false);
+  };
+
+  const handlePinModalClose = (open: boolean) => {
+    setPinModalOpen(open);
+    if (!open && !isPinVerified) {
+      // If modal is closed without verification, redirect away from dashboard
+      // This prevents bypassing the PIN by simply closing the modal
+      // You might want to redirect to a safe page like Home or Activities
+      // For now, let's redirect to activities
+      window.location.href = "/activities"; 
+    }
+  };
 
   const stats = useMemo(() => {
     return AGE_GROUPS.map((group) => {
@@ -75,157 +112,186 @@ const Dashboard = () => {
 
   return (
     <div>
-      <h1 className="text-4xl font-bold tracking-tighter mb-8">Painel dos Pais</h1>
+      {!isPinVerified && (
+        <ParentalPinModal
+          open={pinModalOpen}
+          mode={pinMode}
+          onOpenChange={handlePinModalClose}
+          onVerified={handlePinVerified}
+          title={pinMode === "set" ? "Definir PIN Parental para o Painel" : "Verificar PIN Parental para o Painel"}
+        />
+      )}
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <TiltCard>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Tempo de Uso Hoje</CardTitle>
-            <Clock className="h-5 w-5 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{todayUsage} min</div>
-            {limitMinutes ? (
-              <p className={`text-xs ${isBlocked ? 'text-red-400' : 'text-green-400'}`}>
-                {isBlocked ? "Limite atingido (bloqueio ativo)" : `Dentro do limite de ${limitMinutes} min`}
-              </p>
-            ) : (
-              <p className="text-xs text-muted-foreground">Sem limite configurado</p>
-            )}
-            {usagePct !== null && (
-              <div className="mt-3 w-full bg-white/5 rounded-full h-2 overflow-hidden">
-                <div className="h-2 bg-gradient-to-r from-cyan-500 to-blue-600" style={{ width: `${usagePct}%` }} />
-              </div>
-            )}
-            <div className="mt-3 flex gap-2">
-              <Button size="sm" variant="secondary" onClick={() => addMinutes(5)}>+5 min</Button>
-              <Button size="sm" variant="secondary" onClick={() => resetToday()}>Zerar dia</Button>
-            </div>
-          </CardContent>
-        </TiltCard>
+      {isPinVerified ? (
+        <>
+          <div className="flex items-center justify-between mb-8">
+            <h1 className="text-4xl font-bold tracking-tighter">Painel dos Pais</h1>
+            <Button variant="outline" onClick={signOut} className="flex items-center gap-2">
+              <LogOut className="h-4 w-4" /> Sair
+            </Button>
+          </div>
 
-        <TiltCard>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Lições Concluídas</CardTitle>
-            <Activity className="h-5 w-5 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">+{completedLessons}</div>
-            <p className="text-xs text-muted-foreground">Total de lições marcadas como concluídas</p>
-          </CardContent>
-        </TiltCard>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <TiltCard>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">Tempo de Uso Hoje</CardTitle>
+                <Clock className="h-5 w-5 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">{todayUsage} min</div>
+                {limitMinutes ? (
+                  <p className={`text-xs ${isBlocked ? 'text-red-400' : 'text-green-400'}`}>
+                    {isBlocked ? "Limite atingido (bloqueio ativo)" : `Dentro do limite de ${limitMinutes} min`}
+                  </p>
+                ) : (
+                  <p className="text-xs text-muted-foreground">Sem limite configurado</p>
+                )}
+                {usagePct !== null && (
+                  <div className="mt-3 w-full bg-white/5 rounded-full h-2 overflow-hidden">
+                    <div className="h-2 bg-gradient-to-r from-cyan-500 to-blue-600" style={{ width: `${usagePct}%` }} />
+                  </div>
+                )}
+                <div className="mt-3 flex gap-2">
+                  <Button size="sm" variant="secondary" onClick={() => addMinutes(5)}>+5 min</Button>
+                  <Button size="sm" variant="secondary" onClick={() => resetToday()}>Zerar dia</Button>
+                </div>
+              </CardContent>
+            </TiltCard>
 
-        <TiltCard>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Matéria Favorita</CardTitle>
-            <Heart className="h-5 w-5 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            {favoriteSubject ? (
-              <>
-                <div className="text-3xl font-bold">{favoriteSubject.name}</div>
-                <p className="text-xs text-muted-foreground">{favoriteSubject.count} lições concluídas nessa matéria</p>
-                <div className="mt-3">
-                  <Button asChild size="sm" variant="link" className="p-0">
-                    <Link to={`/activities/${favoriteSubject.slug}`}>Ver atividades de {favoriteSubject.name} →</Link>
+            <TiltCard>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">Lições Concluídas</CardTitle>
+                <Activity className="h-5 w-5 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">+{completedLessons}</div>
+                <p className="text-xs text-muted-foreground">Total de lições marcadas como concluídas</p>
+              </CardContent>
+            </TiltCard>
+
+            <TiltCard>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">Matéria Favorita</CardTitle>
+                <Heart className="h-5 w-5 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                {favoriteSubject ? (
+                  <>
+                    <div className="text-3xl font-bold">{favoriteSubject.name}</div>
+                    <p className="text-xs text-muted-foreground">{favoriteSubject.count} lições concluídas nessa matéria</p>
+                    <div className="mt-3">
+                      <Button asChild size="sm" variant="link" className="p-0">
+                        <Link to={`/activities/${favoriteSubject.slug}`}>Ver atividades de {favoriteSubject.name} →</Link>
+                      </Button>
+                    </div>
+                  </>
+                ) : (
+                  <p className="text-muted-foreground">Conclua algumas lições para ver um destaque aqui.</p>
+                )}
+              </CardContent>
+            </TiltCard>
+          </div>
+
+          <div className="mt-8 grid gap-6 lg:grid-cols-2">
+            <TiltCard>
+              <CardHeader className="flex items-center justify-between">
+                <CardTitle>Configurações de Tempo de Tela</CardTitle>
+                <Gauge className="h-5 w-5 text-muted-foreground" />
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="text-sm text-muted-foreground">
+                  Defina um limite diário e ative o bloqueio automático quando o limite for atingido.
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm">Limite diário (min):</span>
+                  <input
+                    type="number"
+                    className="w-28 p-2 rounded-md bg-secondary/40 border border-white/10"
+                    value={limitMinutes ?? ''}
+                    placeholder="Sem limite"
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      if (v === '') { setLimitMinutes(null); return; }
+                      const n = Math.max(1, Math.min(600, Number(v)));
+                      setLimitMinutes(Number.isNaN(n) ? null : n);
+                    }}
+                  />
+                  <Button size="sm" variant={blockEnabled ? "default" : "secondary"} onClick={() => setBlockEnabled(!blockEnabled)}>
+                    {blockEnabled ? "Bloqueio Ativo" : "Bloqueio Desativado"}
                   </Button>
                 </div>
-              </>
-            ) : (
-              <p className="text-muted-foreground">Conclua algumas lições para ver um destaque aqui.</p>
-            )}
-          </CardContent>
-        </TiltCard>
-      </div>
-
-      <div className="mt-8 grid gap-6 lg:grid-cols-2">
-        <TiltCard>
-          <CardHeader className="flex items-center justify-between">
-            <CardTitle>Configurações de Tempo de Tela</CardTitle>
-            <Gauge className="h-5 w-5 text-muted-foreground" />
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="text-sm text-muted-foreground">
-              Defina um limite diário e ative o bloqueio automático quando o limite for atingido.
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="text-sm">Limite diário (min):</span>
-              <input
-                type="number"
-                className="w-28 p-2 rounded-md bg-secondary/40 border border-white/10"
-                value={limitMinutes ?? ''}
-                placeholder="Sem limite"
-                onChange={(e) => {
-                  const v = e.target.value;
-                  if (v === '') { setLimitMinutes(null); return; }
-                  const n = Math.max(1, Math.min(600, Number(v)));
-                  setLimitMinutes(Number.isNaN(n) ? null : n);
-                }}
-              />
-              <Button size="sm" variant={blockEnabled ? "default" : "secondary"} onClick={() => setBlockEnabled(!blockEnabled)}>
-                {blockEnabled ? "Bloqueio Ativo" : "Bloqueio Desativado"}
-              </Button>
-            </div>
-            <div className="text-xs text-muted-foreground">
-              Quando o bloqueio estiver ativo e o limite for atingido, as atividades podem ser restringidas pelo app.
-            </div>
-          </CardContent>
-        </TiltCard>
-
-        <TiltCard>
-          <CardHeader className="flex items-center justify-between">
-            <CardTitle>Próximas Recomendações</CardTitle>
-            <TrendingUp className="h-5 w-5 text-muted-foreground" />
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {nextLessons.length > 0 ? nextLessons.map((n) => (
-              <Link key={n.url} to={n.url} className="block p-3 rounded-md bg-secondary/40 hover:bg-secondary/60 transition">
-                <div className="flex items-center justify-between">
-                  <div className="font-medium">{n.title}</div>
-                  <CheckCircle className="h-4 w-4 text-green-400" />
+                <div className="text-xs text-muted-foreground">
+                  Quando o bloqueio estiver ativo e o limite for atingido, as atividades podem ser restringidas pelo app.
                 </div>
-              </Link>
-            )) : (
-              <p className="text-muted-foreground">Selecione a faixa etária nas configurações e conclua lições para receber sugestões.</p>
-            )}
-          </CardContent>
-        </TiltCard>
-      </div>
+              </CardContent>
+            </TiltCard>
 
-      <div className="mt-8">
-        <TiltCard>
-          <CardHeader>
-            <CardTitle>Balanceamento Free vs Premium por Faixa Etária</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {stats.map(s => (
-              <div key={s.group} className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="font-medium">Faixa {s.group}</div>
-                  <div className="text-sm text-muted-foreground">{s.total} cursos • {s.recommended} recomendados</div>
-                </div>
+            <TiltCard>
+              <CardHeader className="flex items-center justify-between">
+                <CardTitle>Próximas Recomendações</CardTitle>
+                <TrendingUp className="h-5 w-5 text-muted-foreground" />
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {nextLessons.length > 0 ? nextLessons.map((n) => (
+                  <Link key={n.url} to={n.url} className="block p-3 rounded-md bg-secondary/40 hover:bg-secondary/60 transition">
+                    <div className="flex items-center justify-between">
+                      <div className="font-medium">{n.title}</div>
+                      <CheckCircle className="h-4 w-4 text-green-400" />
+                    </div>
+                  </Link>
+                )) : (
+                  <p className="text-muted-foreground">Selecione a faixa etária nas configurações e conclua lições para receber sugestões.</p>
+                )}
+              </CardContent>
+            </TiltCard>
+          </div>
 
-                <div className="w-full bg-white/5 rounded-full h-4 overflow-hidden">
-                  <div
-                    className="h-4 bg-gradient-to-r from-pink-600 to-purple-600"
-                    style={{ width: `${s.premiumPct}%` }}
-                    role="progressbar"
-                    aria-valuenow={s.premiumPct}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                  />
-                </div>
+          <div className="mt-8">
+            <TiltCard>
+              <CardHeader>
+                <CardTitle>Balanceamento Free vs Premium por Faixa Etária</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {stats.map(s => (
+                  <div key={s.group} className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="font-medium">Faixa {s.group}</div>
+                      <div className="text-sm text-muted-foreground">{s.total} cursos • {s.recommended} recomendados</div>
+                    </div>
 
-                <div className="flex justify-between text-xs text-muted-foreground">
-                  <div>Free: {s.free}</div>
-                  <div>Premium: {s.premium} ({s.premiumPct}%)</div>
-                </div>
-              </div>
-            ))}
-            <div className="text-xs text-muted-foreground">Dica: mantenha um bom mix de cursos gratuitos para atração e cursos premium exclusivos e profundos para conversão.</div>
-          </CardContent>
-        </TiltCard>
-      </div>
+                    <div className="w-full bg-white/5 rounded-full h-4 overflow-hidden">
+                      <div
+                        className="h-4 bg-gradient-to-r from-pink-600 to-purple-600"
+                        style={{ width: `${s.premiumPct}%` }}
+                        role="progressbar"
+                        aria-valuenow={s.premiumPct}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                      />
+                    </div>
+
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <div>Free: {s.free}</div>
+                      <div>Premium: {s.premium} ({s.premiumPct}%)</div>
+                    </div>
+                  </div>
+                ))}
+                <div className="text-xs text-muted-foreground">Dica: mantenha um bom mix de cursos gratuitos para atração e cursos premium exclusivos e profundos para conversão.</div>
+              </CardContent>
+            </TiltCard>
+          </div>
+        </>
+      ) : (
+        <div className="min-h-screen flex items-center justify-center p-4">
+          <div className="glass-card p-6 text-center">
+            <ShieldCheck className="h-12 w-12 text-primary mx-auto mb-4" />
+            <h2 className="text-2xl font-bold">Acesso Restrito</h2>
+            <p className="text-muted-foreground mt-2">
+              Por favor, verifique o PIN parental para acessar o Painel dos Pais.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
