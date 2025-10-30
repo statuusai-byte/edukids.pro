@@ -2,11 +2,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import { subjectsData } from "@/data/activitiesData";
 import { ArrowLeft, BookOpen, ClipboardCheck, Gamepad2, Play, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { showError } from "@/utils/toast";
 import type { Lesson } from "@/data/activitiesData";
-import Icon from "@/components/Icon";
+import { Icon } from "@/components/Icon";
 
 const getLessonActionDetails = (type: Lesson['type']) => {
   switch (type) {
@@ -32,7 +32,7 @@ const ActivityPage = () => {
 
   if (!subject || !activity) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen text-center">
+      <div className="flex flex-col items-center justify-center h-screen text-center p-4">
         <h1 className="text-4xl font-bold mb-4">Oops!</h1>
         <p className="text-lg text-muted-foreground mb-8">
           A atividade que você está procurando não foi encontrada.
@@ -62,7 +62,7 @@ const ActivityPage = () => {
       </Card>
 
       <h2 className="text-2xl font-semibold mb-4">Módulos de Aprendizagem</h2>
-      
+
       {activity.modules.length > 0 ? (
         <Accordion type="single" collapsible defaultValue={activity.modules[0].id} className="w-full">
           {activity.modules.map((module) => (
@@ -72,7 +72,7 @@ const ActivityPage = () => {
                 <ul className="space-y-4 pt-4">
                   {module.lessons.map((lesson) => {
                     const { text, icon } = getLessonActionDetails(lesson.type);
-                    const isAvailable = lesson.content || lesson.videoUrl;
+                    const isAvailable = Boolean(lesson.content || lesson.videoUrl);
 
                     return (
                       <li
@@ -88,7 +88,8 @@ const ActivityPage = () => {
                         <Button
                           onClick={() => {
                             if (isAvailable) {
-                              navigate(`/subjects/${subject.slug}/${activity.id}/${lesson.id}`);
+                              // Navigate to lesson route that other pages expect
+                              navigate(`/activities/${subject.slug}/${activity.id}/modules/${module.id}/lessons/${lesson.id}`);
                             } else {
                               showError("Conteúdo indisponível no momento.");
                             }
@@ -96,8 +97,10 @@ const ActivityPage = () => {
                           disabled={!isAvailable}
                           size="sm"
                         >
-                          {text}
-                          {icon}
+                          <span className="flex items-center">
+                            {text}
+                            {icon}
+                          </span>
                         </Button>
                       </li>
                     );
@@ -108,7 +111,10 @@ const ActivityPage = () => {
           ))}
         </Accordion>
       ) : (
-        <p className="text-muted-foreground">Nenhum módulo disponível para esta atividade ainda.</p>
+        <div className="text-center py-16 glass-card rounded-lg">
+          <h2 className="text-2xl font-bold">Sem módulos disponíveis</h2>
+          <p className="text-muted-foreground mt-2">Esta atividade ainda não possui módulos. Volte mais tarde.</p>
+        </div>
       )}
     </div>
   );
