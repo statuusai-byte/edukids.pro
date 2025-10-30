@@ -1,5 +1,5 @@
 import { motion, Transition } from 'framer-motion';
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import { usePrefersReducedMotion } from '@/hooks/use-reduced-motion';
 
 const pageVariants = {
@@ -38,7 +38,9 @@ const PageTransition = ({ children }: { children: ReactNode }) => {
       variants={pageVariants}
       transition={pageTransition}
     >
-      {children}
+      {/* Garante que motion.div sempre receba um único elemento React.
+          Se 'children' puder ser múltiplos elementos, envolva-os em um fragmento. */}
+      <React.Fragment>{children}</React.Fragment>
     </motion.div>
   );
 };
