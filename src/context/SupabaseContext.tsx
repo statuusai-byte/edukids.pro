@@ -14,6 +14,7 @@ interface SupabaseContextType {
 const SupabaseContext = createContext<SupabaseContextType | undefined>(undefined);
 
 const TEST_EMAIL = "eduki.teste@gmail.com";
+const PREMIUM_LOCAL_FLAG = "edukids_is_premium";
 
 export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
@@ -21,7 +22,31 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
+  // Lê public.profiles.is_premium e aplica a flag localmente (para o cliente)
+  const syncPremiumFromProfile = async (userId: string | undefined) => {
+    if (!userId) return;
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('is_premium')
+        .eq('id', userId)
+        .single();
+
+      if (!error && data && (data as any).is_premium) {
+        try {
+          localStorage.setItem(PREMIUM_LOCAL_FLAG, 'true');
+        } catch (e) {
+          // ignore localStorage errors
+        }
+        showSuccess('Acesso Premium aplicado para sua conta.');
+      }
+    } catch (e) {
+      console.error('Failed to sync premium from profile:', e);
+    }
+  };
+
   useEffect(() => {
+    // Ouve mudanças de autenticação
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (event, currentSession) => {
         setSession(currentSession);
@@ -30,11 +55,11 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
 
         if (event === 'SIGNED_IN') {
           showSuccess('Login realizado com sucesso!');
-          
-          // Grant premium for the test account
+
+          // Fallback legacy: conta de teste
           if (currentSession?.user?.email === TEST_EMAIL) {
             try {
-              localStorage.setItem("edukids_is_premium", "true");
+              localStorage.setItem(PREMIUM_LOCAL_FLAG, "true");
               const profile = {
                 name: "Usuário Teste",
                 avatarUrl: "https://i.pravatar.cc/150?u=edukids-test",
@@ -49,7 +74,11 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
               showError("Falha ao ativar o modo de teste Premium.");
             }
           }
-          
+
+          // Sincroniza o is_premium do profile (se existir)
+          syncPremiumFromProfile(currentSession?.user?.id);
+
+          // Redireciona para activities por padrão
           navigate('/activities');
         } else if (event === 'SIGNED_OUT') {
           showSuccess('Sessão encerrada.');
@@ -58,20 +87,27 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
       }
     );
 
-    // Fetch initial session
+    // Busca a sessão inicial e sincroniza premium (caso o usuário já esteja logado)
     supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
       setSession(initialSession);
       setUser(initialSession?.user ?? null);
+      setIsLoading(false);
+      if (initialSession?.user) {
+        syncPremiumFromProfile(initialSession.user.id);
+      }
+    }).catch((err) => {
+      console.error('Failed to get initial session:', err);
       setIsLoading(false);
     });
 
     return () => {
       authListener.subscription.unsubscribe();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate]);
 
   const signOut = async () => {
-    // Clear local fallback data when signing out as well
+    // Limpa dados locais de fallback
     try {
       localStorage.removeItem('edukids_is_premium');
       localStorage.removeItem('edukids_help_packages');
