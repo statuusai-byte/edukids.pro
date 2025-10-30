@@ -65,7 +65,7 @@ export default function VideoPlayer({ src, title, className }: VideoPlayerProps)
           src={embed}
           title={title ?? "Video"}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerPolicy="strict-origin-when-cross-origin"
+          referrerPolicy="no-referrer-when-downgrade"
           loading="lazy"
           allowFullScreen
         />
