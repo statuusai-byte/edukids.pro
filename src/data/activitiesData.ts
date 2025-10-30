@@ -369,7 +369,7 @@ export const subjectsData: Subject[] = [
     slug: "ingles",
     icon: "SpellCheck",
     color: "indigo",
-    ageGroups: ['4-6','7-9','10-12'],
+    ageGroups: ['4-6','7-9', '10-12'],
     activities: [
       {
         id: "i1",
