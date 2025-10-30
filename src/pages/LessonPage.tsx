@@ -2,7 +2,7 @@ import { useParams, Link as RouterLink, useNavigate } from "react-router-dom";
 import { subjectsData } from "@/data/activitiesData";
 import { useMemo, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Lightbulb } from "lucide-react";
+import { ArrowLeft, Lightbulb, Lock } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ContandoFrutas from "@/components/games/ContandoFrutas";
 import FormandoPalavras from "@/components/games/FormandoPalavras";
@@ -13,6 +13,7 @@ import { showSuccess, showError } from "@/utils/toast";
 import { usePremium } from "@/context/PremiumContext";
 import { useHintsContext } from "@/context/HintsContext";
 import VideoPlayer from "@/components/VideoPlayer";
+import { useScreenTime } from "@/hooks/use-screen-time";
 
 const LessonPage = () => {
   const { subject: subjectSlug, activityId, moduleId, lessonId } = useParams();
@@ -20,6 +21,7 @@ const LessonPage = () => {
   const { isLessonCompleted, markLessonCompleted } = useProgress();
   const { isPremium } = usePremium();
   const { hints, useHint, addHints } = useHintsContext();
+  const { isBlocked, limitMinutes, startSession, stopSession } = useScreenTime();
   
   const [hintTriggered, setHintTriggered] = useState(false);
 
@@ -36,6 +38,16 @@ const LessonPage = () => {
     return { subject: s, activity: a, module: m, lesson: l, lessonIndex: li, moduleIndex: mi };
   }, [subjectSlug, activityId, moduleId, lessonId]);
 
+  // Screen Time Tracking: Start session when entering lesson, stop when leaving
+  useEffect(() => {
+    if (lesson && !isBlocked) {
+      startSession();
+    }
+    return () => {
+      stopSession();
+    };
+  }, [lesson, isBlocked, startSession, stopSession]);
+
   // Reset hint trigger when the lesson changes
   useEffect(() => {
     setHintTriggered(false);
@@ -48,6 +60,22 @@ const LessonPage = () => {
         <Button asChild variant="link">
           <RouterLink to={`/activities/${subjectSlug}/${activityId}`}>Voltar para Atividade</RouterLink>
         </Button>
+      </div>
+    );
+  }
+
+  if (isBlocked) {
+    return (
+      <div className="text-center py-16 glass-card rounded-lg">
+        <Lock className="h-12 w-12 text-red-400 mx-auto mb-4" />
+        <h2 className="text-2xl font-bold">Tempo de Tela Esgotado</h2>
+        <p className="text-muted-foreground mt-2">
+          O limite de {limitMinutes} minutos foi atingido. O acesso às atividades está bloqueado.
+        </p>
+        <p className="text-sm text-muted-foreground mt-4">
+          Para continuar, um adulto deve desativar o bloqueio ou aumentar o limite no Painel dos Pais.
+        </p>
+        <RouterLink to="/dashboard" className="mt-4 inline-block text-primary underline">Ir para Painel dos Pais</RouterLink>
       </div>
     );
   }

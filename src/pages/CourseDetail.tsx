@@ -27,6 +27,7 @@ const CourseDetail = () => {
   }
 
   const canWatch = !course.premium || isPremium;
+  const hasVideo = !!course.videoUrl;
 
   return (
     <div>
@@ -44,8 +45,8 @@ const CourseDetail = () => {
 
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
-          {canWatch && course.videoUrl ? (
-            <VideoPlayer src={course.videoUrl} title={course.title} />
+          {canWatch && hasVideo ? (
+            <VideoPlayer src={course.videoUrl!} title={course.title} />
           ) : !canWatch ? (
              <div className="aspect-video rounded-2xl overflow-hidden border border-primary/50 shadow-lg shadow-primary/20 flex items-center justify-center bg-secondary/20 flex-col gap-4 p-6 text-center">
               <Lock className="h-12 w-12 text-primary" />
@@ -58,8 +59,8 @@ const CourseDetail = () => {
           ) : (
             <div className="aspect-video rounded-2xl overflow-hidden border border-primary/50 shadow-lg shadow-primary/20 flex items-center justify-center bg-secondary/20">
               <div className="text-center p-6">
-                <div className="text-xl font-semibold mb-2">Pré-visualização não disponível</div>
-                <div className="text-sm text-muted-foreground">Este curso não possui vídeo de prévia. Leia a descrição ao lado para mais detalhes.</div>
+                <div className="text-xl font-semibold mb-2">Vídeo indisponível</div>
+                <div className="text-sm text-muted-foreground">Este curso não possui vídeo. Leia a descrição ao lado para mais detalhes.</div>
               </div>
             </div>
           )}

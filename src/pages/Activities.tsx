@@ -5,6 +5,8 @@ import { subjectsData } from "@/data/activitiesData";
 import { TiltCard } from "@/components/TiltCard";
 import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Icon } from "@/components/Icon";
+import { useScreenTime } from "@/hooks/use-screen-time";
+import { Lock } from "lucide-react";
 
 const iconColorClass: Record<string, string> = {
     cyan: 'text-cyan-400',
@@ -38,6 +40,7 @@ const bgColorClass: Record<string, string> = {
 
 const Activities = () => {
   const { ageGroup } = useAge();
+  const { isBlocked, limitMinutes, blockEnabled } = useScreenTime();
 
   const subjects = useMemo(() => {
     if (!ageGroup) return [];
@@ -54,6 +57,22 @@ const Activities = () => {
       })
       .filter(subject => subject.availableActivitiesCount > 0);
   }, [ageGroup]);
+
+  if (isBlocked) {
+    return (
+      <div className="text-center py-16 glass-card rounded-lg">
+        <Lock className="h-12 w-12 text-red-400 mx-auto mb-4" />
+        <h2 className="text-2xl font-bold">Tempo de Tela Esgotado</h2>
+        <p className="text-muted-foreground mt-2">
+          O limite de {limitMinutes} minutos foi atingido. O acesso às atividades está bloqueado.
+        </p>
+        <p className="text-sm text-muted-foreground mt-4">
+          Para continuar, um adulto deve desativar o bloqueio ou aumentar o limite no Painel dos Pais.
+        </p>
+        <Link to="/dashboard" className="mt-4 inline-block text-primary underline">Ir para Painel dos Pais</Link>
+      </div>
+    );
+  }
 
   return (
     <div>

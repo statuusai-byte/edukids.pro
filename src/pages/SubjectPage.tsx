@@ -1,16 +1,19 @@
 import { useParams, Link as RouterLink, Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, CheckCircle } from "lucide-react";
+import { ArrowLeft, CheckCircle, Lock } from "lucide-react";
 import { subjectsData } from "@/data/activitiesData";
 import { useAge } from "@/context/AgeContext";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useProgress } from "@/hooks/use-progress";
 import { Icon } from "@/components/Icon";
+import { useScreenTime } from "@/hooks/use-screen-time";
+import { Link } from "react-router-dom";
 
 const SubjectPage = () => {
   const { subject: subjectSlug } = useParams();
   const { ageGroup } = useAge();
   const { isLessonCompleted } = useProgress();
+  const { isBlocked, limitMinutes } = useScreenTime();
 
   const subject = subjectsData.find(s => s.slug === subjectSlug);
 
@@ -21,6 +24,22 @@ const SubjectPage = () => {
   const filteredActivities = ageGroup
     ? subject.activities.filter(activity => activity.ageGroups.includes(ageGroup))
     : [];
+
+  if (isBlocked) {
+    return (
+      <div className="text-center py-16 glass-card rounded-lg">
+        <Lock className="h-12 w-12 text-red-400 mx-auto mb-4" />
+        <h2 className="text-2xl font-bold">Tempo de Tela Esgotado</h2>
+        <p className="text-muted-foreground mt-2">
+          O limite de {limitMinutes} minutos foi atingido. O acesso às atividades está bloqueado.
+        </p>
+        <p className="text-sm text-muted-foreground mt-4">
+          Para continuar, um adulto deve desativar o bloqueio ou aumentar o limite no Painel dos Pais.
+        </p>
+        <Link to="/dashboard" className="mt-4 inline-block text-primary underline">Ir para Painel dos Pais</Link>
+      </div>
+    );
+  }
 
   return (
     <div>
