@@ -1,114 +1,108 @@
-import { NavLink, Outlet, useLocation, Navigate } from "react-router-dom";
-import {
-  Home,
-  BookOpen,
-  PlayCircle,
-  ShoppingCart,
-  LayoutDashboard,
-  Settings,
-  Sparkles,
-} from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import Header from "./Header";
-import { useAge } from "@/context/AgeContext";
-import AgeGateModal from "./AgeGateModal";
-import { AnimatePresence } from "framer-motion";
-import PageTransition from "./PageTransition";
-import { playSound } from "@/utils/sound";
-import { useSupabase } from "@/context/SupabaseContext";
-import InterstitialAdManager from "./InterstitialAdManager"; // Importar o novo componente
-import StudyAssistant from "./StudyAssistant";
+import { NavLink, Outlet } from "react-router-dom";
+import { Sparkles } from "lucide-react";
+import { Icon, type IconName } from "@/components/Icon";
+import { cn } from "@/lib/utils";
+import { useProfile } from "@/context/ProfileContext";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getInitials } from "@/lib/get-initials";
 
-const navItems = [
-  { to: "/", icon: <Home className="h-6 w-6" />, label: "Home" },
-  { to: "/activities", icon: <BookOpen className="h-6 w-6" />, label: "Atividades" },
-  { to: "/courses", icon: <PlayCircle className="h-6 w-6" />, label: "Cursos" },
-  { to: "/store", icon: <ShoppingCart className="h-6 w-6" />, label: "Loja" },
-  { to: "/dashboard", icon: <LayoutDashboard className="h-6 w-6" />, label: "Painel dos Pais" },
-  { to: "/settings", icon: <Settings className="h-6 w-6" />, label: "Configurações" },
+type NavItem = {
+  to: string;
+  icon: IconName;
+  label: string;
+  color: string;
+};
+
+const navItems: NavItem[] = [
+  { to: "/activities", icon: "BookOpen", label: "Atividades", color: "text-cyan-400" },
+  { to: "/courses", icon: "PlaySquare", label: "Cursos", color: "text-purple-400" },
+  { to: "/store", icon: "Store", label: "Loja", color: "text-green-400" },
+  { to: "/dashboard", icon: "User", label: "Perfil", color: "text-orange-400" },
 ];
 
+const settingsItem: NavItem = {
+  to: "/settings",
+  icon: "Settings",
+  label: "Ajustes",
+  color: "text-slate-400",
+};
+
 const Layout = () => {
-  const { isLoading: isAgeLoading } = useAge();
-  const { user, isLoading: isAuthLoading } = useSupabase();
-  const location = useLocation();
-  const isHomePage = location.pathname === '/';
-  const isLoginPage = location.pathname === '/login';
-
-  const protectedRoutes = navItems.map(item => item.to).filter(path => path !== '/');
-
-  if (isAgeLoading || isAuthLoading) {
-    return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <Sparkles className="h-12 w-12 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  // Redirecionar se a rota for protegida e o usuário não estiver logado
-  if (!user && protectedRoutes.includes(location.pathname) && !isLoginPage) {
-    return <Navigate to="/login" replace />;
-  }
-
-  // Se estiver na home, não mostra o layout completo (Header/Sidebar)
-  if (isHomePage) {
-    return (
-      <AnimatePresence mode="wait">
-        <PageTransition key={location.pathname}>
-          <Outlet />
-        </PageTransition>
-      </AnimatePresence>
-    );
-  }
+  const { profile } = useProfile();
 
   return (
-    <TooltipProvider>
-      <AgeGateModal />
-      <div className="flex min-h-screen w-full text-foreground">
-        <aside className="fixed inset-y-0 left-0 z-20 flex w-20 flex-col items-center border-r border-white/10 bg-secondary/30 backdrop-blur-xl py-6">
-          <div className="mb-10 flex items-center justify-center">
-            <Sparkles size={32} className="text-primary" />
-          </div>
-          <nav className="flex flex-col items-center gap-4 px-2 sm:gap-6">
-            {navItems.map((item) => (
-              <Tooltip key={item.to}>
-                <TooltipTrigger asChild>
-                  <NavLink
-                    to={item.to}
-                    onClick={() => playSound('navigate')}
-                    className={({ isActive }) =>
-                      `flex h-12 w-12 items-center justify-center rounded-2xl text-primary transition-all duration-300 hover:bg-primary/10 hover:scale-110
-                      ${isActive ? "bg-primary text-primary-foreground scale-110 shadow-lg shadow-primary/50" : ""}`
-                    }
-                  >
-                    {item.icon}
-                    <span className="sr-only">{item.label}</span>
-                  </NavLink>
-                </TooltipTrigger>
-                <TooltipContent side="right" className="bg-primary text-primary-foreground">
-                  {item.label}
-                </TooltipContent>
-              </Tooltip>
-            ))}
-          </nav>
-        </aside>
-        <div className="flex flex-1 flex-col pl-20 main-container relative">
-          <Header />
-          <main className={`flex-1 p-4 sm:p-6 md:p-8`}>
-            <InterstitialAdManager>
-              <AnimatePresence mode="wait">
-                <PageTransition key={location.pathname}>
-                  <Outlet />
-                </PageTransition>
-              </AnimatePresence>
-            </InterstitialAdManager>
-          </main>
+    <div className="flex min-h-screen w-full text-foreground">
+      <aside className="fixed inset-y-0 left-0 z-20 flex w-20 flex-col items-center border-r border-white/10 bg-secondary/30 backdrop-blur-xl py-6">
+        <div className="mb-10 flex items-center justify-center">
+          <Sparkles size={32} className="text-primary" />
         </div>
+        <nav className="flex flex-1 flex-col items-center gap-4">
+          {navItems.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              className="group flex w-full flex-col items-center gap-1 rounded-lg p-2 text-muted-foreground transition-colors hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            >
+              {({ isActive }) => (
+                <>
+                  <Icon
+                    name={item.icon}
+                    className={cn(
+                      "h-6 w-6 transition-transform duration-300 group-hover:scale-110",
+                      isActive ? item.color : "text-muted-foreground group-hover:text-foreground"
+                    )}
+                  />
+                  <span
+                    className={cn(
+                      "text-xs font-medium",
+                      isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
+                    )}
+                  >
+                    {item.label}
+                  </span>
+                </>
+              )}
+            </NavLink>
+          ))}
+        </nav>
 
-        {/* Global Study Assistant (floating button + panel) */}
-        <StudyAssistant />
-      </div>
-    </TooltipProvider>
+        <div className="mt-auto flex flex-col items-center gap-4">
+          <NavLink
+            to={settingsItem.to}
+            className="group flex w-full flex-col items-center gap-1 rounded-lg p-2 text-muted-foreground transition-colors hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          >
+            {({ isActive }) => (
+              <>
+                <Icon
+                  name={settingsItem.icon}
+                  className={cn(
+                    "h-6 w-6 transition-transform duration-300 group-hover:scale-110",
+                    isActive ? settingsItem.color : "text-muted-foreground group-hover:text-foreground"
+                  )}
+                />
+                <span
+                  className={cn(
+                    "text-xs font-medium",
+                    isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
+                  )}
+                >
+                  {settingsItem.label}
+                </span>
+              </>
+            )}
+          </NavLink>
+          <Avatar>
+            <AvatarImage src={profile?.avatar_url ?? undefined} />
+            <AvatarFallback>{getInitials(profile?.full_name ?? "Anônimo")}</AvatarFallback>
+          </Avatar>
+        </div>
+      </aside>
+      <main className="flex-1 pl-20">
+        <div className="container mx-auto py-8 px-4 md:px-6 lg:px-8">
+          <Outlet />
+        </div>
+      </main>
+    </div>
   );
 };
 
