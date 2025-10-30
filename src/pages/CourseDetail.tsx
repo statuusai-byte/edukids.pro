@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Clock, Lock } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { usePremium } from "@/context/PremiumContext";
+import VideoPlayer from "@/components/VideoPlayer";
 
 const CourseDetail = () => {
   const { courseId } = useParams();
@@ -44,18 +45,7 @@ const CourseDetail = () => {
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           {canWatch && course.videoUrl ? (
-            <div className="aspect-video rounded-2xl overflow-hidden border border-primary/50 shadow-lg shadow-primary/20">
-              <iframe
-                width="100%"
-                height="100%"
-                src={course.videoUrl}
-                title={course.title}
-                frameBorder="0"
-                loading="lazy"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              ></iframe>
-            </div>
+            <VideoPlayer src={course.videoUrl} title={course.title} />
           ) : !canWatch ? (
              <div className="aspect-video rounded-2xl overflow-hidden border border-primary/50 shadow-lg shadow-primary/20 flex items-center justify-center bg-secondary/20 flex-col gap-4 p-6 text-center">
               <Lock className="h-12 w-12 text-primary" />

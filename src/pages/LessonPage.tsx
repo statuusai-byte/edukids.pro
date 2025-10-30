@@ -12,6 +12,7 @@ import RewardButton from "@/components/RewardButton";
 import { showSuccess, showError } from "@/utils/toast";
 import { usePremium } from "@/context/PremiumContext";
 import { useHintsContext } from "@/context/HintsContext";
+import VideoPlayer from "@/components/VideoPlayer";
 
 const LessonPage = () => {
   const { subject: subjectSlug, activityId, moduleId, lessonId } = useParams();
@@ -111,7 +112,7 @@ const LessonPage = () => {
       } catch (e) { console.error("Failed to parse quiz content:", e); }
     }
     if (lesson.videoUrl) {
-      return <div className="aspect-video rounded-2xl overflow-hidden border border-primary/50 shadow-lg shadow-primary/20"><iframe width="100%" height="100%" src={lesson.videoUrl} title={lesson.title} frameBorder="0" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe></div>;
+      return <VideoPlayer src={lesson.videoUrl} title={lesson.title} />;
     }
     return <p className="text-foreground/90 mb-4">{lesson.content}</p>;
   };
