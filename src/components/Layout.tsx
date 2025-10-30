@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/get-initials";
 import { useIsMobile } from "@/hooks/use-mobile";
 import MobileSidebar from "@/components/MobileSidebar";
-import { StudyAssistantProvider } from "@/context/StudyAssistantContext"; // Import StudyAssistantProvider
+import { StudyAssistantProvider } from "@/context/StudyAssistantContext";
 
 type NavItem = {
   to: string;
@@ -19,6 +19,7 @@ type NavItem = {
 const navItems: NavItem[] = [
   { to: "/activities", icon: "BookOpen", label: "Atividades", color: "text-cyan-400" },
   { to: "/courses", icon: "PlaySquare", label: "Cursos", color: "text-purple-400" },
+  { to: "/games", icon: "Gamepad2", label: "Jogos", color: "text-pink-400" }, // New Games Nav Item
   { to: "/store", icon: "Store", label: "Loja", color: "text-green-400" },
   { to: "/dashboard", icon: "User", label: "Painel dos Pais", color: "text-orange-400" },
 ];
@@ -133,7 +134,7 @@ const Layout = () => {
 
       <main className={cn("flex-1", !isMobile && "pl-24")}>
         <div className="container mx-auto py-8 px-4 md:px-6 lg:px-8">
-          <StudyAssistantProvider> {/* Wrap Outlet with StudyAssistantProvider */}
+          <StudyAssistantProvider>
             <Outlet />
           </StudyAssistantProvider>
         </div>

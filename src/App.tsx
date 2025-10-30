@@ -30,7 +30,8 @@ const Register = lazy(() => import("./pages/Register"));
 const SuccessPayment = lazy(() => import("./pages/SuccessPayment"));
 const TestAccount = lazy(() => import("./pages/TestAccount"));
 const AdminGrantPremium = lazy(() => import("./pages/AdminGrantPremium"));
-const IconExport = lazy(() => import("./pages/IconExport")); // New page
+const IconExport = lazy(() => import("./pages/IconExport"));
+const Games = lazy(() => import("./pages/Games")); // New page: Games
 
 const queryClient = new QueryClient();
 
@@ -76,6 +77,7 @@ const App = () => (
                         <Route path="/store" element={<Store />} />
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/settings" element={<Settings />} />
+                        <Route path="/games" element={<Games />} /> {/* New Games Route */}
                       </Route>
 
                       <Route path="*" element={<NotFound />} />
