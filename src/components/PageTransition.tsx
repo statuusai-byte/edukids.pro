@@ -27,7 +27,7 @@ const PageTransition = ({ children }: { children: ReactNode }) => {
   const reduceMotion = usePrefersReducedMotion();
 
   if (reduceMotion) {
-    return <>{children}</>;
+    return <div>{children}</div>;
   }
 
   return (

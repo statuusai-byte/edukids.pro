@@ -5,20 +5,13 @@ import { CheckCircle, XCircle } from 'lucide-react';
 import { showSuccess, showError } from '@/utils/toast';
 import { cn } from '@/lib/utils';
 
-type Difficulty = 'easy' | 'medium' | 'hard';
+const MAX_FRUITS = 10;
 
 interface ContandoFrutasProps {
-  difficulty: Difficulty;
   triggerHint?: boolean;
 }
 
-const difficultyConfig = {
-  easy: { maxFruits: 10 },
-  medium: { maxFruits: 20 },
-  hard: { maxFruits: 30 },
-};
-
-const ContandoFrutas = ({ difficulty, triggerHint }: ContandoFrutasProps) => {
+const ContandoFrutas = ({ triggerHint }: ContandoFrutasProps) => {
   const [correctAnswer, setCorrectAnswer] = useState(0);
   const [options, setOptions] = useState<number[]>([]);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -26,19 +19,17 @@ const ContandoFrutas = ({ difficulty, triggerHint }: ContandoFrutasProps) => {
   const [animationClass, setAnimationClass] = useState('');
   const [eliminatedOptions, setEliminatedOptions] = useState<number[]>([]);
 
-  const { maxFruits } = difficultyConfig[difficulty];
-
   const generateProblem = () => {
     setSelectedAnswer(null);
     setIsCorrect(null);
     setEliminatedOptions([]);
     
-    const answer = Math.floor(Math.random() * maxFruits) + 1;
+    const answer = Math.floor(Math.random() * MAX_FRUITS) + 1;
     setCorrectAnswer(answer);
 
     const wrongOptions = new Set<number>();
     while (wrongOptions.size < 3) {
-      const option = Math.floor(Math.random() * maxFruits) + 1;
+      const option = Math.floor(Math.random() * MAX_FRUITS) + 1;
       if (option !== answer) {
         wrongOptions.add(option);
       }
@@ -50,8 +41,9 @@ const ContandoFrutas = ({ difficulty, triggerHint }: ContandoFrutasProps) => {
 
   useEffect(() => {
     generateProblem();
-  }, [difficulty]);
+  }, []);
 
+  // Logic to eliminate two wrong answers when hint is triggered
   useEffect(() => {
     if (triggerHint && eliminatedOptions.length === 0) {
       const incorrectOptions = options.filter(

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
@@ -9,7 +9,6 @@ interface SupabaseContextType {
   user: User | null;
   isLoading: boolean;
   signOut: () => Promise<void>;
-  syncPremiumFromProfile: (userId: string | undefined) => Promise<void>;
 }
 
 const SupabaseContext = createContext<SupabaseContextType | undefined>(undefined);
@@ -24,7 +23,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
 
   // Lê public.profiles.is_premium e aplica a flag localmente (para o cliente)
-  const syncPremiumFromProfile = useCallback(async (userId: string | undefined) => {
+  const syncPremiumFromProfile = async (userId: string | undefined) => {
     if (!userId) return;
     try {
       const { data, error } = await supabase
@@ -40,18 +39,11 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
           // ignore localStorage errors
         }
         showSuccess('Acesso Premium aplicado para sua conta.');
-      } else {
-        // Se não for premium no DB ou houver erro, garante que a flag local seja removida
-        try {
-          localStorage.removeItem(PREMIUM_LOCAL_FLAG);
-        } catch (e) {
-          // ignore localStorage errors
-        }
       }
     } catch (e) {
-      console.error('Falha ao sincronizar premium do perfil:', e);
+      console.error('Failed to sync premium from profile:', e);
     }
-  }, []);
+  };
 
   useEffect(() => {
     // Ouve mudanças de autenticação
@@ -64,7 +56,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
         if (event === 'SIGNED_IN') {
           showSuccess('Login realizado com sucesso!');
 
-          // Fallback legado: conta de teste
+          // Fallback legacy: conta de teste
           if (currentSession?.user?.email === TEST_EMAIL) {
             try {
               localStorage.setItem(PREMIUM_LOCAL_FLAG, "true");
@@ -78,7 +70,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
               localStorage.setItem('edukids_help_packages', JSON.stringify(allPackages));
               showSuccess("Conta de teste Premium ativada!");
             } catch (e) {
-              console.error("Falha ao ativar o modo de teste Premium:", e);
+              console.error("Failed to activate premium test mode:", e);
               showError("Falha ao ativar o modo de teste Premium.");
             }
           }
@@ -86,8 +78,8 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
           // Sincroniza o is_premium do profile (se existir)
           syncPremiumFromProfile(currentSession?.user?.id);
 
-          // Redireciona para o dashboard por padrão
-          navigate('/dashboard');
+          // Redireciona para activities por padrão
+          navigate('/activities');
         } else if (event === 'SIGNED_OUT') {
           showSuccess('Sessão encerrada.');
           navigate('/');
@@ -104,7 +96,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
         syncPremiumFromProfile(initialSession.user.id);
       }
     }).catch((err) => {
-      console.error('Falha ao obter a sessão inicial:', err);
+      console.error('Failed to get initial session:', err);
       setIsLoading(false);
     });
 
@@ -112,7 +104,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
       authListener.subscription.unsubscribe();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [navigate, syncPremiumFromProfile]);
+  }, [navigate]);
 
   const signOut = async () => {
     // Limpa dados locais de fallback
@@ -135,7 +127,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <SupabaseContext.Provider value={{ session, user, isLoading, signOut, syncPremiumFromProfile }}>
+    <SupabaseContext.Provider value={{ session, user, isLoading, signOut }}>
       {children}
     </SupabaseContext.Provider>
   );

@@ -14,7 +14,7 @@ export default defineConfig(() => ({
     dyadComponentTagger(),
     react(),
     VitePWA({
-      registerType: 'prompt',
+      registerType: 'autoUpdate',
       injectRegister: 'auto',
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,webmanifest}'],

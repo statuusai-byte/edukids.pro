@@ -18,8 +18,9 @@ export default {
       },
     },
     extend: {
-      fontFamily: {
-        sans: ['Nunito', 'sans-serif'],
+      backgroundImage: {
+        'hero-desktop': "url('/hero-1920.png')",
+        'hero-mobile': "url('/hero-mobile.png')",
       },
       colors: {
         border: "hsl(var(--border))",

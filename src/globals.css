@@ -3,34 +3,26 @@
 @tailwind utilities;
 
 @layer base {
-  /* 
-    Theme: Cosmic Pop
-    Inspired by the new app icon, this theme uses a vibrant
-    violet-to-magenta gradient for a modern and energetic feel.
-  */
-  :root, .theme-cosmic-pop {
-    --background: 224 71% 4%; /* Deep space blue */
-    --foreground: 210 40% 98%;
-    --card: 224 71% 4%;
-    --card-foreground: 210 40% 98%;
-    --popover: 224 71% 4%;
-    --popover-foreground: 210 40% 98%;
-    
-    /* NEW COLORS from the icon */
-    --primary: 258 95% 68%; /* Vibrant Violet from icon (#8b5cf6) */
-    --primary-foreground: 355 100% 97%;
-    --accent: 327 82% 61%; /* Vivid Magenta Pink from icon (#ec4899) */
-    --accent-foreground: 210 40% 98%;
-
-    --secondary: 224 30% 15%; /* Lighter space blue */
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 258 95% 68%; /* Match new primary */
+  :root, .theme-nebula {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 262.1 83.3% 57.8%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 3.7% 11.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 262.1 83.3% 57.8%;
     --radius: 0.75rem;
   }
 }
@@ -40,12 +32,9 @@
     @apply border-border;
   }
   body {
-    @apply text-foreground bg-background font-sans;
+    @apply text-foreground bg-background;
     font-feature-settings: "rlig" 1, "calt" 1;
     transition: background 0.5s ease, color 0.5s ease;
-  }
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-extrabold;
   }
 }
 
@@ -54,15 +43,17 @@
   to { background-position: 350% 50%, 350% 50%; }
 }
 
+/* Improve performance and avoid flicker by not using background-attachment: fixed on animated backgrounds.
+   Use will-change and transform hints to push rendering to the GPU where appropriate. */
 .main-container::before {
   content: "";
   position: absolute;
   inset: 0;
   z-index: -1;
+  /* Avoid `fixed` which causes expensive repaints on some browsers when combined with animations */
   background-attachment: scroll;
-  /* Cosmic Pop aurora background */
-  background-image: radial-gradient(ellipse 80% 80% at 50% -20%, hsla(var(--primary), 0.4), transparent),
-                    radial-gradient(ellipse 80% 80% at 50% 120%, hsla(var(--accent), 0.4), transparent);
+  /* Aplicando o fundo Nebula padrão */
+  background-image: radial-gradient(ellipse 80% 80% at 50% -20%, rgba(120, 119, 198, 0.3), transparent);
   animation: aurora 60s linear infinite;
   will-change: background-position, transform;
   backface-visibility: hidden;
@@ -70,7 +61,7 @@
 }
 
 .glass-card {
-    @apply bg-secondary/40 backdrop-blur-lg border border-white/10 rounded-2xl shadow-2xl shadow-black/20 transition-all duration-300;
+    @apply bg-secondary/40 backdrop-blur-lg border border-white/10 rounded-2xl shadow-2xl shadow-black/20;
 }
 
 .interactive-glow {
@@ -83,18 +74,13 @@
   position: absolute;
   left: var(--glow-x, -100%);
   top: var(--glow-y, -100%);
-  width: 200px;
-  height: 200px;
-  background: radial-gradient(circle closest-side, hsla(var(--primary), 0.2), transparent);
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle closest-side, rgba(255, 255, 255, 0.1), transparent);
   transform: translate(-50%, -50%);
   transition: left 0.2s ease-out, top 0.2s ease-out;
   pointer-events: none;
   z-index: 1;
-}
-
-.interactive-glow:hover {
-  border-color: hsla(var(--primary), 0.3);
-  box-shadow: 0 0 20px hsla(var(--primary), 0.1);
 }
 
 @layer utilities {
