@@ -3,6 +3,11 @@
 @tailwind utilities;
 
 @layer base {
+  /* 
+    Theme: Cosmic Pop
+    Inspired by the new app icon, this theme uses a vibrant
+    violet-to-magenta gradient for a modern and energetic feel.
+  */
   :root, .theme-cosmic-pop {
     --background: 224 71% 4%; /* Deep space blue */
     --foreground: 210 40% 98%;
