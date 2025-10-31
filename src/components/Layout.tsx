@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/get-initials";
 import { useIsMobile } from "@/hooks/use-mobile";
 import MobileSidebar from "@/components/MobileSidebar";
+import MobileTabBar from "@/components/MobileTabBar";
 
 type NavItem = {
   to: string;
@@ -36,7 +37,10 @@ const Layout = () => {
   return (
     <div className="flex min-h-screen w-full text-foreground">
       {isMobile ? (
-        <MobileSidebar />
+        <>
+          <MobileSidebar />
+          <MobileTabBar />
+        </>
       ) : (
         <aside className="fixed inset-y-0 left-0 z-20 flex w-24 flex-col items-center border-r border-white/10 bg-secondary/30 backdrop-blur-xl py-6">
           <div className="mb-8 flex items-center justify-center">
@@ -130,11 +134,11 @@ const Layout = () => {
         </aside>
       )}
 
-      <main className={cn("flex-1", !isMobile && "pl-24")}>
-        <div className="mx-auto w-full max-w-7xl px-4 md:px-6 lg:px-8 py-12">
+      <main className={cn("flex-1", !isMobile && "pl-24", isMobile && "pb-24")}>
+        <div className="mx-auto w-full max-w-7xl px-4 md:px-6 lg:px-8 py-10 md:py-12">
           <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-secondary/60 shadow-[0_25px_120px_rgba(76,29,149,0.35)] backdrop-blur-2xl">
-            <div className="pointer-events-none absolute -top-32 left-16 h-72 w-72 rounded-full bg-primary/30 blur-3xl" />
-            <div className="pointer-events-none absolute bottom-[-10%] right-[-5%] h-72 w-72 rounded-full bg-pink-500/20 blur-[110px]" />
+            <div className="pointer-events-none absolute -top-28 left-10 h-64 w-64 rounded-full bg-primary/30 blur-3xl" />
+            <div className="pointer-events-none absolute bottom-[-15%] right-[-8%] h-60 w-60 rounded-full bg-pink-500/20 blur-[110px]" />
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.12),transparent_65%)]" />
             <div className="relative z-10 px-4 py-6 sm:px-8 sm:py-10 md:px-14 md:py-14">
               <Outlet />
