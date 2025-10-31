@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { useProfile } from "@/context/ProfileContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/get-initials";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-is-mobile";
 import MobileSidebar from "@/components/MobileSidebar";
 import { StudyAssistantProvider } from "@/context/StudyAssistantContext";
 
