@@ -10,19 +10,19 @@
     --card-foreground: 210 40% 98%;
     --popover: 224 71% 4%;
     --popover-foreground: 210 40% 98%;
-    --primary: 320 83% 58%; /* Vibrant Pink/Purple */
+    --primary: 258 95% 68%; /* Vibrant Violet */
     --primary-foreground: 355 100% 97%;
     --secondary: 224 30% 15%; /* Lighter space blue */
     --secondary-foreground: 210 40% 98%;
     --muted: 217 33% 17%;
     --muted-foreground: 215 20% 65%;
-    --accent: 175 80% 45%; /* Bright Teal */
+    --accent: 45 95% 55%; /* Vibrant Yellow/Gold */
     --accent-foreground: 210 40% 98%;
     --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
     --border: 217 33% 17%;
     --input: 217 33% 17%;
-    --ring: 320 83% 58%;
+    --ring: 258 95% 68%;
     --radius: 0.75rem;
   }
 }
@@ -53,8 +53,8 @@
   z-index: -1;
   background-attachment: scroll;
   /* Cosmic Pop aurora background */
-  background-image: radial-gradient(ellipse 80% 80% at 50% -20%, hsla(var(--primary), 0.3), transparent),
-                    radial-gradient(ellipse 80% 80% at 50% 120%, hsla(var(--accent), 0.3), transparent);
+  background-image: radial-gradient(ellipse 80% 80% at 50% -20%, hsla(var(--primary), 0.4), transparent),
+                    radial-gradient(ellipse 80% 80% at 50% 120%, hsla(var(--accent), 0.4), transparent);
   animation: aurora 60s linear infinite;
   will-change: background-position, transform;
   backface-visibility: hidden;

@@ -3,7 +3,7 @@ import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabase } from '@/context/SupabaseContext';
 import { Navigate } from 'react-router-dom';
-// Removed: import PageTransition from '@/components/PageTransition';
+import PageTransition from '@/components/PageTransition';
 
 const Register = () => {
   const { user, isLoading } = useSupabase();
@@ -18,8 +18,8 @@ const Register = () => {
   }
 
   return (
-    // Removed: <PageTransition>
-      <div className="min-h-screen flex items-center justify-center p-4">
+    <PageTransition>
+      <div className="min-h-screen flex items-center justify-center p-4 main-container relative overflow-hidden">
         <div className="w-full max-w-md glass-card p-8">
           <h1 className="text-3xl font-bold text-center mb-6">Crie sua conta no EDUKIDS+</h1>
           <Auth
@@ -72,7 +72,7 @@ const Register = () => {
           />
         </div>
       </div>
-    // Removed: </PageTransition>
+    </PageTransition>
   );
 };
 
