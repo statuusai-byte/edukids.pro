@@ -22,9 +22,9 @@ const Header = () => {
   const { isPremium } = usePremium();
 
   return (
-    <header className="sticky top-0 z-10 flex h-20 items-center justify-between bg-background/80 backdrop-blur-lg px-4 sm:px-6">
+    <header className="sticky top-0 z-40 flex h-20 items-center justify-between bg-background/80 backdrop-blur-lg px-4 sm:px-6 border-b border-white/10">
       <div>
-        <h1 className="text-3xl font-bold tracking-tighter bg-gradient-to-r from-primary via-fuchsia-500 to-orange-400 text-transparent bg-clip-text">
+        <h1 className="text-3xl font-black tracking-tighter bg-gradient-to-r from-primary via-pink-400 to-orange-400 text-transparent bg-clip-text">
           EDUKIDS+
         </h1>
       </div>
@@ -34,7 +34,7 @@ const Header = () => {
           <span className="sr-only">Notificações</span>
         </Button>
 
-        <Link to="/store" className="flex items-center gap-2 bg-secondary/50 px-3 py-2 rounded-full hover:bg-secondary">
+        <Link to="/store" className="flex items-center gap-2 bg-secondary/50 px-3 py-2 rounded-full hover:bg-secondary transition-colors">
           <Lightbulb className="h-5 w-5 text-yellow-400" />
           <span className="font-bold text-sm">{isPremium ? '∞' : hints}</span>
           <span className="sr-only">Dicas</span>

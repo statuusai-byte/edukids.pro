@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AgeSelectionModal from "@/components/AgeSelectionModal";
 import PageTransition from "@/components/PageTransition";
-import { Play } from "lucide-react"; // Import Play icon
+import { Play, Rocket, ShieldCheck, Sparkles } from "lucide-react";
 
 const SKIP_REDIRECT_KEY = "edukids_skip_auto_redirect";
 
@@ -38,67 +38,47 @@ const Index = () => {
     setModalOpen(true);
   };
 
-  const starsUrl =
-    "https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?q=80&w=1920&auto=format&fit=crop";
-
   return (
     <PageTransition>
-      <div className="h-screen w-screen overflow-hidden">
-        <section className="relative h-full w-full flex items-center justify-center text-center">
-          {/* More vibrant, playful gradient background */}
+      <div className="min-h-screen w-full overflow-x-hidden">
+        <section className="relative h-screen w-full flex flex-col items-center justify-center text-center p-4">
           <div
             aria-hidden
-            className="absolute inset-0"
+            className="absolute inset-0 z-0"
             style={{
-              background:
-                "radial-gradient(ellipse at 50% 0%, rgba(124,58,237,0.3), transparent 50%), radial-gradient(ellipse at 50% 100%, rgba(236,72,153,0.3), transparent 50%), linear-gradient(180deg, #6366f1, #a855f7)", // Brighter, more playful gradient
-              zIndex: 0,
+              backgroundImage:
+                "radial-gradient(ellipse 80% 50% at 50% -20%, hsla(var(--primary), 0.3), transparent), radial-gradient(ellipse 80% 50% at 50% 120%, hsla(var(--accent), 0.3), transparent)",
             }}
           />
 
-          {/* Subtle stars overlay for depth, adjusted opacity */}
-          <div
-            aria-hidden
-            className="absolute inset-0"
-            style={{
-              backgroundImage: `url(${starsUrl})`,
-              opacity: 0.1, // Reduced opacity
-              mixBlendMode: "screen",
-              zIndex: 1,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          />
-
-          {/* Foreground content */}
           <motion.div
-            className="relative z-20 flex flex-col items-center justify-center px-6"
-            initial={{ opacity: 0, y: 18 }}
+            className="relative z-10 flex flex-col items-center justify-center"
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: "easeOut" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 via-pink-400 to-purple-500 drop-shadow-lg"> {/* Adjusted gradient for title */}
+            <h1 className="text-6xl sm:text-7xl md:text-8xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-br from-white via-pink-300 to-purple-400 text-shadow-lg">
               EDUKIDS+
             </h1>
 
-            <p className="mt-3 max-w-2xl text-sm sm:text-base text-white/90 leading-relaxed">
+            <p className="mt-4 max-w-2xl text-base sm:text-lg text-foreground/80 leading-relaxed">
               Aprendizagem lúdica e segura para crianças — jogos, quizzes e conteúdo pedagógico para todas as idades.
             </p>
 
-            <div className="mt-6 flex gap-3 w-full max-w-md">
+            <div className="mt-8 flex flex-col sm:flex-row gap-4 w-full max-w-md">
               <Button
                 onClick={() => openFor("explore")}
-                className="flex-1 bg-white text-purple-700 font-bold py-3 hover:bg-gray-100" // Adjusted button color
+                className="flex-1 bg-primary text-primary-foreground font-bold text-lg py-6 shadow-lg shadow-primary/30 hover:scale-105 transition-transform"
                 aria-label="Começar a Explorar"
               >
-                <Play className="h-4 w-4 mr-2" /> Começar a Explorar
+                <Play className="h-5 w-5 mr-2" /> Começar a Explorar
               </Button>
             </div>
 
-            <div className="mt-4 flex gap-3 w-full max-w-md">
+            <div className="mt-4 flex gap-4 w-full max-w-md">
               <Button
                 onClick={() => openFor("entrar")}
-                className="flex-1 border border-white/40 text-white/90 py-3 bg-transparent hover:bg-white/10" // Adjusted button style
+                className="flex-1 border border-white/20 text-foreground/90 py-3 bg-white/5 backdrop-blur-sm hover:bg-white/10"
                 aria-label="Entrar"
               >
                 Entrar
@@ -106,37 +86,42 @@ const Index = () => {
 
               <Button
                 onClick={() => openFor("cadastrar")}
-                className="flex-1 border border-white/40 text-white/90 py-3 bg-transparent hover:bg-white/10" // Adjusted button style
+                className="flex-1 border border-white/20 text-foreground/90 py-3 bg-white/5 backdrop-blur-sm hover:bg-white/10"
                 aria-label="Cadastrar"
               >
                 Cadastrar
               </Button>
             </div>
-
-            <div className="mt-4 text-xs text-white/80"> {/* Adjusted text color */}
-              <span>Selecione Entrar ou Cadastrar — em seguida escolha a faixa etária do explorador.</span>
-            </div>
           </motion.div>
-
-          <AgeSelectionModal open={modalOpen} onOpenChange={setModalOpen} action={action} />
         </section>
 
-        {/* Secondary section: benefits (already responsive) */}
-        <section className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="p-4 bg-white/10 rounded-2xl border border-white/20 text-center"> {/* Adjusted card background/border */}
-            <div className="text-2xl font-bold text-white">Aprender Brincando</div>
-            <div className="text-sm text-white/80 mt-2">Atividades lúdicas feitas para envolver crianças e ensinar conceitos.</div>
-          </div>
-          <div className="p-4 bg-white/10 rounded-2xl border border-white/20 text-center"> {/* Adjusted card background/border */}
-            <div className="text-2xl font-bold text-white">Segurança & Controle</div>
-            <div className="text-sm text-white/80 mt-2">Painel dos pais, limite de tempo e PIN parental para compras.</div>
-          </div>
-          <div className="p-4 bg-white/10 rounded-2xl border border-white/20 text-center"> {/* Adjusted card background/border */}
-            <div className="text-2xl font-bold text-white">Dicas & Suporte</div>
-            <div className="text-sm text-white/80 mt-2">Use dicas, assista anúncios para ganhar dicas ou adquira pacotes na Loja.</div>
+        <section className="py-16 sm:py-24 px-4">
+          <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div className="p-6 glass-card">
+              <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
+                <Rocket className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-2xl font-bold">Aprender Brincando</h3>
+              <p className="text-muted-foreground mt-2">Atividades lúdicas feitas para envolver crianças e ensinar conceitos complexos de forma simples.</p>
+            </div>
+            <div className="p-6 glass-card">
+              <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center">
+                <ShieldCheck className="h-8 w-8 text-accent" />
+              </div>
+              <h3 className="text-2xl font-bold">Segurança & Controle</h3>
+              <p className="text-muted-foreground mt-2">Painel dos pais, limite de tempo de tela e PIN parental para total tranquilidade.</p>
+            </div>
+            <div className="p-6 glass-card">
+              <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-yellow-500/20 flex items-center justify-center">
+                <Sparkles className="h-8 w-8 text-yellow-400" />
+              </div>
+              <h3 className="text-2xl font-bold">Dicas & Suporte</h3>
+              <p className="text-muted-foreground mt-2">Assistente de estudos, dicas por recompensa e pacotes de ajuda para nunca deixar uma dúvida para trás.</p>
+            </div>
           </div>
         </section>
       </div>
+      <AgeSelectionModal open={modalOpen} onOpenChange={setModalOpen} action={action} />
     </PageTransition>
   );
 };
