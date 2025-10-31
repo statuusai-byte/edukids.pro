@@ -24,7 +24,7 @@ const Header = () => {
   return (
     <header className="sticky top-0 z-40 flex h-20 items-center justify-between bg-background/80 backdrop-blur-lg px-4 sm:px-6 border-b border-white/10">
       <div>
-        <h1 className="text-3xl font-black tracking-tighter bg-gradient-to-r from-primary via-pink-400 to-orange-400 text-transparent bg-clip-text">
+        <h1 className="text-3xl font-black tracking-tighter bg-gradient-to-r from-primary to-accent text-transparent bg-clip-text">
           EDUKIDS+
         </h1>
       </div>

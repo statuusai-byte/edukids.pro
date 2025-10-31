@@ -140,7 +140,7 @@ const Dashboard = () => {
                   )}
                   {usagePct !== null && (
                     <div className="mt-3 w-full bg-white/5 rounded-full h-2 overflow-hidden">
-                      <div className="h-2 bg-gradient-to-r from-cyan-500 to-blue-600" style={{ width: `${usagePct}%` }} />
+                      <div className="h-2 bg-gradient-to-r from-primary to-cyan-400" style={{ width: `${usagePct}%` }} />
                     </div>
                   )}
                   <div className="mt-3 flex gap-2 flex-wrap">

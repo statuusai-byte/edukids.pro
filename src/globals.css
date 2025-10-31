@@ -10,19 +10,22 @@
     --card-foreground: 210 40% 98%;
     --popover: 224 71% 4%;
     --popover-foreground: 210 40% 98%;
-    --primary: 258 95% 68%; /* Vibrant Violet */
+    
+    /* NEW COLORS from the icon */
+    --primary: 258 95% 68%; /* Vibrant Violet from icon (#8b5cf6) */
     --primary-foreground: 355 100% 97%;
+    --accent: 327 82% 61%; /* Vivid Magenta Pink from icon (#ec4899) */
+    --accent-foreground: 210 40% 98%;
+
     --secondary: 224 30% 15%; /* Lighter space blue */
     --secondary-foreground: 210 40% 98%;
     --muted: 217 33% 17%;
     --muted-foreground: 215 20% 65%;
-    --accent: 45 95% 55%; /* Vibrant Yellow/Gold */
-    --accent-foreground: 210 40% 98%;
     --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
     --border: 217 33% 17%;
     --input: 217 33% 17%;
-    --ring: 258 95% 68%;
+    --ring: 258 95% 68%; /* Match new primary */
     --radius: 0.75rem;
   }
 }

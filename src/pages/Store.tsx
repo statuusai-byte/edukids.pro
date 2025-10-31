@@ -74,7 +74,7 @@ const Store = () => {
   return (
     <PageTransition>
       <div className="space-y-10">
-        <section className="relative rounded-2xl overflow-hidden bg-gradient-to-r from-purple-700 via-indigo-600 to-pink-600 p-8 text-white shadow-lg">
+        <section className="relative rounded-2xl overflow-hidden bg-gradient-to-r from-primary via-purple-600 to-pink-500 p-8 text-white shadow-lg">
           <div className="flex flex-col lg:flex-row items-center gap-6">
             <div className="flex-1">
               <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight">Loja EDUKIDS+</h1>
