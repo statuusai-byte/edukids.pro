@@ -1,6 +1,6 @@
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import { AgeProvider } from "./context/AgeContext";
 import { ProfileProvider } from "./context/ProfileContext";
@@ -55,6 +55,8 @@ const App = () => (
                         <Route path="/success-payment" element={<SuccessPayment />} />
                         <Route path="/test-account" element={<TestAccount />} />
                         <Route path="/admin/grant-premium" element={<AdminGrantPremium />} />
+                        <Route path="/courses" element={<Navigate to="/play-plus" replace />} />
+                        <Route path="/courses/:courseId" element={<Navigate to="/play-plus" replace />} />
 
                         <Route element={<Layout />}>
                           <Route path="/activities" element={<Activities />} />

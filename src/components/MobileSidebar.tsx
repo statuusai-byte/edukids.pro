@@ -18,7 +18,7 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   { to: "/activities", icon: "BookOpen", label: "Atividades", color: "text-cyan-400" },
-  { to: "/courses", icon: "PlaySquare", label: "Cursos", color: "text-purple-400" },
+  { to: "/play-plus", icon: "PlaySquare", label: "Play+", color: "text-purple-400" },
   { to: "/store", icon: "Store", label: "Loja", color: "text-green-400" },
   { to: "/dashboard", icon: "User", label: "Painel dos Pais", color: "text-orange-400" },
 ];
@@ -38,9 +38,9 @@ const MobileSidebar = () => {
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         <Button 
-          variant="default" // Changed from 'ghost'
+          variant="default"
           size="icon" 
-          className="fixed top-4 left-4 z-50 md:hidden bg-white text-black shadow-md hover:bg-gray-100" // Added bg-white, text-black, shadow-md
+          className="fixed top-4 left-4 z-50 md:hidden bg-white text-black shadow-md hover:bg-gray-100"
         >
           <Menu className="h-6 w-6" />
           <span className="sr-only">Abrir menu</span>
@@ -56,7 +56,7 @@ const MobileSidebar = () => {
             <NavLink
               key={item.to}
               to={item.to}
-              onClick={() => setIsOpen(false)} // Close sheet on navigation
+              onClick={() => setIsOpen(false)}
               className={({ isActive }) =>
                 cn(
                   "group flex w-full items-center gap-3 rounded-xl px-3 py-2 transition-all duration-200",
@@ -99,7 +99,7 @@ const MobileSidebar = () => {
         <div className="mt-auto flex w-full flex-col items-stretch gap-3 px-2">
           <NavLink
             to={settingsItem.to}
-            onClick={() => setIsOpen(false)} // Close sheet on navigation
+            onClick={() => setIsOpen(false)}
             className={({ isActive }) =>
               cn(
                 "group flex w-full items-center gap-3 rounded-xl px-3 py-2 transition-all duration-200",

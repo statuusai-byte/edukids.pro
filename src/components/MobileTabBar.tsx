@@ -10,14 +10,14 @@ type TabItem = {
 
 const tabs: TabItem[] = [
   { to: "/activities", icon: "BookOpen", label: "Atividades" },
-  { to: "/courses", icon: "PlaySquare", label: "Cursos" },
+  { to: "/play-plus", icon: "PlaySquare", label: "Play+" },
   { to: "/store", icon: "Store", label: "Loja" },
   { to: "/dashboard", icon: "User", label: "Pais" },
 ];
 
 const isActivePath = (pathname: string, target: string) => {
   if (target === "/dashboard") return pathname.startsWith("/dashboard");
-  if (target === "/courses") return pathname.startsWith("/courses");
+  if (target === "/play-plus") return pathname.startsWith("/play-plus") || pathname.startsWith("/courses");
   if (target === "/activities") return pathname.startsWith("/activities");
   if (target === "/store") return pathname.startsWith("/store");
   return pathname === target;
