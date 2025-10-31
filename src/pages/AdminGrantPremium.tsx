@@ -1,6 +1,3 @@
-dot).">
-"use client";
-
 import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -122,9 +119,7 @@ export default function AdminGrantPremium() {
         if (error) {
           results.push(`${normalized}: erro (${error.message || String(error)})`);
           console.error("Error granting premium for", normalized, error);
-          // continue with others
         } else {
-          // seed local so tests show premium immediately
           try {
             await seedLocalPremiumFor(normalized);
             results.push(`${normalized}: sucesso`);
@@ -136,7 +131,7 @@ export default function AdminGrantPremium() {
 
       dismissToast(toastId);
 
-      const anyErrors = results.some(r => r.includes("erro"));
+      const anyErrors = results.some((r) => r.includes("erro"));
       if (anyErrors) {
         showError("Algumas contas falharam ao receber Premium. Veja o resultado abaixo.");
       } else {
@@ -182,8 +177,8 @@ export default function AdminGrantPremium() {
               Esta página é somente para administração da família. Faça login com uma conta autorizada para acessar.
             </p>
             <div className="flex justify-center gap-3">
-              <Button onClick={() => window.location.href = "/login"}>Ir para Login</Button>
-              <Button variant="outline" onClick={() => window.location.href = "/"}>Voltar para Home</Button>
+              <Button onClick={() => (window.location.href = "/login")}>Ir para Login</Button>
+              <Button variant="outline" onClick={() => (window.location.href = "/")}>Voltar para Home</Button>
             </div>
             <div className="mt-4 text-xs text-muted-foreground">
               Contas permitidas: <strong>{allowedEmailsDescription}</strong>
@@ -233,21 +228,28 @@ export default function AdminGrantPremium() {
 
             <hr className="my-2 border-white/6" />
 
-            {/* New batch button for the allowed admin emails */}
             <Button onClick={handleGrantPremiumForAdmins} disabled={loading} className="bg-yellow-400 text-black">
               {loading ? "Concedendo para listas..." : "Conceder Premium para contas permitidas"}
             </Button>
           </div>
 
           {result && (
-            <div className={`mt-4 p-3 rounded-md text-sm ${result.includes("erro") ? "bg-red-500/20 text-red-400" : "bg-green-500/20 text-green-400"}`}>
+            <div
+              className={`mt-4 p-3 rounded-md text-sm ${
+                result.includes("erro") ? "bg-red-500/20 text-red-400" : "bg-green-500/20 text-green-400"
+              }`}
+            >
               <pre className="whitespace-pre-wrap text-xs">{result}</pre>
             </div>
           )}
 
           <div className="mt-3 text-xs text-muted-foreground">
-            <p>Esta ação invoca a função <code>grant-premium</code> do Supabase Edge Function para atualizar o perfil do usuário no banco de dados e também salva o status Premium localmente.</p>
-            <p className="mt-1">Obs: endereços com vírgula serão normalizados para usar ponto (ex.: <code>statuus,ai@gmail.com</code> → <code>statuus.ai@gmail.com</code>).</p>
+            <p>
+              Esta ação invoca a função <code>grant-premium</code> do Supabase Edge Function para atualizar o perfil do usuário no banco de dados e também salva o status Premium localmente.
+            </p>
+            <p className="mt-1">
+              Obs: endereços com vírgula serão normalizados para usar ponto (ex.: <code>statuus,ai@gmail.com</code> → <code>statuus.ai@gmail.com</code>).
+            </p>
           </div>
         </CardContent>
       </Card>
