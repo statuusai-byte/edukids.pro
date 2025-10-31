@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Gamepad2 } from 'lucide-react';
+import { ArrowLeft, Gamepad2, Star, Shield, Brain } from 'lucide-react';
 import PageTransition from '@/components/PageTransition';
 import ContandoFrutas from '@/components/games/ContandoFrutas';
 import FormandoPalavras from '@/components/games/FormandoPalavras';
@@ -10,6 +10,7 @@ import { TiltCard } from '@/components/TiltCard';
 import { Icon } from '@/components/Icon';
 
 type GameId = 'contando-frutas' | 'formando-palavras' | 'jogo-da-memoria';
+type Difficulty = 'easy' | 'medium' | 'hard';
 
 const gamesList: { id: GameId; title: string; description: string; icon: any }[] = [
   { id: 'contando-frutas', title: 'Contando Frutas', description: 'Conte as frutas e escolha o número certo.', icon: 'Apple' },
@@ -17,21 +18,44 @@ const gamesList: { id: GameId; title: string; description: string; icon: any }[]
   { id: 'jogo-da-memoria', title: 'Jogo da Memória', description: 'Encontre os pares de cartas iguais.', icon: 'Brain' },
 ];
 
+const difficultyLevels: { id: Difficulty; label: string; icon: React.ElementType }[] = [
+  { id: 'easy', label: 'Fácil', icon: Star },
+  { id: 'medium', label: 'Médio', icon: Shield },
+  { id: 'hard', label: 'Difícil', icon: Brain },
+];
+
 const Games = () => {
   const [selectedGame, setSelectedGame] = useState<GameId | null>(null);
+  const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty | null>(null);
+
+  const handleGameSelect = (gameId: GameId) => {
+    setSelectedGame(gameId);
+    setSelectedDifficulty(null); // Reset difficulty when a new game is chosen
+  };
+
+  const handleBack = () => {
+    if (selectedDifficulty) {
+      setSelectedDifficulty(null);
+    } else if (selectedGame) {
+      setSelectedGame(null);
+    }
+  };
 
   const renderGame = () => {
+    if (!selectedGame || !selectedDifficulty) return null;
     switch (selectedGame) {
       case 'contando-frutas':
-        return <ContandoFrutas />;
+        return <ContandoFrutas difficulty={selectedDifficulty} />;
       case 'formando-palavras':
-        return <FormandoPalavras />;
+        return <FormandoPalavras difficulty={selectedDifficulty} />;
       case 'jogo-da-memoria':
-        return <MemoryGame />;
+        return <MemoryGame difficulty={selectedDifficulty} />;
       default:
         return null;
     }
   };
+
+  const currentGame = gamesList.find(g => g.id === selectedGame);
 
   return (
     <PageTransition>
@@ -42,17 +66,13 @@ const Games = () => {
             Central de Jogos
           </h1>
           {selectedGame && (
-            <Button variant="outline" onClick={() => setSelectedGame(null)}>
-              <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para a seleção
+            <Button variant="outline" onClick={handleBack}>
+              <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
             </Button>
           )}
         </div>
 
-        {selectedGame ? (
-          <div className="max-w-2xl mx-auto">
-            {renderGame()}
-          </div>
-        ) : (
+        {!selectedGame && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {gamesList.map((game) => (
               <TiltCard key={game.id} className="flex flex-col">
@@ -66,12 +86,33 @@ const Games = () => {
                 </CardHeader>
                 <CardContent className="flex flex-col flex-grow">
                   <p className="text-muted-foreground flex-grow">{game.description}</p>
-                  <Button onClick={() => setSelectedGame(game.id)} className="mt-4 w-full">
+                  <Button onClick={() => handleGameSelect(game.id)} className="mt-4 w-full">
                     Jogar Agora
                   </Button>
                 </CardContent>
               </TiltCard>
             ))}
+          </div>
+        )}
+
+        {selectedGame && !selectedDifficulty && (
+          <div className="max-w-2xl mx-auto text-center">
+            <h2 className="text-3xl font-bold mb-2">Selecione a Dificuldade</h2>
+            <p className="text-muted-foreground mb-8">Jogo selecionado: {currentGame?.title}</p>
+            <div className="grid grid-cols-1 gap-4">
+              {difficultyLevels.map(level => (
+                <Button key={level.id} onClick={() => setSelectedDifficulty(level.id)} className="h-20 text-2xl" variant="outline">
+                  <level.icon className="mr-4 h-8 w-8" />
+                  {level.label}
+                </Button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {selectedGame && selectedDifficulty && (
+          <div className="max-w-2xl mx-auto">
+            {renderGame()}
           </div>
         )}
       </div>

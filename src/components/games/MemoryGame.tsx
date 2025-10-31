@@ -5,6 +5,12 @@ import { RefreshCw, CheckCircle } from 'lucide-react';
 import { showSuccess, showError } from '@/utils/toast';
 import { cn } from '@/lib/utils';
 
+type Difficulty = 'easy' | 'medium' | 'hard';
+
+interface MemoryGameProps {
+  difficulty: Difficulty;
+}
+
 interface MemoryCard {
   id: number;
   value: string;
@@ -13,7 +19,7 @@ interface MemoryCard {
   isMatched: boolean;
 }
 
-const CARD_PAIRS = [
+const ALL_CARD_PAIRS = [
   { value: 'Maçã', emoji: '🍎' },
   { value: 'Banana', emoji: '🍌' },
   { value: 'Uva', emoji: '🍇' },
@@ -24,15 +30,24 @@ const CARD_PAIRS = [
   { value: 'Melancia', emoji: '🍉' },
 ];
 
-const MemoryGame = () => {
+const difficultyConfig = {
+  easy: { pairs: 4, grid: 'grid-cols-4' },
+  medium: { pairs: 6, grid: 'grid-cols-4' },
+  hard: { pairs: 8, grid: 'grid-cols-4' },
+};
+
+const MemoryGame = ({ difficulty }: MemoryGameProps) => {
   const [cards, setCards] = useState<MemoryCard[]>([]);
-  const [flippedCards, setFlippedCards] = useState<number[]>([]); // IDs of currently flipped cards
+  const [flippedCards, setFlippedCards] = useState<number[]>([]);
   const [matches, setMatches] = useState(0);
   const [turns, setTurns] = useState(0);
-  const [isProcessing, setIsProcessing] = useState(false); // To prevent rapid clicks
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const { pairs: numPairs, grid: gridClass } = difficultyConfig[difficulty];
+  const gamePairs = useMemo(() => ALL_CARD_PAIRS.slice(0, numPairs), [numPairs]);
 
   const initializeGame = useCallback(() => {
-    const shuffledPairs = CARD_PAIRS
+    const shuffledPairs = gamePairs
       .flatMap((pair, index) => [
         { ...pair, id: index * 2, isFlipped: false, isMatched: false },
         { ...pair, id: index * 2 + 1, isFlipped: false, isMatched: false },
@@ -44,7 +59,7 @@ const MemoryGame = () => {
     setMatches(0);
     setTurns(0);
     setIsProcessing(false);
-  }, []);
+  }, [gamePairs]);
 
   useEffect(() => {
     initializeGame();
@@ -70,7 +85,6 @@ const MemoryGame = () => {
       const card2 = cards.find(c => c.id === id2);
 
       if (card1 && card2 && card1.value === card2.value) {
-        // Match found
         setCards(prevCards =>
           prevCards.map(card =>
             card.id === id1 || card.id === id2 ? { ...card, isMatched: true } : card
@@ -81,7 +95,6 @@ const MemoryGame = () => {
         setIsProcessing(false);
         showSuccess("Parabéns! Você encontrou um par!");
       } else {
-        // No match, flip back after a delay
         setTimeout(() => {
           setCards(prevCards =>
             prevCards.map(card =>
@@ -96,7 +109,7 @@ const MemoryGame = () => {
     }
   }, [flippedCards, cards]);
 
-  const isGameComplete = useMemo(() => matches === CARD_PAIRS.length, [matches]);
+  const isGameComplete = useMemo(() => matches === numPairs, [matches, numPairs]);
 
   return (
     <Card className="glass-card p-6">
@@ -106,11 +119,11 @@ const MemoryGame = () => {
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="flex justify-around items-center text-lg font-semibold">
-          <span>Pares: {matches}/{CARD_PAIRS.length}</span>
+          <span>Pares: {matches}/{numPairs}</span>
           <span>Tentativas: {turns}</span>
         </div>
 
-        <div className="grid grid-cols-4 gap-4">
+        <div className={cn("grid gap-4", gridClass)}>
           {cards.map(card => (
             <Button
               key={card.id}
