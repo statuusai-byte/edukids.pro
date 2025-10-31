@@ -1,4 +1,3 @@
-import { Toaster as RadixToaster } from "@/components/ui/toaster";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -27,7 +26,7 @@ const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const SuccessPayment = lazy(() => import("./pages/SuccessPayment"));
 const TestAccount = lazy(() => import("./pages/TestAccount"));
-const AdminGrantPremium = lazy(() => import("./pages/AdminGrantPremium")); // New import
+const AdminGrantPremium = lazy(() => import("./pages/AdminGrantPremium"));
 
 const queryClient = new QueryClient();
 
@@ -45,8 +44,6 @@ const App = () => (
           <ProfileProvider>
             <PremiumProvider>
               <HintsProvider>
-                {/* Radix-style Toaster (for Radix/Custom toasts) */}
-                <RadixToaster />
                 {/* Sonner Toaster (used by sonner toast utility) */}
                 <SonnerToaster />
                 <ErrorBoundary>
@@ -58,7 +55,7 @@ const App = () => (
                       <Route path="/register" element={<Register />} />
                       <Route path="/success-payment" element={<SuccessPayment />} />
                       <Route path="/test-account" element={<TestAccount />} />
-                      <Route path="/admin/grant-premium" element={<AdminGrantPremium />} /> {/* New route */}
+                      <Route path="/admin/grant-premium" element={<AdminGrantPremium />} />
 
                       {/* All other routes use the main Layout */}
                       <Route element={<Layout />}>
