@@ -1,4 +1,4 @@
-import { useParams, Link as RouterLink, Navigate } from "react-router-dom";
+import { useParams, Link as RouterLink, Navigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, CheckCircle, Lock } from "lucide-react";
 import { subjectsData } from "@/data/activitiesData";
@@ -7,7 +7,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { useProgress } from "@/hooks/use-progress";
 import { Icon } from "@/components/Icon";
 import { useScreenTime } from "@/hooks/use-screen-time";
-import { Link } from "react-router-dom";
 
 const SubjectPage = () => {
   const { subject: subjectSlug } = useParams();
