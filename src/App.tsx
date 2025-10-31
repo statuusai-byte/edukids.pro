@@ -55,7 +55,6 @@ const App = () => (
                         <Route path="/success-payment" element={<SuccessPayment />} />
                         <Route path="/test-account" element={<TestAccount />} />
                         <Route path="/admin/grant-premium" element={<AdminGrantPremium />} />
-                        <Route path="/admin/grand-premium" element={<Navigate to="/admin/grant-premium" replace />} />
                         <Route path="/courses" element={<Navigate to="/play-plus" replace />} />
                         <Route path="/courses/:courseId" element={<Navigate to="/play-plus" replace />} />
 
