@@ -16,12 +16,11 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const Layout = lazy(() => import("./components/Layout"));
 const Home = lazy(() => import("./pages/Home"));
 const Activities = lazy(() => import("./pages/Activities"));
-const Courses = lazy(() => import("./pages/Courses"));
+const PlayPlus = lazy(() => import("./pages/PlayPlus"));
 const Store = lazy(() => import("./pages/Store"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Settings = lazy(() => import("./pages/Settings"));
 const SubjectPage = lazy(() => import("./pages/SubjectPage"));
-const CourseDetail = lazy(() => import("./pages/CourseDetail"));
 const LessonPage = lazy(() => import("./pages/LessonPage"));
 const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
@@ -61,8 +60,7 @@ const App = () => (
                           <Route path="/activities" element={<Activities />} />
                           <Route path="/activities/:subject" element={<SubjectPage />} />
                           <Route path="/activities/:subject/:activityId/modules/:moduleId/lessons/:lessonId" element={<LessonPage />} />
-                          <Route path="/courses" element={<Courses />} />
-                          <Route path="/courses/:courseId" element={<CourseDetail />} />
+                          <Route path="/play-plus" element={<PlayPlus />} />
                           <Route path="/store" element={<Store />} />
                           <Route path="/dashboard" element={<Dashboard />} />
                           <Route path="/settings" element={<Settings />} />
