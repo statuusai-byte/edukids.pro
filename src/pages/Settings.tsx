@@ -20,7 +20,7 @@ import {
 } from "@/utils/parental";
 import { useSupabase } from "@/context/SupabaseContext";
 import { supabase } from "@/integrations/supabase/client";
-import PageTransition from "@/components/PageTransition"; // Import PageTransition
+import PageTransition from "@/components/PageTransition";
 
 const INTERSTITIALS_KEY = "edukids_show_interstitials";
 
@@ -31,13 +31,11 @@ const Settings = () => {
   const [uiSounds, setUiSounds] = useState(true);
   const [interstitialsEnabled, setInterstitialsEnabled] = useState(true);
 
-  // Parental PIN UI state
   const [pinModalOpen, setPinModalOpen] = useState(false);
   const [pinMode, setPinMode] = useState<"set" | "verify" | "remove">("set");
   const [requirePinForPurchases, setRequirePinForPurchases] = useState<boolean>(false);
   const [parentPinExists, setParentPinExists] = useState<boolean>(false);
 
-  // pending action (e.g., delete account) requiring verify
   const pendingActionRef = useRef<null | (() => void)>(null);
   const { signOut } = useSupabase();
 
@@ -46,7 +44,7 @@ const Settings = () => {
     try {
       const raw = localStorage.getItem(INTERSTITIALS_KEY);
       if (raw === null) {
-        setInterstitialsEnabled(true); // default: enabled
+        setInterstitialsEnabled(true);
       } else {
         setInterstitialsEnabled(raw === "true");
       }
@@ -149,27 +147,26 @@ const Settings = () => {
   };
 
   return (
-    <PageTransition> {/* Wrap with PageTransition */}
+    <PageTransition>
       <div>
         <h1 className="text-4xl font-bold tracking-tighter mb-8">Configurações</h1>
         <div className="grid gap-8 max-w-2xl">
-          {/* Perfil */}
           <Card className="glass-card">
             <CardHeader>
               <CardTitle>Perfil da Criança</CardTitle>
               <CardDescription>Atualize as informações e preferências.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="flex flex-col sm:flex-row items-center gap-6"> {/* Added flex-col sm:flex-row for responsiveness */}
+              <div className="flex flex-col sm:flex-row items-center gap-6">
                 <AvatarUploader src={avatarUrl} fallback={name.charAt(0).toUpperCase()} onImageSelect={handleAvatarChange} />
-                <div className="space-y-2 flex-grow w-full"> {/* Added w-full */}
+                <div className="space-y-2 flex-grow w-full">
                   <Label htmlFor="name">Nome</Label>
                   <Input id="name" value={name} onChange={(e) => setName(e.target.value)} className="bg-secondary/60 border-white/20" />
                 </div>
               </div>
               <div className="space-y-2">
                 <Label>Faixa Etária</Label>
-                <RadioGroup value={ageGroup ?? ""} onValueChange={(value) => setAgeGroup(value as "4-6" | "7-9" | "10-12")} className="flex flex-wrap space-x-4"> {/* Added flex-wrap */}
+                <RadioGroup value={ageGroup ?? ""} onValueChange={(value) => setAgeGroup(value as "4-6" | "7-9" | "10-12")} className="flex flex-wrap space-x-4">
                   <div className="flex items-center space-x-2"><RadioGroupItem value="4-6" id="r1" /><Label htmlFor="r1">4-6 anos</Label></div>
                   <div className="flex items-center space-x-2"><RadioGroupItem value="7-9" id="r2" /><Label htmlFor="r2">7-9 anos</Label></div>
                   <div className="flex items-center space-x-2"><RadioGroupItem value="10-12" id="r3" /><Label htmlFor="r3">10-12 anos</Label></div>
@@ -178,7 +175,6 @@ const Settings = () => {
             </CardContent>
           </Card>
 
-          {/* Dados e notificações */}
           <Card className="glass-card">
             <CardHeader><CardTitle>Gerenciamento de Dados</CardTitle><CardDescription>Opções avançadas de dados e progresso.</CardDescription></CardHeader>
             <CardContent className="space-y-6">
@@ -190,11 +186,10 @@ const Settings = () => {
             </CardContent>
           </Card>
 
-          {/* Controle Parental */}
           <Card className="glass-card">
             <CardHeader><CardTitle className="flex items-center gap-2"><ShieldCheck className="h-5 w-5 text-primary" />Controle Parental</CardTitle><CardDescription>Defina um PIN para compras e ações sensíveis.</CardDescription></CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"> {/* Added flex-col sm:flex-row for responsiveness */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div><div className="font-medium">Status do PIN</div><div className="text-xs text-muted-foreground">{parentPinExists ? "PIN configurado neste dispositivo." : "Nenhum PIN definido."}</div></div>
                 {parentPinExists ? <Button variant="secondary" onClick={openRemovePin}><ShieldX className="mr-2 h-4 w-4" /> Remover PIN</Button> : <Button onClick={openSetPin}><ShieldCheck className="mr-2 h-4 w-4" /> Definir PIN</Button>}
               </div>
@@ -202,14 +197,13 @@ const Settings = () => {
             </CardContent>
           </Card>
 
-          {/* Exclusão Permanente da Conta */}
           <Card className="glass-card border-red-500/50">
             <CardHeader>
               <CardTitle className="text-red-400">Zona de Perigo</CardTitle>
               <CardDescription>Ações irreversíveis relacionadas à sua conta.</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"> {/* Added flex-col sm:flex-row for responsiveness */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                   <Label className="font-bold text-foreground">Excluir Conta Permanentemente</Label>
                   <p className="text-xs text-muted-foreground mt-1">
@@ -226,7 +220,6 @@ const Settings = () => {
           <Button className="bg-primary hover:bg-primary/90 shadow-lg shadow-primary/30">Salvar Alterações</Button>
         </div>
 
-        {/* Modal PIN */}
         <ParentalPinModal open={pinModalOpen} mode={pinMode} onOpenChange={afterPinModalChange} onVerified={() => { const fn = pendingActionRef.current; pendingActionRef.current = null; if (fn) fn(); }} />
       </div>
     </PageTransition>

@@ -38,17 +38,15 @@ const AgeSelectionModal = ({ open, onOpenChange, action }: AgeSelectionModalProp
   const handleConfirm = () => {
     if (!selected) return;
 
-    // Prevent Home's auto-redirect when we intend to navigate to login/register/activities
     try {
       localStorage.setItem(SKIP_REDIRECT_KEY, "true");
     } catch (e) {
-      // ignore storage errors
+      // ignore
     }
 
     setAgeGroup(selected as any);
     onOpenChange(false);
 
-    // Navigate to the appropriate route based on the requested action
     if (action === "cadastrar") {
       navigate("/register");
     } else if (action === "entrar") {
@@ -79,7 +77,6 @@ const AgeSelectionModal = ({ open, onOpenChange, action }: AgeSelectionModalProp
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md text-center p-6">
-        {/* Wrap all direct children of DialogContent in a single div */}
         <div>
           <DialogHeader>
             <div className="mx-auto mb-3 rounded-full bg-primary/20 p-3 border border-primary/50 w-fit">

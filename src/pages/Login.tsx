@@ -12,7 +12,6 @@ const Login = () => {
     return <div className="min-h-screen flex items-center justify-center">Carregando...</div>;
   }
 
-  // Se o usuário já estiver logado, redireciona para o dashboard
   if (user) {
     return <Navigate to="/dashboard" replace />;
   }

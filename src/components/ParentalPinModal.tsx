@@ -10,7 +10,7 @@ import { showSuccess, showError } from "@/utils/toast";
 
 interface ParentalPinModalProps {
   open: boolean;
-  mode?: "verify" | "set" | "remove"; // set = create/update PIN
+  mode?: "verify" | "set" | "remove";
   onOpenChange: (open: boolean) => void;
   onVerified?: () => void;
   title?: string;
@@ -48,6 +48,7 @@ const ParentalPinModal = ({ open, mode = "verify", onOpenChange, onVerified, tit
     setLoading(false);
     showSuccess("PIN parental definido com sucesso.");
     onOpenChange(false);
+    onVerified?.();
   };
 
   const handleVerify = async () => {
@@ -80,7 +81,6 @@ const ParentalPinModal = ({ open, mode = "verify", onOpenChange, onVerified, tit
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
-        {/* Wrap all direct children of DialogContent in a single div */}
         <div>
           <DialogHeader>
             <DialogTitle>{title ?? (mode === "set" ? "Definir PIN Parental" : mode === "remove" ? "Remover PIN Parental" : "Verificar PIN Parental")}</DialogTitle>
@@ -97,7 +97,7 @@ const ParentalPinModal = ({ open, mode = "verify", onOpenChange, onVerified, tit
                   <Label>Confirme o PIN</Label>
                   <Input value={pinConfirm} onChange={(e) => setPinConfirm(e.target.value)} type="password" />
                 </div>
-                <div className="text-sm text-muted-foreground">O PIN é armazenado localmente (hash). Ele será necessário para aprovar compras e ações sensíveis.</div>
+                <div className="text-sm text-muted-foreground">O PIN é armazenado localmente. Ele será necessário para aprovar compras e ações sensíveis.</div>
               </>
             ) : mode === "remove" ? (
               <>
@@ -105,7 +105,7 @@ const ParentalPinModal = ({ open, mode = "verify", onOpenChange, onVerified, tit
                   <Label>Digite seu PIN atual</Label>
                   <Input value={pin} onChange={(e) => setPin(e.target.value)} type="password" />
                 </div>
-                <div className="text-sm text-muted-foreground">Ao confirmar, o PIN será removido e a exigência de verificação local será desativada.</div>
+                <div className="text-sm text-muted-foreground">Ao confirmar, o PIN será removido.</div>
               </>
             ) : (
               <>
@@ -113,13 +113,13 @@ const ParentalPinModal = ({ open, mode = "verify", onOpenChange, onVerified, tit
                   <Label>Digite seu PIN</Label>
                   <Input value={pin} onChange={(e) => setPin(e.target.value)} type="password" />
                 </div>
-                {!existingPinExists && <div className="text-sm text-muted-foreground">Nenhum PIN configurado — você pode defini-lo nas configurações.</div>}
+                {!existingPinExists && <div className="text-sm text-muted-foreground">Nenhum PIN configurado.</div>}
               </>
             )}
           </div>
 
           <DialogFooter>
-            <div className="flex w-full justify-end gap-2">
+            <div className="flex w-full justify-end gap-2 mt-4">
               <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
               {mode === "set" ? (
                 <Button onClick={handleSet} disabled={loading}>{loading ? "Salvando..." : "Definir PIN"}</Button>

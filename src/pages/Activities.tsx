@@ -7,7 +7,7 @@ import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Icon } from "@/components/Icon";
 import { useScreenTime } from "@/hooks/use-screen-time";
 import { Lock } from "lucide-react";
-import PageTransition from "@/components/PageTransition"; // Import PageTransition
+import PageTransition from "@/components/PageTransition";
 
 const iconColorClass: Record<string, string> = {
     cyan: 'text-cyan-400',
@@ -41,7 +41,7 @@ const bgColorClass: Record<string, string> = {
 
 const Activities = () => {
   const { ageGroup } = useAge();
-  const { isBlocked, limitMinutes } = useScreenTime(); // Removed blockEnabled
+  const { isBlocked, limitMinutes } = useScreenTime();
 
   const subjects = useMemo(() => {
     if (!ageGroup) return [];
@@ -61,7 +61,7 @@ const Activities = () => {
 
   if (isBlocked) {
     return (
-      <PageTransition> {/* Wrap with PageTransition */}
+      <PageTransition>
         <div className="text-center py-16 glass-card rounded-lg">
           <Lock className="h-12 w-12 text-red-400 mx-auto mb-4" />
           <h2 className="text-2xl font-bold">Tempo de Tela Esgotado</h2>
@@ -78,7 +78,7 @@ const Activities = () => {
   }
 
   return (
-    <PageTransition> {/* Wrap with PageTransition */}
+    <PageTransition>
       <div>
         <h1 className="text-4xl font-bold tracking-tighter mb-8">Áreas de Estudo</h1>
         {subjects.length > 0 ? (

@@ -12,7 +12,6 @@ const Register = () => {
     return <div className="min-h-screen flex items-center justify-center">Carregando...</div>;
   }
 
-  // If already authenticated, redirect to dashboard
   if (user) {
     return <Navigate to="/dashboard" replace />;
   }

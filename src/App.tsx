@@ -13,6 +13,7 @@ import { Sparkles } from "lucide-react";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { AnimatePresence } from "framer-motion";
 import Layout from "./components/Layout";
+import AgeGateModal from "./components/AgeGateModal";
 
 // Lazy pages/components
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -80,6 +81,7 @@ const App = () => (
                 <ErrorBoundary>
                   <Suspense fallback={<Fallback />}>
                     <AppRoutes />
+                    <AgeGateModal />
                   </Suspense>
                 </ErrorBoundary>
               </HintsProvider>

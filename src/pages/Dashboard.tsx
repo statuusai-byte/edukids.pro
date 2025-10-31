@@ -1,18 +1,17 @@
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, Clock, TrendingUp, CheckCircle, Gauge, Heart, LogOut, ShieldCheck } from "lucide-react";
 import { TiltCard } from "@/components/TiltCard";
-// import { allCourses } from "@/data/coursesData"; // Removido
 import { subjectsData } from "@/data/activitiesData";
 import { useMemo, useState, useEffect } from "react";
 import { useProgress } from "@/hooks/use-progress";
 import { useScreenTime } from "@/hooks/use-screen-time";
 import { useAge } from "@/context/AgeContext";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ParentalPinModal from "@/components/ParentalPinModal";
 import { hasParentPin } from "@/utils/parental";
 import { useSupabase } from "@/context/SupabaseContext";
-import PageTransition from "@/components/PageTransition"; // Import PageTransition
+import PageTransition from "@/components/PageTransition";
 
 const AGE_GROUPS = ['4-6', '7-9', '10-12'] as const;
 
@@ -21,22 +20,17 @@ const Dashboard = () => {
   const { todayUsage, limitMinutes, setLimitMinutes, blockEnabled, setBlockEnabled, resetToday, addMinutes, isBlocked } = useScreenTime();
   const { ageGroup } = useAge();
   const { signOut } = useSupabase();
+  const navigate = useNavigate();
 
-  // Parental PIN state
   const [isPinVerified, setIsPinVerified] = useState(false);
   const [pinModalOpen, setPinModalOpen] = useState(false);
-  const [pinMode, setPinMode] = useState<"set" | "verify" | "remove">("verify"); // Default to verify
+  const [pinMode, setPinMode] = useState<"set" | "verify" | "remove">("verify");
 
   useEffect(() => {
-    // Check if a PIN exists when the component mounts
-    const pinExists = hasParentPin();
-    if (!pinExists) {
-      setPinMode("set"); // If no PIN, prompt to set one
-      setPinModalOpen(true);
-    } else {
-      setPinMode("verify"); // If PIN exists, prompt to verify
-      setPinModalOpen(true);
+    if (!hasParentPin()) {
+      setPinMode("set");
     }
+    setPinModalOpen(true);
   }, []);
 
   const handlePinVerified = () => {
@@ -45,30 +39,22 @@ const Dashboard = () => {
   };
 
   const handlePinModalClose = (open: boolean) => {
-    setPinModalOpen(open);
     if (!open && !isPinVerified) {
-      // If modal is closed without verification, redirect away from dashboard
-      // This prevents bypassing the PIN by simply closing the modal
-      // You might want to redirect to a safe page like Home or Activities
-      // For now, let's redirect to activities
-      window.location.href = "/activities"; 
+      navigate("/activities");
     }
+    setPinModalOpen(open);
   };
 
-  // Simplificando as estatísticas após a remoção dos cursos
   const stats = useMemo(() => {
     return AGE_GROUPS.map((group) => {
       const activitiesForGroup = subjectsData.flatMap(s => 
         s.activities.filter(a => a.ageGroups.includes(group))
       );
       const totalActivities = activitiesForGroup.length;
-      // Para simplificar, vamos considerar todas as atividades como "gratuitas" por enquanto
-      // ou podemos adicionar uma flag premium nas atividades se necessário no futuro.
       const freeActivities = totalActivities; 
-      const premiumActivities = 0; // Não há mais cursos premium diretamente aqui
-      const recommendedActivities = activitiesForGroup.filter(a => a.modules.some(m => m.lessons.some(l => l.type === 'game'))).length; // Exemplo: atividades com jogos
-      
-      const premiumPct = totalActivities === 0 ? 0 : Math.round((premiumActivities / totalActivities) * 100);
+      const premiumActivities = 0;
+      const recommendedActivities = activitiesForGroup.filter(a => a.modules.some(m => m.lessons.some(l => l.type === 'game'))).length;
+      const premiumPct = 0;
       return { group, total: totalActivities, premium: premiumActivities, free: freeActivities, premiumPct, recommended: recommendedActivities };
     });
   }, []);
@@ -102,7 +88,7 @@ const Dashboard = () => {
                   title: `${s.name}: ${l.title}`,
                   url: `/activities/${s.slug}/${a.id}/modules/${m.id}/lessons/${l.id}`,
                 });
-                break; // uma por módulo
+                break;
               }
             }
           });
@@ -118,17 +104,15 @@ const Dashboard = () => {
   }, [todayUsage, limitMinutes]);
 
   return (
-    <PageTransition> {/* Wrap with PageTransition */}
+    <PageTransition>
       <div>
-        {!isPinVerified && (
-          <ParentalPinModal
-            open={pinModalOpen}
-            mode={pinMode}
-            onOpenChange={handlePinModalClose}
-            onVerified={handlePinVerified}
-            title={pinMode === "set" ? "Definir PIN Parental para o Painel" : "Verificar PIN Parental para o Painel"}
-          />
-        )}
+        <ParentalPinModal
+          open={pinModalOpen}
+          mode={pinMode}
+          onOpenChange={handlePinModalClose}
+          onVerified={handlePinVerified}
+          title={pinMode === "set" ? "Defina um PIN para o Painel" : "Acesso ao Painel dos Pais"}
+        />
 
         {isPinVerified ? (
           <>
@@ -159,7 +143,7 @@ const Dashboard = () => {
                       <div className="h-2 bg-gradient-to-r from-cyan-500 to-blue-600" style={{ width: `${usagePct}%` }} />
                     </div>
                   )}
-                  <div className="mt-3 flex gap-2 flex-wrap"> {/* Added flex-wrap */}
+                  <div className="mt-3 flex gap-2 flex-wrap">
                     <Button size="sm" variant="secondary" onClick={() => addMinutes(5)}>+5 min</Button>
                     <Button size="sm" variant="secondary" onClick={() => resetToday()}>Zerar dia</Button>
                   </div>
@@ -210,7 +194,7 @@ const Dashboard = () => {
                   <div className="text-sm text-muted-foreground">
                     Defina um limite diário e ative o bloqueio automático quando o limite for atingido.
                   </div>
-                  <div className="flex items-center gap-3 flex-wrap"> {/* Added flex-wrap */}
+                  <div className="flex items-center gap-3 flex-wrap">
                     <span className="text-sm">Limite diário (min):</span>
                     <input
                       type="number"
@@ -257,7 +241,7 @@ const Dashboard = () => {
             <div className="mt-8">
               <TiltCard>
                 <CardHeader>
-                  <CardTitle>Balanceamento Free vs Premium por Faixa Etária</CardTitle>
+                  <CardTitle>Balanceamento de Atividades por Faixa Etária</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {stats.map(s => (
@@ -266,36 +250,19 @@ const Dashboard = () => {
                         <div className="font-medium">Faixa {s.group}</div>
                         <div className="text-sm text-muted-foreground">{s.total} atividades • {s.recommended} com jogos</div>
                       </div>
-
-                      <div className="w-full bg-white/5 rounded-full h-4 overflow-hidden">
-                        <div
-                          className="h-4 bg-gradient-to-r from-pink-600 to-purple-600"
-                          style={{ width: `${s.premiumPct}%` }}
-                          role="progressbar"
-                          aria-valuenow={s.premiumPct}
-                          aria-valuemin={0}
-                          aria-valuemax={100}
-                        />
-                      </div>
-
-                      <div className="flex justify-between text-xs text-muted-foreground">
-                        <div>Gratuitas: {s.free}</div>
-                        <div>Premium: {s.premium} ({s.premiumPct}%)</div>
-                      </div>
                     </div>
                   ))}
-                  <div className="text-xs text-muted-foreground">Dica: mantenha um bom mix de atividades gratuitas para atração e atividades premium exclusivas e profundas para conversão.</div>
                 </CardContent>
               </TiltCard>
             </div>
           </>
         ) : (
-          <div className="min-h-screen flex items-center justify-center p-4">
+          <div className="flex h-[60vh] items-center justify-center p-4">
             <div className="glass-card p-6 text-center">
               <ShieldCheck className="h-12 w-12 text-primary mx-auto mb-4" />
               <h2 className="text-2xl font-bold">Acesso Restrito</h2>
               <p className="text-muted-foreground mt-2">
-                Por favor, verifique o PIN parental para acessar o Painel dos Pais.
+                Aguardando verificação do PIN parental...
               </p>
             </div>
           </div>

@@ -8,8 +8,8 @@ import { showLoading, showError, dismissToast, showSuccess } from "@/utils/toast
 import { supabase } from "@/integrations/supabase/client";
 import { useSupabase } from "@/context/SupabaseContext";
 import { useHintsContext } from "@/context/HintsContext";
-import { cn } from "@/lib/utils"; // Import cn for conditional classNames
-import PageTransition from "@/components/PageTransition"; // Import PageTransition
+import { cn } from "@/lib/utils";
+import PageTransition from "@/components/PageTransition";
 
 const Store = () => {
   const { isPremium } = usePremium();
@@ -27,7 +27,6 @@ const Store = () => {
     const loadingToast = showLoading("Iniciando checkout...");
 
     try {
-      // Get token first in a clear, debuggable step
       const sessionRes = await supabase.auth.getSession();
       const token = sessionRes.data.session?.access_token;
 
@@ -73,7 +72,7 @@ const Store = () => {
   ];
 
   return (
-    <PageTransition> {/* Wrap with PageTransition */}
+    <PageTransition>
       <div className="space-y-10">
         <section className="relative rounded-2xl overflow-hidden bg-gradient-to-r from-purple-700 via-indigo-600 to-pink-600 p-8 text-white shadow-lg">
           <div className="flex flex-col lg:flex-row items-center gap-6">
@@ -127,8 +126,8 @@ const Store = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {hintPackages.map((pkg) => (
               <Card key={pkg.name} className={cn(
-                "glass-card p-4 flex flex-col h-full relative", // Added relative for badge positioning
-                pkg.popular ? "border-2 border-primary/50 shadow-primary/20" : "border-white/10", // Highlight popular
+                "glass-card p-4 flex flex-col h-full relative",
+                pkg.popular ? "border-2 border-primary/50 shadow-primary/20" : "border-white/10",
                 "hover:scale-[1.01] transform transition"
               )}>
                 {pkg.popular && (

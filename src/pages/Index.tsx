@@ -26,7 +26,7 @@ const Index = () => {
       } catch (e) {
         // ignore storage errors
       }
-      navigate("/dashboard", { replace: true });
+      navigate("/activities", { replace: true });
     }
   }, [isLoading, ageGroup, navigate]);
 
