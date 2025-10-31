@@ -8,6 +8,7 @@ import { getInitials } from "@/lib/get-initials";
 import { useIsMobile } from "@/hooks/use-mobile";
 import MobileSidebar from "@/components/MobileSidebar";
 import MobileTabBar from "@/components/MobileTabBar";
+import StudyAssistant from "@/components/StudyAssistant";
 
 type NavItem = {
   to: string;
@@ -172,6 +173,8 @@ const Layout = () => {
           </div>
         </div>
       </main>
+
+      <StudyAssistant />
     </div>
   );
 };
