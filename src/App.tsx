@@ -12,10 +12,10 @@ import { HintsProvider } from "./context/HintsContext";
 import { Sparkles } from "lucide-react";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { AnimatePresence } from "framer-motion";
+import Layout from "./components/Layout"; // Importa o Layout diretamente
 
 // Lazy pages/components
 const NotFound = lazy(() => import("./pages/NotFound"));
-const Layout = lazy(() => import("./components/Layout"));
 const IndexPage = lazy(() => import("./pages/Index")); // Root presentation page
 const Activities = lazy(() => import("./pages/Activities"));
 const Store = lazy(() => import("./pages/Store"));
