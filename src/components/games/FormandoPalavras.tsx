@@ -17,6 +17,17 @@ const WORDS: WordData[] = [
   { word: "PATO", syllables: ["PA", "TO"], image: "🦆" },
   { word: "GATO", syllables: ["GA", "TO"], image: "🐈" },
   { word: "FOCA", syllables: ["FO", "CA"], image: "🦭" },
+  { word: "SAPO", syllables: ["SA", "PO"], image: "🐸" },
+  { word: "MACACO", syllables: ["MA", "CA", "CO"], image: "🐒" },
+  { word: "ELEFANTE", syllables: ["E", "LE", "FAN", "TE"], image: "🐘" },
+  { word: "FLOR", syllables: ["FLOR"], image: "🌸" },
+  { word: "SOL", syllables: ["SOL"], image: "☀️" },
+  { word: "LUA", syllables: ["LU", "A"], image: "🌙" },
+  { word: "ARVORE", syllables: ["AR", "VO", "RE"], image: "🌳" },
+  { word: "PEIXE", syllables: ["PEI", "XE"], image: "🐠" },
+  { word: "CACHORRO", syllables: ["CA", "CHO", "RRO"], image: "🐶" },
+  { word: "JANELA", syllables: ["JA", "NE", "LA"], image: "🪟" },
+  { word: "CADEIRA", syllables: ["CA", "DEI", "RA"], image: "🪑" },
 ];
 
 interface FormandoPalavrasProps {

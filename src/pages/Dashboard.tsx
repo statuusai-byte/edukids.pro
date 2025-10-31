@@ -1,7 +1,7 @@
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, Clock, TrendingUp, CheckCircle, Gauge, Heart, LogOut, ShieldCheck } from "lucide-react";
 import { TiltCard } from "@/components/TiltCard";
-import { allCourses } from "@/data/coursesData";
+// import { allCourses } from "@/data/coursesData"; // Removido
 import { subjectsData } from "@/data/activitiesData";
 import { useMemo, useState, useEffect } from "react";
 import { useProgress } from "@/hooks/use-progress";
@@ -55,15 +55,21 @@ const Dashboard = () => {
     }
   };
 
+  // Simplificando as estatísticas após a remoção dos cursos
   const stats = useMemo(() => {
     return AGE_GROUPS.map((group) => {
-      const courses = allCourses.filter(c => c.ageGroups.includes(group));
-      const total = courses.length;
-      const premium = courses.filter(c => c.premium).length;
-      const free = total - premium;
-      const recommended = courses.filter(c => c.recommended).length;
-      const premiumPct = total === 0 ? 0 : Math.round((premium / total) * 100);
-      return { group, total, premium, free, premiumPct, recommended };
+      const activitiesForGroup = subjectsData.flatMap(s => 
+        s.activities.filter(a => a.ageGroups.includes(group))
+      );
+      const totalActivities = activitiesForGroup.length;
+      // Para simplificar, vamos considerar todas as atividades como "gratuitas" por enquanto
+      // ou podemos adicionar uma flag premium nas atividades se necessário no futuro.
+      const freeActivities = totalActivities; 
+      const premiumActivities = 0; // Não há mais cursos premium diretamente aqui
+      const recommendedActivities = activitiesForGroup.filter(a => a.modules.some(m => m.lessons.some(l => l.type === 'game'))).length; // Exemplo: atividades com jogos
+      
+      const premiumPct = totalActivities === 0 ? 0 : Math.round((premiumActivities / totalActivities) * 100);
+      return { group, total: totalActivities, premium: premiumActivities, free: freeActivities, premiumPct, recommended: recommendedActivities };
     });
   }, []);
 
@@ -258,7 +264,7 @@ const Dashboard = () => {
                     <div key={s.group} className="space-y-2">
                       <div className="flex items-center justify-between">
                         <div className="font-medium">Faixa {s.group}</div>
-                        <div className="text-sm text-muted-foreground">{s.total} cursos • {s.recommended} recomendados</div>
+                        <div className="text-sm text-muted-foreground">{s.total} atividades • {s.recommended} com jogos</div>
                       </div>
 
                       <div className="w-full bg-white/5 rounded-full h-4 overflow-hidden">
@@ -273,12 +279,12 @@ const Dashboard = () => {
                       </div>
 
                       <div className="flex justify-between text-xs text-muted-foreground">
-                        <div>Free: {s.free}</div>
+                        <div>Gratuitas: {s.free}</div>
                         <div>Premium: {s.premium} ({s.premiumPct}%)</div>
                       </div>
                     </div>
                   ))}
-                  <div className="text-xs text-muted-foreground">Dica: mantenha um bom mix de cursos gratuitos para atração e cursos premium exclusivos e profundos para conversão.</div>
+                  <div className="text-xs text-muted-foreground">Dica: mantenha um bom mix de atividades gratuitas para atração e atividades premium exclusivas e profundas para conversão.</div>
                 </CardContent>
               </TiltCard>
             </div>

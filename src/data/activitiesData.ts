@@ -503,6 +503,9 @@ export const subjectsData: Subject[] = [
           { id: "a1-mod1", title: "Teoria das Cores", lessons: [
               { id: "a1-l1", title: "Misturando as Cores", content: reading_primary_colors, type: "reading" },
               { id: "a1-l2", title: "Jogo: Pintando com Cores Primárias", description: "Misture as cores para criar novas!", content: "Em breve: jogo de mistura de cores!", type: "game" } // Placeholder for a future game
+          ]},
+          { id: "a1-mod2", title: "Jogos de Memória", lessons: [
+              { id: "a1-l3", title: "Jogo da Memória de Frutas", description: "Combine os pares de frutas neste divertido jogo de memória!", content: "Jogo de memória de frutas", type: "game" }
           ]}
       ]}
     ]
