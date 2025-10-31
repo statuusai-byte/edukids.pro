@@ -30,7 +30,6 @@ const TestAccount = lazy(() => import("./pages/TestAccount"));
 const AdminGrantPremium = lazy(() => import("./pages/AdminGrantPremium"));
 const IconExport = lazy(() => import("./pages/IconExport"));
 const Games = lazy(() => import("./pages/Games"));
-const DailyChallengePage = lazy(() => import("./pages/DailyChallenge")); // Nova página
 
 const queryClient = new QueryClient();
 
@@ -61,7 +60,6 @@ const AppRoutes = () => {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/games" element={<Games />} />
-          <Route path="/daily-challenge" element={<DailyChallengePage />} /> {/* Nova Rota */}
         </Route>
 
         <Route path="*" element={<NotFound />} />

@@ -19,7 +19,6 @@ type NavItem = {
 const navItems: NavItem[] = [
   { to: "/activities", icon: "BookOpen", label: "Atividades", color: "text-cyan-400" },
   { to: "/games", icon: "Gamepad2", label: "Jogos", color: "text-yellow-400" },
-  { to: "/daily-challenge", icon: "CalendarCheck", label: "Desafio", color: "text-pink-400" },
   { to: "/store", icon: "Store", label: "Loja", color: "text-green-400" },
   { to: "/dashboard", icon: "User", label: "Painel dos Pais", color: "text-orange-400" },
 ];
