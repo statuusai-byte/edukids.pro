@@ -14,6 +14,7 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import { AnimatePresence } from "framer-motion";
 import Layout from "./components/Layout";
 import AgeGateModal from "./components/AgeGateModal";
+import ReloadPrompt from "./components/ReloadPrompt";
 
 // Lazy pages/components
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -82,6 +83,7 @@ const App = () => (
                   <Suspense fallback={<Fallback />}>
                     <AppRoutes />
                     <AgeGateModal />
+                    <ReloadPrompt />
                   </Suspense>
                 </ErrorBoundary>
               </HintsProvider>
