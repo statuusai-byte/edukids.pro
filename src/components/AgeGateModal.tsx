@@ -30,25 +30,28 @@ const AgeGateModal = () => {
         // Impede que o modal seja fechado ao clicar fora, forçando uma seleção.
         onInteractOutside={(e) => e.preventDefault()}
       >
-        <DialogHeader>
-          <div className="mx-auto mb-4 rounded-full bg-primary/20 p-3 border border-primary/50 w-fit">
-            <Rocket className="h-8 w-8 text-primary" />
+        {/* Wrap all direct children of DialogContent in a single div */}
+        <div>
+          <DialogHeader>
+            <div className="mx-auto mb-4 rounded-full bg-primary/20 p-3 border border-primary/50 w-fit">
+              <Rocket className="h-8 w-8 text-primary" />
+            </div>
+            <DialogTitle className="text-2xl font-bold">Continue a Aventura!</DialogTitle>
+            <DialogDescription className="text-muted-foreground">
+              Para aceder a esta página, por favor, selecione a faixa etária do explorador.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-6 flex flex-col space-y-3">
+            <Button size="lg" onClick={() => handleSelectAge('4-6')}>
+              4-6 anos
+            </Button>
+            <Button size="lg" onClick={() => handleSelectAge('7-9')}>
+              7-9 anos
+            </Button>
+            <Button size="lg" onClick={() => handleSelectAge('10-12')}>
+              10-12 anos
+            </Button>
           </div>
-          <DialogTitle className="text-2xl font-bold">Continue a Aventura!</DialogTitle>
-          <DialogDescription className="text-muted-foreground">
-            Para aceder a esta página, por favor, selecione a faixa etária do explorador.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="mt-6 flex flex-col space-y-3">
-          <Button size="lg" onClick={() => handleSelectAge('4-6')}>
-            4-6 anos
-          </Button>
-          <Button size="lg" onClick={() => handleSelectAge('7-9')}>
-            7-9 anos
-          </Button>
-          <Button size="lg" onClick={() => handleSelectAge('10-12')}>
-            10-12 anos
-          </Button>
         </div>
       </DialogContent>
     </Dialog>
