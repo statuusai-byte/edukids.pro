@@ -13,8 +13,8 @@ interface SupabaseContextType {
 
 const SupabaseContext = createContext<SupabaseContextType | undefined>(undefined);
 
-const TEST_EMAIL = "eduki.teste@gmail.com";
-const PREMIUM_LOCAL_FLAG = "edukids_is_premium";
+const PREMIUM_LOCAL_FLAG = 'edukids_is_premium';
+const ADMIN_EMAILS = ['statuus.ai@gmail.com', 'eduki.teste@gmail.com'];
 
 export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
@@ -22,7 +22,29 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Lê public.profiles.is_premium e aplica a flag localmente (para o cliente)
+  const emailIsAdmin = (email: string | null | undefined) => {
+    if (!email) return false;
+    return ADMIN_EMAILS.includes(email.toLowerCase());
+  };
+
+  const applyLocalPremiumForAdmin = (targetEmail: string) => {
+    try {
+      localStorage.setItem(PREMIUM_LOCAL_FLAG, 'true');
+      const profile = {
+        name: 'Administrador EDUKIDS+',
+        avatarUrl: 'https://i.pravatar.cc/150?u=admin-edukids',
+        email: targetEmail,
+      };
+      localStorage.setItem('edukids_profile', JSON.stringify(profile));
+      const allPackages = ['matematica', 'portugues', 'ciencias', 'historia', 'geografia', 'ingles'];
+      localStorage.setItem('edukids_help_packages', JSON.stringify(allPackages));
+      showSuccess('Conta administradora com Premium ativado.');
+    } catch (e) {
+      console.error('Failed to activate local premium for admin:', e);
+      showError('Falha ao aplicar modo Premium local.');
+    }
+  };
+
   const syncPremiumFromProfile = async (userId: string | undefined) => {
     if (!userId) return;
     try {
@@ -36,7 +58,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
         try {
           localStorage.setItem(PREMIUM_LOCAL_FLAG, 'true');
         } catch (e) {
-          // ignore localStorage errors
+          console.error('Local storage error while syncing premium:', e);
         }
         showSuccess('Acesso Premium aplicado para sua conta.');
       }
@@ -46,7 +68,6 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    // Ouve mudanças de autenticação
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (event, currentSession) => {
         setSession(currentSession);
@@ -56,29 +77,12 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
         if (event === 'SIGNED_IN') {
           showSuccess('Login realizado com sucesso!');
 
-          // Fallback legacy: conta de teste
-          if (currentSession?.user?.email === TEST_EMAIL) {
-            try {
-              localStorage.setItem(PREMIUM_LOCAL_FLAG, "true");
-              const profile = {
-                name: "Usuário Teste",
-                avatarUrl: "https://i.pravatar.cc/150?u=edukids-test",
-                email: TEST_EMAIL,
-              };
-              localStorage.setItem("edukids_profile", JSON.stringify(profile));
-              const allPackages = ["matematica", "portugues", "ciencias", "historia", "geografia", "ingles"];
-              localStorage.setItem('edukids_help_packages', JSON.stringify(allPackages));
-              showSuccess("Conta de teste Premium ativada!");
-            } catch (e) {
-              console.error("Failed to activate premium test mode:", e);
-              showError("Falha ao ativar o modo de teste Premium.");
-            }
+          const currentEmail = currentSession?.user?.email ?? '';
+          if (emailIsAdmin(currentEmail)) {
+            applyLocalPremiumForAdmin(currentEmail);
           }
 
-          // Sincroniza o is_premium do profile (se existir)
           syncPremiumFromProfile(currentSession?.user?.id);
-
-          // Redireciona para activities por padrão
           navigate('/activities');
         } else if (event === 'SIGNED_OUT') {
           showSuccess('Sessão encerrada.');
@@ -87,12 +91,15 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
       }
     );
 
-    // Busca a sessão inicial e sincroniza premium (caso o usuário já esteja logado)
     supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
       setSession(initialSession);
       setUser(initialSession?.user ?? null);
       setIsLoading(false);
       if (initialSession?.user) {
+        const email = initialSession.user.email ?? '';
+        if (emailIsAdmin(email)) {
+          applyLocalPremiumForAdmin(email);
+        }
         syncPremiumFromProfile(initialSession.user.id);
       }
     }).catch((err) => {
@@ -103,18 +110,16 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
     return () => {
       authListener.subscription.unsubscribe();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate]);
 
   const signOut = async () => {
-    // Limpa dados locais de fallback
     try {
       localStorage.removeItem('edukids_is_premium');
       localStorage.removeItem('edukids_help_packages');
       localStorage.removeItem('edukids_profile');
-      localStorage.removeItem("edukids_force_premium_applied");
+      localStorage.removeItem('edukids_force_premium_applied');
     } catch (e) {
-      // ignore
+      console.warn('Failed to clear local storage on sign out:', e);
     }
 
     const { error } = await supabase.auth.signOut();
