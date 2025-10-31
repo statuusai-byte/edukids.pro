@@ -12,7 +12,7 @@ import {
   type PlayPlusGame,
   type PlayPlusVideo,
 } from "@/data/playPlusData";
-import { Sparkles, Gamepad2, Lock, Clock, Star, PlayCircle, ExternalLink } from "lucide-react";
+import { Sparkles, Gamepad2, Lock, Clock, Star, ExternalLink } from "lucide-react";
 import ContandoFrutas from "@/components/games/ContandoFrutas";
 import FormandoPalavras from "@/components/games/FormandoPalavras";
 
