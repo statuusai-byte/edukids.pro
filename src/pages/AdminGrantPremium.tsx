@@ -15,7 +15,8 @@ const PREMIUM_LOCAL_FLAG = "edukids_is_premium";
 
 export default function AdminGrantPremium() {
   const { user, isLoading: authLoading } = useSupabase();
-  const [email, setEmail] = useState(DEFAULT_ADMIN_EMAIL);
+  // ensure the state is a general string (not a narrow literal type)
+  const [email, setEmail] = useState<string>(DEFAULT_ADMIN_EMAIL);
   const [password, setPassword] = useState("12121212");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<string | null>(null);
@@ -89,7 +90,7 @@ export default function AdminGrantPremium() {
   };
 
   const normalizedUserEmail = user?.email?.toLowerCase();
-  const isAuthorized = normalizedUserEmail ? ADMIN_EMAILS.includes(normalizedUserEmail as typeof ADMIN_EMAILS[number]) : false;
+  const isAuthorized = normalizedUserEmail ? (ADMIN_EMAILS as readonly string[]).includes(normalizedUserEmail) : false;
 
   if (authLoading) {
     return (
