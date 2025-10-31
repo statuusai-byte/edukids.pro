@@ -105,27 +105,20 @@ export type PlayPlusCatalogSummary = {
   totalPremium: number;
   totalFree: number;
   recommended: number;
-  playableNow: number;
 };
 
 export const buildCatalogSummary = (ageGroup: AgeGroup | null): PlayPlusCatalogSummary => {
   const filteredGames = playPlusGames.filter(
-    (game) => !ageGroup || game.ageGroups.includes(ageGroup),
+    (game) => !ageGroup || game.ageGroups.includes(game),
   );
 
   const totalPremium = filteredGames.filter((game) => game.premium).length;
   const recommended = filteredGames.filter((game) => game.recommended).length;
-  const playableNow = filteredGames.filter((game) => isGamePlayableNow(game.component)).length;
 
   return {
     totalGames: filteredGames.length,
     totalPremium,
     totalFree: filteredGames.length - totalPremium,
     recommended,
-    playableNow,
   };
-};
-
-export const isGamePlayableNow = (component: PlayPlusGame["component"]) => {
-  return component === "contando-frutas" || component === "formando-palavras";
 };

@@ -7,12 +7,13 @@ import { usePremium } from "@/context/PremiumContext";
 import {
   playPlusGames,
   buildCatalogSummary,
-  isGamePlayableNow,
   type PlayPlusGame,
 } from "@/data/playPlusData";
 import { Sparkles, Gamepad2, Lock, Star, Clock, ShieldCheck } from "lucide-react";
 import ContandoFrutas from "@/components/games/ContandoFrutas";
 import FormandoPalavras from "@/components/games/FormandoPalavras";
+import MemoryMatch from "@/components/games/MemoryMatch";
+import MissionMath from "@/components/games/MissionMath";
 
 const PlayPlus = () => {
   const { ageGroup } = useAge();
@@ -37,11 +38,6 @@ const PlayPlus = () => {
       navigate("/store");
       return;
     }
-
-    if (!isGamePlayableNow(game.component)) {
-      return;
-    }
-
     setActiveGameId(game.id);
   };
 
@@ -51,6 +47,10 @@ const PlayPlus = () => {
         return <ContandoFrutas />;
       case "formando-palavras":
         return <FormandoPalavras />;
+      case "memory-match":
+        return <MemoryMatch />;
+      case "mission-math":
+        return <MissionMath />;
       default:
         return (
           <div className="rounded-xl border border-dashed border-white/20 p-6 text-center text-muted-foreground">
@@ -101,7 +101,7 @@ const PlayPlus = () => {
           <Card className="glass-card border-white/10">
             <CardContent className="flex flex-col gap-2 p-4">
               <span className="text-xs uppercase tracking-[0.3em] text-emerald-400">Prontos para jogar</span>
-              <strong className="text-3xl font-bold text-emerald-400">{catalogSummary.playableNow}</strong>
+              <strong className="text-3xl font-bold text-emerald-400">{catalogSummary.totalGames}</strong>
               <span className="text-xs text-muted-foreground">Jogos com carregamento imediato dentro do app</span>
             </CardContent>
           </Card>
@@ -140,7 +140,6 @@ const PlayPlus = () => {
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {filteredGames.map((game) => {
               const canAccess = !game.premium || isPremium;
-              const playableNow = isGamePlayableNow(game.component);
 
               return (
                 <Card key={game.id} className="glass-card flex flex-col overflow-hidden border-white/10 transition hover:-translate-y-1">
@@ -162,12 +161,10 @@ const PlayPlus = () => {
                           Recomendado
                         </span>
                       )}
-                      {playableNow && (
-                        <span className="flex items-center gap-1 rounded-full bg-emerald-400/90 px-3 py-1 text-xs font-semibold text-black">
-                          <ShieldCheck className="h-3 w-3" />
-                          Testado no app
-                        </span>
-                      )}
+                      <span className="flex items-center gap-1 rounded-full bg-emerald-400/90 px-3 py-1 text-xs font-semibold text-black">
+                        <ShieldCheck className="h-3 w-3" />
+                        Testado no app
+                      </span>
                     </div>
                     {game.premium && !isPremium && (
                       <div className="absolute bottom-4 left-4 flex items-center gap-2 rounded-full bg-yellow-400/90 px-3 py-1 text-xs font-semibold text-black">
@@ -210,13 +207,10 @@ const PlayPlus = () => {
                     </div>
                     <Button
                       onClick={() => (canAccess ? handlePlayGame(game) : navigate("/store"))}
-                      disabled={!playableNow}
                       className="w-full"
                     >
                       {canAccess
-                        ? playableNow
-                          ? "Jogar agora"
-                          : "Em breve no EDUKIDS+"
+                        ? "Jogar agora"
                         : "Assine para jogar"}
                     </Button>
                   </CardFooter>
