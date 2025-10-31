@@ -54,7 +54,12 @@ const App = () => (
                         <Route path="/register" element={<Register />} />
                         <Route path="/success-payment" element={<SuccessPayment />} />
                         <Route path="/test-account" element={<TestAccount />} />
+
+                        {/* Correct admin route */}
                         <Route path="/admin/grant-premium" element={<AdminGrantPremium />} />
+                        {/* Safe redirect: handle old/typo route and any external links */}
+                        <Route path="/admin/grand-premium" element={<Navigate to="/admin/grant-premium" replace />} />
+
                         <Route path="/courses" element={<Navigate to="/play-plus" replace />} />
                         <Route path="/courses/:courseId" element={<Navigate to="/play-plus" replace />} />
 
