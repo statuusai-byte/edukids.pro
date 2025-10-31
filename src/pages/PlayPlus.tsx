@@ -6,13 +6,11 @@ import { useAge } from "@/context/AgeContext";
 import { usePremium } from "@/context/PremiumContext";
 import {
   playPlusGames,
-  playPlusVideos,
   buildCatalogSummary,
   isGamePlayableNow,
   type PlayPlusGame,
-  type PlayPlusVideo,
 } from "@/data/playPlusData";
-import { Sparkles, Gamepad2, Lock, Clock, Star, ExternalLink } from "lucide-react";
+import { Sparkles, Gamepad2, Lock, Star, Clock, ShieldCheck } from "lucide-react";
 import ContandoFrutas from "@/components/games/ContandoFrutas";
 import FormandoPalavras from "@/components/games/FormandoPalavras";
 
@@ -24,11 +22,6 @@ const PlayPlus = () => {
 
   const filteredGames = useMemo(
     () => playPlusGames.filter((game) => !ageGroup || game.ageGroups.includes(ageGroup)),
-    [ageGroup],
-  );
-
-  const filteredVideos = useMemo(
-    () => playPlusVideos.filter((video) => !ageGroup || video.ageGroups.includes(ageGroup)),
     [ageGroup],
   );
 
@@ -50,15 +43,6 @@ const PlayPlus = () => {
     }
 
     setActiveGameId(game.id);
-  };
-
-  const handleWatchVideo = (video: PlayPlusVideo) => {
-    if (video.premium && !isPremium) {
-      navigate("/store");
-      return;
-    }
-
-    window.open(video.url, "_blank", "noopener,noreferrer");
   };
 
   const renderSelectedGame = (game: PlayPlusGame) => {
@@ -98,7 +82,7 @@ const PlayPlus = () => {
           <div>
             <h1 className="text-4xl font-bold tracking-tighter">Play+ — Aprender brincando</h1>
             <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-              Jogos educativos e desafios rápidos pensados para a faixa etária <strong>{ageGroup}</strong>. Aqui você encontra experiências que desenvolvem lógica, leitura, criatividade e muito mais.
+              Jogos educativos e desafios rápidos pensados para a faixa etária <strong>{ageGroup}</strong>. Cada experiência é curada e testada para garantir diversão com resultados pedagógicos reais.
             </p>
           </div>
           <Button variant="outline" onClick={() => navigate("/store")} className="w-full sm:w-auto">
@@ -109,30 +93,30 @@ const PlayPlus = () => {
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Card className="glass-card border-white/10">
             <CardContent className="flex flex-col gap-2 p-4">
-              <span className="text-xs uppercase tracking-[0.3em] text-primary">Experiências</span>
-              <strong className="text-3xl font-bold">{catalogSummary.totalExperiences}</strong>
-              <span className="text-xs text-muted-foreground">Jogos e vídeos alinhados à idade selecionada</span>
+              <span className="text-xs uppercase tracking-[0.3em] text-primary">Jogos</span>
+              <strong className="text-3xl font-bold">{catalogSummary.totalGames}</strong>
+              <span className="text-xs text-muted-foreground">Atividades interativas alinhadas à idade selecionada</span>
+            </CardContent>
+          </Card>
+          <Card className="glass-card border-white/10">
+            <CardContent className="flex flex-col gap-2 p-4">
+              <span className="text-xs uppercase tracking-[0.3em] text-emerald-400">Prontos para jogar</span>
+              <strong className="text-3xl font-bold text-emerald-400">{catalogSummary.playableNow}</strong>
+              <span className="text-xs text-muted-foreground">Jogos com carregamento imediato dentro do app</span>
             </CardContent>
           </Card>
           <Card className="glass-card border-white/10">
             <CardContent className="flex flex-col gap-2 p-4">
               <span className="text-xs uppercase tracking-[0.3em] text-yellow-400">Premium</span>
               <strong className="text-3xl font-bold text-yellow-400">{catalogSummary.totalPremium}</strong>
-              <span className="text-xs text-muted-foreground">Conteúdos exclusivos para assinantes EDUKIDS+</span>
+              <span className="text-xs text-muted-foreground">Experiências exclusivas com relatórios aprofundados</span>
             </CardContent>
           </Card>
           <Card className="glass-card border-white/10">
             <CardContent className="flex flex-col gap-2 p-4">
-              <span className="text-xs uppercase tracking-[0.3em] text-emerald-400">Grátis</span>
-              <strong className="text-3xl font-bold text-emerald-400">{catalogSummary.totalFree}</strong>
-              <span className="text-xs text-muted-foreground">Experiências liberadas para todos os exploradores</span>
-            </CardContent>
-          </Card>
-          <Card className="glass-card border-white/10">
-            <CardContent className="flex flex-col gap-2 p-4">
-              <span className="text-xs uppercase tracking-[0.3em] text-sky-400">Recomendados</span>
+              <span className="text-xs uppercase tracking-[0.3em] text-sky-400">Destaques</span>
               <strong className="text-3xl font-bold text-sky-400">{catalogSummary.recommended}</strong>
-              <span className="text-xs text-muted-foreground">Sugestões que combinam com a etapa atual de aprendizado</span>
+              <span className="text-xs text-muted-foreground">Jogos avaliados como favoritos pela família EDUKIDS+</span>
             </CardContent>
           </Card>
         </div>
@@ -143,7 +127,7 @@ const PlayPlus = () => {
           <div>
             <h2 className="text-2xl font-bold">Jogos interativos</h2>
             <p className="text-sm text-muted-foreground">
-              Ganhe experiência resolvendo desafios rápidos. Alguns jogos podem ser acessados agora mesmo aqui na plataforma.
+              Ganhe experiência resolvendo desafios rápidos. Todos os títulos abaixo foram revisados pelo time pedagógico para manter a qualidade sem depender de vídeos externos.
             </p>
           </div>
         </div>
@@ -178,6 +162,12 @@ const PlayPlus = () => {
                           Recomendado
                         </span>
                       )}
+                      {playableNow && (
+                        <span className="flex items-center gap-1 rounded-full bg-emerald-400/90 px-3 py-1 text-xs font-semibold text-black">
+                          <ShieldCheck className="h-3 w-3" />
+                          Testado no app
+                        </span>
+                      )}
                     </div>
                     {game.premium && !isPremium && (
                       <div className="absolute bottom-4 left-4 flex items-center gap-2 rounded-full bg-yellow-400/90 px-3 py-1 text-xs font-semibold text-black">
@@ -209,7 +199,10 @@ const PlayPlus = () => {
 
                   <CardFooter className="flex flex-col gap-2 p-4 pt-0">
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span>{game.estimatedTime} por sessão</span>
+                      <span className="flex items-center gap-1">
+                        <Clock className="h-3.5 w-3.5" />
+                        {game.estimatedTime} por sessão
+                      </span>
                       <span>
                         Faixa etária:{" "}
                         <strong className="text-foreground">{game.ageGroups.join(" • ")}</strong>
@@ -252,86 +245,6 @@ const PlayPlus = () => {
           </Card>
         </section>
       )}
-
-      <section className="space-y-4">
-        <div>
-          <h2 className="text-2xl font-bold">Vídeos para aprender e praticar</h2>
-          <p className="text-sm text-muted-foreground">
-            Conteúdos selecionados para assistir no YouTube com segurança. Clique para abrir em uma nova aba.
-          </p>
-        </div>
-
-        {filteredVideos.length === 0 ? (
-          <div className="glass-card p-8 text-center text-muted-foreground">
-            Ainda não temos vídeos recomendados para esta faixa etária.
-          </div>
-        ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {filteredVideos.map((video) => {
-              const canWatch = !video.premium || isPremium;
-
-              return (
-                <Card key={video.id} className="glass-card flex h-full flex-col border-white/10">
-                  <div className="relative h-40 w-full overflow-hidden">
-                    <img
-                      src={video.thumbnail}
-                      alt={video.title}
-                      className="h-full w-full object-cover"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-3 text-xs text-white/85">
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-3.5 w-3.5" />
-                        {video.duration}
-                      </div>
-                    </div>
-                  </div>
-
-                  <CardHeader className="flex-1 space-y-2">
-                    <CardTitle className="text-lg">{video.title}</CardTitle>
-                    <p className="text-sm text-muted-foreground">{video.description}</p>
-                  </CardHeader>
-
-                  <CardContent className="space-y-3">
-                    <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
-                      <span className="rounded-full bg-white/5 px-3 py-1">Canal: {video.channel}</span>
-                      <span className="rounded-full bg-white/5 px-3 py-1">
-                        Faixa: {video.ageGroups.join(" • ")}
-                      </span>
-                      {video.premium && (
-                        <span className="flex items-center gap-1 rounded-full bg-yellow-400/80 px-3 py-1 text-black">
-                          <Lock className="h-3 w-3" />
-                          Premium
-                        </span>
-                      )}
-                    </div>
-                  </CardContent>
-
-                  <CardFooter className="p-4 pt-0">
-                    <Button
-                      className="w-full"
-                      variant={canWatch ? "default" : "outline"}
-                      onClick={() => handleWatchVideo(video)}
-                    >
-                      {canWatch ? (
-                        <>
-                          Assistir no YouTube
-                          <ExternalLink className="ml-2 h-4 w-4" />
-                        </>
-                      ) : (
-                        <>
-                          Assine para assistir
-                          <Lock className="ml-2 h-4 w-4" />
-                        </>
-                      )}
-                    </Button>
-                  </CardFooter>
-                </Card>
-              );
-            })}
-          </div>
-        )}
-      </section>
     </div>
   );
 };
