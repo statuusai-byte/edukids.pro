@@ -2,7 +2,7 @@
 
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import { AgeProvider } from "./context/AgeContext";
 import { ProfileProvider } from "./context/ProfileContext";
@@ -11,6 +11,7 @@ import { PremiumProvider } from "./context/PremiumContext";
 import { HintsProvider } from "./context/HintsContext";
 import { Sparkles } from "lucide-react";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { AnimatePresence } from "framer-motion";
 
 // Lazy pages/components
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -38,6 +39,39 @@ const Fallback = () => (
   </div>
 );
 
+const AppRoutes = () => {
+  const location = useLocation();
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        {/* Root presentation page */}
+        <Route path="/" element={<IndexPage />} />
+
+        {/* Top-level routes that should not be wrapped by the main Layout */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/success-payment" element={<SuccessPayment />} />
+        <Route path="/test-account" element={<TestAccount />} />
+        <Route path="/admin/grant-premium" element={<AdminGrantPremium />} />
+        <Route path="/icon-export" element={<IconExport />} />
+
+        {/* All other routes use the main Layout */}
+        <Route element={<Layout />}>
+          <Route path="/activities" element={<Activities />} />
+          <Route path="/activities/:subject" element={<SubjectPage />} />
+          <Route path="/activities/:subject/:activityId/modules/:moduleId/lessons/:lessonId" element={<LessonPage />} />
+          <Route path="/store" element={<Store />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/games" element={<Games />} /> {/* New Games Route */}
+        </Route>
+
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </AnimatePresence>
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <BrowserRouter>
@@ -50,31 +84,7 @@ const App = () => (
                 <SonnerToaster />
                 <ErrorBoundary>
                   <Suspense fallback={<Fallback />}>
-                    <Routes>
-                      {/* Root presentation page */}
-                      <Route path="/" element={<IndexPage />} />
-
-                      {/* Top-level routes that should not be wrapped by the main Layout */}
-                      <Route path="/login" element={<Login />} />
-                      <Route path="/register" element={<Register />} />
-                      <Route path="/success-payment" element={<SuccessPayment />} />
-                      <Route path="/test-account" element={<TestAccount />} />
-                      <Route path="/admin/grant-premium" element={<AdminGrantPremium />} />
-                      <Route path="/icon-export" element={<IconExport />} />
-
-                      {/* All other routes use the main Layout */}
-                      <Route element={<Layout />}>
-                        <Route path="/activities" element={<Activities />} />
-                        <Route path="/activities/:subject" element={<SubjectPage />} />
-                        <Route path="/activities/:subject/:activityId/modules/:moduleId/lessons/:lessonId" element={<LessonPage />} />
-                        <Route path="/store" element={<Store />} />
-                        <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/settings" element={<Settings />} />
-                        <Route path="/games" element={<Games />} /> {/* New Games Route */}
-                      </Route>
-
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
+                    <AppRoutes />
                   </Suspense>
                 </ErrorBoundary>
               </HintsProvider>
