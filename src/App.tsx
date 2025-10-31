@@ -4,13 +4,12 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import { AgeProvider } from "./context/AgeContext";
 import { ProfileProvider } from "./context/ProfileContext";
-import { SupabaseProvider } from "./context/SupabaseContext";
+import { SupabaseProvider, useSupabase } from "./context/SupabaseContext";
 import { PremiumProvider } from "./context/PremiumContext";
 import { HintsProvider } from "./context/HintsContext";
 import { Sparkles } from "lucide-react";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import AmbientBackground from "@/components/AmbientBackground";
-import AdminRoutes from "@/components/AdminRoutes";
 
 // Lazy pages/components
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -27,6 +26,7 @@ const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const SuccessPayment = lazy(() => import("./pages/SuccessPayment"));
 const TestAccount = lazy(() => import("./pages/TestAccount"));
+const AdminGrantPremium = lazy(() => import("./pages/AdminGrantPremium"));
 
 const queryClient = new QueryClient();
 
@@ -35,6 +35,53 @@ const Fallback = () => (
     <Sparkles className="h-12 w-12 animate-spin text-primary" />
   </div>
 );
+
+const ADMIN_EMAILS = ["statuus.ai@gmail.com", "eduki.teste@gmail.com"];
+
+const AppRoutes = () => {
+  const { user, isLoading } = useSupabase();
+  const isDev = import.meta.env.MODE === "development";
+
+  if (isLoading) {
+    return <Fallback />;
+  }
+
+  const email = user?.email?.toLowerCase();
+  const isAdmin = !!email && ADMIN_EMAILS.includes(email);
+  const showAdminRoute = isDev || isAdmin;
+
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/success-payment" element={<SuccessPayment />} />
+      <Route path="/test-account" element={<TestAccount />} />
+
+      {/* Admin routes registered conditionally (only for admins or in dev) */}
+      {showAdminRoute && <Route path="/admin/grant-premium" element={<AdminGrantPremium />} />}
+
+      {/* Keep a single catch-all for legacy /courses links and redirect to play-plus */}
+      <Route path="/courses/*" element={<Navigate to="/play-plus" replace />} />
+
+      <Route element={<Layout />}>
+        {/* Consolidated Activities block: index, subject and lesson routes grouped */}
+        <Route path="activities">
+          <Route index element={<Activities />} />
+          <Route path=":subject" element={<SubjectPage />} />
+          <Route path=":subject/:activityId/modules/:moduleId/lessons/:lessonId" element={<LessonPage />} />
+        </Route>
+
+        <Route path="/play-plus" element={<PlayPlus />} />
+        <Route path="/store" element={<Store />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/settings" element={<Settings />} />
+      </Route>
+
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -48,35 +95,7 @@ const App = () => (
                   <SonnerToaster />
                   <ErrorBoundary>
                     <Suspense fallback={<Fallback />}>
-                      <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/register" element={<Register />} />
-                        <Route path="/success-payment" element={<SuccessPayment />} />
-                        <Route path="/test-account" element={<TestAccount />} />
-
-                        {/* Admin routes registered conditionally (only for admins or in dev) */}
-                        <AdminRoutes />
-
-                        {/* Keep a single catch-all for legacy /courses links and redirect to play-plus */}
-                        <Route path="/courses/*" element={<Navigate to="/play-plus" replace />} />
-
-                        <Route element={<Layout />}>
-                          {/* Consolidated Activities block: index, subject and lesson routes grouped */}
-                          <Route path="activities">
-                            <Route index element={<Activities />} />
-                            <Route path=":subject" element={<SubjectPage />} />
-                            <Route path=":subject/:activityId/modules/:moduleId/lessons/:lessonId" element={<LessonPage />} />
-                          </Route>
-
-                          <Route path="/play-plus" element={<PlayPlus />} />
-                          <Route path="/store" element={<Store />} />
-                          <Route path="/dashboard" element={<Dashboard />} />
-                          <Route path="/settings" element={<Settings />} />
-                        </Route>
-
-                        <Route path="*" element={<NotFound />} />
-                      </Routes>
+                      <AppRoutes />
                     </Suspense>
                   </ErrorBoundary>
                 </HintsProvider>
