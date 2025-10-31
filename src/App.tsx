@@ -12,11 +12,11 @@ import { HintsProvider } from "./context/HintsContext";
 import { Sparkles } from "lucide-react";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { AnimatePresence } from "framer-motion";
-import Layout from "./components/Layout"; // Importa o Layout diretamente
+import Layout from "./components/Layout";
 
 // Lazy pages/components
 const NotFound = lazy(() => import("./pages/NotFound"));
-const IndexPage = lazy(() => import("./pages/Index")); // Root presentation page
+const IndexPage = lazy(() => import("./pages/Index"));
 const Activities = lazy(() => import("./pages/Activities"));
 const Store = lazy(() => import("./pages/Store"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -29,7 +29,8 @@ const SuccessPayment = lazy(() => import("./pages/SuccessPayment"));
 const TestAccount = lazy(() => import("./pages/TestAccount"));
 const AdminGrantPremium = lazy(() => import("./pages/AdminGrantPremium"));
 const IconExport = lazy(() => import("./pages/IconExport"));
-const Games = lazy(() => import("./pages/Games")); // New page: Games
+const Games = lazy(() => import("./pages/Games"));
+const DailyChallengePage = lazy(() => import("./pages/DailyChallenge")); // Nova página
 
 const queryClient = new QueryClient();
 
@@ -44,10 +45,7 @@ const AppRoutes = () => {
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
-        {/* Root presentation page */}
         <Route path="/" element={<IndexPage />} />
-
-        {/* Top-level routes that should not be wrapped by the main Layout */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/success-payment" element={<SuccessPayment />} />
@@ -55,7 +53,6 @@ const AppRoutes = () => {
         <Route path="/admin/grant-premium" element={<AdminGrantPremium />} />
         <Route path="/icon-export" element={<IconExport />} />
 
-        {/* All other routes use the main Layout */}
         <Route element={<Layout />}>
           <Route path="/activities" element={<Activities />} />
           <Route path="/activities/:subject" element={<SubjectPage />} />
@@ -63,7 +60,8 @@ const AppRoutes = () => {
           <Route path="/store" element={<Store />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/settings" element={<Settings />} />
-          <Route path="/games" element={<Games />} /> {/* New Games Route */}
+          <Route path="/games" element={<Games />} />
+          <Route path="/daily-challenge" element={<DailyChallengePage />} /> {/* Nova Rota */}
         </Route>
 
         <Route path="*" element={<NotFound />} />
@@ -80,7 +78,6 @@ const App = () => (
           <ProfileProvider>
             <PremiumProvider>
               <HintsProvider>
-                {/* Sonner Toaster (used by sonner toast utility) */}
                 <SonnerToaster />
                 <ErrorBoundary>
                   <Suspense fallback={<Fallback />}>

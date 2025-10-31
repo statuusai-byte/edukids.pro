@@ -1,6 +1,6 @@
 import {
   Apple, Sigma, BookOpen, FlaskConical, Globe, Palette, Music, Brain, Code, Bot, PiggyBank, Landmark, SpellCheck,
-  PlaySquare, Store, User, Settings, Gamepad2 // Adicionado Gamepad2
+  PlaySquare, Store, User, Settings, Gamepad2, CalendarCheck // Adicionado CalendarCheck
 } from 'lucide-react';
 import React from 'react';
 
@@ -22,7 +22,8 @@ const iconMap = {
   Store,
   User,
   Settings,
-  Gamepad2, // Adicionado Gamepad2
+  Gamepad2,
+  CalendarCheck, // Adicionado CalendarCheck
 };
 
 export type IconName = keyof typeof iconMap;
