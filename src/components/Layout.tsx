@@ -34,6 +34,13 @@ const Layout = () => {
   const { name, avatarUrl } = useProfile();
   const isMobile = useIsMobile();
 
+  const mobileShellStyle = isMobile
+    ? {
+        paddingTop: "calc(env(safe-area-inset-top, 0px) + 1rem)",
+        paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 4.75rem)",
+      }
+    : undefined;
+
   return (
     <div className="flex min-h-screen w-full text-foreground">
       {isMobile ? (
@@ -103,7 +110,7 @@ const Layout = () => {
             >
               {({ isActive }) => (
                 <>
-                  <div className={cn("flex h-10 w-10 items-center justify-center rounded-lg")}>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg">
                     <Icon
                       name={settingsItem.icon}
                       className={cn(
@@ -134,13 +141,32 @@ const Layout = () => {
         </aside>
       )}
 
-      <main className={cn("flex-1", !isMobile && "pl-24", isMobile && "pb-24")}>
-        <div className="mx-auto w-full max-w-7xl px-4 md:px-6 lg:px-8 py-10 md:py-12">
-          <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-secondary/60 shadow-[0_25px_120px_rgba(76,29,149,0.35)] backdrop-blur-2xl">
-            <div className="pointer-events-none absolute -top-28 left-10 h-64 w-64 rounded-full bg-primary/30 blur-3xl" />
-            <div className="pointer-events-none absolute bottom-[-15%] right-[-8%] h-60 w-60 rounded-full bg-pink-500/20 blur-[110px]" />
+      <main
+        className={cn("flex-1 overflow-x-hidden", !isMobile && "pl-24")}
+        style={mobileShellStyle}
+      >
+        <div
+          className={cn(
+            "mx-auto w-full max-w-7xl px-3 sm:px-6 lg:px-8",
+            isMobile ? "py-4" : "py-10 md:py-12"
+          )}
+        >
+          <div
+            className={cn(
+              "relative rounded-2xl bg-secondary/70 shadow-xl shadow-black/30",
+              "md:rounded-3xl md:border md:border-white/10 md:bg-secondary/60 md:shadow-[0_25px_120px_rgba(76,29,149,0.35)] md:backdrop-blur-2xl",
+              "md:overflow-hidden"
+            )}
+          >
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.12),transparent_65%)]" />
-            <div className="relative z-10 px-4 py-6 sm:px-8 sm:py-10 md:px-14 md:py-14">
+            <div className="pointer-events-none absolute -top-32 left-6 hidden h-64 w-64 rounded-full bg-primary/25 blur-[110px] md:block" />
+            <div className="pointer-events-none absolute bottom-[-20%] right-[-12%] hidden h-60 w-60 rounded-full bg-pink-500/20 blur-[110px] md:block" />
+            <div
+              className={cn(
+                "relative z-10",
+                isMobile ? "px-4 py-6" : "px-6 py-8 sm:px-8 sm:py-10 md:px-14 md:py-14"
+              )}
+            >
               <Outlet />
             </div>
           </div>
