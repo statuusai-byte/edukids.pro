@@ -303,7 +303,7 @@ export const subjectsData: Subject[] = [
           { id: "m2-mod2", title: "Multiplicação é Mágica", lessons: [
               { id: "m2-l3", title: "Tabuadas Divertidas", content: JSON.stringify(genMul(QUIZ_COUNT, 12)), type: "exercise" },
               { id: "m2-l4", title: "Resolvendo Problemas de Vezes", content: "Se você tem 3 caixas com 4 lápis cada, quantos lápis você tem no total?", type: "reading" },
-              { id: "m2-l7", title: "Jogo: Desafio da Multiplicação", description: "Teste suas habilidades de multiplicação em um jogo rápido!", content: JSON.stringify(genMul(QUIZ_COUNT, 10)), type: "game" }
+              { id: "m2-l7", title: "Jogo: Desafio da Multiplicação", description: "Teste suas habilidades de multiplicação em um jogo rápido!", content: "Em breve: um jogo de multiplicação super divertido!", type: "reading" }
           ]},
           { id: "m2-mod3", title: "Dividindo o Tesouro", lessons: [
               { id: "m2-l5", title: "Dividindo em Partes Iguais", content: JSON.stringify(genDiv(QUIZ_COUNT, 12)), type: "exercise" },
@@ -401,7 +401,7 @@ export const subjectsData: Subject[] = [
           ]},
           { id: "i1-mod2", title: "Animals", lessons: [
               { id: "i1-l2", title: "Quiz: Common Animals", content: JSON.stringify(genEnglishAnimals(QUIZ_COUNT)), type: "exercise" },
-              { id: "i1-l3", title: "Jogo: Adivinhe o Animal", description: "Ouça o som e adivinhe qual animal é!", content: "Em breve: jogo de sons de animais!", type: "game" } // Placeholder for a future game
+              { id: "i1-l3", title: "Jogo: Adivinhe o Animal", description: "Ouça o som e adivinhe qual animal é!", content: "Em breve: um jogo de sons de animais super divertido!", type: "reading" }
           ]}
         ]
       }
@@ -464,35 +464,6 @@ export const subjectsData: Subject[] = [
     ]
   },
   {
-    name: "História",
-    slug: "historia",
-    icon: "Landmark",
-    color: "orange",
-    ageGroups: ['7-9','10-12'],
-    activities: [
-      { id: "h1", title: "História do Brasil", description: "Eventos que moldaram o nosso país.", ageGroups: ['7-9','10-12'], icon: "Landmark", modules: [
-          { id: "h1-mod1", title: "Descobrimento e Colonização", lessons: [
-              { id: "h1-l1", title: "A Chegada dos Portugueses", content: reading_discovery_brazil, type: "reading" },
-              { id: "h1-l2", title: "Quiz de Fatos Históricos", content: JSON.stringify(genGeographyCapitals(QUIZ_COUNT)), type: "exercise" }
-          ]}
-      ]}
-    ]
-  },
-  {
-    name: "Geografia",
-    slug: "geografia",
-    icon: "Globe",
-    color: "teal",
-    ageGroups: ['7-9','10-12'],
-    activities: [
-      { id: "g1", title: "Mapas e Lugares", description: "Aprenda sobre estados, capitais e continentes.", ageGroups: ['7-9','10-12'], icon: "Globe", modules: [
-          { id: "g1-mod1", title: "Brasil e o Mundo", lessons: [
-              { id: "g1-l1", title: "Quiz de Capitais", content: JSON.stringify(genGeographyCapitals(QUIZ_COUNT)), type: "exercise" }
-          ]}
-      ]}
-    ]
-  },
-  {
     name: "Artes",
     slug: "artes",
     icon: "Palette",
@@ -502,10 +473,10 @@ export const subjectsData: Subject[] = [
       { id: "a1", title: "Cores e Formas", description: "Explore o mundo das cores e da criatividade.", ageGroups: ['4-6','7-9'], icon: "Palette", modules: [
           { id: "a1-mod1", title: "Teoria das Cores", lessons: [
               { id: "a1-l1", title: "Misturando as Cores", content: reading_primary_colors, type: "reading" },
-              { id: "a1-l2", title: "Jogo: Pintando com Cores Primárias", description: "Misture as cores para criar novas!", content: "Em breve: jogo de mistura de cores!", type: "game" } // Placeholder for a future game
+              { id: "a1-l2", title: "Jogo: Pintando com Cores Primárias", description: "Misture as cores para criar novas!", content: "Em breve: um jogo de mistura de cores super divertido!", type: "reading" }
           ]},
           { id: "a1-mod2", title: "Jogos de Memória", lessons: [
-              { id: "a1-l3", title: "Jogo da Memória de Frutas", description: "Combine os pares de frutas neste divertido jogo de memória!", content: "Jogo de memória de frutas", type: "game" }
+              { id: "a1-l3", title: "Jogo da Memória de Frutas", description: "Combine os pares de frutas neste divertido jogo de memória!", type: "game" }
           ]}
       ]}
     ]
@@ -523,7 +494,7 @@ export const subjectsData: Subject[] = [
           ]},
           { id: "pr1-mod2", title: "Lógica Condicional", lessons: [
               { id: "pr1-l2", title: "Pensando com 'SE-ENTÃO'", content: reading_if_then_logic, type: "reading" },
-              { id: "pr1-l3", title: "Jogo: Desafio de Lógica", description: "Resolva quebra-cabeças de lógica para avançar!", content: "Em breve: jogo de lógica!", type: "game" } // Placeholder for a future game
+              { id: "pr1-l3", title: "Jogo: Desafio de Lógica", description: "Resolva quebra-cabeças de lógica para avançar!", content: "Em breve: um jogo de lógica super divertido!", type: "reading" }
           ]}
       ]}
     ]
@@ -548,7 +519,7 @@ export const subjectsData: Subject[] = [
             lessons: [
               { id: "ef1-l1", title: "O que é Poupar?", content: reading_saving_money, type: "reading" },
               { id: "ef1-l2", title: "Quiz do Dinheirinho", content: JSON.stringify(genFinancialLiteracyQuiz(QUIZ_COUNT)), type: "exercise" },
-              { id: "ef1-l3", title: "Jogo: O Mercado da Economia", description: "Compre e venda produtos para aprender a economizar!", content: "Em breve: jogo de economia!", type: "game" } // Placeholder for a future game
+              { id: "ef1-l3", title: "Jogo: O Mercado da Economia", description: "Compre e venda produtos para aprender a economizar!", content: "Em breve: um jogo de economia super divertido!", type: "reading" }
             ]
           }
         ]

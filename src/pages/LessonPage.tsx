@@ -6,6 +6,7 @@ import { ArrowLeft, Lightbulb, Lock, BookOpen } from "lucide-react"; // Adiciona
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ContandoFrutas from "@/components/games/ContandoFrutas";
 import FormandoPalavras from "@/components/games/FormandoPalavras";
+import MemoryGame from "@/components/games/MemoryGame"; // Importa o novo jogo
 import QuizComponent, { QuizQuestion } from "@/components/QuizComponent";
 import { useProgress } from "@/hooks/use-progress";
 import RewardButton from "@/components/RewardButton";
@@ -147,6 +148,7 @@ const LessonPage = () => {
     if (lesson.type === 'game') {
       if (lesson.title.includes("Contando")) return <ContandoFrutas triggerHint={hintTriggered} />;
       if (lesson.title.includes("Formando") || lesson.title.includes("Montagem")) return <FormandoPalavras triggerHint={hintTriggered} />;
+      if (lesson.title.includes("Jogo da Memória")) return <MemoryGame />; // Adiciona o novo jogo
       return <Card className="glass-card p-6"><CardTitle className="text-xl mb-4">Jogo Interativo</CardTitle><p className="text-muted-foreground">O jogo para esta lição está em desenvolvimento.</p></Card>;
     }
     if (lesson.type === 'exercise' && lesson.content) {
