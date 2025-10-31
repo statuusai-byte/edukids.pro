@@ -5,8 +5,8 @@ import { cn } from "@/lib/utils";
 import { useProfile } from "@/context/ProfileContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/get-initials";
-import { useIsMobile } from "@/hooks/use-mobile"; // Import useIsMobile
-import MobileSidebar from "@/components/MobileSidebar"; // Import MobileSidebar
+import { useIsMobile } from "@/hooks/use-mobile";
+import MobileSidebar from "@/components/MobileSidebar";
 
 type NavItem = {
   to: string;
@@ -31,7 +31,7 @@ const settingsItem: NavItem = {
 
 const Layout = () => {
   const { name, avatarUrl } = useProfile();
-  const isMobile = useIsMobile(); // Use the hook
+  const isMobile = useIsMobile();
 
   return (
     <div className="flex min-h-screen w-full text-foreground">
@@ -131,8 +131,15 @@ const Layout = () => {
       )}
 
       <main className={cn("flex-1", !isMobile && "pl-24")}>
-        <div className="container mx-auto py-8 px-4 md:px-6 lg:px-8">
-          <Outlet />
+        <div className="mx-auto w-full max-w-7xl px-4 md:px-6 lg:px-8 py-12">
+          <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-secondary/60 shadow-[0_25px_120px_rgba(76,29,149,0.35)] backdrop-blur-2xl">
+            <div className="pointer-events-none absolute -top-32 left-16 h-72 w-72 rounded-full bg-primary/30 blur-3xl" />
+            <div className="pointer-events-none absolute bottom-[-10%] right-[-5%] h-72 w-72 rounded-full bg-pink-500/20 blur-[110px]" />
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.12),transparent_65%)]" />
+            <div className="relative z-10 px-4 py-6 sm:px-8 sm:py-10 md:px-14 md:py-14">
+              <Outlet />
+            </div>
+          </div>
         </div>
       </main>
     </div>

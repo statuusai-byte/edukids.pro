@@ -9,6 +9,7 @@ import { PremiumProvider } from "./context/PremiumContext";
 import { HintsProvider } from "./context/HintsContext";
 import { Sparkles } from "lucide-react";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import AmbientBackground from "@/components/AmbientBackground";
 
 // Lazy pages/components
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -38,47 +39,46 @@ const Fallback = () => (
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <BrowserRouter>
-      <SupabaseProvider>
-        <AgeProvider>
-          <ProfileProvider>
-            <PremiumProvider>
-              <HintsProvider>
-                {/* Sonner Toaster (used by sonner toast utility) */}
-                <SonnerToaster />
-                <ErrorBoundary>
-                  <Suspense fallback={<Fallback />}>
-                    <Routes>
-                      {/* Top-level routes that should not be wrapped by the main Layout */}
-                      <Route path="/" element={<Home />} />
-                      <Route path="/login" element={<Login />} />
-                      <Route path="/register" element={<Register />} />
-                      <Route path="/success-payment" element={<SuccessPayment />} />
-                      <Route path="/test-account" element={<TestAccount />} />
-                      <Route path="/admin/grant-premium" element={<AdminGrantPremium />} />
+    <AmbientBackground>
+      <BrowserRouter>
+        <SupabaseProvider>
+          <AgeProvider>
+            <ProfileProvider>
+              <PremiumProvider>
+                <HintsProvider>
+                  <SonnerToaster />
+                  <ErrorBoundary>
+                    <Suspense fallback={<Fallback />}>
+                      <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} />
+                        <Route path="/success-payment" element={<SuccessPayment />} />
+                        <Route path="/test-account" element={<TestAccount />} />
+                        <Route path="/admin/grant-premium" element={<AdminGrantPremium />} />
 
-                      {/* All other routes use the main Layout */}
-                      <Route element={<Layout />}>
-                        <Route path="/activities" element={<Activities />} />
-                        <Route path="/activities/:subject" element={<SubjectPage />} />
-                        <Route path="/activities/:subject/:activityId/modules/:moduleId/lessons/:lessonId" element={<LessonPage />} />
-                        <Route path="/courses" element={<Courses />} />
-                        <Route path="/courses/:courseId" element={<CourseDetail />} />
-                        <Route path="/store" element={<Store />} />
-                        <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/settings" element={<Settings />} />
-                      </Route>
+                        <Route element={<Layout />}>
+                          <Route path="/activities" element={<Activities />} />
+                          <Route path="/activities/:subject" element={<SubjectPage />} />
+                          <Route path="/activities/:subject/:activityId/modules/:moduleId/lessons/:lessonId" element={<LessonPage />} />
+                          <Route path="/courses" element={<Courses />} />
+                          <Route path="/courses/:courseId" element={<CourseDetail />} />
+                          <Route path="/store" element={<Store />} />
+                          <Route path="/dashboard" element={<Dashboard />} />
+                          <Route path="/settings" element={<Settings />} />
+                        </Route>
 
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </Suspense>
-                </ErrorBoundary>
-              </HintsProvider>
-            </PremiumProvider>
-          </ProfileProvider>
-        </AgeProvider>
-      </SupabaseProvider>
-    </BrowserRouter>
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </Suspense>
+                  </ErrorBoundary>
+                </HintsProvider>
+              </PremiumProvider>
+            </ProfileProvider>
+          </AgeProvider>
+        </SupabaseProvider>
+      </BrowserRouter>
+    </AmbientBackground>
   </QueryClientProvider>
 );
 
