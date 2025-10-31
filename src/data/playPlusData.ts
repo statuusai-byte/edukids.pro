@@ -21,11 +21,11 @@ export const playPlusGames: PlayPlusGame[] = [
     title: "Memória Cósmica",
     tagline: "Desvende constelações em partidas relâmpago",
     description:
-      "Encontre os pares de planetas e constelações antes que o tempo acabe. Ideal para exercitar memória e atenção em partidas rápidas.",
+      "Encontre os pares de planetas e constelações antes que o tempo acabe. Ideal para exercitar memória e atenção em partidas rápiddas.",
     premium: false,
     difficulty: "Iniciante",
     estimatedTime: "5 min",
-    ageGroups: ["4-6", "7-9"],
+    ageGroups: ["4-6", "7-9", "10-12"],
     component: "memory-match",
     coverImage:
       "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=1600&auto=format&fit=crop",
@@ -45,7 +45,7 @@ export const playPlusGames: PlayPlusGame[] = [
     premium: true,
     difficulty: "Intermediário",
     estimatedTime: "8 min",
-    ageGroups: ["7-9", "10-12"],
+    ageGroups: ["4-6", "7-9", "10-12"],
     component: "mission-math",
     coverImage:
       "https://images.unsplash.com/photo-1517976487492-5750f3195933?q=80&w=1600&auto=format&fit=crop",
@@ -65,7 +65,7 @@ export const playPlusGames: PlayPlusGame[] = [
     premium: false,
     difficulty: "Iniciante",
     estimatedTime: "4 min",
-    ageGroups: ["4-6"],
+    ageGroups: ["4-6", "7-9", "10-12"],
     component: "contando-frutas",
     coverImage:
       "https://images.unsplash.com/photo-1613745726940-ef06ded97b18?q=80&w=1600&auto=format&fit=crop",
@@ -85,7 +85,7 @@ export const playPlusGames: PlayPlusGame[] = [
     premium: true,
     difficulty: "Intermediário",
     estimatedTime: "6 min",
-    ageGroups: ["4-6", "7-9"],
+    ageGroups: ["4-6", "7-9", "10-12"],
     component: "formando-palavras",
     coverImage:
       "https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=1600&auto=format&fit=crop",
@@ -109,7 +109,7 @@ export type PlayPlusCatalogSummary = {
 
 export const buildCatalogSummary = (ageGroup: AgeGroup | null): PlayPlusCatalogSummary => {
   const filteredGames = playPlusGames.filter(
-    (game) => !ageGroup || game.ageGroups.includes(game),
+    (game) => !ageGroup || game.ageGroups.includes(ageGroup),
   );
 
   const totalPremium = filteredGames.filter((game) => game.premium).length;
