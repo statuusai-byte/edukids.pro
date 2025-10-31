@@ -2,31 +2,31 @@ import { useParams, Link as RouterLink, useNavigate } from "react-router-dom";
 import { subjectsData } from "@/data/activitiesData";
 import { useMemo, useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Lightbulb, Lock, BookOpen } from "lucide-react"; // Adicionado BookOpen
+import { ArrowLeft, Lightbulb, Lock, BookOpen } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ContandoFrutas from "@/components/games/ContandoFrutas";
 import FormandoPalavras from "@/components/games/FormandoPalavras";
-import MemoryGame from "@/components/games/MemoryGame"; // Importa o novo jogo
+import MemoryGame from "@/components/games/MemoryGame";
 import QuizComponent, { QuizQuestion } from "@/components/QuizComponent";
 import { useProgress } from "@/hooks/use-progress";
-import RewardButton from "@/components/RewardButton";
 import { showSuccess, showError } from "@/utils/toast";
 import { usePremium } from "@/context/PremiumContext";
 import { useHintsContext } from "@/context/HintsContext";
 import { useScreenTime } from "@/hooks/use-screen-time";
 import PageTransition from "@/components/PageTransition";
-import { useStudyAssistant } from "@/context/StudyAssistantContext"; // Import useStudyAssistant
+import { useStudyAssistant } from "@/context/StudyAssistantContext";
 
 const LessonPage = () => {
   const { subject: subjectSlug, activityId, moduleId, lessonId } = useParams();
   const navigate = useNavigate();
   const { isLessonCompleted, markLessonCompleted } = useProgress();
   const { isPremium } = usePremium();
-  const { hints, addHints } = useHintsContext();
+  const { hints } = useHintsContext();
   const { isBlocked, limitMinutes, startSession, stopSession } = useScreenTime();
   const { requestLessonHint } = useStudyAssistant();
   
   const [hintTriggered, setHintTriggered] = useState(false);
+  const [quizCurrentQuestionIndex, setQuizCurrentQuestionIndex] = useState(0);
 
   const { subject, activity, module, lesson, lessonIndex, moduleIndex } = useMemo(() => {
     const s = subjectsData.find(sub => sub.slug === subjectSlug);
@@ -38,35 +38,21 @@ const LessonPage = () => {
     if (!m) return { subject: s, activity: a, module: null, lesson: null, lessonIndex: -1, moduleIndex: mi };
     const li = m.lessons.findIndex(l => l.id === lessonId);
     const l = li >= 0 ? m.lessons[li] : null;
-    return { subject: s, activity: a, module: m, lesson: l, lessonIndex: li, moduleIndex: li };
+    return { subject: s, activity: a, module: m, lesson: l, lessonIndex: li, moduleIndex: mi };
   }, [subjectSlug, activityId, moduleId, lessonId]);
 
-  // Screen Time Tracking: Start session when entering lesson, stop when leaving
   useEffect(() => {
-    if (lesson && !isBlocked) {
-      startSession();
-    }
-    return () => {
-      stopSession();
-    };
+    if (lesson && !isBlocked) startSession();
+    return () => stopSession();
   }, [lesson, isBlocked, startSession, stopSession]);
 
-  // Reset hint trigger when the lesson changes
   useEffect(() => {
     setHintTriggered(false);
+    setQuizCurrentQuestionIndex(0);
   }, [lessonId]);
 
   if (!subject || !activity || !module || !lesson) {
-    return (
-      <PageTransition>
-        <div>
-          <h1 className="text-2xl font-bold">Lição não encontrada</h1>
-          <Button asChild variant="link">
-            <RouterLink to={`/activities/${subjectSlug}/${activityId}`}>Voltar para Atividade</RouterLink>
-          </Button>
-        </div>
-      </PageTransition>
-    );
+    return <PageTransition><div><h1>Lição não encontrada</h1></div></PageTransition>;
   }
 
   if (isBlocked) {
@@ -75,19 +61,12 @@ const LessonPage = () => {
         <div className="text-center py-16 glass-card rounded-lg">
           <Lock className="h-12 w-12 text-red-400 mx-auto mb-4" />
           <h2 className="text-2xl font-bold">Tempo de Tela Esgotado</h2>
-          <p className="text-muted-foreground mt-2">
-            O limite de {limitMinutes} minutos foi atingido. O acesso às atividades está bloqueado.
-          </p>
-          <p className="text-sm text-muted-foreground mt-4">
-            Para continuar, um adulto deve desativar o bloqueio ou aumentar o limite no Painel dos Pais.
-          </p>
+          <p className="text-muted-foreground mt-2">O limite de {limitMinutes} minutos foi atingido.</p>
           <RouterLink to="/dashboard" className="mt-4 inline-block text-primary underline">Ir para Painel dos Pais</RouterLink>
         </div>
       </PageTransition>
     );
   }
-
-  const completed = isLessonCompleted(subject.slug, activity.id, module.id, lesson.id);
 
   const goNext = () => {
     const nextIndex = lessonIndex + 1;
@@ -95,22 +74,7 @@ const LessonPage = () => {
       navigate(`/activities/${subject.slug}/${activity.id}/modules/${module.id}/lessons/${module.lessons[nextIndex].id}`);
       return;
     }
-    const nextModuleIndex = moduleIndex + 1;
-    if (nextModuleIndex < activity.modules.length) {
-      const nextModule = activity.modules[nextModuleIndex];
-      navigate(`/activities/${subject.slug}/${activity.id}/modules/${nextModule.id}/lessons/${nextModule.lessons[0].id}`);
-      return;
-    }
     showSuccess("Você chegou ao fim desta atividade.");
-  };
-
-  const goPrev = () => {
-    const prevIndex = lessonIndex - 1;
-    if (prevIndex >= 0) {
-      navigate(`/activities/${subject.slug}/${activity.id}/modules/${module.id}/lessons/${module.lessons[prevIndex].id}`);
-      return;
-    }
-    navigate(`/activities/${subject.slug}/${activity.id}`);
   };
 
   const markCompleted = () => {
@@ -119,112 +83,78 @@ const LessonPage = () => {
   };
 
   const handleRequestLessonHint = useCallback(() => {
-    let questionText = lesson.title; // Default to lesson title
+    let questionText = lesson.title;
     if (lesson.type === 'exercise' && lesson.content) {
       try {
         const questions: QuizQuestion[] = JSON.parse(lesson.content);
-        if (questions.length > 0) {
-          // For quizzes, use the current question text
-          questionText = questions[0].question; // Assuming QuizComponent handles current question internally
+        if (questions[quizCurrentQuestionIndex]) {
+          questionText = questions[quizCurrentQuestionIndex].question;
         }
-      } catch (e) {
-        console.error("Failed to parse quiz content for hint:", e);
-      }
+      } catch (e) { console.error("Failed to parse quiz content for hint:", e); }
     }
-    // For games, we might need more specific logic if the game has dynamic questions
-    // For now, lesson.title is a good fallback.
-
-    requestLessonHint(questionText, () => {
-      setHintTriggered(true);
-    });
-  }, [lesson, requestLessonHint]);
-
-  const handleQuizHintSuggested = useCallback(() => {
-    // This callback is still needed by QuizComponent, even if it doesn't set state here.
-    // It could be used for analytics or other side effects.
-  }, []);
+    requestLessonHint(questionText, () => setHintTriggered(true));
+  }, [lesson, requestLessonHint, quizCurrentQuestionIndex]);
 
   const renderLessonContent = () => {
     if (lesson.type === 'game') {
-      if (lesson.title.includes("Contando")) return <ContandoFrutas triggerHint={hintTriggered} />;
-      if (lesson.title.includes("Formando") || lesson.title.includes("Montagem")) return <FormandoPalavras triggerHint={hintTriggered} />;
-      if (lesson.title.includes("Jogo da Memória")) return <MemoryGame />; // Adiciona o novo jogo
-      return <Card className="glass-card p-6"><CardTitle className="text-xl mb-4">Jogo Interativo</CardTitle><p className="text-muted-foreground">O jogo para esta lição está em desenvolvimento.</p></Card>;
+      if (lesson.title.includes("Contando")) return <ContandoFrutas difficulty="easy" triggerHint={hintTriggered} />;
+      if (lesson.title.includes("Formando")) return <FormandoPalavras difficulty="easy" triggerHint={hintTriggered} />;
+      if (lesson.title.includes("Jogo da Memória")) return <MemoryGame difficulty="medium" />;
+      return <Card className="glass-card p-6"><p>Jogo em desenvolvimento.</p></Card>;
     }
     if (lesson.type === 'exercise' && lesson.content) {
       try {
         const questions: QuizQuestion[] = JSON.parse(lesson.content);
-        if (questions.length > 0) return <QuizComponent questions={questions} onQuizComplete={markCompleted} triggerHint={hintTriggered} onHintSuggested={handleQuizHintSuggested} />;
+        return <QuizComponent 
+          questions={questions} 
+          onQuizComplete={markCompleted} 
+          triggerHint={hintTriggered} 
+          onHintSuggested={handleRequestLessonHint}
+          onQuestionChange={setQuizCurrentQuestionIndex}
+        />;
       } catch (e) { console.error("Failed to parse quiz content:", e); }
     }
-    // Render content for 'reading' type or if videoUrl is absent
     return (
       <Card className="glass-card p-6">
-        <CardHeader>
-          <CardTitle className="text-2xl flex items-center gap-2">
-            <BookOpen className="h-6 w-6 text-primary" />
-            {lesson.title}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-foreground/90 mb-4 whitespace-pre-wrap">{lesson.content}</p>
-          <p className="text-sm text-muted-foreground">
-            Esperamos que você goste de aprender com este ebook ilustrado!
-          </p>
-        </CardContent>
+        <CardHeader><CardTitle className="flex items-center gap-2"><BookOpen className="h-6 w-6 text-primary" />{lesson.title}</CardTitle></CardHeader>
+        <CardContent><p className="whitespace-pre-wrap">{lesson.content}</p></CardContent>
       </Card>
     );
   };
 
-  const isQuizOrGame = (lesson.type === 'exercise' && lesson.content?.trim().startsWith('[')) || lesson.type === 'game';
-  const hasPrev = lessonIndex > 0 || moduleIndex > 0;
-  const hasNext = (lessonIndex < module.lessons.length - 1) || (moduleIndex < activity.modules.length - 1);
+  const isQuizOrGame = lesson.type === 'exercise' || lesson.type === 'game';
 
   return (
     <PageTransition>
       <div>
         <div className="flex items-center gap-4 mb-6">
-          <Button asChild variant="outline" size="icon"><RouterLink to={`/activities/${subject.slug}/${activity.id}`}><ArrowLeft className="h-4 w-4" /></RouterLink></Button>
-          <div><h1 className="text-2xl font-bold">{lesson.title}</h1><p className="text-muted-foreground">{activity.title} • {module.title}</p></div>
+          <Button asChild variant="outline" size="icon"><RouterLink to={`/activities/${subject.slug}`}><ArrowLeft className="h-4 w-4" /></RouterLink></Button>
+          <div><h1 className="text-2xl font-bold">{lesson.title}</h1><p className="text-muted-foreground">{activity.title}</p></div>
         </div>
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             {renderLessonContent()}
             <div className="flex gap-4 mt-4 items-center flex-wrap">
-              <Button variant="outline" onClick={goPrev} disabled={!hasPrev}>Anterior</Button>
-              <Button onClick={goNext} disabled={!hasNext}>Próxima</Button>
+              <Button onClick={goNext} disabled={lessonIndex >= module.lessons.length - 1}>Próxima</Button>
               <div className="ml-auto flex items-center gap-4 flex-wrap justify-end">
                 {isQuizOrGame && (
-                  <div className="flex items-center gap-2 flex-wrap justify-end">
-                    {/* Dedicated hint button for the lesson */}
-                    <Button onClick={handleRequestLessonHint} className="bg-yellow-600 hover:bg-yellow-700 text-black" disabled={hintTriggered}>
-                      <Lightbulb className="mr-2 h-4 w-4" />
-                      {isPremium ? "Pedir Dica Premium" : `Pedir Dica (Saldo: ${hints})`}
-                    </Button>
-                    {!isPremium && hints <= 0 && (
-                      <Button onClick={() => showError("Você está sem dicas! Compre mais na loja ou assista a um vídeo para ganhar uma.")} className="bg-blue-600 hover:bg-blue-700 text-white">
-                        <Lightbulb className="mr-2 h-4 w-4" />
-                        Obter Dica
-                      </Button>
-                    )}
-                    {!isPremium && hints > 0 && <RewardButton onReward={() => addHints(1)} label="Ganhar Dica (Anúncio)" />}
-                  </div>
+                  <Button onClick={handleRequestLessonHint} className="bg-yellow-600 hover:bg-yellow-700 text-black" disabled={hintTriggered}>
+                    <Lightbulb className="mr-2 h-4 w-4" />
+                    {isPremium ? "Usar Dica Premium" : `Usar 1 Dica (Saldo: ${hints})`}
+                  </Button>
                 )}
-                {!isQuizOrGame && <Button className="bg-green-600 hover:bg-green-700" onClick={markCompleted}>{completed ? "Revisar (Concluído)" : "Marcar como Concluída"}</Button>}
+                {!isQuizOrGame && <Button className="bg-green-600 hover:bg-green-700" onClick={markCompleted}>Marcar como Concluída</Button>}
               </div>
             </div>
           </div>
           <aside>
             <Card className="glass-card p-4">
-              <CardHeader><CardTitle>Índice da Pasta</CardTitle></CardHeader>
+              <CardHeader><CardTitle>Índice da Atividade</CardTitle></CardHeader>
               <CardContent className="space-y-2">
-                {module.lessons.map((l, idx) => (
+                {activity.modules.flatMap(m => m.lessons).map((l, idx) => (
                   <div key={l.id} className={`p-2 rounded-md ${l.id === lesson.id ? 'bg-primary/10 border border-primary/30' : 'hover:bg-white/5'}`}>
-                    <RouterLink to={`/activities/${subject.slug}/${activity.id}/modules/${module.id}/lessons/${l.id}`}>
-                      <div className="flex items-center justify-between">
-                        <div><div className="font-medium">{idx + 1}. {l.title}</div><div className="text-xs text-muted-foreground">{l.description}</div></div>
-                        <div className="text-xs text-muted-foreground">{isLessonCompleted(subject.slug, activity.id, module.id, l.id) ? 'Concluída' : 'Aberta'}</div>
-                      </div>
+                    <RouterLink to={`/activities/${subject.slug}/${activity.id}/modules/${l.id.split('-')[0]}-mod${l.id.split('-')[1].substring(0,1)}/lessons/${l.id}`}>
+                      <div className="font-medium">{idx + 1}. {l.title}</div>
                     </RouterLink>
                   </div>
                 ))}
