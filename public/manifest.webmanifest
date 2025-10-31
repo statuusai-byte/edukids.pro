@@ -2,66 +2,23 @@
   "name": "EDUKIDS+",
   "short_name": "EDUKIDS",
   "description": "Aprendizagem lúdica e interativa para crianças — EduKids+",
-  "theme_color": "#7c3aed",
+  "theme_color": "#8b5cf6",
   "background_color": "#0f172a",
   "start_url": "/",
   "display": "standalone",
   "scope": "/",
   "icons": [
     {
-      "src": "/icons/icon-192.svg",
+      "src": "/icons/icon-192.png",
       "sizes": "192x192",
-      "type": "image/svg+xml",
-      "purpose": "any"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-512.svg",
+      "src": "/icons/icon-512.png",
       "sizes": "512x512",
-      "type": "image/svg+xml",
-      "purpose": "maskable"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "Atividades",
-      "short_name": "Atividades",
-      "description": "Ver todas as atividades de estudo",
-      "url": "/activities",
-      "icons": [{ "src": "/icons/icon-192.svg", "sizes": "192x192" }]
-    },
-    {
-      "name": "Jogos",
-      "short_name": "Jogos",
-      "description": "Ir para a Central de Jogos",
-      "url": "/games",
-      "icons": [{ "src": "/icons/icon-192.svg", "sizes": "192x192" }]
-    },
-    {
-      "name": "Painel dos Pais",
-      "short_name": "Painel",
-      "description": "Acessar o painel de controle dos pais",
-      "url": "/dashboard",
-      "icons": [{ "src": "/icons/icon-192.svg", "sizes": "192x192" }]
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "/screenshots/screen-1.svg",
-      "type": "image/svg+xml",
-      "sizes": "1080x1920",
-      "form_factor": "narrow"
-    },
-    {
-      "src": "/screenshots/screen-2.svg",
-      "type": "image/svg+xml",
-      "sizes": "1080x1920",
-      "form_factor": "narrow"
-    },
-    {
-      "src": "/screenshots/screen-3.svg",
-      "type": "image/svg+xml",
-      "sizes": "1080x1920",
-      "form_factor": "narrow"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
