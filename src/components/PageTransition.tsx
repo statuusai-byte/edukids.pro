@@ -27,11 +27,9 @@ const PageTransition = ({ children }: { children: ReactNode }) => {
   const reduceMotion = usePrefersReducedMotion();
 
   if (reduceMotion) {
-    // Se a animação for reduzida, apenas renderiza os filhos diretamente dentro de um fragmento.
     return <>{children}</>;
   }
 
-  // Envolve os filhos em um div para garantir que motion.div sempre receba um único elemento.
   return (
     <motion.div
       initial="initial"
@@ -40,7 +38,7 @@ const PageTransition = ({ children }: { children: ReactNode }) => {
       variants={pageVariants}
       transition={pageTransition}
     >
-      <div>{children}</div>
+      {children}
     </motion.div>
   );
 };
