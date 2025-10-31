@@ -55,18 +55,20 @@ const App = () => (
                         <Route path="/success-payment" element={<SuccessPayment />} />
                         <Route path="/test-account" element={<TestAccount />} />
 
-                        {/* Correct admin route */}
+                        {/* Admin panel */}
                         <Route path="/admin/grant-premium" element={<AdminGrantPremium />} />
-                        {/* Safe redirect: handle old/typo route and any external links */}
-                        <Route path="/admin/grand-premium" element={<Navigate to="/admin/grant-premium" replace />} />
 
-                        <Route path="/courses" element={<Navigate to="/play-plus" replace />} />
-                        <Route path="/courses/:courseId" element={<Navigate to="/play-plus" replace />} />
+                        {/* Keep a single catch-all for legacy /courses links and redirect to play-plus */}
+                        <Route path="/courses/*" element={<Navigate to="/play-plus" replace />} />
 
                         <Route element={<Layout />}>
-                          <Route path="/activities" element={<Activities />} />
-                          <Route path="/activities/:subject" element={<SubjectPage />} />
-                          <Route path="/activities/:subject/:activityId/modules/:moduleId/lessons/:lessonId" element={<LessonPage />} />
+                          {/* Consolidated Activities block: index, subject and lesson routes grouped */}
+                          <Route path="activities">
+                            <Route index element={<Activities />} />
+                            <Route path=":subject" element={<SubjectPage />} />
+                            <Route path=":subject/:activityId/modules/:moduleId/lessons/:lessonId" element={<LessonPage />} />
+                          </Route>
+
                           <Route path="/play-plus" element={<PlayPlus />} />
                           <Route path="/store" element={<Store />} />
                           <Route path="/dashboard" element={<Dashboard />} />
