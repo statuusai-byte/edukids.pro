@@ -18,7 +18,7 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   { to: "/activities", icon: "BookOpen", label: "Atividades", color: "text-cyan-400" },
-  { to: "/courses", icon: "PlaySquare", label: "Cursos", color: "text-purple-400" },
+  { to: "/play-plus", icon: "PlaySquare", label: "Play+", color: "text-purple-400" },
   { to: "/store", icon: "Store", label: "Loja", color: "text-green-400" },
   { to: "/dashboard", icon: "User", label: "Painel dos Pais", color: "text-orange-400" },
 ];
@@ -49,7 +49,7 @@ const Layout = () => {
           <MobileTabBar />
         </>
       ) : (
-        <aside className="fixed inset-y-0 left-0 z-20 flex w-24 flex-col items-center border-r border-white/10 bg-secondary/30 backdrop-blur-xl py-6">
+        <aside className="fixed inset-y-0 left-0 z-20 hidden w-24 flex-col items-center border-r border-white/10 bg-secondary/30 backdrop-blur-xl py-6 md:flex">
           <div className="mb-8 flex items-center justify-center">
             <Sparkles size={34} className="text-primary" />
           </div>
@@ -142,12 +142,12 @@ const Layout = () => {
       )}
 
       <main
-        className={cn("flex-1 overflow-x-hidden", !isMobile && "pl-24")}
+        className={cn("flex-1 overflow-x-hidden", !isMobile && "md:pl-24")}
         style={mobileShellStyle}
       >
         <div
           className={cn(
-            "mx-auto w-full max-w-7xl px-3 sm:px-6 lg:px-8",
+            "mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8",
             isMobile ? "py-4" : "py-10 md:py-12"
           )}
         >
