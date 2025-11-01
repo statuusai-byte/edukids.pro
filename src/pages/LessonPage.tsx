@@ -1,19 +1,22 @@
 import { useParams, Link as RouterLink, useNavigate } from "react-router-dom";
 import { subjectsData } from "@/data/activitiesData";
-import { useMemo, useState, useEffect, useCallback } from "react"; // Added useCallback
+import { useMemo, useState, useEffect, useCallback, lazy, Suspense, ComponentType, LazyExoticComponent } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Lightbulb, Lock } from "lucide-react";
+import { ArrowLeft, Lightbulb, Lock, Sparkles } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import ContandoFrutas from "@/components/games/ContandoFrutas";
-import FormandoPalavras from "@/components/games/FormandoPalavras";
 import QuizComponent, { QuizQuestion } from "@/components/QuizComponent";
 import { useProgress } from "@/hooks/use-progress";
 import RewardButton from "@/components/RewardButton";
 import { showSuccess, showError } from "@/utils/toast";
 import { usePremium } from "@/context/PremiumContext";
 import { useHintsContext } from "@/context/HintsContext";
-import VideoPlayer from "@/components/VideoPlayer";
 import { useScreenTime } from "@/hooks/use-screen-time";
+
+// Lazy load game components for better performance
+const gameComponentMap: Record<string, LazyExoticComponent<ComponentType<any>>> = {
+  ContandoFrutas: lazy(() => import("@/components/games/ContandoFrutas")),
+  FormandoPalavras: lazy(() => import("@/components/games/FormandoPalavras")),
+};
 
 const LessonPage = () => {
   const { subject: subjectSlug, activityId, moduleId, lessonId } = useParams();
@@ -24,7 +27,7 @@ const LessonPage = () => {
   const { isBlocked, limitMinutes, startSession, stopSession } = useScreenTime();
   
   const [hintTriggered, setHintTriggered] = useState(false);
-  const [quizHintSuggested, setQuizHintSuggested] = useState(false); // New state
+  const [quizHintSuggested, setQuizHintSuggested] = useState(false);
 
   const { subject, activity, module, lesson, lessonIndex, moduleIndex } = useMemo(() => {
     const s = subjectsData.find(sub => sub.slug === subjectSlug);
@@ -39,7 +42,6 @@ const LessonPage = () => {
     return { subject: s, activity: a, module: m, lesson: l, lessonIndex: li, moduleIndex: mi };
   }, [subjectSlug, activityId, moduleId, lessonId]);
 
-  // Screen Time Tracking: Start session when entering lesson, stop when leaving
   useEffect(() => {
     if (lesson && !isBlocked) {
       startSession();
@@ -49,10 +51,9 @@ const LessonPage = () => {
     };
   }, [lesson, isBlocked, startSession, stopSession]);
 
-  // Reset hint trigger when the lesson changes
   useEffect(() => {
     setHintTriggered(false);
-    setQuizHintSuggested(false); // Reset quiz hint suggestion
+    setQuizHintSuggested(false);
   }, [lessonId]);
 
   if (!subject || !activity || !module || !lesson) {
@@ -60,7 +61,7 @@ const LessonPage = () => {
       <div>
         <h1 className="text-2xl font-bold">Lição não encontrada</h1>
         <Button asChild variant="link">
-          <RouterLink to={`/activities/${subjectSlug}/${activityId}`}>Voltar para Atividade</RouterLink>
+          <RouterLink to={`/activities/${subjectSlug}`}>Voltar para Atividades</RouterLink>
         </Button>
       </div>
     );
@@ -117,14 +118,14 @@ const LessonPage = () => {
     if (isPremium) {
       setHintTriggered(true);
       showSuccess("Dica de Assinante Premium ativada!");
-      setQuizHintSuggested(false); // Hide suggestion after hint is used
+      setQuizHintSuggested(false);
       return;
     }
     if (hints > 0) {
       if (useHint()) {
         setHintTriggered(true);
         showSuccess("Dica usada! Seu saldo foi atualizado.");
-        setQuizHintSuggested(false); // Hide suggestion after hint is used
+        setQuizHintSuggested(false);
       }
     } else {
       showError("Você não tem dicas. Compre mais na loja ou assista a um anúncio para ganhar uma.");
@@ -136,24 +137,26 @@ const LessonPage = () => {
   }, []);
 
   const renderLessonContent = () => {
-    if (lesson.type === 'game') {
-      if (lesson.title.includes("Contando")) return <ContandoFrutas triggerHint={hintTriggered} />;
-      if (lesson.title.includes("Formando") || lesson.title.includes("Montagem")) return <FormandoPalavras triggerHint={hintTriggered} />;
-      return <Card className="glass-card p-6"><CardTitle className="text-xl mb-4">Jogo Interativo</CardTitle><p className="text-muted-foreground">O jogo para esta lição está em desenvolvimento.</p></Card>;
+    if (lesson.type === 'game' && lesson.component) {
+      const GameComponent = gameComponentMap[lesson.component];
+      if (GameComponent) {
+        return (
+          <Suspense fallback={<div className="flex h-40 items-center justify-center"><Sparkles className="h-8 w-8 animate-spin text-primary" /></div>}>
+            <GameComponent triggerHint={hintTriggered} />
+          </Suspense>
+        );
+      }
     }
     if (lesson.type === 'exercise' && lesson.content) {
       try {
         const questions: QuizQuestion[] = JSON.parse(lesson.content);
-        if (questions.length > 0) return <QuizComponent questions={questions} onQuizComplete={markCompleted} triggerHint={hintTriggered} onHintSuggested={handleQuizHintSuggested} />; // Pass new prop
+        if (questions.length > 0) return <QuizComponent questions={questions} onQuizComplete={markCompleted} triggerHint={hintTriggered} onHintSuggested={handleQuizHintSuggested} />;
       } catch (e) { console.error("Failed to parse quiz content:", e); }
-    }
-    if (lesson.videoUrl) {
-      return <VideoPlayer src={lesson.videoUrl} title={lesson.title} />;
     }
     return <p className="text-foreground/90 mb-4">{lesson.content}</p>;
   };
 
-  const isQuizOrGame = (lesson.type === 'exercise' && lesson.content?.trim().startsWith('[')) || lesson.type === 'game';
+  const isInteractive = lesson.type === 'game' || lesson.type === 'exercise';
   const hasPrev = lessonIndex > 0 || moduleIndex > 0;
   const hasNext = (lessonIndex < module.lessons.length - 1) || (moduleIndex < activity.modules.length - 1);
 
@@ -170,9 +173,8 @@ const LessonPage = () => {
             <Button variant="outline" onClick={goPrev} disabled={!hasPrev}>Anterior</Button>
             <Button onClick={goNext} disabled={!hasNext}>Próxima</Button>
             <div className="ml-auto flex items-center gap-4">
-              {isQuizOrGame && (
+              {isInteractive && (
                 <div className="flex items-center gap-2">
-                  {/* Only show the main hint button if not already suggested by quiz or if quizHintSuggested is false */}
                   {(!quizHintSuggested || isPremium) && (
                     <Button onClick={handleUseHint} className="bg-yellow-600 hover:bg-yellow-700 text-black" disabled={hintTriggered}>
                       <Lightbulb className="mr-2 h-4 w-4" />
@@ -182,7 +184,7 @@ const LessonPage = () => {
                   {!isPremium && <RewardButton onReward={() => addHints(1)} label="Ganhar Dica (Anúncio)" />}
                 </div>
               )}
-              {!isQuizOrGame && <Button className="bg-green-600 hover:bg-green-700" onClick={markCompleted}>{completed ? "Revisar (Concluído)" : "Marcar como Concluída"}</Button>}
+              {!isInteractive && <Button className="bg-green-600 hover:bg-green-700" onClick={markCompleted}>{completed ? "Revisar (Concluído)" : "Marcar como Concluída"}</Button>}
             </div>
           </div>
         </div>

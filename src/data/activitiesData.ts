@@ -10,9 +10,9 @@ export interface Lesson {
   id: string;
   title: string;
   description?: string;
-  videoUrl?: string;
   content?: string; // JSON.stringify([...]) for quizzes or plain text
-  type?: 'video' | 'reading' | 'exercise' | 'game';
+  type?: 'reading' | 'exercise' | 'game';
+  component?: 'ContandoFrutas' | 'FormandoPalavras'; // Explicit component mapping for games
 }
 
 export interface Module {
@@ -268,7 +268,7 @@ export const subjectsData: Subject[] = [
           ]},
           { id: "m1-mod2", title: "Introdução à Subtração", lessons: [
               { id: "m1-l3", title: "Tirando Objetos", content: JSON.stringify(genSub(QUIZ_COUNT, 10)), type: "exercise" },
-              { id: "m1-l4", title: "Jogo: Contando Frutas", content: "Conte as frutas na tela!", type: "game" }
+              { id: "m1-l4", title: "Jogo: Contando Frutas", content: "Conte as frutas na tela!", type: "game", component: "ContandoFrutas" }
           ]}
         ]
       },
@@ -301,7 +301,7 @@ export const subjectsData: Subject[] = [
         icon: "Brain",
         modules: [
           { id: "m3-mod1", title: "Frações e Decimais", lessons: [
-              { id: "m3-l1", title: "O que são Frações?", videoUrl: "https://www.youtube.com/embed/Y2-IsyS-YpY", type: "video" },
+              { id: "m3-l1", title: "O que são Frações?", content: "Frações representam partes de um todo. 1/2 é uma metade. 1/4 é um quarto.", type: "reading" },
               { id: "m3-l2", title: "Exercícios com Frações", content: JSON.stringify(genDiv(QUIZ_COUNT, 20)), type: "exercise" }
           ]},
           { id: "m3-mod2", title: "Geometria Básica", lessons: [
@@ -328,7 +328,7 @@ export const subjectsData: Subject[] = [
         modules: [
           { id: "p1-mod1", title: "O Alfabeto", lessons: [
               { id: "p1-l1", title: "Conhecendo as Vogais", content: "As vogais são A, E, I, O, U. Elas estão em quase todas as palavras!", type: "reading" },
-              { id: "p1-l2", title: "Jogo: Formando Palavras", content: "Junte as sílabas para formar a palavra correta.", type: "game" }
+              { id: "p1-l2", title: "Jogo: Formando Palavras", content: "Junte as sílabas para formar a palavra correta.", type: "game", component: "FormandoPalavras" }
           ]}
         ]
       },
@@ -358,7 +358,7 @@ export const subjectsData: Subject[] = [
               { id: "p3-l1", title: "Passado, Presente e Futuro", content: "Eu comi (passado), eu como (presente), eu comerei (futuro).", type: "reading" },
           ]},
           { id: "p3-mod2", title: "Pontuação", lessons: [
-              { id: "p3-l2", title: "Vírgula, Ponto e Interrogação", videoUrl: "https://www.youtube.com/embed/3y-6X4Y-iF4", type: "video" }
+              { id: "p3-l2", title: "Vírgula, Ponto e Interrogação", content: "A vírgula indica uma pausa. O ponto final encerra uma frase. A interrogação faz uma pergunta.", type: "reading" }
           ]}
         ]
       }
@@ -434,7 +434,7 @@ export const subjectsData: Subject[] = [
         icon: "Bot",
         modules: [
           { id: "c3-mod1", title: "Sistema Solar", lessons: [
-              { id: "c3-l1", title: "Conhecendo os Planetas", videoUrl: "https://www.youtube.com/embed/a-z216v-R-8", type: "video" },
+              { id: "c3-l1", title: "Conhecendo os Planetas", content: "Nosso sistema solar tem 8 planetas: Mercúrio, Vênus, Terra, Marte, Júpiter, Saturno, Urano e Netuno.", type: "reading" },
           ]},
           { id: "c3-mod2", title: "Sustentabilidade", lessons: [
               { id: "c3-l2", title: "Reciclagem e Meio Ambiente", content: "Separar o lixo é muito importante para ajudar o planeta!", type: "reading" },
