@@ -1,4 +1,5 @@
 import { useRef, useState, MouseEvent, ReactNode } from 'react';
+import type { CSSProperties } from 'react';
 import { cn } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/use-reduced-motion';
 
@@ -47,7 +48,7 @@ export const TiltCard = ({ children, className }: TiltCardProps) => {
         transform: `perspective(1000px) rotateX(${rotate.x}deg) rotateY(${rotate.y}deg) scale3d(1.05, 1.05, 1.05)`,
         transition: 'transform 0.1s ease-out',
         transformStyle: 'preserve-3d',
-      } as React.CSSProperties;
+      } as CSSProperties;
 
   return (
     <div

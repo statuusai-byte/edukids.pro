@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import type { ElementType } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabase } from '@/context/SupabaseContext';
 import { achievements } from '@/data/achievementsData';
@@ -6,7 +7,7 @@ import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Award, BookOpen, Brain, Lock, Sigma, Star, Trophy } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-const iconMap: Record<string, React.ElementType> = {
+const iconMap: Record<string, ElementType> = {
   Star, Award, Trophy, Brain, Sigma, BookOpen,
 };
 
