@@ -30,22 +30,20 @@ const Settings = () => {
   const [uiSounds, setUiSounds] = useState(true);
   const [interstitialsEnabled, setInterstitialsEnabled] = useState(true);
 
-  // Parental PIN UI state
   const [pinModalOpen, setPinModalOpen] = useState(false);
   const [pinMode, setPinMode] = useState<"set" | "verify" | "remove">("set");
   const [requirePinForPurchases, setRequirePinForPurchases] = useState<boolean>(false);
   const [parentPinExists, setParentPinExists] = useState<boolean>(false);
 
-  // pending action (e.g., delete account) requiring verify
   const pendingActionRef = useRef<null | (() => void)>(null);
-  const { signOut } = useSupabase();
+  const { signOut, user } = useSupabase();
 
   useEffect(() => {
     setUiSounds(getSoundEnabled());
     try {
       const raw = localStorage.getItem(INTERSTITIALS_KEY);
       if (raw === null) {
-        setInterstitialsEnabled(true); // default: enabled
+        setInterstitialsEnabled(true);
       } else {
         setInterstitialsEnabled(raw === "true");
       }
@@ -151,7 +149,6 @@ const Settings = () => {
     <div>
       <h1 className="text-4xl font-bold tracking-tighter mb-8">Configurações</h1>
       <div className="grid gap-8 max-w-2xl">
-        {/* Perfil */}
         <Card className="glass-card">
           <CardHeader>
             <CardTitle>Perfil da Criança</CardTitle>
@@ -159,11 +156,22 @@ const Settings = () => {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex items-center gap-6">
-              <AvatarUploader src={avatarUrl} fallback={name.charAt(0).toUpperCase()} onImageSelect={handleAvatarChange} />
+              <AvatarUploader src(avatarUrl} fallback={name.charAt(0).toUpperCase()} onImageSelect={handleAvatarChange} />
               <div className="space-y-2 flex-grow">
                 <Label htmlFor="name">Nome</Label>
                 <Input id="name" value={name} onChange={(e) => setName(e.target.value)} className="bg-secondary/60 border-white/20" />
               </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Email da conta</Label>
+              <Input
+                value={user?.email ?? "Conta local (sem login)"}
+                disabled
+                className="bg-secondary/60 border-white/20 text-muted-foreground"
+              />
+              <p className="text-xs text-muted-foreground">
+                Este é o e-mail usado para entrar no EDUKIDS+. Para alterá-lo, utilize o painel do responsável ou entre em contato com o suporte.
+              </p>
             </div>
             <div className="space-y-2">
               <Label>Faixa Etária</Label>
@@ -176,7 +184,6 @@ const Settings = () => {
           </CardContent>
         </Card>
 
-        {/* Dados e notificações */}
         <Card className="glass-card">
           <CardHeader><CardTitle>Gerenciamento de Dados</CardTitle><CardDescription>Opções avançadas de dados e progresso.</CardDescription></CardHeader>
           <CardContent className="space-y-6">
@@ -188,7 +195,6 @@ const Settings = () => {
           </CardContent>
         </Card>
 
-        {/* Controle Parental */}
         <Card className="glass-card">
           <CardHeader><CardTitle className="flex items-center gap-2"><ShieldCheck className="h-5 w-5 text-primary" />Controle Parental</CardTitle><CardDescription>Defina um PIN para compras e ações sensíveis.</CardDescription></CardHeader>
           <CardContent className="space-y-4">
@@ -200,7 +206,6 @@ const Settings = () => {
           </CardContent>
         </Card>
 
-        {/* Exclusão Permanente da Conta */}
         <Card className="glass-card border-red-500/50">
           <CardHeader>
             <CardTitle className="text-red-400">Zona de Perigo</CardTitle>
@@ -224,7 +229,6 @@ const Settings = () => {
         <Button className="bg-primary hover:bg-primary/90 shadow-lg shadow-primary/30">Salvar Alterações</Button>
       </div>
 
-      {/* Modal PIN */}
       <ParentalPinModal open={pinModalOpen} mode={pinMode} onOpenChange={afterPinModalChange} onVerified={() => { const fn = pendingActionRef.current; pendingActionRef.current = null; if (fn) fn(); }} />
     </div>
   );
