@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
+import { useSupabase } from "@/context/SupabaseContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const STORAGE_KEY = "edukids_progress_v1";
 
@@ -9,8 +11,11 @@ function makeKey(subject: string, activity: string, moduleId: string, lessonId: 
 }
 
 export function useProgress() {
+  const { user } = useSupabase();
   const [progress, setProgress] = useState<ProgressMap>({});
+  const [isSyncing, setIsSyncing] = useState(true);
 
+  // Load from local storage initially
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -18,15 +23,79 @@ export function useProgress() {
         setProgress(JSON.parse(raw));
       }
     } catch (err) {
-      console.error("Failed to load progress:", err);
+      console.error("Failed to load progress from localStorage:", err);
     }
+    setIsSyncing(false); // Initial load done
   }, []);
 
-  const persist = useCallback((next: ProgressMap) => {
+  // Sync with Supabase when user is available
+  useEffect(() => {
+    const syncWithSupabase = async () => {
+      if (!user) {
+        return;
+      }
+
+      setIsSyncing(true);
+      
+      const { data: remoteData, error: fetchError } = await supabase
+        .from("user_progress")
+        .select("lesson_key")
+        .eq("user_id", user.id);
+
+      if (fetchError) {
+        console.error("Failed to fetch progress from Supabase:", fetchError);
+        setIsSyncing(false);
+        return;
+      }
+
+      const remoteProgress: ProgressMap = {};
+      remoteData.forEach(item => {
+        remoteProgress[item.lesson_key] = true;
+      });
+
+      let localProgress: ProgressMap = {};
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          localProgress = JSON.parse(raw);
+        }
+      } catch (err) {
+        console.error("Failed to parse local progress during sync:", err);
+      }
+
+      const mergedProgress = { ...localProgress, ...remoteProgress };
+      
+      const itemsToUpload = Object.keys(localProgress).filter(key => !remoteProgress[key]);
+      if (itemsToUpload.length > 0) {
+        const recordsToInsert = itemsToUpload.map(key => ({
+          user_id: user.id,
+          lesson_key: key,
+        }));
+        
+        const { error: uploadError } = await supabase.from("user_progress").insert(recordsToInsert);
+        if (uploadError) {
+          console.error("Failed to upload local progress to Supabase:", uploadError);
+        }
+      }
+
+      setProgress(mergedProgress);
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(mergedProgress));
+      } catch (err) {
+        console.error("Failed to save merged progress to localStorage:", err);
+      }
+
+      setIsSyncing(false);
+    };
+
+    syncWithSupabase();
+  }, [user]);
+
+  const persistLocal = useCallback((next: ProgressMap) => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
     } catch (err) {
-      console.error("Failed to save progress:", err);
+      console.error("Failed to save progress to localStorage:", err);
     }
   }, []);
 
@@ -39,35 +108,55 @@ export function useProgress() {
   );
 
   const markLessonCompleted = useCallback(
-    (subject: string, activity: string, moduleId: string, lessonId: string) => {
+    async (subject: string, activity: string, moduleId: string, lessonId: string) => {
       const key = makeKey(subject, activity, moduleId, lessonId);
+      if (progress[key]) return;
+
       const next: ProgressMap = { ...progress, [key]: true };
       setProgress(next);
-      persist(next);
+      persistLocal(next);
+
+      if (user) {
+        const { error } = await supabase.from("user_progress").insert({ user_id: user.id, lesson_key: key });
+        if (error) {
+          console.error("Failed to mark lesson as completed in Supabase:", error);
+        }
+      }
     },
-    [progress, persist]
+    [progress, persistLocal, user]
   );
 
   const unmarkLesson = useCallback(
-    (subject: string, activity: string, moduleId: string, lessonId: string) => {
+    async (subject: string, activity: string, moduleId: string, lessonId: string) => {
       const key = makeKey(subject, activity, moduleId, lessonId);
       if (!(key in progress)) return;
+
       const next = { ...progress };
       delete next[key];
       setProgress(next);
-      persist(next);
+      persistLocal(next);
+
+      if (user) {
+        const { error } = await supabase.from("user_progress").delete().match({ user_id: user.id, lesson_key: key });
+        if (error) {
+          console.error("Failed to unmark lesson in Supabase:", error);
+        }
+      }
     },
-    [progress, persist]
+    [progress, persistLocal, user]
   );
 
-  const clearAll = useCallback(() => {
+  const clearAll = useCallback(async () => {
     setProgress({});
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-    } catch (err) {
-      console.error("Failed to clear progress:", err);
+    persistLocal({});
+
+    if (user) {
+      const { error } = await supabase.from("user_progress").delete().match({ user_id: user.id });
+      if (error) {
+        console.error("Failed to clear all progress in Supabase:", error);
+      }
     }
-  }, []);
+  }, [persistLocal, user]);
 
   return {
     progress,
@@ -75,5 +164,6 @@ export function useProgress() {
     markLessonCompleted,
     unmarkLesson,
     clearAll,
+    isSyncing,
   };
 }

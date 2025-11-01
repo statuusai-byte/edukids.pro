@@ -1,7 +1,6 @@
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, Clock, TrendingUp, CheckCircle, Gauge, Heart, LogOut, ShieldCheck } from "lucide-react";
+import { Activity, Clock, TrendingUp, CheckCircle, Gauge, Heart, LogOut, ShieldCheck, Trophy } from "lucide-react";
 import { TiltCard } from "@/components/TiltCard";
-import { allCourses } from "@/data/coursesData";
 import { subjectsData } from "@/data/activitiesData";
 import { useMemo, useState, useEffect } from "react";
 import { useProgress } from "@/hooks/use-progress";
@@ -13,27 +12,23 @@ import ParentalPinModal from "@/components/ParentalPinModal";
 import { hasParentPin } from "@/utils/parental";
 import { useSupabase } from "@/context/SupabaseContext";
 
-const AGE_GROUPS = ['4-6', '7-9', '10-12'] as const;
-
 const Dashboard = () => {
   const { progress } = useProgress();
   const { todayUsage, limitMinutes, setLimitMinutes, blockEnabled, setBlockEnabled, resetToday, addMinutes, isBlocked } = useScreenTime();
   const { ageGroup } = useAge();
   const { signOut } = useSupabase();
 
-  // Parental PIN state
   const [isPinVerified, setIsPinVerified] = useState(false);
   const [pinModalOpen, setPinModalOpen] = useState(false);
-  const [pinMode, setPinMode] = useState<"set" | "verify" | "remove">("verify"); // Default to verify
+  const [pinMode, setPinMode] = useState<"set" | "verify" | "remove">("verify");
 
   useEffect(() => {
-    // Check if a PIN exists when the component mounts
     const pinExists = hasParentPin();
     if (!pinExists) {
-      setPinMode("set"); // If no PIN, prompt to set one
+      setPinMode("set");
       setPinModalOpen(true);
     } else {
-      setPinMode("verify"); // If PIN exists, prompt to verify
+      setPinMode("verify");
       setPinModalOpen(true);
     }
   }, []);
@@ -46,25 +41,9 @@ const Dashboard = () => {
   const handlePinModalClose = (open: boolean) => {
     setPinModalOpen(open);
     if (!open && !isPinVerified) {
-      // If modal is closed without verification, redirect away from dashboard
-      // This prevents bypassing the PIN by simply closing the modal
-      // You might want to redirect to a safe page like Home or Activities
-      // For now, let's redirect to activities
       window.location.href = "/activities"; 
     }
   };
-
-  const stats = useMemo(() => {
-    return AGE_GROUPS.map((group) => {
-      const courses = allCourses.filter(c => c.ageGroups.includes(group));
-      const total = courses.length;
-      const premium = courses.filter(c => c.premium).length;
-      const free = total - premium;
-      const recommended = courses.filter(c => c.recommended).length;
-      const premiumPct = total === 0 ? 0 : Math.round((premium / total) * 100);
-      return { group, total, premium, free, premiumPct, recommended };
-    });
-  }, []);
 
   const completedLessons = useMemo(() => Object.keys(progress).length, [progress]);
 
@@ -95,7 +74,7 @@ const Dashboard = () => {
                   title: `${s.name}: ${l.title}`,
                   url: `/activities/${s.slug}/${a.id}/modules/${m.id}/lessons/${l.id}`,
                 });
-                break; // uma por módulo
+                break;
               }
             }
           });
@@ -248,35 +227,17 @@ const Dashboard = () => {
 
           <div className="mt-8">
             <TiltCard>
-              <CardHeader>
-                <CardTitle>Balanceamento Free vs Premium por Faixa Etária</CardTitle>
+              <CardHeader className="flex items-center justify-between">
+                <CardTitle>Quadro de Medalhas</CardTitle>
+                <Trophy className="h-5 w-5 text-muted-foreground" />
               </CardHeader>
-              <CardContent className="space-y-4">
-                {stats.map(s => (
-                  <div key={s.group} className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="font-medium">Faixa {s.group}</div>
-                      <div className="text-sm text-muted-foreground">{s.total} cursos • {s.recommended} recomendados</div>
-                    </div>
-
-                    <div className="w-full bg-white/5 rounded-full h-4 overflow-hidden">
-                      <div
-                        className="h-4 bg-gradient-to-r from-pink-600 to-purple-600"
-                        style={{ width: `${s.premiumPct}%` }}
-                        role="progressbar"
-                        aria-valuenow={s.premiumPct}
-                        aria-valuemin={0}
-                        aria-valuemax={100}
-                      />
-                    </div>
-
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <div>Free: {s.free}</div>
-                      <div>Premium: {s.premium} ({s.premiumPct}%)</div>
-                    </div>
-                  </div>
-                ))}
-                <div className="text-xs text-muted-foreground">Dica: mantenha um bom mix de cursos gratuitos para atração e cursos premium exclusivos e profundos para conversão.</div>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Acompanhe as conquistas e o progresso através do novo sistema de medalhas.
+                </p>
+                <Button asChild className="mt-4">
+                  <Link to="/achievements">Ver todas as medalhas</Link>
+                </Button>
               </CardContent>
             </TiltCard>
           </div>

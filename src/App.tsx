@@ -27,6 +27,7 @@ const Register = lazy(() => import("./pages/Register"));
 const SuccessPayment = lazy(() => import("./pages/SuccessPayment"));
 const TestAccount = lazy(() => import("./pages/TestAccount"));
 const AdminGrantPremium = lazy(() => import("./pages/AdminGrantPremium"));
+const AchievementsPage = lazy(() => import("./pages/Achievements"));
 
 const queryClient = new QueryClient();
 
@@ -58,14 +59,11 @@ const AppRoutes = () => {
       <Route path="/success-payment" element={<SuccessPayment />} />
       <Route path="/test-account" element={<TestAccount />} />
 
-      {/* Admin routes registered conditionally (only for admins or in dev) */}
       {showAdminRoute && <Route path="/admin/grant-premium" element={<AdminGrantPremium />} />}
 
-      {/* Keep a single catch-all for legacy /courses links and redirect to play-plus */}
       <Route path="/courses/*" element={<Navigate to="/play-plus" replace />} />
 
       <Route element={<Layout />}>
-        {/* Consolidated Activities block: index, subject and lesson routes grouped */}
         <Route path="activities">
           <Route index element={<Activities />} />
           <Route path=":subject" element={<SubjectPage />} />
@@ -76,6 +74,7 @@ const AppRoutes = () => {
         <Route path="/store" element={<Store />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/achievements" element={<AchievementsPage />} />
       </Route>
 
       <Route path="*" element={<NotFound />} />

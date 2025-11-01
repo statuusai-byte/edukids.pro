@@ -20,6 +20,7 @@ type NavItem = {
 const navItems: NavItem[] = [
   { to: "/activities", icon: "BookOpen", label: "Atividades", color: "text-cyan-400" },
   { to: "/play-plus", icon: "PlaySquare", label: "Play+", color: "text-purple-400" },
+  { to: "/achievements", icon: "Trophy", label: "Medalhas", color: "text-yellow-400" },
   { to: "/store", icon: "Store", label: "Loja", color: "text-green-400" },
   { to: "/dashboard", icon: "User", label: "Painel dos Pais", color: "text-orange-400" },
 ];
@@ -35,14 +36,10 @@ const Layout = () => {
   const { name, avatarUrl } = useProfile();
   const isMobile = useIsMobile();
 
-  // Estilos para o shell do app em modo mobile, garantindo que o conteúdo
-  // não seja cortado por notches ou barras de sistema (safe areas).
   const mobileShellStyle = isMobile
     ? {
-        // Adiciona padding no topo e no fundo para respeitar as safe areas do iOS/Android.
-        // O padding-bottom é maior para não sobrepor a barra de navegação inferior.
         paddingTop: "env(safe-area-inset-top, 1rem)",
-        paddingBottom: "calc(env(safe-area-inset-bottom, 1rem) + 5rem)", // 5rem ~ altura da tab bar
+        paddingBottom: "calc(env(safe-area-inset-bottom, 1rem) + 5rem)",
         paddingLeft: "env(safe-area-inset-left, 1rem)",
         paddingRight: "env(safe-area-inset-right, 1rem)",
       }

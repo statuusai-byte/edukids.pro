@@ -11,6 +11,7 @@ type TabItem = {
 const tabs: TabItem[] = [
   { to: "/activities", icon: "BookOpen", label: "Atividades" },
   { to: "/play-plus", icon: "PlaySquare", label: "Play+" },
+  { to: "/achievements", icon: "Trophy", label: "Medalhas" },
   { to: "/store", icon: "Store", label: "Loja" },
   { to: "/dashboard", icon: "User", label: "Pais" },
 ];
@@ -20,6 +21,7 @@ const isActivePath = (pathname: string, target: string) => {
   if (target === "/play-plus") return pathname.startsWith("/play-plus") || pathname.startsWith("/courses");
   if (target === "/activities") return pathname.startsWith("/activities");
   if (target === "/store") return pathname.startsWith("/store");
+  if (target === "/achievements") return pathname.startsWith("/achievements");
   return pathname === target;
 };
 
@@ -30,7 +32,6 @@ const MobileTabBar = () => {
     <nav className="fixed inset-x-0 bottom-0 z-50 block border-t border-white/10 bg-secondary/90 backdrop-blur-xl md:hidden">
       <div 
         className="mx-auto flex max-w-2xl items-center justify-around px-4 pt-2"
-        // Adiciona padding na parte inferior para respeitar a safe area do dispositivo
         style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 0.5rem)" }}
       >
         {tabs.map((item) => {
