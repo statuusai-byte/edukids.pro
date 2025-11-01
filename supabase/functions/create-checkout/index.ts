@@ -4,45 +4,65 @@ const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Content-Type': 'application/json',
-}
+};
+
+// SKUs válidos (com hífens, compatíveis com as regras do Play Console)
+const ALLOWED_SKUS = new Set([
+  "hints-pack-small",
+  "hints-pack-medium",
+  "hints-pack-large",
+  "premium-monthly-v1",
+  "edukids-basic-monthly",
+]);
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders });
   }
   
   try {
-    // 1. Autenticação (Simulação: Apenas verifica se há um token)
-    const authHeader = req.headers.get('Authorization')
+    // 1) Autenticação (simulada: requer token)
+    const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { 
         status: 401, 
         headers: corsHeaders 
-      })
+      });
     }
-    
-    // 2. Simulação de criação de sessão de pagamento
-    // Em um ambiente real, você chamaria a API do Stripe/PagSeguro aqui.
-    
-    // Para simular o sucesso, retornamos uma URL de sucesso.
-    // O cliente irá redirecionar para esta URL, que irá simular a ativação do Premium.
-    const successUrl = `${req.url.split('/functions')[0]}/success-payment`;
-    
+
+    // 2) Body opcional com SKU
+    let sku = "";
+    if (req.method === "POST") {
+      const body = await req.json().catch(() => ({}));
+      sku = (body?.sku || "").toString().trim();
+      if (!sku) {
+        return new Response(JSON.stringify({ error: "Missing sku" }), { status: 400, headers: corsHeaders });
+      }
+      if (!ALLOWED_SKUS.has(sku)) {
+        return new Response(JSON.stringify({ error: `Invalid sku '${sku}'. Allowed: ${Array.from(ALLOWED_SKUS).join(", ")}` }), { status: 400, headers: corsHeaders });
+      }
+    }
+
+    // 3) Simulação de criação de sessão de pagamento
+    const base = req.url.split('/functions')[0];
+    const successUrl = `${base}/success-payment`;
+
     return new Response(
       JSON.stringify({ 
         checkout_url: successUrl,
-        message: "Checkout session created successfully (simulated)."
+        message: "Checkout session created successfully (simulated).",
+        sku,
       }),
       { 
         headers: corsHeaders, 
         status: 200 
       }
-    )
-  } catch (error) {
-    console.error(error)
-    return new Response(JSON.stringify({ error: error.message }), {
+    );
+  } catch (error: any) {
+    console.error(error);
+    return new Response(JSON.stringify({ error: error?.message ?? "Internal error" }), {
       headers: corsHeaders,
       status: 500,
-    })
+    });
   }
-})
+});
