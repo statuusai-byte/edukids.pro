@@ -9,6 +9,8 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import MobileSidebar from "@/components/MobileSidebar";
 import MobileTabBar from "@/components/MobileTabBar";
 import StudyAssistant from "@/components/StudyAssistant";
+import InterstitialAdManager from "@/components/InterstitialAdManager";
+import AgeGateModal from "@/components/AgeGateModal";
 
 type NavItem = {
   to: string;
@@ -171,7 +173,10 @@ const Layout = () => {
                 isMobile ? "px-4 py-6" : "px-6 py-8 sm:px-8 sm:py-10 md:px-14 md:py-14"
               )}
             >
-              <Outlet />
+              <InterstitialAdManager>
+                <Outlet />
+              </InterstitialAdManager>
+              <AgeGateModal />
             </div>
           </div>
         </div>
