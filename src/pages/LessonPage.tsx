@@ -106,7 +106,8 @@ const LessonPage = () => {
       navigate(`/activities/${subject.slug}/${activity.id}/modules/${module.id}/lessons/${module.lessons[prevIndex].id}`);
       return;
     }
-    navigate(`/activities/${subject.slug}/${activity.id}`);
+    // CORREÇÃO: Voltar para a página do tema, que lista todas as atividades.
+    navigate(`/activities/${subject.slug}`);
   };
 
   const markCompleted = () => {
@@ -163,7 +164,7 @@ const LessonPage = () => {
   return (
     <div>
       <div className="flex items-center gap-4 mb-6">
-        <Button asChild variant="outline" size="icon"><RouterLink to={`/activities/${subject.slug}/${activity.id}`}><ArrowLeft className="h-4 w-4" /></RouterLink></Button>
+        <Button asChild variant="outline" size="icon"><RouterLink to={`/activities/${subject.slug}`}><ArrowLeft className="h-4 w-4" /></RouterLink></Button>
         <div><h1 className="text-2xl font-bold">{lesson.title}</h1><p className="text-muted-foreground">{activity.title} • {module.title}</p></div>
       </div>
       <div className="grid lg:grid-cols-3 gap-8">

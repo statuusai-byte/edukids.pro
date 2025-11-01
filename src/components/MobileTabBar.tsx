@@ -28,7 +28,11 @@ const MobileTabBar = () => {
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-50 block border-t border-white/10 bg-secondary/90 backdrop-blur-xl md:hidden">
-      <div className="mx-auto flex max-w-2xl items-center justify-between px-4 pb-[calc(env(safe-area-inset-bottom)+0.35rem)] pt-2">
+      <div 
+        className="mx-auto flex max-w-2xl items-center justify-around px-4 pt-2"
+        // Adiciona padding na parte inferior para respeitar a safe area do dispositivo
+        style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 0.5rem)" }}
+      >
         {tabs.map((item) => {
           const active = isActivePath(location.pathname, item.to);
           return (
@@ -36,7 +40,7 @@ const MobileTabBar = () => {
               key={item.to}
               to={item.to}
               className={cn(
-                "flex flex-col items-center justify-center gap-1 rounded-2xl px-3 py-2 text-xs transition-all",
+                "flex flex-col items-center justify-center gap-1 rounded-2xl px-3 py-2 text-xs transition-all w-20",
                 active
                   ? "bg-primary/15 text-primary"
                   : "text-muted-foreground hover:text-foreground",
@@ -45,8 +49,8 @@ const MobileTabBar = () => {
               <Icon
                 name={item.icon}
                 className={cn(
-                  "h-5 w-5 transition-colors",
-                  active ? "text-primary" : "text-muted-foreground",
+                  "h-5 w-5 transition-transform",
+                  active ? "scale-110" : "scale-100",
                 )}
               />
               <span className="font-medium">{item.label}</span>

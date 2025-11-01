@@ -35,10 +35,16 @@ const Layout = () => {
   const { name, avatarUrl } = useProfile();
   const isMobile = useIsMobile();
 
+  // Estilos para o shell do app em modo mobile, garantindo que o conteúdo
+  // não seja cortado por notches ou barras de sistema (safe areas).
   const mobileShellStyle = isMobile
     ? {
-        paddingTop: "calc(env(safe-area-inset-top, 0px) + 1rem)",
-        paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 4.75rem)",
+        // Adiciona padding no topo e no fundo para respeitar as safe areas do iOS/Android.
+        // O padding-bottom é maior para não sobrepor a barra de navegação inferior.
+        paddingTop: "env(safe-area-inset-top, 1rem)",
+        paddingBottom: "calc(env(safe-area-inset-bottom, 1rem) + 5rem)", // 5rem ~ altura da tab bar
+        paddingLeft: "env(safe-area-inset-left, 1rem)",
+        paddingRight: "env(safe-area-inset-right, 1rem)",
       }
     : undefined;
 
@@ -148,8 +154,8 @@ const Layout = () => {
       >
         <div
           className={cn(
-            "mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8",
-            isMobile ? "py-4" : "py-10 md:py-12"
+            "mx-auto w-full max-w-7xl",
+            isMobile ? "" : "py-10 md:py-12"
           )}
         >
           <div
