@@ -67,6 +67,32 @@ const LessonPage = () => {
     );
   }
 
+  // NEW: If lesson is premium and user is not premium, block access with CTA to /store
+  if (lesson.premium && !isPremium) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="w-full max-w-xl glass-card p-8 text-center">
+          <Lock className="h-16 w-16 text-yellow-400 mx-auto mb-4" />
+          <h1 className="text-3xl font-bold mb-2">Conteúdo Premium</h1>
+          <p className="text-muted-foreground mb-4">
+            Esta lição faz parte do conteúdo Premium do EDUKIDS+. Assine para desbloquear quizzes avançados, lições extras e dicas ilimitadas.
+          </p>
+          <div className="flex items-center justify-center gap-3 mt-4">
+            <Button onClick={() => navigate('/store')} className="bg-yellow-400 text-black">
+              Assinar Premium
+            </Button>
+            <Button variant="outline" onClick={() => navigate('/test-account')}>
+              Ativar Premium (Teste)
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground mt-4">
+            Assinantes têm acesso a exercícios adicionais, relatórios de desempenho detalhados e experiência sem anúncios.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   if (isBlocked) {
     return (
       <div className="text-center py-16 glass-card rounded-lg">

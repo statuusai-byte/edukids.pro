@@ -13,6 +13,7 @@ export interface Lesson {
   content?: string; // JSON.stringify([...]) for quizzes or plain text
   type?: 'reading' | 'exercise' | 'game';
   component?: 'ContandoFrutas' | 'FormandoPalavras'; // Explicit component mapping for games
+  premium?: boolean; // NEW: whether this lesson requires Premium access
 }
 
 export interface Module {
@@ -284,11 +285,13 @@ export const subjectsData: Subject[] = [
               { id: "m2-l2", title: "Subtraindo até 100", content: JSON.stringify(genSub(QUIZ_COUNT, 100)), type: "exercise" }
           ]},
           { id: "m2-mod2", title: "Multiplicação é Mágica", lessons: [
-              { id: "m2-l3", title: "Tabuadas Divertidas", content: JSON.stringify(genMul(QUIZ_COUNT, 12)), type: "exercise" },
+              // Make the 'Tabuadas Divertidas' a premium exercise (more depth)
+              { id: "m2-l3", title: "Tabuadas Divertidas", content: JSON.stringify(genMul(QUIZ_COUNT, 12)), type: "exercise", premium: true },
               { id: "m2-l4", title: "Resolvendo Problemas de Vezes", content: "Se você tem 3 caixas com 4 lápis cada, quantos lápis você tem no total?", type: "reading" }
           ]},
           { id: "m2-mod3", title: "Dividindo o Tesouro", lessons: [
-              { id: "m2-l5", title: "Dividindo em Partes Iguais", content: JSON.stringify(genDiv(QUIZ_COUNT, 12)), type: "exercise" },
+              // division exercises are more advanced — mark premium
+              { id: "m2-l5", title: "Dividindo em Partes Iguais", content: JSON.stringify(genDiv(QUIZ_COUNT, 12)), type: "exercise", premium: true },
               { id: "m2-l6", title: "Divisão e Resto", content: "Se você dividir 10 por 3, cada um recebe 3 e sobra 1. Esse é o resto!", type: "reading" }
           ]}
         ]
@@ -302,7 +305,8 @@ export const subjectsData: Subject[] = [
         modules: [
           { id: "m3-mod1", title: "Frações e Decimais", lessons: [
               { id: "m3-l1", title: "O que são Frações?", content: "Frações representam partes de um todo. 1/2 é uma metade. 1/4 é um quarto.", type: "reading" },
-              { id: "m3-l2", title: "Exercícios com Frações", content: JSON.stringify(genDiv(QUIZ_COUNT, 20)), type: "exercise" }
+              // advanced exercises behind premium
+              { id: "m3-l2", title: "Exercícios com Frações", content: JSON.stringify(genDiv(QUIZ_COUNT, 20)), type: "exercise", premium: true }
           ]},
           { id: "m3-mod2", title: "Geometria Básica", lessons: [
               { id: "m3-l3", title: "Ângulos e Formas", content: "Um círculo tem 360 graus. Um ângulo reto, como o canto de um quadrado, tem 90 graus.", type: "reading" },
@@ -340,6 +344,7 @@ export const subjectsData: Subject[] = [
         icon: "SpellCheck",
         modules: [
           { id: "p2-mod1", title: "Vocabulário", lessons: [
+              // antonyms quiz can be free but advanced sets mark premium occasionally
               { id: "p2-l1", title: "Quiz de Antônimos", content: JSON.stringify(genPortugueseAntonyms(QUIZ_COUNT)), type: "exercise" }
           ]},
           { id: "p2-mod2", title: "Tipos de Palavras", lessons: [
@@ -355,7 +360,8 @@ export const subjectsData: Subject[] = [
         icon: "BookOpen",
         modules: [
           { id: "p3-mod1", title: "Verbos e Tempos", lessons: [
-              { id: "p3-l1", title: "Passado, Presente e Futuro", content: "Eu comi (passado), eu como (presente), eu comerei (futuro).", type: "reading" },
+              // advanced grammar behind premium
+              { id: "p3-l1", title: "Passado, Presente e Futuro", content: "Eu comi (passado), eu como (presente), eu comerei (futuro).", type: "reading", premium: true },
           ]},
           { id: "p3-mod2", title: "Pontuação", lessons: [
               { id: "p3-l2", title: "Vírgula, Ponto e Interrogação", content: "A vírgula indica uma pausa. O ponto final encerra uma frase. A interrogação faz uma pergunta.", type: "reading" }
@@ -382,6 +388,7 @@ export const subjectsData: Subject[] = [
               { id: "i1-l1", title: "Quiz: Numbers 1-20", content: JSON.stringify(genEnglishNumbers(QUIZ_COUNT)), type: "exercise" }
           ]},
           { id: "i1-mod2", title: "Animals", lessons: [
+              // keep animals free (encourage learning), but advanced vocabulary could be premium later
               { id: "i1-l2", title: "Quiz: Common Animals", content: JSON.stringify(genEnglishAnimals(QUIZ_COUNT)), type: "exercise" }
           ]}
         ]
@@ -419,7 +426,8 @@ export const subjectsData: Subject[] = [
         modules: [
           { id: "c2-mod1", title: "Corpo Humano", lessons: [
               { id: "c2-l1", title: "Como o Corpo Funciona", content: reading_body_systems, type: "reading" },
-              { id: "c2-l2", title: "Quiz: Órgãos do Corpo", content: JSON.stringify(genScienceBodyParts(QUIZ_COUNT)), type: "exercise" }
+              // body parts quiz: premium
+              { id: "c2-l2", title: "Quiz: Órgãos do Corpo", content: JSON.stringify(genScienceBodyParts(QUIZ_COUNT)), type: "exercise", premium: true }
           ]},
           { id: "c2-mod2", title: "Ciclos da Natureza", lessons: [
               { id: "c2-l3", title: "O Ciclo da Água", content: reading_water_cycle, type: "reading" }
@@ -453,7 +461,8 @@ export const subjectsData: Subject[] = [
       { id: "h1", title: "História do Brasil", description: "Eventos que moldaram o nosso país.", ageGroups: ['7-9','10-12'], icon: "Landmark", modules: [
           { id: "h1-mod1", title: "Descobrimento e Colonização", lessons: [
               { id: "h1-l1", title: "A Chegada dos Portugueses", content: reading_discovery_brazil, type: "reading" },
-              { id: "h1-l2", title: "Quiz de Fatos Históricos", content: JSON.stringify(genGeographyCapitals(QUIZ_COUNT)), type: "exercise" }
+              // quiz about historical facts -> premium
+              { id: "h1-l2", title: "Quiz de Fatos Históricos", content: JSON.stringify(genGeographyCapitals(QUIZ_COUNT)), type: "exercise", premium: true }
           ]}
       ]}
     ]
@@ -466,8 +475,9 @@ export const subjectsData: Subject[] = [
     ageGroups: ['7-9','10-12'],
     activities: [
       { id: "g1", title: "Mapas e Lugares", description: "Aprenda sobre estados, capitais e continentes.", ageGroups: ['7-9','10-12'], icon: "Globe", modules: [
+          // capitals quiz set as premium to reward subscribers
           { id: "g1-mod1", title: "Brasil e o Mundo", lessons: [
-              { id: "g1-l1", title: "Quiz de Capitais", content: JSON.stringify(genGeographyCapitals(QUIZ_COUNT)), type: "exercise" }
+              { id: "g1-l1", title: "Quiz de Capitais", content: JSON.stringify(genGeographyCapitals(QUIZ_COUNT)), type: "exercise", premium: true }
           ]}
       ]}
     ]
@@ -522,7 +532,8 @@ export const subjectsData: Subject[] = [
             title: "Primeiros Passos Financeiros",
             lessons: [
               { id: "ef1-l1", title: "O que é Poupar?", content: reading_saving_money, type: "reading" },
-              { id: "ef1-l2", title: "Quiz do Dinheirinho", content: JSON.stringify(genFinancialLiteracyQuiz(QUIZ_COUNT)), type: "exercise" }
+              // financial quiz behind premium to add value
+              { id: "ef1-l2", title: "Quiz do Dinheirinho", content: JSON.stringify(genFinancialLiteracyQuiz(QUIZ_COUNT)), type: "exercise", premium: true }
             ]
           }
         ]
