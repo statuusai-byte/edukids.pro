@@ -2,7 +2,17 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Check, Star, Loader2, Lightbulb, Sparkles, ShieldCheck, WifiOff } from "lucide-react";
+import {
+  Check,
+  Star,
+  Loader2,
+  Lightbulb,
+  Sparkles,
+  ShieldCheck,
+  WifiOff,
+  Gamepad2,
+  Infinity as InfinityIcon,
+} from "lucide-react";
 import { usePremium } from "@/context/PremiumContext";
 import { showLoading, showError, dismissToast, showSuccess } from "@/utils/toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,9 +31,28 @@ type HintPackage = {
 };
 
 const hintPackages: HintPackage[] = [
-  { amount: 3, name: "Pacote Explorador", price: "R$ 1,00", description: "Para desbloquear uma ajuda rápida.", accent: "from-amber-300 to-orange-400" },
-  { amount: 8, name: "Pacote Comandante", price: "R$ 3,00", description: "Equilíbrio ideal para a semana inteira.", popular: true, accent: "from-fuchsia-300 to-purple-500" },
-  { amount: 15, name: "Pacote Mestre", price: "R$ 5,00", description: "Reserve dicas para missões avançadas.", accent: "from-sky-300 to-blue-500" },
+  {
+    amount: 3,
+    name: "Pacote Explorador",
+    price: "R$ 1,00",
+    description: "Para desbloquear uma ajuda rápida.",
+    accent: "from-amber-300 to-orange-400",
+  },
+  {
+    amount: 8,
+    name: "Pacote Comandante",
+    price: "R$ 3,00",
+    description: "Equilíbrio ideal para a semana inteira.",
+    popular: true,
+    accent: "from-fuchsia-300 to-purple-500",
+  },
+  {
+    amount: 15,
+    name: "Pacote Mestre",
+    price: "R$ 5,00",
+    description: "Reserve dicas para missões avançadas.",
+    accent: "from-sky-300 to-blue-500",
+  },
 ];
 
 const freeFeatures = [
@@ -34,16 +63,14 @@ const freeFeatures = [
 ];
 
 const premiumFeatures = [
-  "Acesso a todos os jogos Play+",
-  "Dicas ilimitadas nos estudos",
-  "Experiência sem anúncios",
-  "IA de voz explicativa (em breve)",
-  "Relatórios de progresso",
-  "Controle parental avançado",
-  "Lições e quizzes exclusivos",
-  "Modo offline (via PWA)",
-  "Suporte prioritário",
-  "Novidades toda semana",
+  "Acesso total ao Play+ (todos os jogos, níveis e novidades)",
+  "Dicas ilimitadas com Assistente priorizado",
+  "Experiência 100% sem anúncios",
+  "Relatórios de progresso e recomendações",
+  "Conteúdos e desafios exclusivos por idade",
+  "Play+ otimizado para rodar suave em celulares",
+  "Modo offline via PWA",
+  "IA de voz explicativa chegando em breve",
 ];
 
 const Store = () => {
@@ -73,6 +100,7 @@ const Store = () => {
         },
         body: JSON.stringify({ sku: PRODUCTS.EDUKIDS_BASIC_MONTHLY }),
       };
+
       if (token) {
         (invokeOptions.headers as Record<string, string>).Authorization = `Bearer ${token}`;
       }
@@ -80,6 +108,7 @@ const Store = () => {
       const { data, error } = await supabase.functions.invoke("create-checkout", invokeOptions);
 
       if (error) throw new Error(error.message || "Erro ao criar sessão de checkout.");
+
       const checkoutUrl = (data as any)?.checkout_url as string | undefined;
       if (!checkoutUrl || typeof checkoutUrl !== "string") {
         throw new Error("Falha ao obter URL de checkout.");
@@ -87,7 +116,6 @@ const Store = () => {
 
       dismissToast(loadingToast);
 
-      // Se a URL for interna (relativa), use o roteador; senão, navegue externamente.
       if (checkoutUrl.startsWith("/")) {
         navigate(checkoutUrl, { replace: true });
       } else {
@@ -98,7 +126,6 @@ const Store = () => {
       dismissToast(loadingToast);
       showError("Erro ao processar a assinatura. Tente novamente.");
       setIsCheckingOut(false);
-      return;
     }
   };
 
@@ -119,21 +146,29 @@ const Store = () => {
   return (
     <div className="space-y-10">
       <section className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-r from-[#6d28d9] via-[#8b5cf6] to-[#ec4899] p-8 text-white shadow-lg">
-        <div className="absolute inset-0 opacity-20 mix-blend-screen" style={{ backgroundImage: "radial-gradient(circle at top, #f9fafb33, transparent 55%)" }} />
+        <div
+          className="absolute inset-0 opacity-20 mix-blend-screen"
+          style={{ backgroundImage: "radial-gradient(circle at top, #f9fafb33, transparent 55%)" }}
+        />
         <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex-1 space-y-4">
             <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight">Loja EDUKIDS+</h1>
             <p className="max-w-2xl text-lg text-white/90">
-              O plano Premium libera todo o Play+, remove anúncios e em breve trará uma IA de voz de alta qualidade lendo e explicando as atividades.
+              Libere o Play+ completo: todos os jogos e níveis, sem anúncios, com dicas ilimitadas e
+              novidades semanais. Diversão que ensina — do jeitinho certo para cada idade.
             </p>
             <div className="flex flex-wrap gap-3 text-xs text-white/80">
               <span className="flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5">
-                <ShieldCheck className="h-4 w-4 text-emerald-300" />
-                Sem anúncios para assinantes
+                <Gamepad2 className="h-4 w-4 text-sky-200" />
+                Play+ completo e otimizado
               </span>
               <span className="flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5">
-                <Sparkles className="h-4 w-4 text-yellow-200" />
-                IA de voz em desenvolvimento
+                <InfinityIcon className="h-4 w-4 text-amber-200" />
+                Dicas ilimitadas
+              </span>
+              <span className="flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5">
+                <ShieldCheck className="h-4 w-4 text-emerald-300" />
+                Sem anúncios
               </span>
               <span className="flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5">
                 <WifiOff className="h-4 w-4 text-sky-200" />
@@ -169,9 +204,10 @@ const Store = () => {
                     <Star className="h-4 w-4" />
                     Plano Premium
                   </div>
-                  <h3 className="mt-3 text-2xl font-bold text-white">Acesso Total + IA de voz (em breve)</h3>
+                  <h3 className="mt-3 text-2xl font-bold text-white">Acesso total ao Play+</h3>
                   <p className="text-sm text-white/85">
-                    Conteúdo completo, zero anúncios e um assistente que em breve fala com a criança.
+                    Desbloqueie todos os jogos, ganhe dicas ilimitadas e estude sem interrupções.
+                    Toda semana chega conteúdo novo — tudo pensado para seu filho aprender brincando.
                   </p>
                 </div>
                 <div className="text-right">
@@ -182,15 +218,15 @@ const Store = () => {
               <ul className="space-y-3 text-sm text-white/90">
                 <li className="flex items-center gap-2">
                   <Check className="h-4 w-4 text-emerald-300" />
-                  Jogos exclusivos do Play+ liberados na hora
+                  Play+ completo — nada bloqueado
                 </li>
                 <li className="flex items-center gap-2">
                   <Check className="h-4 w-4 text-emerald-300" />
-                  Relatórios avançados para responsáveis
+                  Dicas ilimitadas e Assistente mais direto
                 </li>
                 <li className="flex items-center gap-2">
                   <Check className="h-4 w-4 text-emerald-300" />
-                  IA de voz de qualidade chegando em breve
+                  0% de anúncios e foco total no aprendizado
                 </li>
               </ul>
               <Button
@@ -208,7 +244,7 @@ const Store = () => {
       <section>
         <h2 className="text-3xl font-bold mb-2">Comparativo rápido</h2>
         <p className="text-sm text-muted-foreground mb-6">
-          Entenda o que cada plano oferece — equilibramos recursos para quem continua no modo gratuito e para quem decide assinar.
+          Veja o que cada plano oferece — o Free já é ótimo para começar, e o Premium libera o Play+ completo.
         </p>
         <div className="grid gap-6 md:grid-cols-2">
           <Card className="border-white/10 bg-secondary/70">
@@ -244,7 +280,7 @@ const Store = () => {
                 <div>
                   <h3 className="text-xl font-semibold">Plano Premium</h3>
                   <p className="text-xs uppercase tracking-[0.3em] text-primary/80">
-                    Tudo do Free + extras poderosos
+                    Tudo do Free + Play+ completo
                   </p>
                 </div>
               </div>
@@ -264,7 +300,8 @@ const Store = () => {
       <section className="max-w-7xl mx-auto px-2">
         <h2 className="text-3xl font-bold mb-2">Comprar pacotes de dicas</h2>
         <p className="text-muted-foreground mb-6">
-          Os pacotes funcionam como reforço extra. Assinantes Premium já possuem dicas ilimitadas e podem aguardar a IA de voz que está chegando.
+          Precisa de um empurrãozinho extra? Compre pacotes de dicas para liberar ajudas diretas.
+          Assinantes Premium já possuem dicas ilimitadas.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {hintPackages.map((pkg) => (
@@ -272,10 +309,10 @@ const Store = () => {
               key={pkg.name}
               className={cn(
                 "relative rounded-3xl border border-white/10 bg-secondary/80 p-px shadow-lg transition-transform hover:-translate-y-1",
-                pkg.popular && "shadow-[0_20px_60px_rgba(168,85,247,0.35)]"
+                pkg.popular && "shadow-[0_20px_60px_rgba(168,85,247,0.35)]",
               )}
             >
-              <div className={cn("rounded-[calc(theme(borderRadius.3xl)-1px)] p-6 h-full bg-secondary/95 flex flex-col")}>
+              <div className="rounded-[calc(theme(borderRadius.3xl)-1px)] p-6 h-full bg-secondary/95 flex flex-col">
                 {pkg.popular && (
                   <div className="absolute -top-3 right-6 rounded-full bg-gradient-to-r from-fuchsia-500 to-purple-600 px-3 py-1 text-xs font-bold text-white shadow-md">
                     Mais Popular
@@ -292,7 +329,9 @@ const Store = () => {
                     </div>
                   </div>
                   <div className="text-center">
-                    <span className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-white to-white/70">{pkg.amount}</span>
+                    <span className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-white to-white/70">
+                      {pkg.amount}
+                    </span>
                     <span className="ml-2 text-lg text-muted-foreground">dicas</span>
                   </div>
                 </div>
