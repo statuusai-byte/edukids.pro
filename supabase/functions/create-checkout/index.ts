@@ -48,13 +48,12 @@ serve(async (req) => {
       );
     }
 
-    // 3) Simulação de criação de sessão de pagamento
-    const base = req.url.split('/functions')[0];
-    const successUrl = `${base}/success-payment`;
+    // 3) Retorna URL relativa para o app redirecionar localmente
+    const successPath = "/success-payment";
 
     return new Response(
       JSON.stringify({ 
-        checkout_url: successUrl,
+        checkout_url: successPath,
         message: "Checkout session created successfully (simulated).",
         sku,
       }),
