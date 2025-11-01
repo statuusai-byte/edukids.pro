@@ -156,12 +156,22 @@ const Settings = () => {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex items-center gap-6">
-              <AvatarUploader src(avatarUrl} fallback={name.charAt(0).toUpperCase()} onImageSelect={handleAvatarChange} />
+              <AvatarUploader
+                src={avatarUrl ?? null}
+                fallback={(name?.charAt(0) ?? "?").toUpperCase()}
+                onImageSelect={handleAvatarChange}
+              />
               <div className="space-y-2 flex-grow">
                 <Label htmlFor="name">Nome</Label>
-                <Input id="name" value={name} onChange={(e) => setName(e.target.value)} className="bg-secondary/60 border-white/20" />
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="bg-secondary/60 border-white/20"
+                />
               </div>
             </div>
+
             <div className="space-y-2">
               <Label>Email da conta</Label>
               <Input
@@ -173,36 +183,102 @@ const Settings = () => {
                 Este é o e-mail usado para entrar no EDUKIDS+. Para alterá-lo, utilize o painel do responsável ou entre em contato com o suporte.
               </p>
             </div>
+
             <div className="space-y-2">
               <Label>Faixa Etária</Label>
-              <RadioGroup value={ageGroup ?? ""} onValueChange={(value) => setAgeGroup(value as "4-6" | "7-9" | "10-12")} className="flex space-x-4">
-                <div className="flex items-center space-x-2"><RadioGroupItem value="4-6" id="r1" /><Label htmlFor="r1">4-6 anos</Label></div>
-                <div className="flex items-center space-x-2"><RadioGroupItem value="7-9" id="r2" /><Label htmlFor="r2">7-9 anos</Label></div>
-                <div className="flex items-center space-x-2"><RadioGroupItem value="10-12" id="r3" /><Label htmlFor="r3">10-12 anos</Label></div>
+              <RadioGroup
+                value={ageGroup ?? ""}
+                onValueChange={(value) => setAgeGroup(value as "4-6" | "7-9" | "10-12")}
+                className="flex space-x-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="4-6" id="age-4-6" />
+                  <Label htmlFor="age-4-6">4-6 anos</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="7-9" id="age-7-9" />
+                  <Label htmlFor="age-7-9">7-9 anos</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="10-12" id="age-10-12" />
+                  <Label htmlFor="age-10-12">10-12 anos</Label>
+                </div>
               </RadioGroup>
             </div>
           </CardContent>
         </Card>
 
         <Card className="glass-card">
-          <CardHeader><CardTitle>Gerenciamento de Dados</CardTitle><CardDescription>Opções avançadas de dados e progresso.</CardDescription></CardHeader>
+          <CardHeader>
+            <CardTitle>Gerenciamento de Dados</CardTitle>
+            <CardDescription>Opções avançadas de dados e progresso.</CardDescription>
+          </CardHeader>
           <CardContent className="space-y-6">
-            <div className="flex items-center justify-between"><Label htmlFor="progress-reports">Relatórios de progresso por e-mail</Label><Switch id="progress-reports" defaultChecked /></div>
-            <div className="flex items-center justify-between"><Label htmlFor="in-app-notifications">Notificações no aplicativo</Label><Switch id="in-app-notifications" defaultChecked /></div>
-            <div className="flex items-center justify-between"><Label htmlFor="ui-sounds">Sons da interface</Label><Switch id="ui-sounds" checked={uiSounds} onCheckedChange={handleToggleSounds} /></div>
-            <div className="flex items-center justify-between"><Label htmlFor="interstitial-ads">Anúncios Intersticiais (tela cheia)</Label><Switch id="interstitial-ads" checked={interstitialsEnabled} onCheckedChange={handleToggleInterstitials} /></div>
-            <div className="pt-4 border-t border-white/10"><Button variant="destructive" onClick={handleResetProgress} className="w-full"><Trash2 className="mr-2 h-4 w-4" /> Resetar Todo o Progresso</Button><p className="text-xs text-muted-foreground mt-2">Isso apagará todas as lições marcadas como concluídas.</p></div>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="progress-reports">Relatórios de progresso por e-mail</Label>
+              <Switch id="progress-reports" defaultChecked />
+            </div>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="in-app-notifications">Notificações no aplicativo</Label>
+              <Switch id="in-app-notifications" defaultChecked />
+            </div>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="ui-sounds">Sons da interface</Label>
+              <Switch id="ui-sounds" checked={uiSounds} onCheckedChange={handleToggleSounds} />
+            </div>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="interstitial-ads">Anúncios Intersticiais (tela cheia)</Label>
+              <Switch
+                id="interstitial-ads"
+                checked={interstitialsEnabled}
+                onCheckedChange={handleToggleInterstitials}
+              />
+            </div>
+            <div className="pt-4 border-t border-white/10">
+              <Button variant="destructive" onClick={handleResetProgress} className="w-full">
+                <Trash2 className="mr-2 h-4 w-4" /> Resetar Todo o Progresso
+              </Button>
+              <p className="text-xs text-muted-foreground mt-2">
+                Isso apagará todas as lições marcadas como concluídas.
+              </p>
+            </div>
           </CardContent>
         </Card>
 
         <Card className="glass-card">
-          <CardHeader><CardTitle className="flex items-center gap-2"><ShieldCheck className="h-5 w-5 text-primary" />Controle Parental</CardTitle><CardDescription>Defina um PIN para compras e ações sensíveis.</CardDescription></CardHeader>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <ShieldCheck className="h-5 w-5 text-primary" />
+              Controle Parental
+            </CardTitle>
+            <CardDescription>Defina um PIN para compras e ações sensíveis.</CardDescription>
+          </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
-              <div><div className="font-medium">Status do PIN</div><div className="text-xs text-muted-foreground">{parentPinExists ? "PIN configurado neste dispositivo." : "Nenhum PIN definido."}</div></div>
-              {parentPinExists ? <Button variant="secondary" onClick={openRemovePin}><ShieldX className="mr-2 h-4 w-4" /> Remover PIN</Button> : <Button onClick={openSetPin}><ShieldCheck className="mr-2 h-4 w-4" /> Definir PIN</Button>}
+              <div>
+                <div className="font-medium">Status do PIN</div>
+                <div className="text-xs text-muted-foreground">
+                  {parentPinExists ? "PIN configurado neste dispositivo." : "Nenhum PIN definido."}
+                </div>
+              </div>
+              {parentPinExists ? (
+                <Button variant="secondary" onClick={openRemovePin}>
+                  <ShieldX className="mr-2 h-4 w-4" /> Remover PIN
+                </Button>
+              ) : (
+                <Button onClick={openSetPin}>
+                  <ShieldCheck className="mr-2 h-4 w-4" /> Definir PIN
+                </Button>
+              )}
             </div>
-            <div className="flex items-center justify-between"><Label htmlFor="require-pin">Exigir PIN para compras</Label><Switch id="require-pin" checked={requirePinForPurchases} onCheckedChange={requirePinChanged} /></div>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="require-pin">Exigir PIN para compras</Label>
+              <Switch
+                id="require-pin"
+                checked={requirePinForPurchases}
+                onCheckedChange={requirePinChanged}
+              />
+            </div>
           </CardContent>
         </Card>
 
@@ -226,10 +302,21 @@ const Settings = () => {
           </CardContent>
         </Card>
 
-        <Button className="bg-primary hover:bg-primary/90 shadow-lg shadow-primary/30">Salvar Alterações</Button>
+        <Button className="bg-primary hover:bg-primary/90 shadow-lg shadow-primary/30">
+          Salvar Alterações
+        </Button>
       </div>
 
-      <ParentalPinModal open={pinModalOpen} mode={pinMode} onOpenChange={afterPinModalChange} onVerified={() => { const fn = pendingActionRef.current; pendingActionRef.current = null; if (fn) fn(); }} />
+      <ParentalPinModal
+        open={pinModalOpen}
+        mode={pinMode}
+        onOpenChange={afterPinModalChange}
+        onVerified={() => {
+          const fn = pendingActionRef.current;
+          pendingActionRef.current = null;
+          if (fn) fn();
+        }}
+      />
     </div>
   );
 };
