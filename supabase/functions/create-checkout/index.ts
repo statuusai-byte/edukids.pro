@@ -3,10 +3,11 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts"
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Content-Type': 'application/json',
 };
 
-// SKUs válidos (com hífens, compatíveis com as regras do Play Console)
+// SKUs válidos (com hífens)
 const ALLOWED_SKUS = new Set([
   "hints-pack-small",
   "hints-pack-medium",
@@ -30,17 +31,21 @@ serve(async (req) => {
       });
     }
 
-    // 2) Body opcional com SKU
-    let sku = "";
-    if (req.method === "POST") {
-      const body = await req.json().catch(() => ({}));
-      sku = (body?.sku || "").toString().trim();
-      if (!sku) {
-        return new Response(JSON.stringify({ error: "Missing sku" }), { status: 400, headers: corsHeaders });
-      }
-      if (!ALLOWED_SKUS.has(sku)) {
-        return new Response(JSON.stringify({ error: `Invalid sku '${sku}'. Allowed: ${Array.from(ALLOWED_SKUS).join(", ")}` }), { status: 400, headers: corsHeaders });
-      }
+    // 2) Recebe e valida SKU (POST)
+    if (req.method !== "POST") {
+      return new Response(JSON.stringify({ error: "Method not allowed" }), { status: 405, headers: corsHeaders });
+    }
+
+    const body = (await req.json().catch(() => ({}))) as { sku?: string };
+    const sku = (body?.sku ?? "").toString().trim();
+    if (!sku) {
+      return new Response(JSON.stringify({ error: "Missing sku" }), { status: 400, headers: corsHeaders });
+    }
+    if (!ALLOWED_SKUS.has(sku)) {
+      return new Response(
+        JSON.stringify({ error: `Invalid sku '${sku}'. Allowed: ${Array.from(ALLOWED_SKUS).join(", ")}` }),
+        { status: 400, headers: corsHeaders }
+      );
     }
 
     // 3) Simulação de criação de sessão de pagamento
@@ -53,10 +58,7 @@ serve(async (req) => {
         message: "Checkout session created successfully (simulated).",
         sku,
       }),
-      { 
-        headers: corsHeaders, 
-        status: 200 
-      }
+      { headers: corsHeaders, status: 200 }
     );
   } catch (error: any) {
     console.error(error);
