@@ -11,7 +11,7 @@ import {
   Sparkles,
   Users,
   Star,
-  PlayCircle,
+  Gamepad2,
   GraduationCap,
 } from "lucide-react";
 
@@ -26,9 +26,9 @@ const featureCards = [
   },
   {
     icon: BrainCircuit,
-    title: "Conteúdo inteligente",
+    title: "Play+ inteligente",
     description:
-      "Quizzes ilimitados, atividades gamificadas e IA assistente para desbloquear o aprendizado.",
+      "Jogos educativos interativos, quizzes ilimitados e um assistente que dá dicas quando precisa.",
   },
   {
     icon: Trophy,
@@ -41,7 +41,7 @@ const featureCards = [
 const impactStats = [
   { value: "5.200+", label: "Crianças aprendendo agora" },
   { value: "98%", label: "Pais satisfeitos com relatórios" },
-  { value: "120+", label: "Cursos e trilhas exclusivas" },
+  { value: "120+", label: "Jogos e atividades Play+" },
   { value: "∞", label: "Dicas para assinantes Premium" },
 ] as const;
 
@@ -51,14 +51,14 @@ const testimonials = [
     role: "Mãe do Theo (7 anos)",
     avatar: "https://i.pravatar.cc/120?u=carolina-edukids",
     quote:
-      "“Meu filho pede para estudar sozinho! Os relatórios deixam tudo claro e as aulas são incríveis.”",
+      "“Meu filho pede para estudar sozinho! Os relatórios deixam tudo claro e as atividades são incríveis.”",
   },
   {
     name: "Marcelo Duarte",
     role: "Pai da Valentina (10 anos)",
     avatar: "https://i.pravatar.cc/120?u=marcelo-edukids",
     quote:
-      "“O modo Premium salvou nossos estudos em casa. O assistente e as dicas deixaram tudo mais leves.”",
+      "“O modo Premium salvou nossos estudos em casa. O assistente e as dicas deixam tudo mais leve.”",
   },
 ] as const;
 
@@ -135,8 +135,7 @@ const Home = () => {
           </h1>
 
           <p className="mt-4 max-w-xl text-sm text-white/80 sm:text-lg">
-            Trilhando conteúdo pedagógico, IA assistente e controle parental — tudo dentro de um
-            ambiente seguro e interativo que cabe na palma da mão.
+            Conteúdo pensado para telas pequenas: Play+ com jogos educativos interativos e quizzes ilimitados, controlados por você.
           </p>
 
           <div className="mt-8 flex w-full max-w-md flex-col gap-2 sm:flex-row sm:gap-4">
@@ -160,8 +159,8 @@ const Home = () => {
               Parental Control com PIN
             </span>
             <span className="flex items-center gap-1.5">
-              <PlayCircle className="h-4 w-4" />
-              +120 aulas em vídeo
+              <Gamepad2 className="h-4 w-4" />
+              Play+ com jogos interativos
             </span>
             <span className="flex items-center gap-1.5">
               <GraduationCap className="h-4 w-4" />
@@ -209,8 +208,7 @@ const Home = () => {
               Encanta crianças, tranquiliza famílias
             </h2>
             <p className="mt-2 text-sm text-muted-foreground sm:max-w-xl sm:text-base">
-              Conteúdo pensado para telas pequenas: cards interativos, vídeos responsivos e quizzes
-              ilimitados para estudar em qualquer lugar.
+              Play+ reúne jogos e atividades interativas, com IA para dar dicas na hora certa — tudo num ambiente seguro e supervisionado.
             </p>
           </div>
 
@@ -301,10 +299,10 @@ const Home = () => {
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
           <h3 className="text-2xl font-extrabold text-white sm:text-3xl">
-            Pronto para levar o EDUKIDS+ para o seu app?
+            Bora jogar e aprender com o Play+?
           </h3>
           <p className="mt-3 text-sm text-white/80 sm:text-base">
-            Instale o PWA, acesse os conteúdos offline e acompanhe cada conquista. Comece grátis e
+            Instale o PWA, acesse as atividades offline e acompanhe cada conquista. Comece grátis e
             ative o Premium quando quiser.
           </p>
           <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:justify-center sm:gap-4">
