@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, lazy, Suspense, type ComponentType, type LazyExoticComponent } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,14 +10,24 @@ import {
   type PlayPlusGame,
 } from "@/data/playPlusData";
 import { Sparkles, Gamepad2, Lock, Star, Clock, ShieldCheck } from "lucide-react";
-import ContandoFrutas from "@/components/games/ContandoFrutas";
-import FormandoPalavras from "@/components/games/FormandoPalavras";
-import MemoryMatch from "@/components/games/MemoryMatch";
-import MissionMath from "@/components/games/MissionMath";
+import { usePrefersReducedMotion } from "@/hooks/use-reduced-motion";
+
+type GameComponentMap = Record<
+  PlayPlusGame["component"],
+  LazyExoticComponent<ComponentType>
+>;
+
+const gameComponentMap: GameComponentMap = {
+  "contando-frutas": lazy(() => import("@/components/games/ContandoFrutas")),
+  "formando-palavras": lazy(() => import("@/components/games/FormandoPalavras")),
+  "memory-match": lazy(() => import("@/components/games/MemoryMatch")),
+  "mission-math": lazy(() => import("@/components/games/MissionMath")),
+};
 
 const PlayPlus = () => {
   const { ageGroup } = useAge();
   const { isPremium } = usePremium();
+  const reduceMotion = usePrefersReducedMotion();
   const navigate = useNavigate();
   const [activeGameId, setActiveGameId] = useState<string | null>(null);
 
@@ -41,32 +51,13 @@ const PlayPlus = () => {
     setActiveGameId(game.id);
   };
 
-  const renderSelectedGame = (game: PlayPlusGame) => {
-    switch (game.component) {
-      case "contando-frutas":
-        return <ContandoFrutas />;
-      case "formando-palavras":
-        return <FormandoPalavras />;
-      case "memory-match":
-        return <MemoryMatch />;
-      case "mission-math":
-        return <MissionMath />;
-      default:
-        return (
-          <div className="rounded-xl border border-dashed border-white/20 p-6 text-center text-muted-foreground">
-            Esse jogo estará disponível em breve dentro do EDUKIDS+. Fique de olho nas próximas atualizações!
-          </div>
-        );
-    }
-  };
-
   if (!ageGroup) {
     return (
       <div className="glass-card p-8 text-center">
         <Sparkles className="mx-auto mb-4 h-10 w-10 text-primary" />
         <h1 className="text-3xl font-bold">Escolha uma faixa etária para explorar o Play+</h1>
         <p className="mt-2 text-muted-foreground">
-          Vá até as configurações ou use o seletor inicial para definir a idade da criança. Assim, mostramos apenas os conteúdos mais adequados.
+          Vá até as configurações ou use o seletor inicial para definir a idade da criança.
         </p>
         <Button className="mt-6" onClick={() => navigate("/settings")}>
           Abrir Configurações
@@ -75,6 +66,8 @@ const PlayPlus = () => {
     );
   }
 
+  const SelectedGameComponent = activeGame ? gameComponentMap[activeGame.component] : null;
+
   return (
     <div className="space-y-10">
       <section>
@@ -82,11 +75,15 @@ const PlayPlus = () => {
           <div>
             <h1 className="text-4xl font-bold tracking-tighter">Play+ — Aprender brincando</h1>
             <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-              Jogos educativos e desafios rápidos pensados para a faixa etária <strong>{ageGroup}</strong>. Cada experiência é curada e testada para garantir diversão com resultados pedagógicos reais.
+              Jogos educativos pensados para a faixa <strong>{ageGroup}</strong>, testados para rodar suave em computadores modestos.
             </p>
           </div>
-          <Button variant="outline" onClick={() => navigate("/store")} className="w-full sm:w-auto">
-            Ver planos Premium
+          <Button
+            variant="outline"
+            onClick={() => navigate("/store")}
+            className="w-full sm:w-auto"
+          >
+            Ver planos e benefícios Premium
           </Button>
         </div>
 
@@ -95,28 +92,28 @@ const PlayPlus = () => {
             <CardContent className="flex flex-col gap-2 p-4">
               <span className="text-xs uppercase tracking-[0.3em] text-primary">Jogos</span>
               <strong className="text-3xl font-bold">{catalogSummary.totalGames}</strong>
-              <span className="text-xs text-muted-foreground">Atividades interativas alinhadas à idade selecionada</span>
+              <span className="text-xs text-muted-foreground">Atividades interativas alinhadas à idade</span>
             </CardContent>
           </Card>
           <Card className="glass-card border-white/10">
             <CardContent className="flex flex-col gap-2 p-4">
-              <span className="text-xs uppercase tracking-[0.3em] text-emerald-400">Prontos para jogar</span>
+              <span className="text-xs uppercase tracking-[0.3em] text-emerald-400">Prontos</span>
               <strong className="text-3xl font-bold text-emerald-400">{catalogSummary.totalGames}</strong>
-              <span className="text-xs text-muted-foreground">Jogos com carregamento imediato dentro do app</span>
+              <span className="text-xs text-muted-foreground">Carregamento sob demanda para poupar memória</span>
             </CardContent>
           </Card>
           <Card className="glass-card border-white/10">
             <CardContent className="flex flex-col gap-2 p-4">
               <span className="text-xs uppercase tracking-[0.3em] text-yellow-400">Premium</span>
               <strong className="text-3xl font-bold text-yellow-400">{catalogSummary.totalPremium}</strong>
-              <span className="text-xs text-muted-foreground">Experiências exclusivas com relatórios aprofundados</span>
+              <span className="text-xs text-muted-foreground">Experiências exclusivas para assinantes</span>
             </CardContent>
           </Card>
           <Card className="glass-card border-white/10">
             <CardContent className="flex flex-col gap-2 p-4">
               <span className="text-xs uppercase tracking-[0.3em] text-sky-400">Destaques</span>
               <strong className="text-3xl font-bold text-sky-400">{catalogSummary.recommended}</strong>
-              <span className="text-xs text-muted-foreground">Jogos avaliados como favoritos pela família EDUKIDS+</span>
+              <span className="text-xs text-muted-foreground">Favoritos da comunidade EDUKIDS+</span>
             </CardContent>
           </Card>
         </div>
@@ -127,14 +124,14 @@ const PlayPlus = () => {
           <div>
             <h2 className="text-2xl font-bold">Jogos interativos</h2>
             <p className="text-sm text-muted-foreground">
-              Ganhe experiência resolvendo desafios rápidos. Todos os títulos abaixo foram revisados pelo time pedagógico para manter a qualidade sem depender de vídeos externos.
+              Tudo foi revisado pelo time pedagógico. Sem vídeos externos, sem consumo extra de RAM desnecessário.
             </p>
           </div>
         </div>
 
         {filteredGames.length === 0 ? (
           <div className="glass-card p-8 text-center text-muted-foreground">
-            Ainda não temos jogos cadastrados para a faixa etária selecionada. 🌟
+            Ainda não temos jogos cadastrados para a faixa etária selecionada.
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
@@ -142,7 +139,10 @@ const PlayPlus = () => {
               const canAccess = !game.premium || isPremium;
 
               return (
-                <Card key={game.id} className="glass-card flex flex-col overflow-hidden border-white/10 transition hover:-translate-y-1">
+                <Card
+                  key={game.id}
+                  className="glass-card flex flex-col overflow-hidden border-white/10 transition hover:-translate-y-1"
+                >
                   <div className="relative h-40 w-full">
                     <img
                       src={game.coverImage}
@@ -161,9 +161,9 @@ const PlayPlus = () => {
                           Recomendado
                         </span>
                       )}
-                      <span className="flex items-center gap-1 rounded-full bg-emerald-400/90 px-3 py-1 text-xs font-semibold text-black">
+                      <span className="flex items-center gap-1 rounded-full bg-emerald-400/85 px-3 py-1 text-xs font-semibold text-black">
                         <ShieldCheck className="h-3 w-3" />
-                        Testado no app
+                        Testado
                       </span>
                     </div>
                     {game.premium && !isPremium && (
@@ -201,7 +201,7 @@ const PlayPlus = () => {
                         {game.estimatedTime} por sessão
                       </span>
                       <span>
-                        Faixa etária:{" "}
+                        Faixa ideal:{" "}
                         <strong className="text-foreground">{game.ageGroups.join(" • ")}</strong>
                       </span>
                     </div>
@@ -209,9 +209,7 @@ const PlayPlus = () => {
                       onClick={() => (canAccess ? handlePlayGame(game) : navigate("/store"))}
                       className="w-full"
                     >
-                      {canAccess
-                        ? "Jogar agora"
-                        : "Assine para jogar"}
+                      {canAccess ? "Jogar agora" : "Assine para jogar"}
                     </Button>
                   </CardFooter>
                 </Card>
@@ -227,14 +225,38 @@ const PlayPlus = () => {
             <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <CardTitle className="text-2xl">{activeGame.title}</CardTitle>
-                <p className="text-sm text-muted-foreground">{activeGame.tagline}</p>
+                <p className="text-sm text-muted-foreground">
+                  {activeGame.tagline}
+                </p>
               </div>
-              <Button variant="outline" onClick={() => setActiveGameId(null)}>
+              <Button
+                variant="outline"
+                onClick={() => setActiveGameId(null)}
+              >
                 Fechar jogo
               </Button>
             </CardHeader>
             <CardContent className="space-y-4">
-              {renderSelectedGame(activeGame)}
+              {SelectedGameComponent ? (
+                <Suspense
+                  fallback={
+                    <div className="flex h-40 items-center justify-center rounded-xl bg-secondary/50 text-sm text-muted-foreground">
+                      Carregando jogo…
+                    </div>
+                  }
+                >
+                  <SelectedGameComponent />
+                </Suspense>
+              ) : (
+                <div className="rounded-xl border border-dashed border-white/20 p-6 text-center text-sm text-muted-foreground">
+                  Esse jogo estará disponível em breve dentro do EDUKIDS+.
+                </div>
+              )}
+              {!reduceMotion && (
+                <p className="text-xs text-muted-foreground">
+                  Os jogos são carregados sob demanda para poupar memória e rodar bem em máquinas mais simples.
+                </p>
+              )}
             </CardContent>
           </Card>
         </section>
