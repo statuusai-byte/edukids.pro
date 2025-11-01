@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSupabase } from "@/context/SupabaseContext";
 import { useHintsContext } from "@/context/HintsContext";
 import { cn } from "@/lib/utils";
+import PRODUCTS from "@/config/products";
 
 type HintPackage = {
   amount: number;
@@ -66,22 +67,27 @@ const Store = () => {
 
       const invokeOptions: Record<string, unknown> = {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ sku: PRODUCTS.EDUKIDS_BASIC_MONTHLY }),
       };
       if (token) {
-        invokeOptions.headers = { Authorization: `Bearer ${token}` };
+        (invokeOptions.headers as Record<string, string>).Authorization = `Bearer ${token}`;
       }
 
       const { data, error } = await supabase.functions.invoke("create-checkout", invokeOptions);
 
       if (error) throw new Error(error.message || "Erro ao criar sessão de checkout.");
-      if (!data || !data.checkout_url) throw new Error("Falha ao obter URL de checkout.");
+      if (!data || !(data as any).checkout_url) throw new Error("Falha ao obter URL de checkout.");
 
-      window.location.href = data.checkout_url;
+      window.location.href = (data as any).checkout_url;
     } catch (error: any) {
       console.error("Checkout failed:", error);
       dismissToast(loadingToast);
       showError("Erro ao processar a assinatura. Tente novamente.");
       setIsCheckingOut(false);
+      return;
     }
   };
 
