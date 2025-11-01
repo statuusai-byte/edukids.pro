@@ -26,18 +26,23 @@ const hintPackages: HintPackage[] = [
 ];
 
 const freeFeatures = [
-  "Acesso aos jogos gratuitos e quizzes temáticos",
-  "Controle parental local e relatórios básicos",
-  "Assistente de estudos com dicas em texto",
-  "Anúncios intersticiais leves a cada uso contínuo",
+  "Acesso a jogos e quizzes grátis",
+  "Controle de idade e acesso",
+  "Assistente com dicas limitadas",
+  "Anúncios leves entre atividades",
 ];
 
 const premiumFeatures = [
-  "Todos os jogos Play+ inclusos (inclusive os exclusivos)",
-  "Dicas ilimitadas dentro dos jogos e quizzes",
-  "Relatórios avançados para responsáveis",
-  "IA de voz de alta qualidade (em breve) guiando cada tarefa",
-  "Acesso sem anúncios e com suporte prioritário",
+  "Acesso a todos os jogos Play+",
+  "Dicas ilimitadas nos estudos",
+  "Experiência sem anúncios",
+  "IA de voz explicativa (em breve)",
+  "Relatórios de progresso",
+  "Controle parental avançado",
+  "Lições e quizzes exclusivos",
+  "Modo offline (via PWA)",
+  "Suporte prioritário",
+  "Novidades toda semana",
 ];
 
 const Store = () => {
