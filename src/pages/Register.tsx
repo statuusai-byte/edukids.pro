@@ -11,19 +11,22 @@ const Register = () => {
     return <div className="min-h-screen flex items-center justify-center">Carregando...</div>;
   }
 
-  // If already authenticated, redirect to dashboard
   if (user) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/activities" replace />;
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md glass-card p-8">
-        <h1 className="text-3xl font-bold text-center mb-6">Crie sua conta no EDUKIDS+</h1>
+        <h1 className="text-3xl font-bold text-center mb-3">Crie sua conta no EDUKIDS+</h1>
+        <p className="text-xs text-muted-foreground text-center mb-4">
+          Ao criar sua conta, enviaremos um e-mail de confirmação. Verifique sua caixa de entrada e siga o link.
+        </p>
         <Auth
           supabaseClient={supabase}
           providers={[]}
           view="sign_up"
+          redirectTo={`${window.location.origin}/activities`}
           appearance={{
             theme: ThemeSupa,
             variables: {
@@ -55,19 +58,12 @@ const Register = () => {
                 social_provider_text: 'Criar conta com {{provider}}',
                 link_text: 'Já tem uma conta? Entrar',
               },
-              sign_in: {
-                email_label: 'Seu Email',
-                password_label: 'Sua Senha',
-                email_input_placeholder: 'email@exemplo.com',
-                password_input_placeholder: '••••••••',
-                button_label: 'Entrar',
-                loading_button_label: 'Entrando...',
-                social_provider_text: 'Entrar com {{provider}}',
-                link_text: 'Não tem uma conta? Criar Conta',
-              },
             },
           }}
         />
+        <p className="mt-4 text-xs text-muted-foreground text-center">
+          Não recebeu? Verifique a pasta de spam ou tente novamente.
+        </p>
       </div>
     </div>
   );

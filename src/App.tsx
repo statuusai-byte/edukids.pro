@@ -4,17 +4,18 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import { AgeProvider } from "./context/AgeContext";
 import { ProfileProvider } from "./context/ProfileContext";
-import { SupabaseProvider, useSupabase } from "./context/SupabaseContext";
+import { SupabaseProvider } from "./context/SupabaseContext";
 import { PremiumProvider } from "./context/PremiumContext";
 import { HintsProvider } from "./context/HintsContext";
 import { Sparkles } from "lucide-react";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import AmbientBackground from "@/components/AmbientBackground";
+import RequireAuth from "@/components/RequireAuth";
 
 // Lazy pages/components
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Layout = lazy(() => import("./components/Layout"));
-const Home = lazy(() => import("./pages/Home"));
+const Index = lazy(() => import("./pages/Index"));
 const Activities = lazy(() => import("./pages/Activities"));
 const PlayPlus = lazy(() => import("./pages/PlayPlus"));
 const Store = lazy(() => import("./pages/Store"));
@@ -40,30 +41,45 @@ const Fallback = () => (
 const ADMIN_EMAILS = ["statuus.ai@gmail.com", "eduki.teste@gmail.com"];
 
 const AppRoutes = () => {
-  const { user, isLoading } = useSupabase();
+  // Nota: a checagem de auth e redireção inicial acontece no componente Index e em RequireAuth
   const isDev = import.meta.env.MODE === "development";
-
-  if (isLoading) {
-    return <Fallback />;
-  }
-
-  const email = user?.email?.toLowerCase();
-  const isAdmin = !!email && ADMIN_EMAILS.includes(email);
-  const showAdminRoute = isDev || isAdmin;
+  const showAdminRoute = isDev; // Admin protegido por RequireAuth; link só visível para contas admin
 
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      {/* Landing decide entre /login (sem sessão) e /activities (com sessão) */}
+      <Route path="/" element={<Index />} />
+
+      {/* Páginas públicas de autenticação */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+
+      {/* Página de confirmação de pagamento (livre) e conta de teste */}
       <Route path="/success-payment" element={<SuccessPayment />} />
       <Route path="/test-account" element={<TestAccount />} />
 
-      {showAdminRoute && <Route path="/admin/grant-premium" element={<AdminGrantPremium />} />}
+      {showAdminRoute && (
+        <Route
+          path="/admin/grant-premium"
+          element={
+            <RequireAuth>
+              <AdminGrantPremium />
+            </RequireAuth>
+          }
+        />
+      )}
 
+      {/* Alias antigo */}
       <Route path="/courses/*" element={<Navigate to="/play-plus" replace />} />
 
-      <Route element={<Layout />}>
+      {/* App protegido por autenticação */}
+      <Route
+        element={
+          <RequireAuth>
+            <Layout />
+          </RequireAuth>
+        }
+      >
         <Route path="activities">
           <Route index element={<Activities />} />
           <Route path=":subject" element={<SubjectPage />} />

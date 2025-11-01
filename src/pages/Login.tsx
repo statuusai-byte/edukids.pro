@@ -11,18 +11,18 @@ const Login = () => {
     return <div className="min-h-screen flex items-center justify-center">Carregando...</div>;
   }
 
-  // Se o usuário já estiver logado, redireciona para o dashboard
   if (user) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/activities" replace />;
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md glass-card p-8">
-        <h1 className="text-3xl font-bold text-center mb-6">Bem-vindo ao EDUKIDS+</h1>
+        <h1 className="text-3xl font-bold text-center mb-6">Entrar no EDUKIDS+</h1>
         <Auth
           supabaseClient={supabase}
           providers={[]}
+          redirectTo={`${window.location.origin}/activities`}
           appearance={{
             theme: ThemeSupa,
             variables: {
@@ -53,16 +53,6 @@ const Login = () => {
                 loading_button_label: 'Entrando...',
                 social_provider_text: 'Entrar com {{provider}}',
                 link_text: 'Já tem uma conta? Entrar',
-              },
-              sign_up: {
-                email_label: 'Seu Email',
-                password_label: 'Crie uma Senha',
-                email_input_placeholder: 'email@exemplo.com',
-                password_input_placeholder: '••••••••',
-                button_label: 'Criar Conta',
-                loading_button_label: 'Criando conta...',
-                social_provider_text: 'Criar conta com {{provider}}',
-                link_text: 'Não tem uma conta? Criar Conta',
               },
               forgotten_password: {
                 link_text: 'Esqueceu sua senha?',
