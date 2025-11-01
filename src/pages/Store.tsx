@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Check, Star, Loader2, Lightbulb, Sparkles, ShieldCheck, WifiOff } from "lucide-react";
@@ -51,6 +51,7 @@ const Store = () => {
   const { user } = useSupabase();
   const { addHints } = useHintsContext();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const navigate = useNavigate();
 
   const handleCheckout = async () => {
     if (!user) {
@@ -79,9 +80,19 @@ const Store = () => {
       const { data, error } = await supabase.functions.invoke("create-checkout", invokeOptions);
 
       if (error) throw new Error(error.message || "Erro ao criar sessão de checkout.");
-      if (!data || !(data as any).checkout_url) throw new Error("Falha ao obter URL de checkout.");
+      const checkoutUrl = (data as any)?.checkout_url as string | undefined;
+      if (!checkoutUrl || typeof checkoutUrl !== "string") {
+        throw new Error("Falha ao obter URL de checkout.");
+      }
 
-      window.location.href = (data as any).checkout_url;
+      dismissToast(loadingToast);
+
+      // Se a URL for interna (relativa), use o roteador; senão, navegue externamente.
+      if (checkoutUrl.startsWith("/")) {
+        navigate(checkoutUrl, { replace: true });
+      } else {
+        window.location.href = checkoutUrl;
+      }
     } catch (error: any) {
       console.error("Checkout failed:", error);
       dismissToast(loadingToast);
