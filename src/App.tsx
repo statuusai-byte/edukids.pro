@@ -38,8 +38,6 @@ const Fallback = () => (
   </div>
 );
 
-const ADMIN_EMAILS = ["statuus.ai@gmail.com", "eduki.teste@gmail.com"];
-
 const AppRoutes = () => {
   // Nota: a checagem de auth e redireção inicial acontece no componente Index e em RequireAuth
   const isDev = import.meta.env.MODE === "development";
