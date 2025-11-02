@@ -2,7 +2,7 @@
 
 **Última atualização:** [Data da Última Atualização]
 
-Bem-vindo ao EDUKIDS+! Esta Política de Privacidade explica como [Seu Nome/Nome da Empresa] ("nós", "nosso") coleta, usa e protege as informações em relação ao nosso aplicativo móvel EDUKIDS+ (o "Serviço").
+Bem-vindo ao EDUKIDS+! Esta Política de Privacidade explica como [diego Ferreira Da Costa] ("nós", "nosso") coleta, usa e protege as informações em relação ao nosso aplicativo móvel EDUKIDS+ (o "Serviço").
 
 ## 1. Informações que Coletamos
 
