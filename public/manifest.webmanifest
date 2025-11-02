@@ -2,24 +2,23 @@
   "name": "EDUKIDS+",
   "short_name": "EDUKIDS",
   "description": "Aprendizagem lúdica e interativa para crianças — EduKids+",
+  "theme_color": "#7c3aed",
+  "background_color": "#0f172a",
   "start_url": "/",
   "display": "standalone",
   "scope": "/",
-  "theme_color": "#7c3aed",
-  "background_color": "#0f172a",
-  "orientation": "portrait",
   "icons": [
     {
-      "src": "/icon-512.png.png",
+      "src": "/icons/icon-512.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icon-512.png.png",
+      "src": "/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }
