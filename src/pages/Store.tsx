@@ -15,11 +15,11 @@ import {
 } from "lucide-react";
 import { usePremium } from "@/context/PremiumContext";
 import { showLoading, showError, dismissToast, showSuccess } from "@/utils/toast";
-import { supabase } from "@/integrations/supabase/client";
 import { useSupabase } from "@/context/SupabaseContext";
 import { useHintsContext } from "@/context/HintsContext";
 import { cn } from "@/lib/utils";
 import PRODUCTS from "@/config/products";
+import { purchaseProduct } from "@/lib/capacitor";
 
 type HintPackage = {
   amount: number;
@@ -74,7 +74,7 @@ const premiumFeatures = [
 ];
 
 const Store = () => {
-  const { isPremium } = usePremium();
+  const { isPremium, activatePremium } = usePremium();
   const { user } = useSupabase();
   const { addHints } = useHintsContext();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
@@ -87,44 +87,25 @@ const Store = () => {
     }
 
     setIsCheckingOut(true);
-    const loadingToast = showLoading("Iniciando checkout...");
+    const loadingToast = showLoading("Iniciando compra...");
 
     try {
-      const sessionRes = await supabase.auth.getSession();
-      const token = sessionRes.data.session?.access_token;
-
-      const invokeOptions: Record<string, unknown> = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ sku: PRODUCTS.EDUKIDS_BASIC_MONTHLY }),
-      };
-
-      if (token) {
-        (invokeOptions.headers as Record<string, string>).Authorization = `Bearer ${token}`;
-      }
-
-      const { data, error } = await supabase.functions.invoke("create-checkout", invokeOptions);
-
-      if (error) throw new Error(error.message || "Erro ao criar sessão de checkout.");
-
-      const checkoutUrl = (data as any)?.checkout_url as string | undefined;
-      if (!checkoutUrl || typeof checkoutUrl !== "string") {
-        throw new Error("Falha ao obter URL de checkout.");
-      }
-
+      const success = await purchaseProduct(PRODUCTS.EDUKIDS_BASIC_MONTHLY);
       dismissToast(loadingToast);
 
-      if (checkoutUrl.startsWith("/")) {
-        navigate(checkoutUrl, { replace: true });
+      if (success) {
+        // On native, you'd verify the receipt on your server and grant premium.
+        // For now, we'll activate it locally and navigate to the success page.
+        activatePremium();
+        navigate('/success-payment', { replace: true });
       } else {
-        window.location.href = checkoutUrl;
+        // Error messages are handled within the purchaseProduct function
       }
     } catch (error: any) {
       console.error("Checkout failed:", error);
       dismissToast(loadingToast);
       showError("Erro ao processar a assinatura. Tente novamente.");
+    } finally {
       setIsCheckingOut(false);
     }
   };
