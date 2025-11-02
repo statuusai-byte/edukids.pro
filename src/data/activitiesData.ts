@@ -238,13 +238,98 @@ function genFinancialLiteracyQuiz(count: number): QuizQuestion[] {
   return out;
 }
 
-/* ---------- Reading Content ---------- */
-const reading_body_systems = "O corpo humano é incrível! O coração bate sem parar para levar sangue a todo lugar. Os pulmões nos ajudam a respirar o ar. E o cérebro é o chefe de tudo, nos ajuda a pensar, aprender e brincar!";
-const reading_water_cycle = "A água está sempre em movimento! O sol esquenta a água dos rios e mares, que vira vapor e sobe (evaporação). Lá no céu, o vapor esfria e forma as nuvens (condensação). Quando as nuvens ficam pesadas, a água cai como chuva (precipitação) e volta para os rios, começando tudo de novo!";
-const reading_discovery_brazil = "Em 1500, navegadores portugueses liderados por Pedro Álvares Cabral chegaram ao Brasil. Eles estavam tentando encontrar um novo caminho para as Índias, mas acabaram descobrindo uma nova terra, cheia de riquezas naturais e povos indígenas que já viviam aqui.";
-const reading_primary_colors = "As cores primárias são o vermelho, o amarelo e o azul. Elas são especiais porque não podem ser criadas pela mistura de outras cores. Mas, ao misturá-las, podemos criar todas as outras cores! Amarelo com azul faz verde. Vermelho com amarelo faz laranja. E azul com vermelho faz roxo. Mágico, não é?";
-const reading_if_then_logic = "Na programação, usamos a lógica 'SE-ENTÃO'. É como tomar uma decisão. SE estiver chovendo, ENTÃO eu pego um guarda-chuva. SE a luz estiver verde, ENTÃO eu posso atravessar a rua. Os computadores usam essa lógica para fazer tudo!";
-const reading_saving_money = "Guardar dinheiro é como plantar uma sementinha. Se você guarda um pouco de sua mesada toda semana em um cofrinho, com o tempo, você terá dinheiro suficiente para comprar aquele brinquedo que tanto quer. Isso se chama 'poupar'!";
+/* ---------- NEW QUIZ GENERATORS ---------- */
+
+function genColorMixingQuiz(count: number): QuizQuestion[] {
+  const questions = [
+    { q: 'Qual cor obtemos ao misturar amarelo e azul?', a: 'Verde', options: ['Laranja', 'Roxo', 'Marrom'] },
+    { q: 'Qual cor obtemos ao misturar vermelho e amarelo?', a: 'Laranja', options: ['Verde', 'Roxo', 'Preto'] },
+    { q: 'Qual cor obtemos ao misturar azul e vermelho?', a: 'Roxo', options: ['Verde', 'Laranja', 'Branco'] },
+    { q: 'Qual destas é uma cor primária?', a: 'Azul', options: ['Verde', 'Laranja', 'Roxo'] },
+    { q: 'Para obter a cor marrom, podemos misturar...', a: 'Vermelho e verde', options: ['Azul e branco', 'Amarelo e preto', 'Laranja e roxo'] },
+  ];
+  const out: QuizQuestion[] = [];
+  for (let i = 0; i < count; i++) {
+    const qData = questions[i % questions.length];
+    out.push({ question: qData.q, options: makeOptions(qData.a, qData.options), correctAnswer: qData.a });
+  }
+  return out;
+}
+
+function genMultiplicationProblemsQuiz(count: number): QuizQuestion[] {
+  const questions = [
+    { q: 'Se você tem 3 caixas com 4 lápis cada, quantos lápis você tem no total?', a: '12', options: ['7', '1', '10'] },
+    { q: 'Uma bicicleta tem 2 rodas. Quantas rodas têm 5 bicicletas?', a: '10', options: ['7', '2', '15'] },
+    { q: 'Maria come 2 maçãs por dia. Quantas maçãs ela come em uma semana (7 dias)?', a: '14', options: ['9', '7', '10'] },
+    { q: 'Um pacote tem 5 figurinhas. Se você comprar 3 pacotes, quantas figurinhas terá?', a: '15', options: ['8', '3', '12'] },
+  ];
+  const out: QuizQuestion[] = [];
+  for (let i = 0; i < count; i++) {
+    const qData = questions[i % questions.length];
+    out.push({ question: qData.q, options: makeOptions(qData.a, qData.options), correctAnswer: qData.a });
+  }
+  return out;
+}
+
+function genDivisionWithRemainderQuiz(count: number): QuizQuestion[] {
+  const questions = [
+    { q: 'Se você dividir 10 por 3, qual é o resto?', a: '1', options: ['0', '2', '3'] },
+    { q: 'João tem 7 bolinhas para dividir com seu amigo. Quantas bolinhas sobram se cada um ficar com a mesma quantidade?', a: '1', options: ['0', '2', '3'] },
+    { q: 'Dividindo 15 por 4, o quociente é 3. Qual é o resto?', a: '3', options: ['0', '1', '2'] },
+    { q: 'Uma professora tem 22 lápis para dividir entre 5 alunos. Quantos lápis sobram?', a: '2', options: ['0', '1', '3'] },
+  ];
+  const out: QuizQuestion[] = [];
+  for (let i = 0; i < count; i++) {
+    const qData = questions[i % questions.length];
+    out.push({ question: qData.q, options: makeOptions(qData.a, qData.options), correctAnswer: qData.a });
+  }
+  return out;
+}
+
+function genNounsAndAdjectivesQuiz(count: number): QuizQuestion[] {
+  const questions = [
+    { q: 'Na frase "O cachorro grande latiu", qual palavra é o adjetivo?', a: 'grande', options: ['cachorro', 'latiu', 'O'] },
+    { q: 'Qual palavra é um substantivo?', a: 'Mesa', options: ['Bonito', 'Corre', 'Muito'] },
+    { q: 'Na frase "A menina feliz brinca", qual palavra é o substantivo?', a: 'menina', options: ['feliz', 'brinca', 'A'] },
+    { q: 'Qual palavra é um adjetivo?', a: 'Azul', options: ['Céu', 'Correr', 'Rapidamente'] },
+  ];
+  const out: QuizQuestion[] = [];
+  for (let i = 0; i < count; i++) {
+    const qData = questions[i % questions.length];
+    out.push({ question: qData.q, options: makeOptions(qData.a, qData.options), correctAnswer: qData.a });
+  }
+  return out;
+}
+
+function genWaterCycleQuiz(count: number): QuizQuestion[] {
+  const questions = [
+    { q: 'Como se chama quando a água do rio vira vapor e sobe para o céu?', a: 'Evaporação', options: ['Condensação', 'Precipitação', 'Infiltração'] },
+    { q: 'Quando o vapor de água no céu esfria e forma as nuvens, o processo é chamado de...', a: 'Condensação', options: ['Evaporação', 'Precipitação', 'Transpiração'] },
+    { q: 'A chuva, a neve e o granizo são formas de...', a: 'Precipitação', options: ['Evaporação', 'Condensação', 'Coleção'] },
+    { q: 'Para onde a água da chuva vai depois de cair na terra?', a: 'Rios e lençóis freáticos', options: ['Para o Sol', 'Para a Lua', 'Fica nas nuvens'] },
+  ];
+  const out: QuizQuestion[] = [];
+  for (let i = 0; i < count; i++) {
+    const qData = questions[i % questions.length];
+    out.push({ question: qData.q, options: makeOptions(qData.a, qData.options), correctAnswer: qData.a });
+  }
+  return out;
+}
+
+function genAdvancedFinancialLiteracyQuiz(count: number): QuizQuestion[] {
+  const questions = [
+    { q: 'O que são "juros" quando você guarda dinheiro no banco?', a: 'Um dinheiro extra que o banco te paga', options: ['Uma taxa que você paga', 'O nome do gerente', 'Um tipo de cofre'] },
+    { q: 'O que significa "investir"?', a: 'Usar o dinheiro para tentar ganhar mais dinheiro', options: ['Gastar todo o dinheiro em brinquedos', 'Esconder o dinheiro', 'Dar o dinheiro para caridade'] },
+    { q: 'Qual a diferença entre "necessidade" e "desejo"?', a: 'Necessidade é algo essencial, desejo é algo que queremos mas não precisamos', options: ['Não há diferença', 'Desejo é mais caro', 'Necessidade é comida, desejo é roupa'] },
+    { q: 'O que é "inflação"?', a: 'Quando os preços das coisas aumentam com o tempo', options: ['Quando o dinheiro fica mais valioso', 'Um tipo de investimento', 'Um imposto sobre brinquedos'] },
+  ];
+  const out: QuizQuestion[] = [];
+  for (let i = 0; i < count; i++) {
+    const qData = questions[i % questions.length];
+    out.push({ question: qData.q, options: makeOptions(qData.a, qData.options), correctAnswer: qData.a });
+  }
+  return out;
+}
 
 /* ---------- subjectsData export ---------- */
 
@@ -285,14 +370,12 @@ export const subjectsData: Subject[] = [
               { id: "m2-l2", title: "Subtraindo até 100", content: JSON.stringify(genSub(QUIZ_COUNT, 100)), type: "exercise" }
           ]},
           { id: "m2-mod2", title: "Multiplicação é Mágica", lessons: [
-              // Make the 'Tabuadas Divertidas' a premium exercise (more depth)
               { id: "m2-l3", title: "Tabuadas Divertidas", content: JSON.stringify(genMul(QUIZ_COUNT, 12)), type: "exercise", premium: true },
-              { id: "m2-l4", title: "Resolvendo Problemas de Vezes", content: "Se você tem 3 caixas com 4 lápis cada, quantos lápis você tem no total?", type: "reading" }
+              { id: "m2-l4", title: "Resolvendo Problemas de Vezes", content: JSON.stringify(genMultiplicationProblemsQuiz(QUIZ_COUNT)), type: "exercise" }
           ]},
           { id: "m2-mod3", title: "Dividindo o Tesouro", lessons: [
-              // division exercises are more advanced — mark premium
               { id: "m2-l5", title: "Dividindo em Partes Iguais", content: JSON.stringify(genDiv(QUIZ_COUNT, 12)), type: "exercise", premium: true },
-              { id: "m2-l6", title: "Divisão e Resto", content: "Se você dividir 10 por 3, cada um recebe 3 e sobra 1. Esse é o resto!", type: "reading" }
+              { id: "m2-l6", title: "Divisão e Resto", content: JSON.stringify(genDivisionWithRemainderQuiz(QUIZ_COUNT)), type: "exercise" }
           ]}
         ]
       },
@@ -305,7 +388,6 @@ export const subjectsData: Subject[] = [
         modules: [
           { id: "m3-mod1", title: "Frações e Decimais", lessons: [
               { id: "m3-l1", title: "O que são Frações?", content: "Frações representam partes de um todo. 1/2 é uma metade. 1/4 é um quarto.", type: "reading" },
-              // advanced exercises behind premium
               { id: "m3-l2", title: "Exercícios com Frações", content: JSON.stringify(genDiv(QUIZ_COUNT, 20)), type: "exercise", premium: true }
           ]},
           { id: "m3-mod2", title: "Geometria Básica", lessons: [
@@ -344,11 +426,10 @@ export const subjectsData: Subject[] = [
         icon: "SpellCheck",
         modules: [
           { id: "p2-mod1", title: "Vocabulário", lessons: [
-              // antonyms quiz can be free but advanced sets mark premium occasionally
               { id: "p2-l1", title: "Quiz de Antônimos", content: JSON.stringify(genPortugueseAntonyms(QUIZ_COUNT)), type: "exercise" }
           ]},
           { id: "p2-mod2", title: "Tipos de Palavras", lessons: [
-              { id: "p2-l2", title: "Substantivos e Adjetivos", content: "Substantivo dá nome às coisas (CASA). Adjetivo dá qualidade (CASA bonita).", type: "reading" }
+              { id: "p2-l2", title: "Substantivos e Adjetivos", content: JSON.stringify(genNounsAndAdjectivesQuiz(QUIZ_COUNT)), type: "exercise" }
           ]}
         ]
       },
@@ -360,7 +441,6 @@ export const subjectsData: Subject[] = [
         icon: "BookOpen",
         modules: [
           { id: "p3-mod1", title: "Verbos e Tempos", lessons: [
-              // advanced grammar behind premium
               { id: "p3-l1", title: "Passado, Presente e Futuro", content: "Eu comi (passado), eu como (presente), eu comerei (futuro).", type: "reading", premium: true },
           ]},
           { id: "p3-mod2", title: "Pontuação", lessons: [
@@ -388,7 +468,6 @@ export const subjectsData: Subject[] = [
               { id: "i1-l1", title: "Quiz: Numbers 1-20", content: JSON.stringify(genEnglishNumbers(QUIZ_COUNT)), type: "exercise" }
           ]},
           { id: "i1-mod2", title: "Animals", lessons: [
-              // keep animals free (encourage learning), but advanced vocabulary could be premium later
               { id: "i1-l2", title: "Quiz: Common Animals", content: JSON.stringify(genEnglishAnimals(QUIZ_COUNT)), type: "exercise" }
           ]}
         ]
@@ -425,12 +504,11 @@ export const subjectsData: Subject[] = [
         icon: "Globe",
         modules: [
           { id: "c2-mod1", title: "Corpo Humano", lessons: [
-              { id: "c2-l1", title: "Como o Corpo Funciona", content: reading_body_systems, type: "reading" },
-              // body parts quiz: premium
+              { id: "c2-l1", title: "Como o Corpo Funciona", content: "O corpo humano é incrível! O coração bate sem parar para levar sangue a todo lugar. Os pulmões nos ajudam a respirar o ar. E o cérebro é o chefe de tudo, nos ajuda a pensar, aprender e brincar!", type: "reading" },
               { id: "c2-l2", title: "Quiz: Órgãos do Corpo", content: JSON.stringify(genScienceBodyParts(QUIZ_COUNT)), type: "exercise", premium: true }
           ]},
           { id: "c2-mod2", title: "Ciclos da Natureza", lessons: [
-              { id: "c2-l3", title: "O Ciclo da Água", content: reading_water_cycle, type: "reading" }
+              { id: "c2-l3", title: "O Ciclo da Água", content: JSON.stringify(genWaterCycleQuiz(QUIZ_COUNT)), type: "exercise" }
           ]}
         ]
       },
@@ -460,8 +538,7 @@ export const subjectsData: Subject[] = [
     activities: [
       { id: "h1", title: "História do Brasil", description: "Eventos que moldaram o nosso país.", ageGroups: ['7-9','10-12'], icon: "Landmark", modules: [
           { id: "h1-mod1", title: "Descobrimento e Colonização", lessons: [
-              { id: "h1-l1", title: "A Chegada dos Portugueses", content: reading_discovery_brazil, type: "reading" },
-              // quiz about historical facts -> premium
+              { id: "h1-l1", title: "A Chegada dos Portugueses", content: "Em 1500, navegadores portugueses liderados por Pedro Álvares Cabral chegaram ao Brasil. Eles estavam tentando encontrar um novo caminho para as Índias, mas acabaram descobrindo uma nova terra, cheia de riquezas naturais e povos indígenas que já viviam aqui.", type: "reading" },
               { id: "h1-l2", title: "Quiz de Fatos Históricos", content: JSON.stringify(genGeographyCapitals(QUIZ_COUNT)), type: "exercise", premium: true }
           ]}
       ]}
@@ -475,7 +552,6 @@ export const subjectsData: Subject[] = [
     ageGroups: ['7-9','10-12'],
     activities: [
       { id: "g1", title: "Mapas e Lugares", description: "Aprenda sobre estados, capitais e continentes.", ageGroups: ['7-9','10-12'], icon: "Globe", modules: [
-          // capitals quiz set as premium to reward subscribers
           { id: "g1-mod1", title: "Brasil e o Mundo", lessons: [
               { id: "g1-l1", title: "Quiz de Capitais", content: JSON.stringify(genGeographyCapitals(QUIZ_COUNT)), type: "exercise", premium: true }
           ]}
@@ -491,7 +567,7 @@ export const subjectsData: Subject[] = [
     activities: [
       { id: "a1", title: "Cores e Formas", description: "Explore o mundo das cores e da criatividade.", ageGroups: ['4-6','7-9'], icon: "Palette", modules: [
           { id: "a1-mod1", title: "Teoria das Cores", lessons: [
-              { id: "a1-l1", title: "Misturando as Cores", content: reading_primary_colors, type: "reading" }
+              { id: "a1-l1", title: "Misturando as Cores", content: JSON.stringify(genColorMixingQuiz(QUIZ_COUNT)), type: "exercise" }
           ]}
       ]}
     ]
@@ -508,7 +584,7 @@ export const subjectsData: Subject[] = [
               { id: "pr1-l1", title: "Passo a Passo", content: "Um algoritmo é como uma receita de bolo: uma lista de passos para resolver um problema. Ex: 1. Pegue o pão. 2. Passe manteiga. 3. Coma.", type: "reading" }
           ]},
           { id: "pr1-mod2", title: "Lógica Condicional", lessons: [
-              { id: "pr1-l2", title: "Pensando com 'SE-ENTÃO'", content: reading_if_then_logic, type: "reading" }
+              { id: "pr1-l2", title: "Pensando com 'SE-ENTÃO'", content: "Na programação, usamos a lógica 'SE-ENTÃO'. É como tomar uma decisão. SE estiver chovendo, ENTÃO eu pego um guarda-chuva. SE a luz estiver verde, ENTÃO eu posso atravessar a rua. Os computadores usam essa lógica para fazer tudo!", type: "reading" }
           ]}
       ]}
     ]
@@ -531,9 +607,8 @@ export const subjectsData: Subject[] = [
             id: "ef1-mod1",
             title: "Primeiros Passos Financeiros",
             lessons: [
-              { id: "ef1-l1", title: "O que é Poupar?", content: reading_saving_money, type: "reading" },
-              // financial quiz behind premium to add value
-              { id: "ef1-l2", title: "Quiz do Dinheirinho", content: JSON.stringify(genFinancialLiteracyQuiz(QUIZ_COUNT)), type: "exercise", premium: true }
+              { id: "ef1-l1", title: "Quiz: O que é Poupar?", content: JSON.stringify(genFinancialLiteracyQuiz(QUIZ_COUNT)), type: "exercise" },
+              { id: "ef1-l2", title: "Quiz Avançado: Investimentos e Juros", content: JSON.stringify(genAdvancedFinancialLiteracyQuiz(QUIZ_COUNT)), type: "exercise", premium: true }
             ]
           }
         ]
