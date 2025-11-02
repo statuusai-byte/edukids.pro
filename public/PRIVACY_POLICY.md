@@ -1,6 +1,6 @@
 # Política de Privacidade para EDUKIDS+
 
-**Última atualização:** 25 de Julho de 2024
+**Última atualização:** 25 de Julho de 2025
 
 Bem-vindo ao EDUKIDS+! Esta Política de Privacidade explica como diego Ferreira Da Costa ("nós", "nosso") coleta, usa e protege as informações em relação ao nosso aplicativo móvel EDUKIDS+ (o "Serviço").
 
