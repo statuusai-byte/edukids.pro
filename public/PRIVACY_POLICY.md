@@ -44,4 +44,4 @@ Podemos atualizar nossa Política de Privacidade de tempos em tempos. Notificare
 
 ## 7. Contato
 
-Se você tiver alguma dúvida sobre esta Política de Privacidade, entre em contato conosco em: [Seu Email de Contato]
+Se você tiver alguma dúvida sobre esta Política de Privacidade, entre em contato conosco em: [contatojpds@gmail.com]
