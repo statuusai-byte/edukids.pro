@@ -1,17 +1,17 @@
-import { Capacitor } from '@capacitor/core';
-import { AdMob, AdOptions, AdLoadInfo, InterstitialAdPluginEvents, RewardAdPluginEvents, AdMobRewardItem } from '@capacitor-community/admob';
-import { CdvPurchase, Product, ProductType, Offer, Transaction, ErrorCode } from '@capacitor-community/billing';
-import { showSuccess, showError } from '@/utils/toast';
+import { Capacitor } from "@capacitor/core";
+import { AdMob, AdOptions, RewardAdPluginEvents } from "@capacitor-community/admob";
+import { CdvPurchase, ProductType, ErrorCode } from "@capacitor-community/billing";
+import { showSuccess, showError } from "@/utils/toast";
 
 // --- AdMob Integration ---
 
 const interstitialOptions: AdOptions = {
-  adId: 'ca-app-pub-472017295403326f', // Your Interstitial ID
+  adId: "ca-app-pub-472017295403326f", // Your Interstitial ID
   isTesting: import.meta.env.DEV,
 };
 
 const rewardOptions: AdOptions = {
-  adId: 'ca-app-pub-4720172954033263/2046840767', // Your Rewarded Ad ID
+  adId: "ca-app-pub-4720172954033263/2046840767", // Your Rewarded Ad ID
   isTesting: import.meta.env.DEV,
 };
 
@@ -30,7 +30,7 @@ export const initializeAds = async () => {
 export const showInterstitialAd = async () => {
   if (!Capacitor.isNativePlatform()) {
     // Fallback for web
-    showSuccess('Anúncio Intersticial simulado exibido.');
+    showSuccess("Anúncio Intersticial simulado exibido.");
     return;
   }
   try {
@@ -45,23 +45,24 @@ export const showRewardAd = (): Promise<boolean> => {
   return new Promise(async (resolve) => {
     if (!Capacitor.isNativePlatform()) {
       // Fallback for web
-      showSuccess('Anúncio Premiado simulado. Recompensa concedida!');
+      showSuccess("Anúncio Premiado simulado. Recompensa concedida!");
       resolve(true);
       return;
     }
 
-    const rewardListener = await AdMob.addListener(RewardAdPluginEvents.Rewarded, (reward: AdMobRewardItem) => {
+    // Use `any` for the callback payload to avoid importing unused types
+    const rewardListener = await AdMob.addListener(RewardAdPluginEvents.Rewarded, (reward: any) => {
       showSuccess(`Recompensa concedida: ${reward.amount} ${reward.type}!`);
       resolve(true);
       rewardListener.remove();
     });
 
     const failureListener = await AdMob.addListener(RewardAdPluginEvents.FailedToLoad, () => {
-      showError('Falha ao carregar o anúncio. Tente mais tarde.');
+      showError("Falha ao carregar o anúncio. Tente mais tarde.");
       resolve(false);
       failureListener.remove();
     });
-    
+
     try {
       await AdMob.showRewardVideoAd();
       await AdMob.prepareRewardVideoAd(rewardOptions); // Pre-load next
@@ -72,7 +73,6 @@ export const showRewardAd = (): Promise<boolean> => {
   });
 };
 
-
 // --- Google Play Billing Integration ---
 
 export const initializeBilling = async () => {
@@ -80,7 +80,7 @@ export const initializeBilling = async () => {
   try {
     CdvPurchase.store.verbosity = CdvPurchase.LogLevel.DEBUG;
     CdvPurchase.store.register([
-      { type: ProductType.PAID_SUBSCRIPTION, id: 'edukids-basic-monthly', platform: 'google-play' },
+      { type: ProductType.PAID_SUBSCRIPTION, id: "edukids-basic-monthly", platform: "google-play" },
       // Add other products here if needed
     ]);
     await CdvPurchase.store.initialize();
@@ -97,30 +97,28 @@ export const purchaseProduct = async (sku: string): Promise<boolean> => {
   }
 
   try {
-    const product = CdvPurchase.store.get(sku, 'google-play');
+    const product = CdvPurchase.store.get(sku, "google-play");
     if (!product || !product.offers) {
-      showError('Produto não encontrado na loja.');
+      showError("Produto não encontrado na loja.");
       return false;
     }
     const offer = product.offers[0];
     const result = await CdvPurchase.store.order(offer);
     if (result.isOk() && result.ok) {
-      // Purchase successful, now verify
       const transaction = result.ok;
-      // Here you would typically verify the receipt on your server
-      // For now, we'll just finish the transaction
+      // In production: verify receipt on server. Here we finish the transaction locally.
       await transaction.finish();
       return true;
     } else if (result.isError() && result.error.code === ErrorCode.USER_CANCELLED) {
-      showError('Compra cancelada.');
+      showError("Compra cancelada.");
       return false;
     } else {
-      showError('Ocorreu um erro na compra.');
+      showError("Ocorreu um erro na compra.");
       return false;
     }
   } catch (e) {
     console.error("Purchase failed", e);
-    showError('Falha ao processar a compra.');
+    showError("Falha ao processar a compra.");
     return false;
   }
 };
