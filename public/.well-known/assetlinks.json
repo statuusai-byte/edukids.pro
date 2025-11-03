@@ -5,7 +5,7 @@
       "namespace": "android_app",
       "package_name": "com.seu.pacote.aqui",
       "sha256_cert_fingerprints": [
-        "PASTE_YOUR_RELEASE_SHA256_HERE",
+        "07:E4:8A:10:AB:EE:D5:CC:2F:B1:2B:D6:41:4D:EB:90:2F:58:93:5D:A4:5C:C1:F4:52:B1:FC:F0:1E:12:0E:A0",
         "PASTE_YOUR_DEBUG_SHA256_IF_YOU_WILL_TEST_DEBUG_BUILD"
       ]
     }
