@@ -6,6 +6,8 @@ interface State {
 }
 
 export class ErrorBoundary extends React.Component<React.PropsWithChildren<{}>, State> {
+  private redirectTimer: number | null = null;
+
   constructor(props: React.PropsWithChildren<{}>) {
     super(props);
     this.state = { hasError: false, error: null };
@@ -18,6 +20,30 @@ export class ErrorBoundary extends React.Component<React.PropsWithChildren<{}>, 
   componentDidCatch(error: Error, _info: any) {
     // Aqui poderíamos reportar o erro para um serviço externo
     console.error("ErrorBoundary caught:", error, _info);
+
+    // Em ambientes de produção, iniciamos um redirecionamento automático
+    // para a tela inicial após alguns segundos, evitando que o usuário
+    // fique preso numa tela de erro que exige ação manual.
+    try {
+      // import.meta.env is available in Vite; em dev deixamos o comportamento para debugging
+      const isDev = (import.meta as any).env?.MODE === "development";
+      if (!isDev) {
+        this.redirectTimer = window.setTimeout(() => {
+          // Use location replace para não poluir o histórico
+          window.location.href = "/";
+        }, 2500);
+      }
+    } catch (e) {
+      // Se import.meta não estiver disponível por algum motivo, não vamos bloquear a experiência
+      console.warn("Could not determine environment mode for ErrorBoundary redirect:", e);
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.redirectTimer) {
+      clearTimeout(this.redirectTimer);
+      this.redirectTimer = null;
+    }
   }
 
   handleReload = () => {
@@ -27,6 +53,8 @@ export class ErrorBoundary extends React.Component<React.PropsWithChildren<{}>, 
 
   render() {
     if (this.state.hasError) {
+      const isDev = (import.meta as any).env?.MODE === "development";
+
       return (
         <div className="min-h-screen flex items-center justify-center p-4">
           <div className="w-full max-w-2xl glass-card p-8 text-center">
@@ -48,7 +76,14 @@ export class ErrorBoundary extends React.Component<React.PropsWithChildren<{}>, 
                 Recarregar
               </button>
             </div>
-            {this.state.error && (
+
+            {!isDev && (
+              <div className="mt-4 text-sm text-muted-foreground">
+                Você será redirecionado para a tela inicial em alguns segundos.
+              </div>
+            )}
+
+            {this.state.error && isDev && (
               <details className="mt-6 text-xs text-muted-foreground text-left break-words">
                 <summary className="cursor-pointer">Detalhes do erro (para depuração)</summary>
                 <pre className="whitespace-pre-wrap mt-2">{String(this.state.error.stack || this.state.error.message)}</pre>
