@@ -16,10 +16,11 @@ interface QuizComponentProps {
   questions: QuizQuestion[];
   onQuizComplete?: (score: number) => void;
   triggerHint?: boolean;
-  onHintSuggested?: () => void; // New prop to notify parent when a hint is suggested
+  onHintSuggested?: () => void; // Notifies parent that suggestion UI appeared (optional)
+  onRequestHint?: () => void; // Parent should run the hint flow (consume hint / show ad / open store)
 }
 
-const QuizComponent = ({ questions, onQuizComplete, triggerHint, onHintSuggested }: QuizComponentProps) => {
+const QuizComponent = ({ questions, onQuizComplete, triggerHint, onHintSuggested, onRequestHint }: QuizComponentProps) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [confirmedAnswer, setConfirmedAnswer] = useState<string | null>(null);
@@ -27,36 +28,40 @@ const QuizComponent = ({ questions, onQuizComplete, triggerHint, onHintSuggested
   const [score, setScore] = useState(0);
   const [animationClass, setAnimationClass] = useState('');
   const [eliminatedOptions, setEliminatedOptions] = useState<string[]>([]);
-  const [incorrectAttempts, setIncorrectAttempts] = useState(0); // New state
-  const [showHintSuggestion, setShowHintSuggestion] = useState(false); // New state
+  const [incorrectAttempts, setIncorrectAttempts] = useState(0); // counts wrong attempts for current question
+  const [showHintSuggestion, setShowHintSuggestion] = useState(false); // when true, question is locked until hint is used
 
   const currentQuestion = useMemo(() => questions[currentQuestionIndex], [questions, currentQuestionIndex]);
   const isQuizFinished = currentQuestionIndex >= questions.length;
 
-  // Reset hint and confirmed answer when question changes
+  // Reset per-question transient state
   useEffect(() => {
     setEliminatedOptions([]);
     setConfirmedAnswer(null);
     setIsCorrect(null);
     setSelectedAnswer(null);
-    setIncorrectAttempts(0); // Reset attempts on new question
-    setShowHintSuggestion(false); // Reset hint suggestion
+    setIncorrectAttempts(0);
+    setShowHintSuggestion(false);
   }, [currentQuestionIndex]);
 
-  // Logic to eliminate two wrong answers when hint is triggered
+  // Apply hint elimination when parent triggers it
   useEffect(() => {
     if (triggerHint && eliminatedOptions.length === 0 && !confirmedAnswer) {
       const incorrectOptions = currentQuestion.options.filter(
         (option) => option !== currentQuestion.correctAnswer
       );
-      // Shuffle and pick two to eliminate
       const toEliminate = incorrectOptions.sort(() => 0.5 - Math.random()).slice(0, 2);
       setEliminatedOptions(toEliminate);
+      // Allow user to try again after a hint; reset attempts so the user can use the remaining logic
+      setIncorrectAttempts(0);
+      setShowHintSuggestion(false);
     }
   }, [triggerHint, currentQuestion, eliminatedOptions, confirmedAnswer]);
 
   const handleOptionSelect = (option: string) => {
-    if (confirmedAnswer !== null) return; // Cannot select if already confirmed
+    if (confirmedAnswer !== null) return; // already finalized for this question
+    if (showHintSuggestion) return; // locked until hint is used
+    if (eliminatedOptions.includes(option)) return;
     setSelectedAnswer(option);
   };
 
@@ -66,24 +71,33 @@ const QuizComponent = ({ questions, onQuizComplete, triggerHint, onHintSuggested
       return;
     }
 
-    setConfirmedAnswer(selectedAnswer);
-    const correct = selectedAnswer === currentQuestion.correctAnswer;
-    setIsCorrect(correct);
-
-    if (correct) {
+    // If correct, finalize as before
+    if (selectedAnswer === currentQuestion.correctAnswer) {
+      setConfirmedAnswer(selectedAnswer);
+      setIsCorrect(true);
       setScore(prev => prev + 1);
       showSuccess("Resposta correta! Muito bem!");
-      setIncorrectAttempts(0); // Reset attempts on correct answer
+      setIncorrectAttempts(0);
       setShowHintSuggestion(false);
-    } else {
-      showError("Ops! Resposta incorreta. Tente a próxima.");
-      setIncorrectAttempts(prev => prev + 1); // Increment attempts
-      if (incorrectAttempts + 1 >= 2 && !showHintSuggestion) { // Suggest hint after 2 incorrect attempts
-        setShowHintSuggestion(true);
-        onHintSuggested?.(); // Notify parent
-      }
+      return;
     }
-  }, [selectedAnswer, currentQuestion.correctAnswer, incorrectAttempts, onHintSuggested, showHintSuggestion]);
+
+    // Incorrect answer: increment attempts but DO NOT reveal the correct answer yet
+    setIsCorrect(false); // used for animation feedback
+    setIncorrectAttempts(prev => {
+      const next = prev + 1;
+      if (next >= 2) {
+        // After 2 incorrect attempts, suggest using a hint and lock the question.
+        setShowHintSuggestion(true);
+        setSelectedAnswer(null); // clear selection to avoid confusion
+        // Notify parent that suggestion is available (optional)
+        onHintSuggested?.();
+      }
+      return next;
+    });
+
+    showError("Ops! Resposta incorreta. Tente novamente.");
+  }, [selectedAnswer, currentQuestion.correctAnswer, onHintSuggested]);
 
   const handleNextQuestion = useCallback(() => {
     if (currentQuestionIndex < questions.length - 1) {
@@ -94,9 +108,9 @@ const QuizComponent = ({ questions, onQuizComplete, triggerHint, onHintSuggested
       setAnimationClass('');
     } else {
       if (onQuizComplete) {
-        onQuizComplete(score); // Pass the final score
+        onQuizComplete(score);
       }
-      setCurrentQuestionIndex(questions.length); // Mark quiz as finished
+      setCurrentQuestionIndex(questions.length); // mark quiz as finished
     }
   }, [currentQuestionIndex, questions.length, onQuizComplete, score]);
 
@@ -129,32 +143,34 @@ const QuizComponent = ({ questions, onQuizComplete, triggerHint, onHintSuggested
           </CardTitle>
           <span className="text-lg font-bold text-primary">{score} pontos</span>
         </div>
-        {/* Apply gradient directly to the Progress component's indicator */}
         <Progress value={progressValue} className="h-2 bg-white/10 [&>*]:bg-gradient-to-r [&>*]:from-green-400 [&>*]:to-yellow-400" />
       </CardHeader>
       <CardContent className="space-y-6">
         <p className="text-2xl font-semibold text-foreground text-center">{currentQuestion.question}</p>
-        
-        <div className="grid grid-cols-1 gap-4"> {/* Changed to single column */}
+
+        <div className="grid grid-cols-1 gap-4">
           {currentQuestion.options.map((option, index) => {
             const isSelected = selectedAnswer === option;
             const isCorrectOption = currentQuestion.correctAnswer === option;
             const isEliminated = eliminatedOptions.includes(option);
-            
-            let buttonClasses = "h-16 text-lg transition-all duration-200 justify-center"; // Centered text
+
+            let buttonClasses = "h-16 text-lg transition-all duration-200 justify-center";
             let buttonVariant: 'default' | 'outline' | 'destructive' = 'outline';
 
-            if (confirmedAnswer !== null) { // After confirmation
+            // If the question was finalized (confirmedAnswer set because user got it right),
+            // reveal correct/incorrect as before.
+            if (confirmedAnswer !== null) {
               if (isCorrectOption) {
                 buttonVariant = 'default';
                 buttonClasses = cn(buttonClasses, 'bg-green-600 hover:bg-green-700');
-              } else if (isSelected && !isCorrectOption) {
+              } else if (confirmedAnswer === option && !isCorrectOption) {
                 buttonVariant = 'destructive';
                 buttonClasses = cn(buttonClasses, 'bg-red-600 hover:bg-red-700');
               } else {
-                buttonClasses = cn(buttonClasses, 'opacity-50'); // Dim unselected wrong answers
+                buttonClasses = cn(buttonClasses, 'opacity-50');
               }
-            } else { // Before confirmation
+            } else {
+              // Before finalization: normal interactive states
               if (isSelected) {
                 buttonVariant = 'default';
                 buttonClasses = cn(buttonClasses, 'bg-primary hover:bg-primary/90');
@@ -167,32 +183,36 @@ const QuizComponent = ({ questions, onQuizComplete, triggerHint, onHintSuggested
               buttonClasses = cn(buttonClasses, 'opacity-30 pointer-events-none line-through');
             }
 
+            // If the question is locked waiting for a hint, disable interaction
+            const disabled = confirmedAnswer !== null || isEliminated || showHintSuggestion;
+
             return (
               <Button
                 key={index}
                 onClick={() => handleOptionSelect(option)}
-                disabled={confirmedAnswer !== null || isEliminated}
+                disabled={disabled}
                 className={buttonClasses}
                 variant={buttonVariant}
               >
                 {option}
                 {confirmedAnswer !== null && isCorrectOption && <CheckCircle className="ml-3 h-5 w-5" />}
-                {confirmedAnswer !== null && isSelected && !isCorrectOption && <XCircle className="ml-3 h-5 w-5" />}
+                {confirmedAnswer !== null && confirmedAnswer === option && !isCorrectOption && <XCircle className="ml-3 h-5 w-5" />}
               </Button>
             );
           })}
         </div>
 
         <div className="mt-6 text-center">
-          {selectedAnswer !== null && confirmedAnswer === null && (
-            <Button 
-              onClick={handleConfirmAnswer} 
-              size="lg" 
+          {selectedAnswer !== null && confirmedAnswer === null && !showHintSuggestion && (
+            <Button
+              onClick={handleConfirmAnswer}
+              size="lg"
               className="w-full bg-gradient-to-r from-green-500 to-yellow-500 text-black font-bold hover:from-green-600 hover:to-yellow-600"
             >
               Confirmar Resposta
             </Button>
           )}
+
           {confirmedAnswer !== null && (
             <Button onClick={handleNextQuestion} size="lg" className="w-full">
               {currentQuestionIndex < questions.length - 1 ? 'Próxima Pergunta' : 'Finalizar Quiz'}
@@ -200,14 +220,19 @@ const QuizComponent = ({ questions, onQuizComplete, triggerHint, onHintSuggested
             </Button>
           )}
 
-          {/* Hint suggestion */}
+          {/* After 2 incorrect attempts, suggest using a hint and lock the question */}
           {showHintSuggestion && confirmedAnswer === null && (
             <div className="mt-4 p-3 bg-yellow-600/20 border border-yellow-500/50 rounded-lg text-yellow-200 text-sm flex items-center justify-between">
-              <span>Parece que você precisa de uma dica!</span>
-              <Button 
-                variant="secondary" 
-                size="sm" 
-                onClick={() => { onHintSuggested?.(); setShowHintSuggestion(false); }} // Trigger hint and hide suggestion
+              <span>Você esgotou as tentativas gratuitas. Use uma dica para continuar.</span>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => {
+                  // Request the parent to run the hint flow (consume a hint, show ad, or open store)
+                  onRequestHint?.();
+                  // hide suggestion UI while parent handles hint flow
+                  setShowHintSuggestion(false);
+                }}
                 className="bg-yellow-500 text-black hover:bg-yellow-600"
               >
                 Usar Dica
