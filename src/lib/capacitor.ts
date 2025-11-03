@@ -78,7 +78,15 @@ export const showRewardAd = (): Promise<boolean> => {
 export const initializeBilling = async () => {
   if (!Capacitor.isNativePlatform()) return;
   try {
-    CdvPurchase.store.verbosity = CdvPurchase.LogLevel.DEBUG;
+    // LogLevel may be provided under CdvPurchase.store in some runtimes (our ambient types define it there).
+    // Use it if present; otherwise set a safe fallback value.
+    if (CdvPurchase.store && (CdvPurchase.store as any).LogLevel && (CdvPurchase.store as any).LogLevel.DEBUG) {
+      CdvPurchase.store.verbosity = (CdvPurchase.store as any).LogLevel.DEBUG;
+    } else {
+      // Fallback value (string 'DEBUG' is acceptable for our typings which accept string|number)
+      CdvPurchase.store.verbosity = "DEBUG";
+    }
+
     CdvPurchase.store.register([
       { type: ProductType.PAID_SUBSCRIPTION, id: "edukids-basic-monthly", platform: "google-play" },
       // Add other products here if needed
@@ -109,8 +117,14 @@ export const purchaseProduct = async (sku: string): Promise<boolean> => {
       // In production: verify receipt on server. Here we finish the transaction locally.
       await transaction.finish();
       return true;
-    } else if (result.isError() && result.error.code === ErrorCode.USER_CANCELLED) {
-      showError("Compra cancelada.");
+    } else if (result.isError()) {
+      // Access error via a safe any-cast because the OrderResult type uses helper methods (isError/isOk)
+      const err = (result as any).error;
+      if (err && err.code === ErrorCode.USER_CANCELLED) {
+        showError("Compra cancelada.");
+        return false;
+      }
+      showError("Ocorreu um erro na compra.");
       return false;
     } else {
       showError("Ocorreu um erro na compra.");
