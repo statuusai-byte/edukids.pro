@@ -27,7 +27,6 @@ const LessonPage = () => {
   const { isBlocked, limitMinutes, startSession, stopSession } = useScreenTime();
   
   const [hintTriggered, setHintTriggered] = useState(false);
-  const [quizHintSuggested, setQuizHintSuggested] = useState(false);
 
   const { subject, activity, module, lesson, lessonIndex, moduleIndex } = useMemo(() => {
     const s = subjectsData.find(sub => sub.slug === subjectSlug);
@@ -53,7 +52,6 @@ const LessonPage = () => {
 
   useEffect(() => {
     setHintTriggered(false);
-    setQuizHintSuggested(false);
   }, [lessonId]);
 
   if (!subject || !activity || !module || !lesson) {
@@ -141,27 +139,25 @@ const LessonPage = () => {
     showSuccess("Lição marcada como concluída.");
   };
 
-  const handleUseHint = useCallback(() => {
+  const handleUseHint = useCallback(async () => {
+    // This function is called both from the lesson-level "Use Hint" button
+    // and from the QuizComponent via onRequestHint.
     if (isPremium) {
       setHintTriggered(true);
       showSuccess("Dica de Assinante Premium ativada!");
-      setQuizHintSuggested(false);
       return;
     }
     if (hints > 0) {
       if (useHint()) {
         setHintTriggered(true);
         showSuccess("Dica usada! Seu saldo foi atualizado.");
-        setQuizHintSuggested(false);
+        return;
       }
-    } else {
-      showError("Você não tem dicas. Compre mais na loja ou assista a um anúncio para ganhar uma.");
     }
-  }, [isPremium, hints, useHint]);
 
-  const handleQuizHintSuggested = useCallback(() => {
-    setQuizHintSuggested(true);
-  }, []);
+    // If no hints available, inform the user: they can buy or watch an ad.
+    showError("Você não tem dicas. Compre mais na loja ou assista a um anúncio para ganhar uma.");
+  }, [isPremium, hints, useHint]);
 
   const renderLessonContent = () => {
     if (lesson.type === 'game' && lesson.component) {
@@ -177,7 +173,16 @@ const LessonPage = () => {
     if (lesson.type === 'exercise' && lesson.content) {
       try {
         const questions: QuizQuestion[] = JSON.parse(lesson.content);
-        if (questions.length > 0) return <QuizComponent questions={questions} onQuizComplete={markCompleted} triggerHint={hintTriggered} onHintSuggested={handleQuizHintSuggested} />;
+        if (questions.length > 0) {
+          return (
+            <QuizComponent
+              questions={questions}
+              onQuizComplete={markCompleted}
+              triggerHint={hintTriggered}
+              onRequestHint={handleUseHint} // <-- parent will handle consuming a hint / showing ad / redirecting to store
+            />
+          );
+        }
       } catch (e) { console.error("Failed to parse quiz content:", e); }
     }
     return <p className="text-foreground/90 mb-4">{lesson.content}</p>;
@@ -202,13 +207,14 @@ const LessonPage = () => {
             <div className="ml-auto flex items-center gap-4">
               {isInteractive && (
                 <div className="flex items-center gap-2">
-                  {(!quizHintSuggested || isPremium) && (
-                    <Button onClick={handleUseHint} className="bg-yellow-600 hover:bg-yellow-700 text-black" disabled={hintTriggered}>
-                      <Lightbulb className="mr-2 h-4 w-4" />
-                      {isPremium ? "Usar Dica Premium" : `Usar 1 Dica (Saldo: ${hints})`}
-                    </Button>
+                  {/* Lesson-level hint button (uses same flow as quiz onRequestHint) */}
+                  <Button onClick={handleUseHint} className="bg-yellow-600 hover:bg-yellow-700 text-black" disabled={hintTriggered}>
+                    <Lightbulb className="mr-2 h-4 w-4" />
+                    {isPremium ? "Usar Dica Premium" : `Usar 1 Dica (Saldo: ${hints})`}
+                  </Button>
+                  {!isPremium && (
+                    <RewardButton onReward={() => addHints(1)} label="Ganhar Dica (Anúncio)" />
                   )}
-                  {!isPremium && <RewardButton onReward={() => addHints(1)} label="Ganhar Dica (Anúncio)" />}
                 </div>
               )}
               {!isInteractive && <Button className="bg-green-600 hover:bg-green-700" onClick={markCompleted}>{completed ? "Revisar (Concluído)" : "Marcar como Concluída"}</Button>}
