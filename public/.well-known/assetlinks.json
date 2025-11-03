@@ -5,8 +5,8 @@
       "namespace": "android_app",
       "package_name": "com.seu.pacote.aqui",
       "sha256_cert_fingerprints": [
-        "AA:BB:CC:DD:EE:FF:00:11:22:33:44:55:66:77:88:99:AA:BB:CC:DD:EE:FF:00:11:22:33:44:55:66:77:88:99"
-        // Se quiser, inclua também o fingerprint de DEBUG para testes locais.
+        "PASTE_YOUR_RELEASE_SHA256_HERE",
+        "PASTE_YOUR_DEBUG_SHA256_IF_YOU_WILL_TEST_DEBUG_BUILD"
       ]
     }
   }
