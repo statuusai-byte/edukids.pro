@@ -6,14 +6,15 @@ type TabItem = {
   to: string;
   icon: IconName;
   label: string;
+  color: string;
 };
 
 const tabs: TabItem[] = [
-  { to: "/activities", icon: "BookOpen", label: "Atividades" },
-  { to: "/play-plus", icon: "PlaySquare", label: "Play+" },
-  { to: "/achievements", icon: "Trophy", label: "Medalhas" },
-  { to: "/store", icon: "Store", label: "Loja" },
-  { to: "/dashboard", icon: "User", label: "Pais" },
+  { to: "/activities", icon: "BookOpen", label: "Atividades", color: "text-cyan-400" },
+  { to: "/play-plus", icon: "PlaySquare", label: "Play+", color: "text-purple-400" },
+  { to: "/achievements", icon: "Trophy", label: "Medalhas", color: "text-yellow-400" },
+  { to: "/store", icon: "Store", label: "Loja", color: "text-green-400" },
+  { to: "/dashboard", icon: "User", label: "Pais", color: "text-orange-400" },
 ];
 
 const isActivePath = (pathname: string, target: string) => {
@@ -41,9 +42,9 @@ const MobileTabBar = () => {
               key={item.to}
               to={item.to}
               className={cn(
-                "flex flex-col items-center justify-center gap-1 rounded-2xl px-3 py-2 text-xs transition-all w-20",
+                "group flex flex-col items-center justify-center gap-1 rounded-2xl px-3 py-2 text-xs transition-all w-20",
                 active
-                  ? "bg-primary/15 text-primary"
+                  ? "bg-primary/15"
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
@@ -51,10 +52,10 @@ const MobileTabBar = () => {
                 name={item.icon}
                 className={cn(
                   "h-5 w-5 transition-transform",
-                  active ? "scale-110" : "scale-100",
+                  active ? `scale-110 ${item.color}` : "scale-100 text-muted-foreground group-hover:text-foreground",
                 )}
               />
-              <span className="font-medium">{item.label}</span>
+              <span className={cn("font-medium", active ? item.color : "text-muted-foreground group-hover:text-foreground")}>{item.label}</span>
             </Link>
           );
         })}

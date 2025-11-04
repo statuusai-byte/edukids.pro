@@ -203,8 +203,10 @@ const StudyAssistant = () => {
           aria-label="Abrir assistente de estudos"
           onClick={() => setOpen((v) => !v)}
           className={cn(
-            "inline-flex h-14 w-14 items-center justify-center rounded-full shadow-xl transition-transform duration-150 focus:outline-none",
-            open ? "scale-105 bg-primary text-primary-foreground" : "bg-yellow-400 text-black hover:scale-105"
+            "inline-flex h-14 w-14 items-center justify-center rounded-full shadow-xl transition-all duration-200 focus:outline-none text-white",
+            open 
+              ? "scale-105 bg-gradient-to-br from-fuchsia-500 to-pink-500 shadow-lg shadow-fuchsia-500/40" 
+              : "bg-gradient-to-br from-primary to-fuchsia-500 hover:scale-105 hover:shadow-primary/60 shadow-lg shadow-primary/40"
           )}
         >
           <div className="flex flex-col items-center">
