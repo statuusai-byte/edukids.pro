@@ -124,7 +124,7 @@ const StudyAssistant = () => {
   return (
     <>
       {/* Floating button */}
-      <div className="fixed z-50 right-6 bottom-6 flex items-end">
+      <div className="fixed z-50 right-4 bottom-24 md:right-6 md:bottom-6 flex items-end">
         {/* Panel */}
         {open && (
           <div className="mr-4 w-full max-w-sm md:w-96 glass-card p-4 shadow-2xl border-white/10">

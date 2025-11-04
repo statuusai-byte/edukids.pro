@@ -170,7 +170,7 @@ const Layout = () => {
             <div
               className={cn(
                 "relative z-10",
-                isMobile ? "px-4 py-6" : "px-6 py-8 sm:px-8 sm:py-10 md:px-14 md:py-14"
+                isMobile ? "px-4 pt-16 pb-24" : "px-6 py-8 sm:px-8 sm:py-10 md:px-14 md:py-14"
               )}
             >
               <InterstitialAdManager>

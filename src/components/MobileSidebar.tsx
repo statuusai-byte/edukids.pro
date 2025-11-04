@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { Sparkles, Menu } from "lucide-react";
+import { Sparkles, Menu, Gem } from "lucide-react";
 import { Icon, type IconName } from "@/components/Icon";
 import { cn } from "@/lib/utils";
 import { useProfile } from "@/context/ProfileContext";
@@ -8,6 +8,8 @@ import { getInitials } from "@/lib/get-initials";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { usePremium } from "@/context/PremiumContext";
+import { Link } from "react-router-dom";
 
 type NavItem = {
   to: string;
@@ -33,6 +35,7 @@ const settingsItem: NavItem = {
 const MobileSidebar = () => {
   const { name, avatarUrl } = useProfile();
   const [isOpen, setIsOpen] = useState(false);
+  const { isPremium } = usePremium();
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -51,7 +54,7 @@ const MobileSidebar = () => {
           <Sparkles size={34} className="text-primary" />
         </div>
 
-        <nav className="flex flex-1 flex-col items-stretch gap-2 w-full px-2">
+        <nav className="flex flex-col items-stretch gap-2 w-full px-2">
           {navItems.map((item) => (
             <NavLink
               key={item.to}
@@ -96,7 +99,25 @@ const MobileSidebar = () => {
           ))}
         </nav>
 
-        <div className="mt-auto flex w-full flex-col items-stretch gap-3 px-2">
+        <div className="flex-1 flex flex-col justify-center px-2">
+          {!isPremium && (
+            <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary to-fuchsia-600 p-4 text-white shadow-lg">
+              <div className="flex items-center gap-3">
+                <Gem className="h-8 w-8" />
+                <div>
+                  <h3 className="font-bold">Seja Premium</h3>
+                  <p className="text-xs text-white/80">Acesso total ao Play+.</p>
+                </div>
+              </div>
+              <p className="mt-2 text-xs">Desbloqueie todos os jogos, dicas ilimitadas e muito mais.</p>
+              <Button asChild size="sm" className="mt-3 w-full bg-white text-primary font-bold hover:bg-white/90" onClick={() => setIsOpen(false)}>
+                <Link to="/store">Ver Vantagens</Link>
+              </Button>
+            </div>
+          )}
+        </div>
+
+        <div className="flex w-full flex-col items-stretch gap-3 px-2">
           <NavLink
             to={settingsItem.to}
             onClick={() => setIsOpen(false)}
@@ -124,7 +145,7 @@ const MobileSidebar = () => {
                     isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
                   )}
                 >
-                  {settingsItem.label}
+                  {item.label}
                 </span>
               </>
             )}
