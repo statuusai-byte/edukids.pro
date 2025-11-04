@@ -10,9 +10,14 @@ import { Sparkles } from "lucide-react";
 import JourneyMap from "@/components/JourneyMap";
 import { showSuccess } from "@/utils/toast";
 
+// Define the props interface for the game components
+interface GameComponentProps {
+  onGameComplete: () => void;
+}
+
 type GameComponentMap = Record<
   PlayPlusGame["component"],
-  LazyExoticComponent<ComponentType>
+  LazyExoticComponent<ComponentType<GameComponentProps>>
 >;
 
 const gameComponentMap: GameComponentMap = {
