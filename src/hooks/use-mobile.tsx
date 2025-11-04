@@ -39,9 +39,7 @@ export function useIsMobile() {
     let mql: MediaQueryList | null = null;
     if (typeof window.matchMedia === "function") {
       mql = window.matchMedia("(pointer: coarse)");
-      // @ts-expect-error Safari fallback
       mql.addEventListener?.("change", onResize);
-      // @ts-expect-error Safari fallback
       mql.addListener?.(onResize);
     }
 
@@ -51,9 +49,7 @@ export function useIsMobile() {
     return () => {
       window.removeEventListener("resize", onResize);
       if (mql) {
-        // @ts-expect-error Safari fallback
         mql.removeEventListener?.("change", onResize);
-        // @ts-expect-error Safari fallback
         mql.removeListener?.(onResize);
       }
     };
