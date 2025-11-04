@@ -29,6 +29,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
 
   const applyLocalPremiumForAdmin = (targetEmail: string) => {
     try {
+      const wasAlreadyPremium = localStorage.getItem(PREMIUM_LOCAL_FLAG) === 'true';
       localStorage.setItem(PREMIUM_LOCAL_FLAG, 'true');
       const profile = {
         name: 'Administrador EDUKIDS+',
@@ -38,7 +39,10 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
       localStorage.setItem('edukids_profile', JSON.stringify(profile));
       const allPackages = ['matematica', 'portugues', 'ciencias', 'historia', 'geografia', 'ingles'];
       localStorage.setItem('edukids_help_packages', JSON.stringify(allPackages));
-      showSuccess('Conta administradora com Premium ativado.');
+      
+      if (!wasAlreadyPremium) {
+        showSuccess('Conta administradora com Premium ativado.');
+      }
     } catch (e) {
       console.error('Failed to activate local premium for admin:', e);
       showError('Falha ao aplicar modo Premium local.');
@@ -55,12 +59,15 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
         .single();
 
       if (!error && data && (data as any).is_premium) {
+        const wasAlreadyPremium = localStorage.getItem(PREMIUM_LOCAL_FLAG) === 'true';
         try {
           localStorage.setItem(PREMIUM_LOCAL_FLAG, 'true');
         } catch (e) {
           console.error('Local storage error while syncing premium:', e);
         }
-        showSuccess('Acesso Premium aplicado para sua conta.');
+        if (!wasAlreadyPremium) {
+          showSuccess('Acesso Premium aplicado para sua conta.');
+        }
       }
     } catch (e) {
       console.error('Failed to sync premium from profile:', e);

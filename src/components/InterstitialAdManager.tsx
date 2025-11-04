@@ -5,10 +5,26 @@ import { showInterstitialAd } from '@/lib/capacitor';
 
 const AD_DISPLAY_FREQUENCY = 8;
 
+const getAdCounter = (): number => {
+  try {
+    return parseInt(localStorage.getItem('ad_counter') || '0', 10);
+  } catch {
+    return 0;
+  }
+};
+
+const setAdCounter = (count: number) => {
+  try {
+    localStorage.setItem('ad_counter', String(count));
+  } catch {
+    // ignore storage errors
+  }
+};
+
 const InterstitialAdManager = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const { isPremium } = usePremium();
-  const adCounterRef = useRef(parseInt(localStorage.getItem('ad_counter') || '0', 10));
+  const adCounterRef = useRef(getAdCounter());
 
   useEffect(() => {
     if (isPremium) return;
@@ -17,16 +33,15 @@ const InterstitialAdManager = ({ children }: { children: React.ReactNode }) => {
     if (isExcludedRoute) return;
 
     adCounterRef.current += 1;
-    localStorage.setItem('ad_counter', String(adCounterRef.current));
+    setAdCounter(adCounterRef.current);
 
     if (adCounterRef.current >= AD_DISPLAY_FREQUENCY) {
       showInterstitialAd();
       adCounterRef.current = 0;
-      localStorage.setItem('ad_counter', '0');
+      setAdCounter(0);
     }
   }, [location.pathname, isPremium]);
 
-  // The component no longer needs to render any UI, as the native plugin handles it.
   return <>{children}</>;
 };
 

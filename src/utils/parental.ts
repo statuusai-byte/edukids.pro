@@ -13,23 +13,40 @@ async function hashString(text: string) {
 }
 
 export async function setParentPin(pin: string) {
-  const h = await hashString(pin);
-  localStorage.setItem(PIN_HASH_KEY, h);
+  try {
+    const h = await hashString(pin);
+    localStorage.setItem(PIN_HASH_KEY, h);
+  } catch (e) {
+    console.error("Failed to set parent pin", e);
+  }
 }
 
 export function removeParentPin() {
-  localStorage.removeItem(PIN_HASH_KEY);
+  try {
+    localStorage.removeItem(PIN_HASH_KEY);
+  } catch (e) {
+    console.error("Failed to remove parent pin", e);
+  }
 }
 
 export async function verifyParentPin(pin: string) {
-  const stored = localStorage.getItem(PIN_HASH_KEY);
-  if (!stored) return false;
-  const h = await hashString(pin);
-  return h === stored;
+  try {
+    const stored = localStorage.getItem(PIN_HASH_KEY);
+    if (!stored) return false;
+    const h = await hashString(pin);
+    return h === stored;
+  } catch (e) {
+    console.error("Failed to verify parent pin", e);
+    return false;
+  }
 }
 
 export function hasParentPin() {
-  return !!localStorage.getItem(PIN_HASH_KEY);
+  try {
+    return !!localStorage.getItem(PIN_HASH_KEY);
+  } catch {
+    return false;
+  }
 }
 
 export function requirePinForPurchasesGet(): boolean {
