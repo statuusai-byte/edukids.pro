@@ -19,7 +19,11 @@ const generateCards = () => {
   }));
 };
 
-const MemoryMatch = () => {
+interface MemoryMatchProps {
+  onGameComplete?: () => void;
+}
+
+const MemoryMatch = ({ onGameComplete }: MemoryMatchProps) => {
   const [cards, setCards] = useState(generateCards());
   const [flippedIndices, setFlippedIndices] = useState<number[]>([]);
   const [moves, setMoves] = useState(0);
@@ -59,8 +63,9 @@ const MemoryMatch = () => {
     if (allMatched && cards.length > 0) {
       setIsGameWon(true);
       showSuccess(`Parabéns! Você venceu em ${moves} jogadas!`);
+      onGameComplete?.();
     }
-  }, [cards, moves]);
+  }, [cards, moves, onGameComplete]);
 
   const handleCardClick = (index: number) => {
     if (flippedIndices.length >= 2 || cards[index].isFlipped || cards[index].isMatched) {

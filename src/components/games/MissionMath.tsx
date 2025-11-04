@@ -45,7 +45,11 @@ const generateProblem = (ageGroup: '4-6' | '7-9' | '10-12' | null) => {
   return { question, answer };
 };
 
-const MissionMath = () => {
+interface MissionMathProps {
+  onGameComplete?: () => void;
+}
+
+const MissionMath = ({ onGameComplete }: MissionMathProps) => {
   const { ageGroup } = useAge();
   const [problem, setProblem] = useState(generateProblem(ageGroup));
   const [userAnswer, setUserAnswer] = useState('');
@@ -64,11 +68,12 @@ const MissionMath = () => {
       setIsGameActive(false);
       if (timerRef.current) clearInterval(timerRef.current);
       showSuccess(`Tempo esgotado! Sua pontuação final é ${score}.`);
+      onGameComplete?.();
     }
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [isGameActive, timeLeft, score]);
+  }, [isGameActive, timeLeft, score, onGameComplete]);
 
   const startGame = () => {
     setScore(0);
