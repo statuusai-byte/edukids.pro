@@ -1,1 +1,1 @@
-npx cap build android
+npm run dev
