@@ -158,7 +158,7 @@ const MobileSidebar = () => {
                       <Gem className="h-5 w-5 text-emerald-300" />
                     </div>
                     <div>
-                      <p className="font-semibold text-white">Você é Premium 🤩</p>
+                      <p a className="font-semibold text-white">Você é Premium 🤩</p>
                       <p className="text-xs text-white/70">Play+ completo e dicas ilimitadas liberadas.</p>
                     </div>
                   </div>
@@ -229,7 +229,7 @@ const MobileSidebar = () => {
               <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3 shadow-inner shadow-black/10">
                 <Avatar className="h-10 w-10">
                   <AvatarImage src={avatarUrl ?? undefined} />
-                  <AvatarFallback>{getInitials(displayName)}</AvatarFallback}
+                  <AvatarFallback>{getInitials(displayName)}</AvatarFallback>
                 </Avatar>
                 <div>
                   <p className="text-sm font-medium text-white">{displayName}</p>
