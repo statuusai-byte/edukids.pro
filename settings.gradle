@@ -16,7 +16,10 @@ dependencyResolutionManagement {
 
 rootProject.name = "edukidsspro"
 
-// Módulo Android principal
 include(":app")
-// Mapeia o módulo :app para a pasta android/app do seu projeto
-project(":app").projectDir = new File(rootDir, "android/app")
+
+// Se o projeto usar a estrutura android/app, redireciona automaticamente.
+// No seu caso (print), a pasta 'app' já está na raiz, então esta linha não terá efeito.
+if (new File(rootDir, "android/app").exists()) {
+  project(":app").projectDir = new File(rootDir, "android/app")
+}
