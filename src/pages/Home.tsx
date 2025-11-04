@@ -131,10 +131,13 @@ const Home = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-white/70">
-            <Sparkles className="h-4 w-4" />
-            EDUKIDS+ Premium Learning
-          </span>
+          {/* App name destacado e grande */}
+          <div className="mb-6 inline-flex items-center gap-3">
+            <Sparkles className="h-6 w-6 text-primary" />
+            <span className="text-4xl sm:text-5xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-fuchsia-200 to-amber-200 drop-shadow">
+              EDUKIDS+
+            </span>
+          </div>
 
           <h1 className="text-3xl font-extrabold tracking-tight text-white drop-shadow-lg sm:text-5xl">
             Trilhas de estudo e missões que motivam
@@ -189,7 +192,7 @@ const Home = () => {
             {impactStats.map((stat) => (
               <div
                 key={stat.label}
-                className="flex min-w=[150px] flex-col items-center justify-center rounded-2xl bg-white/5 px-4 py-5 text-center md:min-w-0"
+                className="flex min-w-[150px] flex-col items-center justify-center rounded-2xl bg-white/5 px-4 py-5 text-center md:min-w-0"
               >
                 <div className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-br from-primary/90 via-fuchsia-400 to-amber-300 drop-shadow">
                   {stat.value}
@@ -397,7 +400,7 @@ const Home = () => {
                 <Download className="h-3.5 w-3.5" />
                 Instale em poucos passos
               </span>
-              <h3 className="mt-3 text-2xl font-extrabold text白 sm:text-3xl">
+              <h3 className="mt-3 text-2xl font-extrabold text-white sm:text-3xl">
                 Baixe o EDUKIDS+ onde você estiver
               </h3>
               <p className="mt-2 max-w-xl text-sm text-white/80 sm:text-base">
