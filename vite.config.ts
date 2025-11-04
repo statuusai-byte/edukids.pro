@@ -18,6 +18,8 @@ export default defineConfig(() => ({
       injectRegister: 'auto',
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,webmanifest}'],
+        // Impede que navegações para /.well-known/* caiam no fallback do SPA
+        navigateFallbackDenylist: [/^\/\.well-known\//],
       },
       manifest: {
         name: "EDUKIDS+",
