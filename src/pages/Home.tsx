@@ -11,11 +11,12 @@ import {
   Sparkles,
   Users,
   Star,
-  Gamepad2,
   GraduationCap,
   Download,
   Smartphone,
   Globe,
+  Target,
+  ListChecks,
 } from "lucide-react";
 
 const SKIP_REDIRECT_KEY = "edukids_skip_auto_redirect";
@@ -28,24 +29,24 @@ const featureCards = [
       "Ambiente protegido, controle parental com PIN e recomendações alinhadas a cada idade.",
   },
   {
-    icon: BrainCircuit,
-    title: "Play+ inteligente",
+    icon: Target,
+    title: "Trilhas de estudo",
     description:
-      "Jogos educativos interativos, quizzes ilimitados e um assistente que dá dicas quando precisa.",
+      "Siga caminhos por matéria, com progresso automático e próximos passos claros.",
   },
   {
-    icon: Trophy,
-    title: "Motivação contínua",
+    icon: ListChecks,
+    title: "Missões diárias",
     description:
-      "Recompensas, dicas extras e incentivos para manter o estudo divertido todos os dias.",
+      "Desafios simples para manter o ritmo: concluir lição, estudar 10 minutos e revisar.",
   },
 ] as const;
 
 const impactStats = [
-  { value: "5.200+", label: "Crianças aprendendo agora" },
-  { value: "98%", label: "Pais satisfeitos com relatórios" },
-  { value: "120+", label: "Jogos e atividades Play+" },
-  { value: "∞", label: "Dicas para assinantes Premium" },
+  { value: "5.200+", label: "Crianças estudando agora" },
+  { value: "98%", label: "Pais satisfeitos" },
+  { value: "30+", label: "Trilhas e unidades" },
+  { value: "∞", label: "Dicas para Premium" },
 ] as const;
 
 const testimonials = [
@@ -54,14 +55,14 @@ const testimonials = [
     role: "Mãe do Theo (7 anos)",
     avatar: "https://i.pravatar.cc/120?u=carolina-edukids",
     quote:
-      "“Meu filho pede para estudar sozinho! Os relatórios deixam tudo claro e as atividades são incríveis.”",
+      "“Meu filho pede para estudar sozinho! Os relatórios deixam tudo claro e as trilhas ajudam a manter o foco.”",
   },
   {
     name: "Marcelo Duarte",
     role: "Pai da Valentina (10 anos)",
     avatar: "https://i.pravatar.cc/120?u=marcelo-edukids",
     quote:
-      "“O modo Premium salvou nossos estudos em casa. O assistente e as dicas deixam tudo mais leve.”",
+      "“O Premium salvou nossos estudos em casa. As missões diárias deixam tudo mais leve.”",
   },
 ] as const;
 
@@ -134,11 +135,11 @@ const Home = () => {
           </span>
 
           <h1 className="text-3xl font-extrabold tracking-tight text-white drop-shadow-lg sm:text-5xl">
-            Aprendizagem linda para crianças curiosas
+            Trilhas de estudo e missões que motivam
           </h1>
 
           <p className="mt-4 max-w-xl text-sm text-white/80 sm:text-lg">
-            Conteúdo pensado para telas pequenas: Play+ com jogos educativos interativos e quizzes ilimitados, controlados por você.
+            Conteúdo pensado para telas pequenas: Play+ com Trilhas de Estudo e Missões Diárias, quizzes ilimitados e controle parental.
           </p>
 
           <div className="mt-8 flex w-full max-w-md flex-col gap-2 sm:flex-row sm:gap-4">
@@ -159,11 +160,11 @@ const Home = () => {
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-[11px] text-white/65 sm:text-xs">
             <span className="flex items-center gap-1.5">
               <ShieldCheck className="h-4 w-4" />
-              Parental Control com PIN
+              Parental PIN
             </span>
             <span className="flex items-center gap-1.5">
-              <Gamepad2 className="h-4 w-4" />
-              Play+ com jogos interativos
+              <BrainCircuit className="h-4 w-4" />
+              Trilhas e Missões
             </span>
             <span className="flex items-center gap-1.5">
               <GraduationCap className="h-4 w-4" />
@@ -211,7 +212,7 @@ const Home = () => {
               Encanta crianças, tranquiliza famílias
             </h2>
             <p className="mt-2 text-sm text-muted-foreground sm:max-w-xl sm:text-base">
-              Play+ reúne jogos e atividades interativas, com IA para dar dicas na hora certa — tudo num ambiente seguro e supervisionado.
+              Play+ reúne Trilhas e Missões, com dicas quando precisa — tudo num ambiente seguro e supervisionado.
             </p>
           </div>
 
@@ -247,13 +248,12 @@ const Home = () => {
               Escolha nº1 para estudar no celular
             </h3>
             <p className="mt-3 text-sm text-muted-foreground sm:text-base">
-              Assinando EDUKIDS+ você libera o modo offline (PWA), monitora o progresso em tempo
-              real e garante dicas ilimitadas para qualquer matéria.
+              Assinando EDUKIDS+ você libera trilhas completas, missões diárias, modo offline (PWA), e acompanhamento em tempo real.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3 text-[11px] text-white/80 sm:text-xs">
               <span className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5">
-                <Star className="h-4 w-4 text-yellow-400" />
+                <Star className="h-4 w-4" />
                 Avaliação média 4.9/5
               </span>
               <span className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5">
@@ -311,7 +311,7 @@ const Home = () => {
                 Baixe o EDUKIDS+ onde você estiver
               </h3>
               <p className="mt-2 max-w-xl text-sm text-white/80 sm:text-base">
-                Use o aplicativo Android oficial para uma experiência nativa ou instale o modo PWA no navegador e leve o Play+ para qualquer tela.
+                Use o aplicativo Android oficial para uma experiência nativa ou instale o modo PWA no navegador e leve as Trilhas+ para qualquer tela.
               </p>
             </div>
 
@@ -340,15 +340,15 @@ const Home = () => {
             <ul className="space-y-2 text-sm text-white/80">
               <li className="flex items-center gap-2">
                 <Sparkles className="h-4 w-4 text-yellow-300" />
-                Play+ completo com dicas ilimitadas para assinantes Premium.
+                Trilhas de Estudo completas para assinantes Premium.
+              </li>
+              <li className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-yellow-300" />
+                Missões diárias e dicas ilimitadas.
               </li>
               <li className="flex items-center gap-2">
                 <Sparkles className="h-4 w-4 text-yellow-300" />
                 Parental PIN e painel de acompanhamento em tempo real.
-              </li>
-              <li className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-yellow-300" />
-                Conteúdos semanais, conquistas e jogos testados para celular.
               </li>
             </ul>
 
@@ -365,7 +365,7 @@ const Home = () => {
                 </div>
                 <div>
                   <h4 className="text-lg font-semibold text-white">Instalação no Android</h4>
-                  <p className="text-xs text-white/70">Aplicativo oficial otimizado para Play+.</p>
+                  <p className="text-xs text-white/70">Aplicativo oficial com trilhas otimizadas.</p>
                 </div>
               </div>
               <ol className="mt-4 space-y-2 text-sm text-white/80">

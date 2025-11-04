@@ -6,6 +6,7 @@ import { achievements } from '@/data/achievementsData';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Award, BookOpen, Brain, Lock, Sigma, Star, Trophy } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { readLocal } from '@/utils/achievements';
 
 const iconMap: Record<string, ElementType> = {
   Star, Award, Trophy, Brain, Sigma, BookOpen,
@@ -18,11 +19,17 @@ const AchievementsPage = () => {
 
   useEffect(() => {
     const fetchAchievements = async () => {
+      setLoading(true);
+
+      // Começa com as conquistas locais (offline)
+      const localSet = readLocal();
+
       if (!user) {
+        setUnlockedIds(localSet);
         setLoading(false);
         return;
       }
-      setLoading(true);
+
       const { data, error } = await supabase
         .from('user_achievements')
         .select('achievement_id')
@@ -30,8 +37,11 @@ const AchievementsPage = () => {
 
       if (error) {
         console.error('Error fetching achievements:', error);
+        setUnlockedIds(localSet);
       } else {
-        setUnlockedIds(new Set(data.map(a => a.achievement_id)));
+        const remoteSet = new Set((data ?? []).map((a: any) => a.achievement_id));
+        const union = new Set<string>([...Array.from(localSet), ...Array.from(remoteSet)]);
+        setUnlockedIds(union);
       }
       setLoading(false);
     };
@@ -66,9 +76,6 @@ const AchievementsPage = () => {
           );
         })}
       </div>
-      <p className="text-sm text-muted-foreground mt-8 text-center">
-        A lógica para desbloquear conquistas será implementada em breve. Continue estudando!
-      </p>
     </div>
   );
 };

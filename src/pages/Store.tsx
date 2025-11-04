@@ -10,8 +10,9 @@ import {
   Sparkles,
   ShieldCheck,
   WifiOff,
-  Gamepad2,
   Infinity as InfinityIcon,
+  ListChecks,
+  Target,
 } from "lucide-react";
 import { usePremium } from "@/context/PremiumContext";
 import { showLoading, showError, dismissToast, showSuccess } from "@/utils/toast";
@@ -56,19 +57,19 @@ const hintPackages: HintPackage[] = [
 ];
 
 const freeFeatures = [
-  "Acesso a jogos e quizzes grátis",
+  "Acesso a quizzes e leitura grátis",
   "Controle de idade e acesso",
   "Assistente com dicas limitadas",
   "Anúncios leves entre atividades",
 ];
 
 const premiumFeatures = [
-  "Acesso total ao Play+ (todos os jogos, níveis e novidades)",
+  "Trilhas de Estudo completas no Play+",
+  "Missões diárias para manter o ritmo",
   "Dicas ilimitadas com Assistente priorizado",
   "Experiência 100% sem anúncios",
   "Relatórios de progresso e recomendações",
   "Conteúdos e desafios exclusivos por idade",
-  "Play+ otimizado para rodar suave em celulares",
   "Modo offline via PWA",
   "IA de voz explicativa chegando em breve",
 ];
@@ -94,12 +95,8 @@ const Store = () => {
       dismissToast(loadingToast);
 
       if (success) {
-        // On native, you'd verify the receipt on your server and grant premium.
-        // For now, we'll activate it locally and navigate to the success page.
         activatePremium();
         navigate('/success-payment', { replace: true });
-      } else {
-        // Error messages are handled within the purchaseProduct function
       }
     } catch (error: any) {
       console.error("Checkout failed:", error);
@@ -135,17 +132,17 @@ const Store = () => {
           <div className="flex-1 space-y-4">
             <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight">Loja EDUKIDS+</h1>
             <p className="max-w-2xl text-lg text-white/90">
-              Libere o Play+ completo: todos os jogos e níveis, sem anúncios, com dicas ilimitadas e
+              Libere o Play+ completo: Trilhas de Estudo e Missões Diárias, sem anúncios, com dicas ilimitadas e
               novidades semanais. Diversão que ensina — do jeitinho certo para cada idade.
             </p>
             <div className="flex flex-wrap gap-3 text-xs text-white/80">
               <span className="flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5">
-                <Gamepad2 className="h-4 w-4 text-sky-200" />
-                Play+ completo e otimizado
+                <Target className="h-4 w-4 text-sky-200" />
+                Trilhas completas
               </span>
               <span className="flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5">
-                <InfinityIcon className="h-4 w-4 text-amber-200" />
-                Dicas ilimitadas
+                <ListChecks className="h-4 w-4 text-amber-200" />
+                Missões diárias
               </span>
               <span className="flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5">
                 <ShieldCheck className="h-4 w-4 text-emerald-300" />
@@ -185,9 +182,9 @@ const Store = () => {
                     <Star className="h-4 w-4" />
                     Plano Premium
                   </div>
-                  <h3 className="mt-3 text-2xl font-bold text-white">Acesso total ao Play+</h3>
+                  <h3 className="mt-3 text-2xl font-bold text-white">Trilhas + Missões</h3>
                   <p className="text-sm text-white/85">
-                    Desbloqueie todos os jogos, ganhe dicas ilimitadas e estude sem interrupções.
+                    Desbloqueie todas as trilhas, ganhe dicas ilimitadas e estude sem interrupções.
                     Toda semana chega conteúdo novo — tudo pensado para seu filho aprender brincando.
                   </p>
                 </div>
@@ -197,18 +194,12 @@ const Store = () => {
                 </div>
               </div>
               <ul className="space-y-3 text-sm text-white/90">
-                <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-emerald-300" />
-                  Play+ completo — nada bloqueado
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-emerald-300" />
-                  Dicas ilimitadas e Assistente mais direto
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-emerald-300" />
-                  0% de anúncios e foco total no aprendizado
-                </li>
+                {premiumFeatures.map((f) => (
+                  <li key={f} className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-emerald-300" />
+                    {f}
+                  </li>
+                ))}
               </ul>
               <Button
                 onClick={handleCheckout}
@@ -261,7 +252,7 @@ const Store = () => {
                 <div>
                   <h3 className="text-xl font-semibold">Plano Premium</h3>
                   <p className="text-xs uppercase tracking-[0.3em] text-primary/80">
-                    Tudo do Free + Play+ completo
+                    Tudo do Free + Trilhas completas
                   </p>
                 </div>
               </div>

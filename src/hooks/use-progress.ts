@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSupabase } from "@/context/SupabaseContext";
 import { supabase } from "@/integrations/supabase/client";
+import { syncAchievements } from "@/utils/achievements";
 
 const STORAGE_KEY = "edukids_progress_v1";
 
@@ -85,6 +86,9 @@ export function useProgress() {
         console.error("Failed to save merged progress to localStorage:", err);
       }
 
+      // Sincroniza conquistas após sincronizar progresso
+      await syncAchievements(user.id, mergedProgress);
+
       setIsSyncing(false);
     };
 
@@ -121,6 +125,11 @@ export function useProgress() {
         if (error) {
           console.error("Failed to mark lesson as completed in Supabase:", error);
         }
+        // Atualiza conquistas após gravar
+        await syncAchievements(user.id, next);
+      } else {
+        // Atualiza conquistas localmente
+        await syncAchievements(null, next);
       }
     },
     [progress, persistLocal, user]
@@ -141,20 +150,27 @@ export function useProgress() {
         if (error) {
           console.error("Failed to unmark lesson in Supabase:", error);
         }
+        await syncAchievements(user.id, next);
+      } else {
+        await syncAchievements(null, next);
       }
     },
     [progress, persistLocal, user]
   );
 
   const clearAll = useCallback(async () => {
-    setProgress({});
-    persistLocal({});
+    const next: ProgressMap = {};
+    setProgress(next);
+    persistLocal(next);
 
     if (user) {
       const { error } = await supabase.from("user_progress").delete().match({ user_id: user.id });
       if (error) {
         console.error("Failed to clear all progress in Supabase:", error);
       }
+      await syncAchievements(user.id, next);
+    } else {
+      await syncAchievements(null, next);
     }
   }, [persistLocal, user]);
 

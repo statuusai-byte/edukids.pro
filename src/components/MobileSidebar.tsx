@@ -159,7 +159,7 @@ const MobileSidebar = () => {
                     </div>
                     <div>
                       <p className="font-semibold text-white">Você é Premium 🤩</p>
-                      <p className="text-xs text-white/70">Play+ completo e dicas ilimitadas liberadas.</p>
+                      <p className="text-xs text-white/70">Missões e Trilhas completas liberadas, sem anúncios.</p>
                     </div>
                   </div>
                 </div>
@@ -179,7 +179,7 @@ const MobileSidebar = () => {
                       </div>
                     </div>
                     <p className="text-xs text-white/80">
-                      Desbloqueie todos os jogos Play+, dicas ilimitadas, IA de apoio e uma experiência sem anúncios.
+                      Desbloqueie Missões Diárias e Trilhas de Estudo completas, dicas ilimitadas e navegação sem anúncios.
                     </p>
                     <Button
                       asChild
