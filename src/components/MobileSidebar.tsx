@@ -1,15 +1,14 @@
-import { NavLink } from "react-router-dom";
-import { Sparkles, Menu, Gem } from "lucide-react";
+import { NavLink, Link } from "react-router-dom";
+import { Sparkles, Menu, Gem, X } from "lucide-react";
 import { Icon, type IconName } from "@/components/Icon";
 import { cn } from "@/lib/utils";
 import { useProfile } from "@/context/ProfileContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/get-initials";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useMemo, MouseEvent } from "react";
 import { usePremium } from "@/context/PremiumContext";
-import { Link } from "react-router-dom";
 
 type NavItem = {
   to: string;
@@ -21,8 +20,9 @@ type NavItem = {
 const navItems: NavItem[] = [
   { to: "/activities", icon: "BookOpen", label: "Atividades", color: "text-cyan-400" },
   { to: "/play-plus", icon: "PlaySquare", label: "Play+", color: "text-purple-400" },
+  { to: "/achievements", icon: "Trophy", label: "Medalhas", color: "text-yellow-400" },
   { to: "/store", icon: "Store", label: "Loja", color: "text-green-400" },
-  { to: "/dashboard", icon: "User", label: "Painel dos Pais", color: "text-orange-400" },
+  { to: "/dashboard", icon: "User", label: "Pais", color: "text-orange-400" },
 ];
 
 const settingsItem: NavItem = {
@@ -34,128 +34,209 @@ const settingsItem: NavItem = {
 
 const MobileSidebar = () => {
   const { name, avatarUrl } = useProfile();
+  const displayName = useMemo(
+    () => (name?.trim()?.length ? name : "Explorador EDUKIDS"),
+    [name],
+  );
   const [isOpen, setIsOpen] = useState(false);
   const { isPremium } = usePremium();
+
+  const handleNavClick = () => setIsOpen(false);
+
+  const handleOverlayClose = (event: Event) => {
+    event.preventDefault();
+    setIsOpen(false);
+  };
+
+  const preventPropagation = (event: MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+  };
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button 
+        <Button
+          type="button"
           variant="default"
-          size="icon" 
-          className="fixed top-4 left-4 z-50 md:hidden bg-white text-black shadow-md hover:bg-gray-100"
+          size="icon"
+          className="fixed left-4 top-4 z-50 bg-white text-black shadow-md hover:bg-gray-100 md:hidden"
         >
           <Menu className="h-6 w-6" />
           <span className="sr-only">Abrir menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-64 bg-secondary/95 backdrop-blur-lg border-r border-white/10 p-4 flex flex-col">
-        <div className="mb-8 flex items-center justify-center">
-          <Sparkles size={34} className="text-primary" />
-        </div>
 
-        <nav className="flex flex-col items-stretch gap-2 w-full px-2">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              onClick={() => setIsOpen(false)}
-              className={({ isActive }) =>
-                cn(
-                  "group flex w-full items-center gap-3 rounded-xl px-3 py-2 transition-all duration-200",
-                  isActive
-                    ? "bg-gradient-to-r from-primary/10 to-primary/5 ring-1 ring-primary/20"
-                    : "hover:bg-white/5"
-                )
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  <div
-                    className={cn(
-                      "flex h-10 w-10 items-center justify-center rounded-lg transition-transform duration-200",
-                      isActive ? "scale-105" : "group-hover:scale-105"
-                    )}
-                  >
-                    <Icon
-                      name={item.icon}
-                      className={cn(
-                        "h-6 w-6 transition-colors",
-                        isActive ? item.color : "text-muted-foreground group-hover:text-foreground"
-                      )}
-                    />
-                  </div>
-                  <span
-                    className={cn(
-                      "text-sm font-medium truncate",
-                      isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
-                    )}
-                  >
-                    {item.label}
-                  </span>
-                </>
-              )}
-            </NavLink>
-          ))}
-        </nav>
+      <SheetContent
+        side="left"
+        className="w-72 overflow-hidden border-r border-white/10 bg-transparent p-0"
+        onInteractOutside={handleOverlayClose}
+      >
+        <div
+          className="relative flex h-full flex-col bg-gradient-to-br from-[#090720] via-[#170d35] to-[#050312]"
+          onClick={preventPropagation}
+        >
+          <div className="pointer-events-none absolute inset-0">
+            <div className="absolute -top-16 -left-24 h-48 w-48 rounded-full bg-primary/25 blur-3xl" />
+            <div className="absolute top-1/3 -right-20 h-44 w-44 rounded-full bg-fuchsia-500/25 blur-[120px]" />
+            <div className="absolute bottom-0 left-[-30px] h-56 w-56 rounded-full bg-cyan-500/20 blur-[110px]" />
+          </div>
 
-        <div className="mt-auto flex w-full flex-col items-stretch gap-3 px-2">
-          {!isPremium && (
-            <div className="mb-4">
-              <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary to-fuchsia-600 p-4 text-white shadow-lg">
-                <div className="flex items-center gap-3">
-                  <Gem className="h-8 w-8" />
-                  <div>
-                    <h3 className="font-bold">Seja Premium</h3>
-                    <p className="text-xs text-white/80">Acesso total ao Play+.</p>
+          <div className="relative flex h-full flex-col px-5 pb-6 pt-6">
+            <div className="flex items-start justify-between pb-6">
+              <div className="flex items-center gap-3">
+                <div className="rounded-xl bg-white/12 p-2">
+                  <Sparkles className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-white">EDUKIDS+</p>
+                  <p className="text-xs text-white/60">Explorar, aprender e brincar</p>
+                </div>
+              </div>
+              <SheetClose asChild>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 rounded-full bg-white/10 text-white hover:bg-white/20"
+                >
+                  <X className="h-5 w-5" />
+                  <span className="sr-only">Fechar menu</span>
+                </Button>
+              </SheetClose>
+            </div>
+
+            <nav className="flex-1 space-y-2 overflow-y-auto pr-1">
+              {navItems.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  onClick={handleNavClick}
+                  className={({ isActive }) =>
+                    cn(
+                      "group flex items-center gap-3 rounded-2xl border border-transparent px-3 py-3 transition-all duration-200",
+                      isActive
+                        ? "border-primary/40 bg-primary/12 shadow-[0_0_30px_rgba(124,58,237,0.35)]"
+                        : "bg-white/[0.04] hover:bg-white/[0.09]",
+                    )
+                  }
+                >
+                  {({ isActive }) => (
+                    <>
+                      <div
+                        className={cn(
+                          "flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 transition-transform duration-200",
+                          isActive ? "scale-105" : "group-hover:scale-105",
+                        )}
+                      >
+                        <Icon
+                          name={item.icon}
+                          className={cn(
+                            "h-5 w-5 transition-colors",
+                            isActive ? item.color : "text-white/65 group-hover:text-white",
+                          )}
+                        />
+                      </div>
+                      <span
+                        className={cn(
+                          "text-sm font-medium transition-colors",
+                          isActive ? "text-white" : "text-white/70 group-hover:text-white",
+                        )}
+                      >
+                        {item.label}
+                      </span>
+                    </>
+                  )}
+                </NavLink>
+              ))}
+            </nav>
+
+            <div className="mt-6 space-y-4">
+              {isPremium ? (
+                <div className="rounded-2xl border border-emerald-400/30 bg-gradient-to-br from-emerald-400/[0.25] via-emerald-500/[0.12] to-teal-400/[0.15] p-4 text-sm text-white/85 shadow-[0_10px_45px_rgba(16,185,129,0.25)]">
+                  <div className="flex items-center gap-3">
+                    <div className="rounded-full bg-emerald-400/25 p-2">
+                      <Gem className="h-5 w-5 text-emerald-300" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-white">Você é Premium 🤩</p>
+                      <p className="text-xs text-white/70">Play+ completo e dicas ilimitadas liberadas.</p>
+                    </div>
                   </div>
                 </div>
-                <p className="mt-2 text-xs">Desbloqueie todos os jogos, dicas ilimitadas e muito mais.</p>
-                <Button asChild size="sm" className="mt-3 w-full bg-white text-primary font-bold hover:bg-white/90" onClick={() => setIsOpen(false)}>
-                  <Link to="/store">Ver Vantagens</Link>
-                </Button>
+              ) : (
+                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary to-fuchsia-600 p-4 text-white shadow-[0_20px_58px_rgba(147,51,234,0.28)]">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.35),transparent_55%)] opacity-40" />
+                  <div className="relative flex flex-col gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="rounded-full bg-white/20 p-2">
+                        <Gem className="h-5 w-5 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-semibold uppercase tracking-[0.24em] text-white/80">
+                          Exclusivo
+                        </h3>
+                        <p className="text-base font-semibold text-white">Seja Premium</p>
+                      </div>
+                    </div>
+                    <p className="text-xs text-white/80">
+                      Desbloqueie todos os jogos Play+, dicas ilimitadas, IA de apoio e uma experiência sem anúncios.
+                    </p>
+                    <Button
+                      asChild
+                      size="sm"
+                      className="mt-1 w-full rounded-xl bg-white text-primary font-bold hover:bg-white/90"
+                      onClick={handleNavClick}
+                    >
+                      <Link to="/store">Ver planos e vantagens</Link>
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              <NavLink
+                to={settingsItem.to}
+                onClick={handleNavClick}
+                className={({ isActive }) =>
+                  cn(
+                    "group flex items-center gap-3 rounded-2xl border border-transparent px-3 py-3 transition-all duration-200",
+                    isActive ? "border-white/20 bg-white/10" : "bg-white/[0.04] hover:bg-white/[0.09]",
+                  )
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/6">
+                      <Icon
+                        name={settingsItem.icon}
+                        className={cn(
+                          "h-5 w-5 transition-colors",
+                          isActive ? settingsItem.color : "text-white/65 group-hover:text-white",
+                        )}
+                      />
+                    </div>
+                    <span
+                      className={cn(
+                        "text-sm font-medium",
+                        isActive ? "text-white" : "text-white/70 group-hover:text-white",
+                      )}
+                    >
+                      {settingsItem.label}
+                    </span>
+                  </>
+                )}
+              </NavLink>
+
+              <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3 shadow-inner shadow-black/10">
+                <Avatar className="h-10 w-10">
+                  <AvatarImage src={avatarUrl ?? undefined} />
+                  <AvatarFallback>{getInitials(displayName)}</AvatarFallback}
+                </Avatar>
+                <div>
+                  <p className="text-sm font-medium text-white">{displayName}</p>
+                  <p className="text-xs text-white/60">Pronto para descobrir uma nova aventura?</p>
+                </div>
               </div>
             </div>
-          )}
-
-          <NavLink
-            to={settingsItem.to}
-            onClick={() => setIsOpen(false)}
-            className={({ isActive }) =>
-              cn(
-                "group flex w-full items-center gap-3 rounded-xl px-3 py-2 transition-all duration-200",
-                isActive ? "bg-white/5 ring-1 ring-primary/20" : "hover:bg-white/5"
-              )
-            }
-          >
-            {({ isActive }) => (
-              <>
-                <div className={cn("flex h-10 w-10 items-center justify-center rounded-lg")}>
-                  <Icon
-                    name={settingsItem.icon}
-                    className={cn(
-                      "h-6 w-6 transition-colors",
-                      isActive ? settingsItem.color : "text-muted-foreground group-hover:text-foreground"
-                    )}
-                  />
-                </div>
-                <span
-                  className={cn(
-                    "text-sm font-medium",
-                    isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
-                  )}
-                >
-                  {settingsItem.label}
-                </span>
-              </>
-            )}
-          </NavLink>
-
-          <div className="w-full flex items-center justify-center py-2">
-            <Avatar className="h-10 w-10">
-              <AvatarImage src={avatarUrl ?? undefined} />
-              <AvatarFallback>{getInitials(name ?? "Anônimo")}</AvatarFallback>
-            </Avatar>
           </div>
         </div>
       </SheetContent>
