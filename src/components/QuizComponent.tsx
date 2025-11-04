@@ -28,7 +28,7 @@ const QuizComponent = ({ questions, onQuizComplete, triggerHint, onHintSuggested
   const [score, setScore] = useState(0);
   const [animationClass, setAnimationClass] = useState('');
   const [eliminatedOptions, setEliminatedOptions] = useState<string[]>([]);
-  const [incorrectAttempts, setIncorrectAttempts] = useState(0); // counts wrong attempts for current question
+  const [, setIncorrectAttempts] = useState(0); // counts wrong attempts for current question
   const [showHintSuggestion, setShowHintSuggestion] = useState(false); // when true, question is locked until hint is used
 
   const currentQuestion = useMemo(() => questions[currentQuestionIndex], [questions, currentQuestionIndex]);
