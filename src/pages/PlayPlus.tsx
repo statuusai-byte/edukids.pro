@@ -18,8 +18,8 @@ type GameComponentMap = Record<
 >;
 
 const gameComponentMap: GameComponentMap = {
-  "tic-tac-toe": lazy(() => import("@/components/games/TicTacToe")),
-  "hangman": lazy(() => import("@/components/games/Hangman")),
+  "memory-match": lazy(() => import("@/components/games/MemoryMatch")),
+  "mission-math": lazy(() => import("@/components/games/MissionMath")),
 };
 
 const PlayPlus = () => {

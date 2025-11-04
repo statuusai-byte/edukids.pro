@@ -9,7 +9,7 @@ export type PlayPlusGame = {
   difficulty: "Iniciante" | "Intermediário" | "Avançado";
   estimatedTime: string;
   ageGroups: AgeGroup[];
-  component: "tic-tac-toe" | "hangman";
+  component: "memory-match" | "mission-math";
   coverImage: string;
   features: string[];
   recommended: boolean;
@@ -17,42 +17,42 @@ export type PlayPlusGame = {
 
 export const playPlusGames: PlayPlusGame[] = [
   {
-    id: "tic-tac-toe",
-    title: "Jogo da Velha",
-    tagline: "O clássico desafio de estratégia",
+    id: "memory-match",
+    title: "Jogo da Memória",
+    tagline: "Encontre os pares e treine sua mente",
     description:
-      "Desafie um amigo ou a si mesmo neste jogo atemporal. Perfeito para desenvolver o raciocínio lógico e a capacidade de prever movimentos.",
+      "Um clássico divertido para todas as idades. Vire as cartas, memorize as posições e encontre todos os pares de ícones o mais rápido possível. Ótimo para a memória e concentração.",
     premium: false,
     difficulty: "Iniciante",
-    estimatedTime: "3 min",
+    estimatedTime: "5 min",
     ageGroups: ["4-6", "7-9", "10-12"],
-    component: "tic-tac-toe",
+    component: "memory-match",
     coverImage:
       "https://images.unsplash.com/photo-1584931423298-c576fda548c0?q=80&w=1600&auto=format&fit=crop",
     features: [
-      "Interface limpa e intuitiva",
-      "Partidas rápidas e divertidas",
-      "Ideal para todas as idades",
+      "Desenvolve a memória visual",
+      "Ícones coloridos e divertidos",
+      "Partidas rápidas e relaxantes",
     ],
     recommended: true,
   },
   {
-    id: "hangman",
-    title: "Jogo da Forca",
-    tagline: "Adivinhe a palavra secreta",
+    id: "mission-math",
+    title: "Missão Matemática",
+    tagline: "Desafio de agilidade e cálculo",
     description:
-      "Teste seu vocabulário e suas habilidades de dedução. Adivinhe as letras para revelar a palavra oculta antes que seja tarde demais!",
+      "Corra contra o tempo para resolver o máximo de problemas de matemática! Cada resposta correta adiciona segundos preciosos ao relógio. Perfeito para praticar o cálculo mental.",
     premium: true,
     difficulty: "Intermediário",
-    estimatedTime: "5 min",
+    estimatedTime: "3 min",
     ageGroups: ["7-9", "10-12"],
-    component: "hangman",
+    component: "mission-math",
     coverImage:
       "https://images.unsplash.com/photo-1524995767962-b6246ac15514?q=80&w=1600&auto=format&fit=crop",
     features: [
-      "Banco de palavras educativo",
-      "Fortalece a ortografia",
-      "Desafio de lógica e vocabulário",
+      "Problemas adaptados por idade",
+      "Estimula o raciocínio rápido",
+      "Competição saudável contra o relógio",
     ],
     recommended: true,
   },
