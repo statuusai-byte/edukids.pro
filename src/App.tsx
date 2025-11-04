@@ -29,6 +29,7 @@ const SuccessPayment = lazy(() => import("./pages/SuccessPayment"));
 const TestAccount = lazy(() => import("./pages/TestAccount"));
 const AdminGrantPremium = lazy(() => import("./pages/AdminGrantPremium"));
 const AchievementsPage = lazy(() => import("./pages/Achievements"));
+const Home = lazy(() => import("./pages/Home"));
 
 const queryClient = new QueryClient();
 
@@ -39,20 +40,14 @@ const Fallback = () => (
 );
 
 const AppRoutes = () => {
-  // Nota: a checagem de auth e redireção inicial acontece no componente Index e em RequireAuth
   const isDev = import.meta.env.MODE === "development";
-  const showAdminRoute = isDev; // Admin protegido por RequireAuth; link só visível para contas admin
+  const showAdminRoute = isDev;
 
   return (
     <Routes>
-      {/* Landing decide entre /login (sem sessão) e /activities (com sessão) */}
-      <Route path="/" element={<Index />} />
-
-      {/* Páginas públicas de autenticação */}
+      <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-
-      {/* Página de confirmação de pagamento (livre) e conta de teste */}
       <Route path="/success-payment" element={<SuccessPayment />} />
       <Route path="/test-account" element={<TestAccount />} />
 
@@ -67,10 +62,6 @@ const AppRoutes = () => {
         />
       )}
 
-      {/* Alias antigo */}
-      <Route path="/courses/*" element={<Navigate to="/play-plus" replace />} />
-
-      {/* App protegido por autenticação */}
       <Route
         element={
           <RequireAuth>

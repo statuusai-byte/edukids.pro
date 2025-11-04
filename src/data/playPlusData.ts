@@ -9,7 +9,7 @@ export type PlayPlusGame = {
   difficulty: "Iniciante" | "Intermediário" | "Avançado";
   estimatedTime: string;
   ageGroups: AgeGroup[];
-  component: "memory-match" | "mission-math" | "contando-frutas" | "formando-palavras";
+  component: "tic-tac-toe" | "hangman";
   coverImage: string;
   features: string[];
   recommended: boolean;
@@ -17,88 +17,46 @@ export type PlayPlusGame = {
 
 export const playPlusGames: PlayPlusGame[] = [
   {
-    id: "memory-match",
-    title: "Memória Cósmica",
-    tagline: "Desvende constelações em partidas relâmpago",
+    id: "tic-tac-toe",
+    title: "Jogo da Velha",
+    tagline: "O clássico desafio de estratégia",
     description:
-      "Encontre os pares de planetas e constelações antes que o tempo acabe. Ideal para exercitar memória e atenção em partidas rápiddas.",
+      "Desafie um amigo ou a si mesmo neste jogo atemporal. Perfeito para desenvolver o raciocínio lógico e a capacidade de prever movimentos.",
     premium: false,
     difficulty: "Iniciante",
+    estimatedTime: "3 min",
+    ageGroups: ["4-6", "7-9", "10-12"],
+    component: "tic-tac-toe",
+    coverImage:
+      "https://images.unsplash.com/photo-1584931423298-c576fda548c0?q=80&w=1600&auto=format&fit=crop",
+    features: [
+      "Interface limpa e intuitiva",
+      "Partidas rápidas e divertidas",
+      "Ideal para todas as idades",
+    ],
+    recommended: true,
+  },
+  {
+    id: "hangman",
+    title: "Jogo da Forca",
+    tagline: "Adivinhe a palavra secreta",
+    description:
+      "Teste seu vocabulário e suas habilidades de dedução. Adivinhe as letras para revelar a palavra oculta antes que seja tarde demais!",
+    premium: true,
+    difficulty: "Intermediário",
     estimatedTime: "5 min",
-    ageGroups: ["4-6", "7-9", "10-12"],
-    component: "memory-match",
+    ageGroups: ["7-9", "10-12"],
+    component: "hangman",
     coverImage:
-      "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=1600&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1524995767962-b6246ac15514?q=80&w=1600&auto=format&fit=crop",
     features: [
-      "Testado por pais e pedagogos",
-      "Feedback animado e reforço positivo",
-      "Modo turbo para acelerar desafios",
+      "Banco de palavras educativo",
+      "Fortalece a ortografia",
+      "Desafio de lógica e vocabulário",
     ],
     recommended: true,
-  },
-  {
-    id: "mission-math",
-    title: "Missão Matemática",
-    tagline: "Resolva equações antes que o foguete decole",
-    description:
-      "Avance por fases com operações que se adaptam à idade. Ganhe combos, veja o placar em tempo real e fortaleça raciocínio lógico.",
-    premium: true,
-    difficulty: "Intermediário",
-    estimatedTime: "8 min",
-    ageGroups: ["4-6", "7-9", "10-12"],
-    component: "mission-math",
-    coverImage:
-      "https://images.unsplash.com/photo-1517976487492-5750f3195933?q=80&w=1600&auto=format&fit=crop",
-    features: [
-      "Operações adaptativas em tempo real",
-      "Sistema de combos com medalhas digitais",
-      "Resumo de desempenho ao final da missão",
-    ],
-    recommended: true,
-  },
-  {
-    id: "contando-frutas",
-    title: "Contando Frutas",
-    tagline: "Matemática saborosa para iniciar a jornada",
-    description:
-      "Fortaleça contagem, comparação e atenção visual em uma experiência lúdica com frutas animadas. Cada rodada gera um desafio diferente.",
-    premium: false,
-    difficulty: "Iniciante",
-    estimatedTime: "4 min",
-    ageGroups: ["4-6", "7-9", "10-12"],
-    component: "contando-frutas",
-    coverImage:
-      "https://images.unsplash.com/photo-1613745726940-ef06ded97b18?q=80&w=1600&auto=format&fit=crop",
-    features: [
-      "Variações infinitas de combinação",
-      "Reforço de contagem com animações suaves",
-      "Controle de tempo opcional para prática livre",
-    ],
-    recommended: false,
-  },
-  {
-    id: "formando-palavras",
-    title: "Formando Palavras",
-    tagline: "Monte sílabas e desbloqueie vocabulário",
-    description:
-      "Combine sílabas, descubra palavras secretas e fortaleça leitura com apoio visual. Pensado para crianças em alfabetização.",
-    premium: true,
-    difficulty: "Intermediário",
-    estimatedTime: "6 min",
-    ageGroups: ["4-6", "7-9", "10-12"],
-    component: "formando-palavras",
-    coverImage:
-      "https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=1600&auto=format&fit=crop",
-    features: [
-      "Banco de palavras revisado por fonoaudiólogos",
-      "Trilhas de progressão com feedback instantâneo",
-      "Modo revisão para reforçar sílabas desafiadoras",
-    ],
-    recommended: false,
   },
 ];
-
-export const highlightedGameIds: ReadonlyArray<PlayPlusGame["id"]> = ["mission-math", "memory-match"];
 
 export type PlayPlusCatalogSummary = {
   totalGames: number;

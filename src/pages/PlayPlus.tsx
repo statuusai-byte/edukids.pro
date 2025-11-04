@@ -2,6 +2,7 @@ import { useMemo, useState, lazy, Suspense, type ComponentType, type LazyExoticC
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useAge } from "@/context/AgeContext";
 import { usePremium } from "@/context/PremiumContext";
 import {
@@ -10,7 +11,6 @@ import {
   type PlayPlusGame,
 } from "@/data/playPlusData";
 import { Sparkles, Gamepad2, Lock, Star, Clock, ShieldCheck } from "lucide-react";
-import { usePrefersReducedMotion } from "@/hooks/use-reduced-motion";
 
 type GameComponentMap = Record<
   PlayPlusGame["component"],
@@ -18,18 +18,15 @@ type GameComponentMap = Record<
 >;
 
 const gameComponentMap: GameComponentMap = {
-  "contando-frutas": lazy(() => import("@/components/games/ContandoFrutas")),
-  "formando-palavras": lazy(() => import("@/components/games/FormandoPalavras")),
-  "memory-match": lazy(() => import("@/components/games/MemoryMatch")),
-  "mission-math": lazy(() => import("@/components/games/MissionMath")),
+  "tic-tac-toe": lazy(() => import("@/components/games/TicTacToe")),
+  "hangman": lazy(() => import("@/components/games/Hangman")),
 };
 
 const PlayPlus = () => {
   const { ageGroup } = useAge();
   const { isPremium } = usePremium();
-  const reduceMotion = usePrefersReducedMotion();
   const navigate = useNavigate();
-  const [activeGameId, setActiveGameId] = useState<string | null>(null);
+  const [activeGame, setActiveGame] = useState<PlayPlusGame | null>(null);
 
   const filteredGames = useMemo(
     () => playPlusGames.filter((game) => !ageGroup || game.ageGroups.includes(ageGroup)),
@@ -38,17 +35,12 @@ const PlayPlus = () => {
 
   const catalogSummary = useMemo(() => buildCatalogSummary(ageGroup ?? null), [ageGroup]);
 
-  const activeGame = useMemo(
-    () => filteredGames.find((game) => game.id === activeGameId) ?? null,
-    [filteredGames, activeGameId],
-  );
-
   const handlePlayGame = (game: PlayPlusGame) => {
     if (game.premium && !isPremium) {
       navigate("/store");
       return;
     }
-    setActiveGameId(game.id);
+    setActiveGame(game);
   };
 
   if (!ageGroup) {
@@ -206,7 +198,7 @@ const PlayPlus = () => {
                       </span>
                     </div>
                     <Button
-                      onClick={() => (canAccess ? handlePlayGame(game) : navigate("/store"))}
+                      onClick={() => handlePlayGame(game)}
                       className="w-full"
                     >
                       {canAccess ? "Jogar agora" : "Assine para jogar"}
@@ -219,48 +211,35 @@ const PlayPlus = () => {
         )}
       </section>
 
-      {activeGame && (
-        <section className="space-y-4">
-          <Card className="glass-card border-primary/30">
-            <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <CardTitle className="text-2xl">{activeGame.title}</CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  {activeGame.tagline}
-                </p>
+      <Dialog open={!!activeGame} onOpenChange={(isOpen) => !isOpen && setActiveGame(null)}>
+        <DialogContent className="sm:max-w-lg md:max-w-2xl glass-card p-0">
+          {activeGame && (
+            <>
+              <DialogHeader className="p-6 pb-4">
+                <DialogTitle className="text-2xl">{activeGame.title}</DialogTitle>
+                <DialogDescription>{activeGame.tagline}</DialogDescription>
+              </DialogHeader>
+              <div className="p-6 pt-0">
+                {SelectedGameComponent ? (
+                  <Suspense
+                    fallback={
+                      <div className="flex h-40 items-center justify-center rounded-xl bg-secondary/50 text-sm text-muted-foreground">
+                        Carregando jogo…
+                      </div>
+                    }
+                  >
+                    <SelectedGameComponent />
+                  </Suspense>
+                ) : (
+                  <div className="rounded-xl border border-dashed border-white/20 p-6 text-center text-sm text-muted-foreground">
+                    Esse jogo estará disponível em breve dentro do EDUKIDS+.
+                  </div>
+                )}
               </div>
-              <Button
-                variant="outline"
-                onClick={() => setActiveGameId(null)}
-              >
-                Fechar jogo
-              </Button>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {SelectedGameComponent ? (
-                <Suspense
-                  fallback={
-                    <div className="flex h-40 items-center justify-center rounded-xl bg-secondary/50 text-sm text-muted-foreground">
-                      Carregando jogo…
-                    </div>
-                  }
-                >
-                  <SelectedGameComponent />
-                </Suspense>
-              ) : (
-                <div className="rounded-xl border border-dashed border-white/20 p-6 text-center text-sm text-muted-foreground">
-                  Esse jogo estará disponível em breve dentro do EDUKIDS+.
-                </div>
-              )}
-              {!reduceMotion && (
-                <p className="text-xs text-muted-foreground">
-                  Os jogos são carregados sob demanda para poupar memória e rodar bem em máquinas mais simples.
-                </p>
-              )}
-            </CardContent>
-          </Card>
-        </section>
-      )}
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
