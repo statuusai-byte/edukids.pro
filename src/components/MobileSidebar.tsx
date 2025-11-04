@@ -145,7 +145,7 @@ const MobileSidebar = () => {
                     isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
                   )}
                 >
-                  {item.label}
+                  {settingsItem.label}
                 </span>
               </>
             )}
