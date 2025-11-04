@@ -158,7 +158,7 @@ const MobileSidebar = () => {
                       <Gem className="h-5 w-5 text-emerald-300" />
                     </div>
                     <div>
-                      <p a className="font-semibold text-white">Você é Premium 🤩</p>
+                      <p className="font-semibold text-white">Você é Premium 🤩</p>
                       <p className="text-xs text-white/70">Play+ completo e dicas ilimitadas liberadas.</p>
                     </div>
                   </div>
