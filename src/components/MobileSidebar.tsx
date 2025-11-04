@@ -99,25 +99,25 @@ const MobileSidebar = () => {
           ))}
         </nav>
 
-        <div className="flex-1 flex flex-col justify-center px-2">
+        <div className="mt-auto flex w-full flex-col items-stretch gap-3 px-2">
           {!isPremium && (
-            <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary to-fuchsia-600 p-4 text-white shadow-lg">
-              <div className="flex items-center gap-3">
-                <Gem className="h-8 w-8" />
-                <div>
-                  <h3 className="font-bold">Seja Premium</h3>
-                  <p className="text-xs text-white/80">Acesso total ao Play+.</p>
+            <div className="mb-4">
+              <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary to-fuchsia-600 p-4 text-white shadow-lg">
+                <div className="flex items-center gap-3">
+                  <Gem className="h-8 w-8" />
+                  <div>
+                    <h3 className="font-bold">Seja Premium</h3>
+                    <p className="text-xs text-white/80">Acesso total ao Play+.</p>
+                  </div>
                 </div>
+                <p className="mt-2 text-xs">Desbloqueie todos os jogos, dicas ilimitadas e muito mais.</p>
+                <Button asChild size="sm" className="mt-3 w-full bg-white text-primary font-bold hover:bg-white/90" onClick={() => setIsOpen(false)}>
+                  <Link to="/store">Ver Vantagens</Link>
+                </Button>
               </div>
-              <p className="mt-2 text-xs">Desbloqueie todos os jogos, dicas ilimitadas e muito mais.</p>
-              <Button asChild size="sm" className="mt-3 w-full bg-white text-primary font-bold hover:bg-white/90" onClick={() => setIsOpen(false)}>
-                <Link to="/store">Ver Vantagens</Link>
-              </Button>
             </div>
           )}
-        </div>
 
-        <div className="flex w-full flex-col items-stretch gap-3 px-2">
           <NavLink
             to={settingsItem.to}
             onClick={() => setIsOpen(false)}
