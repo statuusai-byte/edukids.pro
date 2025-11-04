@@ -7,7 +7,6 @@ import AgeSelectionModal from "@/components/AgeSelectionModal";
 import {
   ShieldCheck,
   BrainCircuit,
-  Trophy,
   Sparkles,
   Users,
   Star,
@@ -187,7 +186,7 @@ const Home = () => {
             {impactStats.map((stat) => (
               <div
                 key={stat.label}
-                className="flex min-w-[150px] flex-col items-center justify-center rounded-2xl bg-white/5 px-4 py-5 text-center md:min-w-0"
+                className="flex min-w=[150px] flex-col items-center justify-center rounded-2xl bg-white/5 px-4 py-5 text-center md:min-w-0"
               >
                 <div className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-br from-primary/90 via-fuchsia-400 to-amber-300 drop-shadow">
                   {stat.value}
@@ -307,7 +306,7 @@ const Home = () => {
                 <Download className="h-3.5 w-3.5" />
                 Instale em poucos passos
               </span>
-              <h3 className="mt-3 text-2xl font-extrabold text-white sm:text-3xl">
+              <h3 className="mt-3 text-2xl font-extrabold text白 sm:text-3xl">
                 Baixe o EDUKIDS+ onde você estiver
               </h3>
               <p className="mt-2 max-w-xl text-sm text-white/80 sm:text-base">

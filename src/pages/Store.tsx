@@ -10,7 +10,6 @@ import {
   Sparkles,
   ShieldCheck,
   WifiOff,
-  Infinity as InfinityIcon,
   ListChecks,
   Target,
 } from "lucide-react";
