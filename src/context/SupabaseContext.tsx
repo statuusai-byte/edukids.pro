@@ -75,43 +75,48 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    setIsLoading(true);
+    const checkInitialSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        setSession(session);
+        setUser(session?.user ?? null);
+        if (session?.user) {
+          if (emailIsAdmin(session.user.email)) {
+            applyLocalPremiumForAdmin(session.user.email);
+          }
+          await syncPremiumFromProfile(session.user.id);
+        }
+      } catch (error) {
+        console.error("Error fetching initial session:", error);
+        setSession(null);
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-    const timer = setTimeout(() => {
-      console.warn("Supabase auth state check timed out. Assuming logged out.");
-      setIsLoading(false);
-    }, 5000); // 5-second timeout as a fallback
+    checkInitialSession();
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (event, currentSession) => {
-        clearTimeout(timer);
-
+      async (_event, currentSession) => {
         setSession(currentSession);
         const currentUser = currentSession?.user ?? null;
         setUser(currentUser);
 
-        if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
-          if (currentUser) {
-            if (event === 'SIGNED_IN') {
-              showSuccess('Login realizado com sucesso!');
-            }
-            const email = currentUser.email ?? '';
-            if (emailIsAdmin(email)) {
-              applyLocalPremiumForAdmin(email);
-            }
-            await syncPremiumFromProfile(currentUser.id);
+        if (_event === 'SIGNED_IN' && currentUser) {
+          showSuccess('Login realizado com sucesso!');
+          if (emailIsAdmin(currentUser.email)) {
+            applyLocalPremiumForAdmin(currentUser.email);
           }
-        } else if (event === 'SIGNED_OUT') {
+          await syncPremiumFromProfile(currentUser.id);
+        } else if (_event === 'SIGNED_OUT') {
           showSuccess('Sessão encerrada.');
           navigate('/');
         }
-        
-        setIsLoading(false);
       }
     );
 
     return () => {
-      clearTimeout(timer);
       authListener.subscription.unsubscribe();
     };
   }, [navigate]);
