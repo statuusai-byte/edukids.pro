@@ -40,11 +40,6 @@ const Dashboard = () => {
 
   const handlePinModalClose = (open: boolean) => {
     setPinModalOpen(open);
-    // Se o modal for fechado sem verificação (ex: clicando fora),
-    // o usuário deve ser redirecionado para um local seguro.
-    if (!open && !isPinVerified) {
-      navigate("/activities", { replace: true }); 
-    }
   };
 
   const completedLessons = useMemo(() => Object.keys(progress).length, [progress]);
