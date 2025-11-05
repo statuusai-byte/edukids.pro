@@ -12,6 +12,12 @@
         <activity
             android:name="com.google.androidbrowserhelper.trusted.LauncherActivity"
             android:exported="true">
+            
+            <!-- CORREÇÃO CRÍTICA: Adicionando a URL que o app deve abrir -->
+            <meta-data
+                android:name="android.support.customtabs.trusted.DEFAULT_URL"
+                android:value="https://edukidsspro.vercel.app" />
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -30,7 +36,6 @@
             android:name="com.google.android.actions"
             android:resource="@xml/actions" />
             
-        <!-- Fallback para evitar que o app feche se a verificação falhar -->
         <meta-data
             android:name="android.support.customtabs.trusted.FALLBACK_STRATEGY"
             android:value="customtabs" />
