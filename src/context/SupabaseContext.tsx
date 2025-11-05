@@ -81,7 +81,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
-          if (emailIsAdmin(session.user.email)) {
+          if (session.user.email && emailIsAdmin(session.user.email)) {
             applyLocalPremiumForAdmin(session.user.email);
           }
           await syncPremiumFromProfile(session.user.id);
@@ -105,7 +105,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
 
         if (_event === 'SIGNED_IN' && currentUser) {
           showSuccess('Login realizado com sucesso!');
-          if (emailIsAdmin(currentUser.email)) {
+          if (currentUser.email && emailIsAdmin(currentUser.email)) {
             applyLocalPremiumForAdmin(currentUser.email);
           }
           await syncPremiumFromProfile(currentUser.id);

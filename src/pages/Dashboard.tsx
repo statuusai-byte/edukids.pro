@@ -7,7 +7,7 @@ import { useProgress } from "@/hooks/use-progress";
 import { useScreenTime } from "@/hooks/use-screen-time";
 import { useAge } from "@/context/AgeContext";
 import { Button } from "@/components/ui/button";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import ParentalPinModal from "@/components/ParentalPinModal";
 import { hasParentPin } from "@/utils/parental";
 import { useSupabase } from "@/context/SupabaseContext";
@@ -17,7 +17,6 @@ const Dashboard = () => {
   const { todayUsage, limitMinutes, setLimitMinutes, blockEnabled, setBlockEnabled, resetToday, addMinutes, isBlocked } = useScreenTime();
   const { ageGroup } = useAge();
   const { signOut } = useSupabase();
-  const navigate = useNavigate();
 
   const [isPinVerified, setIsPinVerified] = useState(false);
   const [pinModalOpen, setPinModalOpen] = useState(false);
