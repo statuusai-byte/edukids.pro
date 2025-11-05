@@ -76,8 +76,16 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     setIsLoading(true);
+
+    const timer = setTimeout(() => {
+      console.warn("Supabase auth state check timed out. Assuming logged out.");
+      setIsLoading(false);
+    }, 5000); // 5-second timeout as a fallback
+
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
+        clearTimeout(timer);
+
         setSession(currentSession);
         const currentUser = currentSession?.user ?? null;
         setUser(currentUser);
@@ -103,6 +111,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
     );
 
     return () => {
+      clearTimeout(timer);
       authListener.subscription.unsubscribe();
     };
   }, [navigate]);

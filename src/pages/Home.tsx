@@ -93,7 +93,7 @@ const Home = () => {
 
   return (
     <div
-      className="flex flex-col"
+      className="flex flex-col min-h-screen"
       style={{
         paddingTop: "env(safe-area-inset-top)",
         paddingBottom: "env(safe-area-inset-bottom)",
