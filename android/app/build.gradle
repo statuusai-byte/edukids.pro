@@ -23,7 +23,7 @@ android {
             if (keystorePropertiesFile.exists()) {
                 storeFile file(keystoreProperties['storeFile'])
                 storePassword keystoreProperties['storePassword']
-                keyAlias keystoreProperties['keyAlias']
+                keyAlias 'edukidsspro'
                 keyPassword keystoreProperties['keyPassword']
             }
         }
