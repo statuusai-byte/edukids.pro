@@ -16,6 +16,7 @@ import {
   Target,
   ListChecks,
   ChevronDown,
+  Loader2,
 } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useSupabase } from "@/context/SupabaseContext";
@@ -67,13 +68,14 @@ const testimonials = [
 
 const Home = () => {
   const navigate = useNavigate();
-  const { user } = useSupabase();
+  const { user, isLoading: isAuthLoading } = useSupabase();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [action, setAction] = useState<"entrar" | "cadastrar" | null>(null);
   const [installOpen, setInstallOpen] = useState(false);
 
   const handleEnterClick = () => {
+    if (isAuthLoading) return; // Previne clique durante a verificação
     if (user) {
       navigate("/activities");
     } else {
@@ -88,7 +90,15 @@ const Home = () => {
   };
 
   return (
-    <div className="flex flex-col">
+    <div
+      className="flex flex-col"
+      style={{
+        paddingTop: "env(safe-area-inset-top)",
+        paddingBottom: "env(safe-area-inset-bottom)",
+        paddingLeft: "env(safe-area-inset-left)",
+        paddingRight: "env(safe-area-inset-right)",
+      }}
+    >
       {/* Hero */}
       <section className="relative flex min-h-[560px] w-full items-center justify-center overflow-hidden px-6 text-center sm:min-h-[620px] sm:px-10">
         <div
@@ -143,8 +153,16 @@ const Home = () => {
             <Button
               onClick={handleEnterClick}
               className="flex-1 bg-white text-black font-bold py-3 hover:bg-white/90"
+              disabled={isAuthLoading}
             >
-              Entrar agora
+              {isAuthLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Verificando sessão...
+                </>
+              ) : (
+                "Entrar agora"
+              )}
             </Button>
             <Button
               onClick={handleRegisterClick}
