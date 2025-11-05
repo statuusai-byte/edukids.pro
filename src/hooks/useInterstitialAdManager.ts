@@ -4,7 +4,6 @@ import { usePremium } from '@/context/PremiumContext';
 import { showInterstitialAd } from '@/lib/capacitor';
 
 const AD_DISPLAY_FREQUENCY = 8;
-const INTERSTITIALS_ENABLED_KEY = "edukids_show_interstitials";
 const AD_COUNTER_KEY = 'ad_counter';
 
 const getAdCounter = (): number => {
@@ -23,22 +22,13 @@ const setAdCounter = (count: number) => {
   }
 };
 
-const areInterstitialAdsEnabled = (): boolean => {
-  try {
-    const raw = localStorage.getItem(INTERSTITIALS_ENABLED_KEY);
-    return raw === null || raw === 'true';
-  } catch {
-    return true;
-  }
-};
-
 export const useInterstitialAdManager = () => {
   const location = useLocation();
   const { isPremium } = usePremium();
   const adCounterRef = useRef(getAdCounter());
 
   useEffect(() => {
-    if (isPremium || !areInterstitialAdsEnabled()) {
+    if (isPremium) {
       return;
     }
 
