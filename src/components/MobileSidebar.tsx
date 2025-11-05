@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/get-initials";
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { useState, useMemo, MouseEvent } from "react";
+import { useState, useMemo } from "react";
 import { usePremium } from "@/context/PremiumContext";
 
 type NavItem = {
@@ -43,15 +43,6 @@ const MobileSidebar = () => {
 
   const handleNavClick = () => setIsOpen(false);
 
-  const handleOverlayClose = (event: Event) => {
-    event.preventDefault();
-    setIsOpen(false);
-  };
-
-  const preventPropagation = (event: MouseEvent<HTMLDivElement>) => {
-    event.stopPropagation();
-  };
-
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
@@ -69,11 +60,9 @@ const MobileSidebar = () => {
       <SheetContent
         side="left"
         className="w-72 overflow-hidden border-r border-white/10 bg-transparent p-0"
-        onInteractOutside={handleOverlayClose}
       >
         <div
           className="relative flex h-full flex-col bg-gradient-to-br from-[#090720] via-[#170d35] to-[#050312]"
-          onClick={preventPropagation}
         >
           <div className="pointer-events-none absolute inset-0">
             <div className="absolute -top-16 -left-24 h-48 w-48 rounded-full bg-primary/25 blur-3xl" />
