@@ -20,8 +20,10 @@ import { useHintsContext } from "@/context/HintsContext";
 import { cn } from "@/lib/utils";
 import PRODUCTS from "@/config/products";
 import { purchaseProduct } from "@/lib/capacitor";
+import FakeCheckoutModal from "@/components/FakeCheckoutModal";
 
 type HintPackage = {
+  id: string;
   amount: number;
   name: string;
   price: string;
@@ -32,6 +34,7 @@ type HintPackage = {
 
 const hintPackages: HintPackage[] = [
   {
+    id: PRODUCTS.HINTS_PACK_SMALL,
     amount: 3,
     name: "Pacote Explorador",
     price: "R$ 1,00",
@@ -39,6 +42,7 @@ const hintPackages: HintPackage[] = [
     accent: "from-amber-300 to-orange-400",
   },
   {
+    id: PRODUCTS.HINTS_PACK_MEDIUM,
     amount: 8,
     name: "Pacote Comandante",
     price: "R$ 3,00",
@@ -47,6 +51,7 @@ const hintPackages: HintPackage[] = [
     accent: "from-fuchsia-300 to-purple-500",
   },
   {
+    id: PRODUCTS.HINTS_PACK_LARGE,
     amount: 15,
     name: "Pacote Mestre",
     price: "R$ 5,00",
@@ -80,44 +85,57 @@ const Store = () => {
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const navigate = useNavigate();
 
-  const handleCheckout = async () => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<{ name: string; price: string; onConfirm: () => Promise<void> } | null>(null);
+
+  const handlePremiumCheckout = () => {
     if (!user) {
       showError("Você precisa estar logado para iniciar uma assinatura.");
       return;
     }
-
-    setIsCheckingOut(true);
-    const loadingToast = showLoading("Iniciando compra...");
-
-    try {
-      const success = await purchaseProduct(PRODUCTS.EDUKIDS_BASIC_MONTHLY);
-      dismissToast(loadingToast);
-
-      if (success) {
-        activatePremium();
-        navigate('/success-payment', { replace: true });
-      }
-    } catch (error: any) {
-      console.error("Checkout failed:", error);
-      dismissToast(loadingToast);
-      showError("Erro ao processar a assinatura. Tente novamente.");
-    } finally {
-      setIsCheckingOut(false);
-    }
+    setSelectedProduct({
+      name: "Assinatura Premium",
+      price: "R$ 19,90/mês",
+      onConfirm: async () => {
+        setIsCheckingOut(true);
+        const loadingToast = showLoading("Processando assinatura...");
+        try {
+          const success = await purchaseProduct(PRODUCTS.EDUKIDS_BASIC_MONTHLY);
+          dismissToast(loadingToast);
+          if (success) {
+            activatePremium();
+            navigate('/success-payment', { replace: true });
+          }
+        } catch (error: any) {
+          console.error("Checkout failed:", error);
+          dismissToast(loadingToast);
+          showError("Erro ao processar a assinatura. Tente novamente.");
+        } finally {
+          setIsCheckingOut(false);
+        }
+      },
+    });
+    setModalOpen(true);
   };
 
-  const handleBuyHints = (amount: number, packageName: string) => {
+  const handleBuyHints = (pkg: HintPackage) => {
     if (!user) {
       showError("Você precisa estar logado para comprar dicas.");
       return;
     }
-
-    const loading = showLoading(`Comprando ${packageName}...`);
-    setTimeout(() => {
-      addHints(amount);
-      dismissToast(loading);
-      showSuccess(`${packageName} comprado! ${amount} dicas foram adicionadas ao seu saldo.`);
-    }, 1200);
+    setSelectedProduct({
+      name: pkg.name,
+      price: pkg.price,
+      onConfirm: async () => {
+        const loading = showLoading(`Comprando ${pkg.name}...`);
+        // Simula a compra
+        await new Promise(resolve => setTimeout(resolve, 1200));
+        addHints(pkg.amount);
+        dismissToast(loading);
+        showSuccess(`${pkg.name} comprado! ${pkg.amount} dicas foram adicionadas ao seu saldo.`);
+      },
+    });
+    setModalOpen(true);
   };
 
   return (
@@ -154,7 +172,7 @@ const Store = () => {
             </div>
             <div className="flex flex-wrap gap-3">
               <Button
-                onClick={handleCheckout}
+                onClick={handlePremiumCheckout}
                 className="bg-white text-black font-bold shadow-md hover:bg-white/90"
                 disabled={isCheckingOut}
               >
@@ -201,7 +219,7 @@ const Store = () => {
                 ))}
               </ul>
               <Button
-                onClick={handleCheckout}
+                onClick={handlePremiumCheckout}
                 className="w-full bg-yellow-300 text-black font-bold hover:bg-yellow-200"
                 disabled={isPremium || isCheckingOut}
               >
@@ -308,7 +326,7 @@ const Store = () => {
                 </div>
                 <CardFooter className="p-0 pt-6">
                   <Button
-                    onClick={() => handleBuyHints(pkg.amount, pkg.name)}
+                    onClick={() => handleBuyHints(pkg)}
                     className="w-full"
                     disabled={isPremium}
                   >
@@ -325,6 +343,16 @@ const Store = () => {
           </p>
         )}
       </section>
+
+      {selectedProduct && (
+        <FakeCheckoutModal
+          open={modalOpen}
+          onOpenChange={setModalOpen}
+          productName={selectedProduct.name}
+          price={selectedProduct.price}
+          onConfirm={selectedProduct.onConfirm}
+        />
+      )}
     </div>
   );
 };
