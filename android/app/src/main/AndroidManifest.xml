@@ -30,5 +30,10 @@
             android:name="com.google.android.actions"
             android:resource="@xml/actions" />
             
+        <!-- Fallback para evitar que o app feche se a verificação falhar -->
+        <meta-data
+            android:name="android.support.customtabs.trusted.FALLBACK_STRATEGY"
+            android:value="customtabs" />
+            
     </application>
 </manifest>
