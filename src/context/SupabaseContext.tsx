@@ -75,49 +75,30 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    const initializeSession = async () => {
-      try {
-        const { data: { session: initialSession } } = await supabase.auth.getSession();
-        setSession(initialSession);
-        const currentUser = initialSession?.user ?? null;
-        setUser(currentUser);
-
-        if (currentUser) {
-          const email = currentUser.email ?? '';
-          if (emailIsAdmin(email)) {
-            applyLocalPremiumForAdmin(email);
-          }
-          await syncPremiumFromProfile(currentUser.id);
-        }
-      } catch (err) {
-        console.error('Failed to get initial session:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    initializeSession();
-
+    setIsLoading(true);
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
         setSession(currentSession);
         const currentUser = currentSession?.user ?? null;
         setUser(currentUser);
 
-        if (event === 'SIGNED_IN') {
-          setIsLoading(true);
-          showSuccess('Login realizado com sucesso!');
-          const email = currentUser?.email ?? '';
-          if (emailIsAdmin(email)) {
-            applyLocalPremiumForAdmin(email);
+        if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
+          if (currentUser) {
+            if (event === 'SIGNED_IN') {
+              showSuccess('Login realizado com sucesso!');
+            }
+            const email = currentUser.email ?? '';
+            if (emailIsAdmin(email)) {
+              applyLocalPremiumForAdmin(email);
+            }
+            await syncPremiumFromProfile(currentUser.id);
           }
-          await syncPremiumFromProfile(currentUser?.id);
-          setIsLoading(false);
-          // A navegação agora é tratada pelo botão na página Home
         } else if (event === 'SIGNED_OUT') {
           showSuccess('Sessão encerrada.');
           navigate('/');
         }
+        
+        setIsLoading(false);
       }
     );
 
