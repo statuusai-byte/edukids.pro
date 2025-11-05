@@ -20,6 +20,9 @@ export default defineConfig(() => ({
         globPatterns: ['**/*.{js,css,html,svg,png,webmanifest}'],
         // Impede que navegações para /.well-known/* caiam no fallback do SPA
         navigateFallbackDenylist: [/^\/\.well-known\//],
+        // Força o novo Service Worker a assumir o controle imediatamente
+        skipWaiting: true,
+        clientsClaim: true,
       },
       manifest: {
         name: "EDUKIDS+",
