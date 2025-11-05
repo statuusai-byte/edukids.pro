@@ -4,10 +4,12 @@ import { usePremium } from '@/context/PremiumContext';
 import { showInterstitialAd } from '@/lib/capacitor';
 
 const AD_DISPLAY_FREQUENCY = 8;
+const INTERSTITIALS_ENABLED_KEY = "edukids_show_interstitials";
+const AD_COUNTER_KEY = 'ad_counter';
 
 const getAdCounter = (): number => {
   try {
-    return parseInt(localStorage.getItem('ad_counter') || '0', 10);
+    return parseInt(localStorage.getItem(AD_COUNTER_KEY) || '0', 10);
   } catch {
     return 0;
   }
@@ -15,22 +17,35 @@ const getAdCounter = (): number => {
 
 const setAdCounter = (count: number) => {
   try {
-    localStorage.setItem('ad_counter', String(count));
+    localStorage.setItem(AD_COUNTER_KEY, String(count));
   } catch {
     // ignore storage errors
   }
 };
 
-const InterstitialAdManager = ({ children }: { children: React.ReactNode }) => {
+const areInterstitialAdsEnabled = (): boolean => {
+  try {
+    const raw = localStorage.getItem(INTERSTITIALS_ENABLED_KEY);
+    return raw === null || raw === 'true';
+  } catch {
+    return true;
+  }
+};
+
+export const useInterstitialAdManager = () => {
   const location = useLocation();
   const { isPremium } = usePremium();
   const adCounterRef = useRef(getAdCounter());
 
   useEffect(() => {
-    if (isPremium) return;
+    if (isPremium || !areInterstitialAdsEnabled()) {
+      return;
+    }
 
-    const isExcludedRoute = location.pathname === '/' || location.pathname === '/login';
-    if (isExcludedRoute) return;
+    const isExcludedRoute = location.pathname === '/' || location.pathname.startsWith('/login') || location.pathname.startsWith('/register');
+    if (isExcludedRoute) {
+      return;
+    }
 
     adCounterRef.current += 1;
     setAdCounter(adCounterRef.current);
@@ -41,8 +56,4 @@ const InterstitialAdManager = ({ children }: { children: React.ReactNode }) => {
       setAdCounter(0);
     }
   }, [location.pathname, isPremium]);
-
-  return <>{children}</>;
 };
-
-export default InterstitialAdManager;

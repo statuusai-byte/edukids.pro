@@ -9,8 +9,8 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import MobileSidebar from "@/components/MobileSidebar";
 import MobileTabBar from "@/components/MobileTabBar";
 import StudyAssistant from "@/components/StudyAssistant";
-import InterstitialAdManager from "@/components/InterstitialAdManager";
 import AgeGateModal from "@/components/AgeGateModal";
+import { useInterstitialAdManager } from "@/hooks/useInterstitialAdManager";
 
 type NavItem = {
   to: string;
@@ -37,6 +37,9 @@ const settingsItem: NavItem = {
 const Layout = () => {
   const { name, avatarUrl } = useProfile();
   const isMobile = useIsMobile();
+  
+  // Hook para gerenciar anúncios
+  useInterstitialAdManager();
 
   const mobileShellStyle = isMobile
     ? {
@@ -173,9 +176,7 @@ const Layout = () => {
                 isMobile ? "px-4 pt-16 pb-24" : "px-6 py-8 sm:px-8 sm:py-10 md:px-14 md:py-14"
               )}
             >
-              <InterstitialAdManager>
-                <Outlet />
-              </InterstitialAdManager>
+              <Outlet />
               <AgeGateModal />
             </div>
           </div>
