@@ -13,7 +13,6 @@
             android:name="com.google.androidbrowserhelper.trusted.LauncherActivity"
             android:exported="true">
             
-            <!-- CORREÇÃO CRÍTICA: Adicionando a URL que o app deve abrir -->
             <meta-data
                 android:name="android.support.customtabs.trusted.DEFAULT_URL"
                 android:value="https://edukidsspro.vercel.app" />
@@ -22,6 +21,8 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            
+            <!-- CORREÇÃO CRÍTICA PARA NAVEGAÇÃO: Permite que o app capture todos os links do seu site -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
