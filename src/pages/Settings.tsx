@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useAge } from "@/context/AgeContext";
-import { Trash2, ShieldCheck, ShieldX, FileText } from "lucide-react";
+import { Trash2, ShieldCheck, ShieldX, FileText, Info } from "lucide-react";
 import { useProfile } from "@/context/ProfileContext";
 import { AvatarUploader } from "@/components/AvatarUploader";
 import { useProgress } from "@/hooks/use-progress";
@@ -124,7 +124,11 @@ const Settings = () => {
 
   return (
     <div>
-      <h1 className="text-4xl font-bold tracking-tighter mb-8">Configurações</h1>
+      <h1 className="text-4xl font-bold tracking-tighter mb-4">Configurações</h1>
+      <div className="mb-8 flex items-center gap-2 text-sm text-muted-foreground bg-secondary/50 p-3 rounded-lg">
+        <Info className="h-4 w-4" />
+        As alterações são salvas automaticamente.
+      </div>
       <div className="grid gap-8 max-w-2xl">
         <Card className="glass-card">
           <CardHeader>
@@ -187,8 +191,8 @@ const Settings = () => {
 
         <Card className="glass-card">
           <CardHeader>
-            <CardTitle>Gerenciamento de Dados</CardTitle>
-            <CardDescription>Opções avançadas de dados e progresso.</CardDescription>
+            <CardTitle>Preferências do Aplicativo</CardTitle>
+            <CardDescription>Opções de notificações, sons e dados.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between">
@@ -285,10 +289,6 @@ const Settings = () => {
             </div>
           </CardContent>
         </Card>
-
-        <Button className="bg-primary hover:bg-primary/90 shadow-lg shadow-primary/30">
-          Salvar Alterações
-        </Button>
       </div>
 
       <ParentalPinModal

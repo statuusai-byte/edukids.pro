@@ -39,7 +39,6 @@ const AgeSelectionModal = ({ open, onOpenChange, action }: AgeSelectionModalProp
     setAgeGroup(selected as any);
     onOpenChange(false);
 
-    // Navigate to the appropriate route based on the requested action
     if (action === "cadastrar") {
       navigate("/register");
     } else {
