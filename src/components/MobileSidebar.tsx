@@ -43,6 +43,8 @@ const MobileSidebar = () => {
 
   const handleNavClick = () => setIsOpen(false);
 
+  const avatarInitials = useMemo(() => getInitials(displayName), [displayName]);
+
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
@@ -218,7 +220,7 @@ const MobileSidebar = () => {
               <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3 shadow-inner shadow-black/10">
                 <Avatar className="h-10 w-10">
                   <AvatarImage src={avatarUrl ?? undefined} />
-                  <AvatarFallback>{getInitials(displayName)}</AvatarFallback>
+                  <AvatarFallback>{avatarInitials}</AvatarFallback>
                 </Avatar>
                 <div>
                   <p className="text-sm font-medium text-white">{displayName}</p>

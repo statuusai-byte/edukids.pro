@@ -24,11 +24,12 @@ const setAdCounter = (count: number) => {
 
 export const useInterstitialAdManager = () => {
   const location = useLocation();
-  const { isPremium } = usePremium();
+  const { isPremium, isLoading: isPremiumLoading } = usePremium();
   const adCounterRef = useRef(getAdCounter());
 
   useEffect(() => {
-    if (isPremium) {
+    // Aguarda o status premium ser carregado e verifica se o usuário é premium
+    if (isPremiumLoading || isPremium) {
       return;
     }
 
@@ -45,5 +46,5 @@ export const useInterstitialAdManager = () => {
       adCounterRef.current = 0;
       setAdCounter(0);
     }
-  }, [location.pathname, isPremium]);
+  }, [location.pathname, isPremium, isPremiumLoading]);
 };
