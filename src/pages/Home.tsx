@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { useAge } from "@/context/AgeContext";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AgeSelectionModal from "@/components/AgeSelectionModal";
 import {
@@ -19,8 +18,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-
-const SKIP_REDIRECT_KEY = "edukids_skip_auto_redirect";
+import { useSupabase } from "@/context/SupabaseContext";
 
 const featureCards = [
   {
@@ -68,30 +66,24 @@ const testimonials = [
 ] as const;
 
 const Home = () => {
-  const { ageGroup, isLoading } = useAge();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!isLoading && ageGroup) {
-      try {
-        const skip = localStorage.getItem(SKIP_REDIRECT_KEY);
-        if (skip === "true") {
-          localStorage.removeItem(SKIP_REDIRECT_KEY);
-          return;
-        }
-      } catch {
-        /* ignore storage errors */
-      }
-      navigate("/dashboard", { replace: true });
-    }
-  }, [isLoading, ageGroup, navigate]);
+  const { user } = useSupabase();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [action, setAction] = useState<"entrar" | "cadastrar" | null>(null);
   const [installOpen, setInstallOpen] = useState(false);
 
-  const openFor = (nextAction: "entrar" | "cadastrar") => {
-    setAction(nextAction);
+  const handleEnterClick = () => {
+    if (user) {
+      navigate("/activities");
+    } else {
+      setAction("entrar");
+      setModalOpen(true);
+    }
+  };
+
+  const handleRegisterClick = () => {
+    setAction("cadastrar");
     setModalOpen(true);
   };
 
@@ -149,13 +141,13 @@ const Home = () => {
 
           <div className="mt-8 flex w-full max-w-md flex-col gap-2 sm:flex-row sm:gap-4">
             <Button
-              onClick={() => openFor("entrar")}
+              onClick={handleEnterClick}
               className="flex-1 bg-white text-black font-bold py-3 hover:bg-white/90"
             >
               Entrar agora
             </Button>
             <Button
-              onClick={() => openFor("cadastrar")}
+              onClick={handleRegisterClick}
               className="flex-1 border border-white/40 text-white/90 py-3 bg-white/5 hover:bg-white/15"
             >
               Criar conta Premium
@@ -328,7 +320,7 @@ const Home = () => {
                 <Button
                   variant="outline"
                   className="w-full border-white/40 text-white hover:bg-white/10"
-                  onClick={() => openFor("cadastrar")}
+                  onClick={handleRegisterClick}
                 >
                   Criar conta grátis
                 </Button>
@@ -424,7 +416,7 @@ const Home = () => {
               <Button
                 variant="outline"
                 className="flex-1 border-white/40 text-white hover:bg-white/10"
-                onClick={() => openFor("cadastrar")}
+                onClick={handleRegisterClick}
               >
                 Criar conta e começar grátis
               </Button>

@@ -75,44 +75,51 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (event, currentSession) => {
-        setSession(currentSession);
-        setUser(currentSession?.user ?? null);
+    const initializeSession = async () => {
+      try {
+        const { data: { session: initialSession } } = await supabase.auth.getSession();
+        setSession(initialSession);
+        const currentUser = initialSession?.user ?? null;
+        setUser(currentUser);
+
+        if (currentUser) {
+          const email = currentUser.email ?? '';
+          if (emailIsAdmin(email)) {
+            applyLocalPremiumForAdmin(email);
+          }
+          await syncPremiumFromProfile(currentUser.id);
+        }
+      } catch (err) {
+        console.error('Failed to get initial session:', err);
+      } finally {
         setIsLoading(false);
+      }
+    };
+
+    initializeSession();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, currentSession) => {
+        setSession(currentSession);
+        const currentUser = currentSession?.user ?? null;
+        setUser(currentUser);
 
         if (event === 'SIGNED_IN') {
+          setIsLoading(true);
           showSuccess('Login realizado com sucesso!');
-
-          const currentEmail = currentSession?.user?.email ?? '';
-          if (emailIsAdmin(currentEmail)) {
-            applyLocalPremiumForAdmin(currentEmail);
+          const email = currentUser?.email ?? '';
+          if (emailIsAdmin(email)) {
+            applyLocalPremiumForAdmin(email);
           }
-
-          syncPremiumFromProfile(currentSession?.user?.id);
-          navigate('/activities');
+          await syncPremiumFromProfile(currentUser?.id);
+          setIsLoading(false);
+          // A navegação agora é tratada pelo botão na página Home
         } else if (event === 'SIGNED_OUT') {
           showSuccess('Sessão encerrada.');
           navigate('/');
         }
       }
     );
-
-    supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
-      setSession(initialSession);
-      setUser(initialSession?.user ?? null);
-      setIsLoading(false);
-      if (initialSession?.user) {
-        const email = initialSession.user.email ?? '';
-        if (emailIsAdmin(email)) {
-          applyLocalPremiumForAdmin(email);
-        }
-        syncPremiumFromProfile(initialSession.user.id);
-      }
-    }).catch((err) => {
-      console.error('Failed to get initial session:', err);
-      setIsLoading(false);
-    });
 
     return () => {
       authListener.subscription.unsubscribe();
