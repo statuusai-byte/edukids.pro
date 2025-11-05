@@ -28,8 +28,6 @@ const AGE_OPTIONS: Array<{ id: string; label: string }> = [
   { id: "10-12", label: "10-12 anos" },
 ];
 
-const SKIP_REDIRECT_KEY = "edukids_skip_auto_redirect";
-
 const AgeSelectionModal = ({ open, onOpenChange, action }: AgeSelectionModalProps) => {
   const { setAgeGroup } = useAge();
   const [selected, setSelected] = useState<string | null>(null);
@@ -37,13 +35,6 @@ const AgeSelectionModal = ({ open, onOpenChange, action }: AgeSelectionModalProp
 
   const handleConfirm = () => {
     if (!selected) return;
-
-    // Prevent Home's auto-redirect when we intend to navigate to login/register
-    try {
-      localStorage.setItem(SKIP_REDIRECT_KEY, "true");
-    } catch (e) {
-      // ignore storage errors
-    }
 
     setAgeGroup(selected as any);
     onOpenChange(false);

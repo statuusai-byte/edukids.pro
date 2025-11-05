@@ -2,17 +2,26 @@ import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabase } from '@/context/SupabaseContext';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Sparkles } from 'lucide-react';
 
 const Register = () => {
   const { user, isLoading } = useSupabase();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isLoading && user) {
+      navigate('/activities', { replace: true });
+    }
+  }, [user, isLoading, navigate]);
 
   if (isLoading) {
-    return <div className="min-h-screen flex items-center justify-center">Carregando...</div>;
-  }
-
-  if (user) {
-    return <Navigate to="/activities" replace />;
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <Sparkles className="h-12 w-12 animate-spin text-primary" />
+      </div>
+    );
   }
 
   return (
@@ -26,7 +35,6 @@ const Register = () => {
           supabaseClient={supabase}
           providers={[]}
           view="sign_up"
-          redirectTo={`${window.location.origin}/activities`}
           appearance={{
             theme: ThemeSupa,
             variables: {
