@@ -11,6 +11,7 @@ import { Sparkles } from "lucide-react";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import AmbientBackground from "@/components/AmbientBackground";
 import RequireAuth from "@/components/RequireAuth";
+import GlobalErrorLogger from "@/components/GlobalErrorLogger";
 
 // Lazy pages/components
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -96,6 +97,7 @@ const App = () => (
               <PremiumProvider>
                 <HintsProvider>
                   <SonnerToaster />
+                  <GlobalErrorLogger />
                   <ErrorBoundary>
                     <Suspense fallback={<Fallback />}>
                       <AppRoutes />
