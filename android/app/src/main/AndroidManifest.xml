@@ -11,7 +11,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name="com.google.androidbrowserhelper.trusted.LauncherActivity"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTask">
             
             <meta-data
                 android:name="android.support.customtabs.trusted.DEFAULT_URL"
