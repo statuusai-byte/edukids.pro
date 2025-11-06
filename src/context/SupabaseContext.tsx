@@ -37,7 +37,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
         email: targetEmail,
       };
       localStorage.setItem('edukids_profile', JSON.stringify(profile));
-      const allPackages = ['matematica', 'portugues', 'ciencias', 'historia', 'geografia', 'ingles'];
+      const allPackages = ['matemantica', 'portugues', 'ciencias', 'historia', 'geografia', 'ingles'];
       localStorage.setItem('edukids_help_packages', JSON.stringify(allPackages));
       
       if (!wasAlreadyPremium) {
@@ -95,16 +95,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
       }
     };
 
-    const timeoutId = setTimeout(() => {
-      if (isLoading) {
-        console.warn("Supabase session check timed out. Assuming logged out.");
-        setIsLoading(false);
-      }
-    }, 5000);
-
-    checkInitialSession().finally(() => {
-      clearTimeout(timeoutId);
-    });
+    checkInitialSession();
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (_event, currentSession) => {
@@ -127,9 +118,8 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
 
     return () => {
       authListener.subscription.unsubscribe();
-      clearTimeout(timeoutId);
     };
-  }, [navigate, isLoading]);
+  }, [navigate]);
 
   const signOut = async () => {
     try {
