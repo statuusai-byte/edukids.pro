@@ -39,6 +39,10 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    // Adicionado para corrigir o erro de compilação dos ícones PNG
+    aaptOptions {
+        cruncherEnabled = false
+    }
 }
 
 dependencies {
