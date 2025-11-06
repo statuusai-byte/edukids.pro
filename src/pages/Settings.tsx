@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useAge } from "@/context/AgeContext";
-import { Trash2, ShieldCheck, ShieldX, FileText, Info } from "lucide-react";
+import { Trash2, ShieldCheck, ShieldX, FileText, Info, LogOut } from "lucide-react";
 import { useProfile } from "@/context/ProfileContext";
 import { AvatarUploader } from "@/components/AvatarUploader";
 import { useProgress } from "@/hooks/use-progress";
@@ -252,6 +252,18 @@ const Settings = () => {
                 onCheckedChange={requirePinChanged}
               />
             </div>
+          </CardContent>
+        </Card>
+
+        <Card className="glass-card">
+          <CardHeader>
+            <CardTitle>Sessão</CardTitle>
+            <CardDescription>Encerrar a sessão atual para acessar com outra conta.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button variant="outline" onClick={signOut} className="w-full">
+              <LogOut className="mr-2 h-4 w-4" /> Sair (Logout)
+            </Button>
           </CardContent>
         </Card>
 
