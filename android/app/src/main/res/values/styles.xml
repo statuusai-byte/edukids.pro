@@ -2,11 +2,24 @@
 <resources>
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
-        <!-- Customize your theme here. -->
+        <!-- Core brand colors -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <!-- Set the window background to the app's background color to prevent white flash -->
+
+        <!-- Prevent white flash: set window background to app dark color -->
         <item name="android:windowBackground">@color/colorPrimaryDark</item>
+
+        <!-- Draw system bars with our colors -->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        <item name="android:navigationBarColor">@color/colorPrimaryDark</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+
+        <!-- Android 12+ splash screen configuration (ignored on older OS) -->
+        <item name="android:windowSplashScreenBackground">@color/colorPrimaryDark</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="android:windowSplashScreenAnimationDuration">200</item>
     </style>
 </resources>
