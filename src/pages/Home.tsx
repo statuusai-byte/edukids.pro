@@ -3,7 +3,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Star } from "lucide-react";
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -17,25 +16,21 @@ const Home: React.FC = () => {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-background to-background/90 flex items-center justify-center p-6">
-      <section className="max-w-4xl w-full text-center">
-        <div className="relative mb-8 flex justify-center items-center">
-          <div className="absolute -inset-4 bg-yellow-400/20 rounded-full blur-3xl animate-pulse duration-[4s]" />
-          <Star className="relative mx-auto h-24 w-24 text-yellow-300 fill-yellow-400/80 animate-slow-glow drop-shadow-[0_0_1rem_#facc15]" />
-        </div>
-
-        <h1 className="text-4xl sm:text-5xl font-extrabold mb-4 text-foreground">
-          Bem-vindo ao App
+    <main className="relative min-h-screen flex items-center justify-center p-6 overflow-hidden bg-starry-sky bg-cover bg-center">
+      <div className="absolute inset-0 bg-black/60 z-0" />
+      <section className="relative z-10 max-w-4xl w-full text-center">
+        <h1 className="text-4xl sm:text-6xl font-extrabold mb-4 text-white text-shadow-lg animate-fade-in-up">
+          Bem-vindo ao EDUKIDS+
         </h1>
 
-        <p className="text-lg text-muted-foreground mb-8">
+        <p className="text-lg text-gray-300 mb-8 text-shadow-md animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
           Aprenda, jogue e evolua — tudo em um só lugar.
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-md mx-auto">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-md mx-auto animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
           <Button
             onClick={handleLoginClick}
-            className="flex-1 border border-white/20 text-white/90 py-3 bg-white/5 hover:bg-white/10"
+            className="flex-1 border border-white/20 text-white/90 py-3 bg-white/5 hover:bg-white/10 backdrop-blur-sm"
           >
             Entrar
           </Button>
@@ -47,9 +42,6 @@ const Home: React.FC = () => {
             Criar conta
           </Button>
         </div>
-
-        {/* Observação: o botão de assinatura foi removido conforme solicitado,
-            pois já existe uma área de assinaturas dentro do app. */}
       </section>
     </main>
   );

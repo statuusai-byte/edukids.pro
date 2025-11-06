@@ -20,6 +20,7 @@ module.exports = {
       backgroundImage: {
         'hero-desktop': "url('/hero-1920.png')",
         'hero-mobile': "url('/hero-mobile.png')",
+        'starry-sky': "url('https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?q=80&w=2000&auto=format&fit=crop')",
       },
       colors: {
         border: "hsl(var(--border))",
