@@ -23,10 +23,11 @@ import { supabase } from "@/integrations/supabase/client";
 
 const Settings = () => {
   const { ageGroup, setAgeGroup } = useAge();
-  const { name, setName, avatarUrl, setAvatarUrl } = useProfile();
+  const { name, setName, avatarUrl, setAvatarFile, isLoading: isProfileLoading } = useProfile();
   const { clearAll } = useProgress();
   const [uiSounds, setUiSounds] = useState(true);
 
+  const [currentName, setCurrentName] = useState(name);
   const [pinModalOpen, setPinModalOpen] = useState(false);
   const [pinMode, setPinMode] = useState<"set" | "verify" | "remove">("set");
   const [requirePinForPurchases, setRequirePinForPurchases] = useState<boolean>(false);
@@ -36,17 +37,39 @@ const Settings = () => {
   const { signOut, user } = useSupabase();
 
   useEffect(() => {
+    setCurrentName(name);
+  }, [name]);
+
+  useEffect(() => {
     setUiSounds(getSoundEnabled());
     setRequirePinForPurchases(requirePinForPurchasesGet());
     setParentPinExists(hasParentPin());
   }, []);
 
-  const handleAvatarChange = (file: File) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setAvatarUrl(reader.result as string);
-    };
-    reader.readAsDataURL(file);
+  const handleAvatarChange = async (file: File) => {
+    const toastId = showLoading("Enviando novo avatar...");
+    try {
+      await setAvatarFile(file);
+      dismissToast(toastId);
+      showSuccess("Avatar atualizado com sucesso!");
+    } catch (error) {
+      dismissToast(toastId);
+      // The context already shows an error toast, no need for another one.
+      console.error(error);
+    }
+  };
+
+  const handleNameBlur = async () => {
+    if (currentName.trim() === name || currentName.trim() === "") return;
+    const toastId = showLoading("Salvando nome...");
+    try {
+      await setName(currentName);
+      dismissToast(toastId);
+      showSuccess("Nome atualizado!");
+    } catch (error) {
+      dismissToast(toastId);
+      setCurrentName(name); // Revert on error
+    }
   };
 
   const handleResetProgress = () => {
@@ -146,8 +169,10 @@ const Settings = () => {
                 <Label htmlFor="name">Nome</Label>
                 <Input
                   id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={currentName}
+                  onChange={(e) => setCurrentName(e.target.value)}
+                  onBlur={handleNameBlur}
+                  disabled={isProfileLoading}
                   className="bg-secondary/60 border-white/20"
                 />
               </div>
