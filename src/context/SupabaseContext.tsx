@@ -95,7 +95,16 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
       }
     };
 
-    checkInitialSession();
+    const timeoutId = setTimeout(() => {
+      if (isLoading) {
+        console.warn("Supabase session check timed out. Assuming logged out.");
+        setIsLoading(false);
+      }
+    }, 5000);
+
+    checkInitialSession().finally(() => {
+      clearTimeout(timeoutId);
+    });
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (_event, currentSession) => {
@@ -118,8 +127,9 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
 
     return () => {
       authListener.subscription.unsubscribe();
+      clearTimeout(timeoutId);
     };
-  }, [navigate]);
+  }, [navigate, isLoading]);
 
   const signOut = async () => {
     try {
