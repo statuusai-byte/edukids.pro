@@ -3,9 +3,18 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useSupabase } from "@/context/SupabaseContext";
+import { Sparkles } from "lucide-react";
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
+  const { user, isLoading } = useSupabase();
+
+  React.useEffect(() => {
+    if (!isLoading && user) {
+      navigate("/activities", { replace: true });
+    }
+  }, [user, isLoading, navigate]);
 
   const handleLoginClick = () => {
     navigate("/login");
@@ -14,6 +23,14 @@ const Home: React.FC = () => {
   const handleRegisterClick = () => {
     navigate("/register");
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <Sparkles className="h-12 w-12 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <main className="relative min-h-screen flex items-center justify-center p-6 overflow-hidden bg-starry-sky bg-cover bg-center">

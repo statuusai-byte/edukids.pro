@@ -75,9 +75,19 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
+    let isMounted = true;
+
+    const sessionCheckTimeout = setTimeout(() => {
+      if (isMounted) {
+        console.warn("Supabase session check timed out. Proceeding without session.");
+        setIsLoading(false);
+      }
+    }, 5000);
+
     const checkInitialSession = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
+        if (!isMounted) return;
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
@@ -88,10 +98,15 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
         }
       } catch (error) {
         console.error("Error fetching initial session:", error);
-        setSession(null);
-        setUser(null);
+        if (isMounted) {
+          setSession(null);
+          setUser(null);
+        }
       } finally {
-        setIsLoading(false);
+        clearTimeout(sessionCheckTimeout);
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
 
@@ -99,6 +114,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (_event, currentSession) => {
+        if (!isMounted) return;
         setSession(currentSession);
         const currentUser = currentSession?.user ?? null;
         setUser(currentUser);
@@ -117,6 +133,8 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
     );
 
     return () => {
+      isMounted = false;
+      clearTimeout(sessionCheckTimeout);
       authListener.subscription.unsubscribe();
     };
   }, [navigate]);
