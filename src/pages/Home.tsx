@@ -3,7 +3,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Sparkles } from "lucide-react";
+import { Star } from "lucide-react";
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -19,8 +19,9 @@ const Home: React.FC = () => {
   return (
     <main className="min-h-screen bg-gradient-to-b from-background to-background/90 flex items-center justify-center p-6">
       <section className="max-w-4xl w-full text-center">
-        <div className="mb-8">
-          <Sparkles className="mx-auto h-16 w-16 text-primary" />
+        <div className="relative mb-8 flex justify-center items-center">
+          <div className="absolute -inset-4 bg-yellow-400/20 rounded-full blur-3xl animate-pulse duration-[4s]" />
+          <Star className="relative mx-auto h-24 w-24 text-yellow-300 fill-yellow-400/80 animate-slow-glow drop-shadow-[0_0_1rem_#facc15]" />
         </div>
 
         <h1 className="text-4xl sm:text-5xl font-extrabold mb-4 text-foreground">

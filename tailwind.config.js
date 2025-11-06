@@ -97,6 +97,10 @@ module.exports = {
           "10%, 30%, 50%, 70%, 90%": { transform: "translateX(-5px)" },
           "20%, 40%, 60%, 80%": { transform: "translateX(5px)" },
         },
+        "slow-glow": {
+          "0%, 100%": { opacity: "1", transform: "scale(1)" },
+          "50%": { opacity: "0.85", transform: "scale(1.05)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -105,6 +109,7 @@ module.exports = {
         "aurora": "aurora 60s linear infinite",
         "correct-answer-pop": "correct-answer-pop 0.4s ease-in-out",
         "incorrect-answer-shake": "incorrect-answer-shake 0.5s ease-in-out",
+        "slow-glow": "slow-glow 4s ease-in-out infinite",
       },
     },
   },
