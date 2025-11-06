@@ -9,38 +9,68 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity
             android:name="com.google.androidbrowserhelper.trusted.LauncherActivity"
             android:exported="true"
             android:launchMode="singleTask">
-            
+
+            <!-- URL padrão do TWA -->
             <meta-data
                 android:name="android.support.customtabs.trusted.DEFAULT_URL"
                 android:value="https://edukidsspro.vercel.app" />
 
+            <!-- Intent filter para launcher -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            
-            <!-- CORREÇÃO CRÍTICA PARA NAVEGAÇÃO: Permite que o app capture todos os links do seu site -->
+
+            <!-- Link handling com autoVerify -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
                     android:scheme="https"
-                    android:host="edukidsspro.vercel.app"/>
+                    android:host="edukidsspro.vercel.app" />
             </intent-filter>
         </activity>
-        
+
+        <!-- Ações do helper -->
         <meta-data
             android:name="com.google.android.actions"
             android:resource="@xml/actions" />
-            
+
+        <!-- Fallback do TWA -->
         <meta-data
             android:name="android.support.customtabs.trusted.FALLBACK_STRATEGY"
             android:value="customtabs" />
-            
+
+        <!-- Splash screen do Android Browser Helper para evitar flash branco -->
+        <meta-data
+            android:name="android.support.customtabs.trusted.SPLASH_IMAGE_DRAWABLE"
+            android:resource="@mipmap/ic_launcher" />
+        <meta-data
+            android:name="android.support.customtabs.trusted.SPLASH_SCREEN_BACKGROUND_COLOR"
+            android:value="#0f172a" />
+        <meta-data
+            android:name="android.support.customtabs.trusted.SPLASH_SCREEN_FADES_OUT"
+            android:value="true" />
+        <meta-data
+            android:name="android.support.customtabs.trusted.FILE_PROVIDER_AUTHORITY"
+            android:value="${applicationId}.fileprovider" />
+
+        <!-- Provider exigido pelo helper para compartilhar o splash com o Chrome -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
     </application>
 </manifest>
