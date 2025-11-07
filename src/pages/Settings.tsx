@@ -20,6 +20,7 @@ import {
 } from "@/utils/parental";
 import { useSupabase } from "@/context/SupabaseContext";
 import { supabase } from "@/integrations/supabase/client";
+import { Link } from "react-router-dom";
 
 const Settings = () => {
   const { ageGroup, setAgeGroup } = useAge();
@@ -298,12 +299,12 @@ const Settings = () => {
             <CardDescription>Documentos importantes e informações do app.</CardDescription>
           </CardHeader>
           <CardContent>
-            <a href="/PRIVACY_POLICY.md" target="_blank" rel="noopener noreferrer">
-              <Button variant="outline" className="w-full">
+            <Button asChild variant="outline" className="w-full">
+              <Link to="/privacy">
                 <FileText className="mr-2 h-4 w-4" />
                 Ler Política de Privacidade
-              </Button>
-            </a>
+              </Link>
+            </Button>
           </CardContent>
         </Card>
 

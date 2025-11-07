@@ -30,6 +30,7 @@ const TestAccount = lazy(() => import("./pages/TestAccount"));
 const AdminGrantPremium = lazy(() => import("./pages/AdminGrantPremium"));
 const AchievementsPage = lazy(() => import("./pages/Achievements"));
 const Home = lazy(() => import("./pages/Home"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 
 const queryClient = new QueryClient();
 
@@ -50,6 +51,7 @@ const AppRoutes = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/success-payment" element={<SuccessPayment />} />
       <Route path="/test-account" element={<TestAccount />} />
+      <Route path="/privacy" element={<PrivacyPolicy />} />
 
       {showAdminRoute && (
         <Route
@@ -57,7 +59,7 @@ const AppRoutes = () => {
           element={
             <RequireAuth>
               <AdminGrantPremium />
-            </RequireAuth>
+            </Require-Auth>
           }
         />
       )}
