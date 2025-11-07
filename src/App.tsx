@@ -30,7 +30,6 @@ const TestAccount = lazy(() => import("./pages/TestAccount"));
 const AdminGrantPremium = lazy(() => import("./pages/AdminGrantPremium"));
 const AchievementsPage = lazy(() => import("./pages/Achievements"));
 const Home = lazy(() => import("./pages/Home"));
-const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 
 const queryClient = new QueryClient();
 
@@ -51,7 +50,6 @@ const AppRoutes = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/success-payment" element={<SuccessPayment />} />
       <Route path="/test-account" element={<TestAccount />} />
-      <Route path="/privacy" element={<PrivacyPolicy />} />
 
       {showAdminRoute && (
         <Route
@@ -64,6 +62,18 @@ const AppRoutes = () => {
         />
       )}
 
+      {/* Rotas públicas que usam o layout principal */}
+      <Route element={<Layout />}>
+        <Route path="activities">
+          <Route index element={<Activities />} />
+          <Route path=":subject" element={<SubjectPage />} />
+          <Route path=":subject/:activityId/modules/:moduleId/lessons/:lessonId" element={<LessonPage />} />
+        </Route>
+        <Route path="/play-plus" element={<PlayPlus />} />
+        <Route path="/store" element={<Store />} />
+      </Route>
+
+      {/* Rotas protegidas que exigem login */}
       <Route
         element={
           <RequireAuth>
@@ -71,14 +81,6 @@ const AppRoutes = () => {
           </RequireAuth>
         }
       >
-        <Route path="activities">
-          <Route index element={<Activities />} />
-          <Route path=":subject" element={<SubjectPage />} />
-          <Route path=":subject/:activityId/modules/:moduleId/lessons/:lessonId" element={<LessonPage />} />
-        </Route>
-
-        <Route path="/play-plus" element={<PlayPlus />} />
-        <Route path="/store" element={<Store />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/achievements" element={<AchievementsPage />} />
