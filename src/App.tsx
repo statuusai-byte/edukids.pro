@@ -57,18 +57,16 @@ const AppRoutes = () => {
           element={
             <RequireAuth>
               <AdminGrantPremium />
-            </Require-Auth>
+            </RequireAuth>
           }
         />
       )}
 
       {/* Rotas públicas que usam o layout principal */}
       <Route element={<Layout />}>
-        <Route path="activities">
-          <Route index element={<Activities />} />
-          <Route path=":subject" element={<SubjectPage />} />
-          <Route path=":subject/:activityId/modules/:moduleId/lessons/:lessonId" element={<LessonPage />} />
-        </Route>
+        <Route path="/activities" element={<Activities />} />
+        <Route path="/activities/:subject" element={<SubjectPage />} />
+        <Route path="/activities/:subject/:activityId/modules/:moduleId/lessons/:lessonId" element={<LessonPage />} />
         <Route path="/play-plus" element={<PlayPlus />} />
         <Route path="/store" element={<Store />} />
       </Route>
