@@ -94,7 +94,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
           if (session.user.email && emailIsAdmin(session.user.email)) {
             applyLocalPremiumForAdmin(session.user.email);
           }
-          await syncPremiumFrom_profile(session.user.id);
+          await syncPremiumFromProfile(session.user.id);
         }
       } catch (error) {
         console.error("Error fetching initial session:", error);
