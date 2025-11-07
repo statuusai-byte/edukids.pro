@@ -293,21 +293,6 @@ const Settings = () => {
           </CardContent>
         </Card>
 
-        <Card className="glass-card">
-          <CardHeader>
-            <CardTitle>Sobre e Legal</CardTitle>
-            <CardDescription>Documentos importantes e informações do app.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button asChild variant="outline" className="w-full">
-              <Link to="/privacy">
-                <FileText className="mr-2 h-4 w-4" />
-                Ler Política de Privacidade
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-
         <Card className="glass-card border-red-500/50">
           <CardHeader>
             <CardTitle className="text-red-400">Zona de Perigo</CardTitle>

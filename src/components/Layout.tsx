@@ -38,7 +38,6 @@ const Layout = () => {
   const { name, avatarUrl } = useProfile();
   const isMobile = useIsMobile();
   
-  // Hook para gerenciar anúncios
   useInterstitialAdManager();
 
   const mobileShellStyle = isMobile
@@ -58,19 +57,19 @@ const Layout = () => {
           <MobileTabBar />
         </>
       ) : (
-        <aside className="fixed inset-y-0 left-0 z-20 hidden w-24 flex-col items-center border-r border-white/10 bg-secondary/30 backdrop-blur-xl py-6 md:flex">
+        <aside className="group fixed inset-y-0 left-0 z-20 hidden w-24 flex-col items-center border-r border-white/10 bg-secondary/30 backdrop-blur-xl py-6 transition-all duration-300 hover:w-64 md:flex">
           <div className="mb-8 flex items-center justify-center">
             <Sparkles size={34} className="text-primary" />
           </div>
 
-          <nav className="flex flex-1 flex-col items-stretch gap-2 w-full px-2">
+          <nav className="flex flex-1 flex-col items-stretch gap-2 w-full px-4">
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 className={({ isActive }) =>
                   cn(
-                    "group flex w-full items-center gap-3 rounded-xl px-3 py-2 transition-all duration-200",
+                    "flex w-full items-center gap-4 rounded-xl p-3 transition-all duration-200",
                     isActive
                       ? "bg-gradient-to-r from-primary/10 to-primary/5 ring-1 ring-primary/20"
                       : "hover:bg-white/5"
@@ -79,23 +78,16 @@ const Layout = () => {
               >
                 {({ isActive }) => (
                   <>
-                    <div
+                    <Icon
+                      name={item.icon}
                       className={cn(
-                        "flex h-10 w-10 items-center justify-center rounded-lg transition-transform duration-200",
-                        isActive ? "scale-105" : "group-hover:scale-105"
+                        "h-6 w-6 transition-colors",
+                        isActive ? item.color : "text-muted-foreground group-hover:text-foreground"
                       )}
-                    >
-                      <Icon
-                        name={item.icon}
-                        className={cn(
-                          "h-6 w-6 transition-colors",
-                          isActive ? item.color : "text-muted-foreground group-hover:text-foreground"
-                        )}
-                      />
-                    </div>
+                    />
                     <span
                       className={cn(
-                        "text-sm font-medium truncate",
+                        "text-sm font-medium truncate opacity-0 transition-opacity duration-200 group-hover:opacity-100",
                         isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
                       )}
                     >
@@ -107,30 +99,28 @@ const Layout = () => {
             ))}
           </nav>
 
-          <div className="mt-auto flex w-full flex-col items-stretch gap-3 px-2">
+          <div className="mt-auto flex w-full flex-col items-stretch gap-3 px-4">
             <NavLink
               to={settingsItem.to}
               className={({ isActive }) =>
                 cn(
-                  "group flex w-full items-center gap-3 rounded-xl px-3 py-2 transition-all duration-200",
+                  "flex w-full items-center gap-4 rounded-xl p-3 transition-all duration-200",
                   isActive ? "bg-white/5 ring-1 ring-primary/20" : "hover:bg-white/5"
                 )
               }
             >
               {({ isActive }) => (
                 <>
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg">
-                    <Icon
-                      name={settingsItem.icon}
-                      className={cn(
-                        "h-6 w-6 transition-colors",
-                        isActive ? settingsItem.color : "text-muted-foreground group-hover:text-foreground"
-                      )}
-                    />
-                  </div>
+                  <Icon
+                    name={settingsItem.icon}
+                    className={cn(
+                      "h-6 w-6 transition-colors",
+                      isActive ? settingsItem.color : "text-muted-foreground group-hover:text-foreground"
+                    )}
+                  />
                   <span
                     className={cn(
-                      "text-sm font-medium",
+                      "text-sm font-medium truncate opacity-0 transition-opacity duration-200 group-hover:opacity-100",
                       isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
                     )}
                   >
@@ -140,11 +130,15 @@ const Layout = () => {
               )}
             </NavLink>
 
-            <div className="w-full flex items-center justify-center py-2">
+            <div className="w-full flex items-center gap-4 p-3">
               <Avatar className="h-10 w-10">
                 <AvatarImage src={avatarUrl ?? undefined} />
                 <AvatarFallback>{getInitials(name ?? "Anônimo")}</AvatarFallback>
               </Avatar>
+              <div className="truncate opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                <p className="text-sm font-semibold truncate">{name}</p>
+                <p className="text-xs text-muted-foreground truncate">Explorador</p>
+              </div>
             </div>
           </div>
         </aside>

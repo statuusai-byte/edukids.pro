@@ -40,7 +40,7 @@ const bgColorClass: Record<string, string> = {
 
 const Activities = () => {
   const { ageGroup } = useAge();
-  const { isBlocked, limitMinutes } = useScreenTime(); // Removed blockEnabled
+  const { isBlocked, limitMinutes } = useScreenTime();
 
   const subjects = useMemo(() => {
     if (!ageGroup) return [];
