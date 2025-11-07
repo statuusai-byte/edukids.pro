@@ -16,10 +16,16 @@ export class ErrorBoundary extends React.Component<React.PropsWithChildren<{}>, 
   }
 
   componentDidCatch(error: Error, info: any) {
-    // Report the error to console (or external service)
     console.error("ErrorBoundary caught:", error, info);
-    // NOTE: we intentionally DO NOT auto-redirect the user to the home page.
-    // Automatic redirects hide the real error and make debugging on mobile difficult.
+
+    const isChunkLoadError =
+      error?.message?.includes("Failed to fetch dynamically imported module") ||
+      error?.message?.includes("Loading chunk");
+
+    if (isChunkLoadError) {
+      console.log("Chunk load error detected, forcing a page reload to fetch latest assets.");
+      window.location.reload();
+    }
   }
 
   handleGoHome = () => {
