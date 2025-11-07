@@ -6,8 +6,6 @@ interface State {
 }
 
 export class ErrorBoundary extends React.Component<React.PropsWithChildren<{}>, State> {
-  private redirectTimer: number | null = null;
-
   constructor(props: React.PropsWithChildren<{}>) {
     super(props);
     this.state = { hasError: false, error: null };
@@ -17,78 +15,61 @@ export class ErrorBoundary extends React.Component<React.PropsWithChildren<{}>, 
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, _info: any) {
-    // Aqui poderíamos reportar o erro para um serviço externo
-    console.error("ErrorBoundary caught:", error, _info);
-
-    // Em ambientes de produção, iniciamos um redirecionamento automático
-    // para a tela inicial após alguns segundos, evitando que o usuário
-    // fique preso numa tela de erro que exige ação manual.
-    try {
-      // import.meta.env is available in Vite; em dev deixamos o comportamento para debugging
-      const isDev = (import.meta as any).env?.MODE === "development";
-      if (!isDev) {
-        this.redirectTimer = window.setTimeout(() => {
-          // Use location replace para não poluir o histórico
-          window.location.href = "/";
-        }, 2500);
-      }
-    } catch (e) {
-      // Se import.meta não estiver disponível por algum motivo, não vamos bloquear a experiência
-      console.warn("Could not determine environment mode for ErrorBoundary redirect:", e);
-    }
+  componentDidCatch(error: Error, info: any) {
+    // Report the error to console (or external service)
+    console.error("ErrorBoundary caught:", error, info);
+    // NOTE: we intentionally DO NOT auto-redirect the user to the home page.
+    // Automatic redirects hide the real error and make debugging on mobile difficult.
   }
 
-  componentWillUnmount() {
-    if (this.redirectTimer) {
-      clearTimeout(this.redirectTimer);
-      this.redirectTimer = null;
-    }
-  }
+  handleGoHome = () => {
+    window.location.href = "/";
+  };
 
   handleReload = () => {
-    // Reinicia a aplicação para tentar recuperar do erro
-    window.location.href = "/";
+    window.location.reload();
   };
 
   render() {
     if (this.state.hasError) {
-      const isDev = (import.meta as any).env?.MODE === "development";
+      const errorMessage = this.state.error?.message ?? "Erro desconhecido";
+      const stack = this.state.error?.stack ?? null;
 
       return (
         <div className="min-h-screen flex items-center justify-center p-4">
           <div className="w-full max-w-2xl glass-card p-8 text-center">
             <h2 className="text-2xl font-bold mb-2 text-red-400">Ocorreu um erro</h2>
             <p className="text-sm text-muted-foreground mb-4">
-              Algo deu errado ao carregar esta página. Você pode tentar recarregar a página ou voltar para o início.
+              Algo deu errado ao carregar esta página. Você pode recarregar ou voltar para a tela inicial.
             </p>
-            <div className="flex justify-center gap-4">
+
+            <div className="flex justify-center gap-4 mb-4">
               <button
-                onClick={this.handleReload}
+                onClick={this.handleGoHome}
                 className="bg-primary text-primary-foreground px-4 py-2 rounded-md shadow hover:brightness-95"
               >
                 Voltar para a Home
               </button>
               <button
-                onClick={() => window.location.reload()}
+                onClick={this.handleReload}
                 className="bg-secondary text-foreground px-4 py-2 rounded-md shadow hover:brightness-95"
               >
                 Recarregar
               </button>
             </div>
 
-            {!isDev && (
-              <div className="mt-4 text-sm text-muted-foreground">
-                Você será redirecionado para a tela inicial em alguns segundos.
+            <div className="mt-4 text-left">
+              <div className="text-sm font-medium text-foreground mb-2">Resumo do erro</div>
+              <div className="bg-black/60 p-3 rounded-md text-xs text-white break-words">
+                <div><strong>Mensagem:</strong> {errorMessage}</div>
+                {stack && (
+                  <details className="mt-2">
+                    <summary className="cursor-pointer text-muted-foreground">Mostrar stack trace</summary>
+                    <pre className="whitespace-pre-wrap mt-2 text-xs">{String(stack)}</pre>
+                  </details>
+                )}
               </div>
-            )}
-
-            {this.state.error && isDev && (
-              <details className="mt-6 text-xs text-muted-foreground text-left break-words">
-                <summary className="cursor-pointer">Detalhes do erro (para depuração)</summary>
-                <pre className="whitespace-pre-wrap mt-2">{String(this.state.error.stack || this.state.error.message)}</pre>
-              </details>
-            )}
+            </div>
           </div>
         </div>
       );

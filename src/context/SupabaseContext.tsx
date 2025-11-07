@@ -94,7 +94,7 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
           if (session.user.email && emailIsAdmin(session.user.email)) {
             applyLocalPremiumForAdmin(session.user.email);
           }
-          await syncPremiumFromProfile(session.user.id);
+          await syncPremiumFrom_profile(session.user.id);
         }
       } catch (error) {
         console.error("Error fetching initial session:", error);
@@ -126,8 +126,10 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
           }
           await syncPremiumFromProfile(currentUser.id);
         } else if (_event === 'SIGNED_OUT') {
+          // We intentionally avoid forcibly navigating to '/' here because
+          // sudden navigations are a common cause of 'jump back to home' issues
+          // on mobile when auth state fluctuates. Let the UI react naturally.
           showSuccess('Sessão encerrada.');
-          navigate('/');
         }
       }
     );
