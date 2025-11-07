@@ -19,7 +19,7 @@ const tabs: TabItem[] = [
 
 const isActivePath = (pathname: string, target: string) => {
   if (target === "/dashboard") return pathname.startsWith("/dashboard");
-  if (target === "/play-plus") return pathname.startsWith("/play-plus") || pathname.startsWith("/courses");
+  if (target === "/play-plus") return pathname.startsWith("/play-plus");
   if (target === "/activities") return pathname.startsWith("/activities");
   if (target === "/store") return pathname.startsWith("/store");
   if (target === "/achievements") return pathname.startsWith("/achievements");
