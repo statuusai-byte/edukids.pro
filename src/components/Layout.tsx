@@ -51,7 +51,7 @@ const Layout = () => {
     : undefined;
 
   return (
-    <div className="flex min-h-screen w-full text-foreground">
+    <div className="flex flex-1 w-full text-foreground">
       {isMobile ? (
         <>
           <MobileSidebar />
