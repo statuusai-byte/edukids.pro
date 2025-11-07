@@ -11,6 +11,7 @@ import { showSuccess, showError } from "@/utils/toast";
 import { usePremium } from "@/context/PremiumContext";
 import { useHintsContext } from "@/context/HintsContext";
 import { useScreenTime } from "@/hooks/use-screen-time";
+import LocalErrorBoundary from "@/components/LocalErrorBoundary";
 
 // Lazy load game components for better performance
 const gameComponentMap: Record<string, LazyExoticComponent<ComponentType<any>>> = {
@@ -27,6 +28,8 @@ const LessonPage = () => {
   const { isBlocked, limitMinutes, startSession, stopSession } = useScreenTime();
   
   const [hintTriggered, setHintTriggered] = useState(false);
+  // key to force remount of lazy game components on retry
+  const [gameResetKey, setGameResetKey] = useState(0);
 
   const { subject, activity, module, lesson, lessonIndex, moduleIndex } = useMemo(() => {
     const s = subjectsData.find(sub => sub.slug === subjectSlug);
@@ -65,7 +68,6 @@ const LessonPage = () => {
     );
   }
 
-  // NEW: If lesson is premium and user is not premium, block access with CTA to /store
   if (lesson.premium && !isPremium) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
@@ -130,7 +132,6 @@ const LessonPage = () => {
       navigate(`/activities/${subject.slug}/${activity.id}/modules/${module.id}/lessons/${module.lessons[prevIndex].id}`);
       return;
     }
-    // CORREÇÃO: Voltar para a página do tema, que lista todas as atividades.
     navigate(`/activities/${subject.slug}`);
   };
 
@@ -140,8 +141,6 @@ const LessonPage = () => {
   };
 
   const handleUseHint = useCallback(async () => {
-    // This function is called both from the lesson-level "Use Hint" button
-    // and from the QuizComponent via onRequestHint.
     if (isPremium) {
       setHintTriggered(true);
       showSuccess("Dica de Assinante Premium ativada!");
@@ -154,8 +153,6 @@ const LessonPage = () => {
         return;
       }
     }
-
-    // If no hints available, inform the user: they can buy or watch an ad.
     showError("Você não tem dicas. Compre mais na loja ou assista a um anúncio para ganhar uma.");
   }, [isPremium, hints, useHint]);
 
@@ -164,9 +161,11 @@ const LessonPage = () => {
       const GameComponent = gameComponentMap[lesson.component];
       if (GameComponent) {
         return (
-          <Suspense fallback={<div className="flex h-40 items-center justify-center"><Sparkles className="h-8 w-8 animate-spin text-primary" /></div>}>
-            <GameComponent triggerHint={hintTriggered} />
-          </Suspense>
+          <LocalErrorBoundary key={gameResetKey} onReset={() => setGameResetKey(k => k + 1)}>
+            <Suspense fallback={<div className="flex h-40 items-center justify-center"><Sparkles className="h-8 w-8 animate-spin text-primary" /></div>}>
+              <GameComponent triggerHint={hintTriggered} />
+            </Suspense>
+          </LocalErrorBoundary>
         );
       }
     }
@@ -179,11 +178,25 @@ const LessonPage = () => {
               questions={questions}
               onQuizComplete={markCompleted}
               triggerHint={hintTriggered}
-              onRequestHint={handleUseHint} // <-- parent will handle consuming a hint / showing ad / redirecting to store
+              onRequestHint={handleUseHint}
             />
           );
         }
-      } catch (e) { console.error("Failed to parse quiz content:", e); }
+      } catch (e) { 
+        console.error("Failed to parse quiz content:", e);
+        return (
+          <div className="glass-card p-6">
+            <h3 className="text-xl font-semibold">Conteúdo indisponível</h3>
+            <p className="text-sm text-muted-foreground mt-2">
+              Não foi possível carregar as perguntas desta lição. Tente recarregar ou volte mais tarde.
+            </p>
+            <div className="mt-4 flex gap-2">
+              <Button onClick={() => window.location.reload()}>Recarregar</Button>
+              <Button variant="outline" onClick={() => navigate(`/activities/${subject.slug}`)}>Voltar</Button>
+            </div>
+          </div>
+        );
+      }
     }
     return <p className="text-foreground/90 mb-4">{lesson.content}</p>;
   };
@@ -207,7 +220,6 @@ const LessonPage = () => {
             <div className="ml-auto flex items-center gap-4">
               {isInteractive && (
                 <div className="flex items-center gap-2">
-                  {/* Lesson-level hint button (uses same flow as quiz onRequestHint) */}
                   <Button onClick={handleUseHint} className="bg-yellow-600 hover:bg-yellow-700 text-black" disabled={hintTriggered}>
                     <Lightbulb className="mr-2 h-4 w-4" />
                     {isPremium ? "Usar Dica Premium" : `Usar 1 Dica (Saldo: ${hints})`}
