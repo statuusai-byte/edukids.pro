@@ -20,7 +20,11 @@ export default defineConfig(() => ({
         'icons/icon-192.png',
         'icons/icon-512.png',
         'images/edukids-banner.png',
-        'uploads/Captura_de_tela_2025-11-04_115828.png'
+        'uploads/BANER-1.png',
+        'uploads/BANER-2.png',
+        'uploads/BANER-3.png',
+        'uploads/screenshot1.png',
+        'uploads/screenshot2.png'
       ],
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,webmanifest}'],
@@ -54,7 +58,7 @@ export default defineConfig(() => ({
           },
           {
             src: "/icons/icon-512.png",
-            sizes: "192x192",
+            sizes: "512x512",
             type: "image/png",
             purpose: "any maskable"
           }
@@ -68,10 +72,18 @@ export default defineConfig(() => ({
             label: "Tela inicial do EDUKIDS+"
           },
           {
-            src: "/uploads/Captura_de_tela_2025-11-04_115828.png",
+            src: "/uploads/screenshot1.png",
             type: "image/png",
+            sizes: "1080x1920",
             form_factor: "narrow",
-            label: "Interface principal do app"
+            label: "Screenshot 1"
+          },
+          {
+            src: "/uploads/screenshot2.png",
+            type: "image/png",
+            sizes: "1080x1920",
+            form_factor: "narrow",
+            label: "Screenshot 2"
           }
         ],
         shortcuts: [

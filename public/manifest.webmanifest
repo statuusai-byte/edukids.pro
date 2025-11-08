@@ -57,10 +57,17 @@
       "form_factor": "wide"
     },
     {
-      "src": "/uploads/Captura_de_tela_2025-11-04_115828.png",
+      "src": "/uploads/screenshot1.png",
       "sizes": "1080x1920",
       "type": "image/png",
-      "label": "Interface do aplicativo (exemplo de lição)",
+      "label": "Screenshot 1",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/uploads/screenshot2.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "label": "Screenshot 2",
       "form_factor": "narrow"
     }
   ]
