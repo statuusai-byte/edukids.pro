@@ -19,12 +19,7 @@ export default defineConfig(() => ({
       includeAssets: [
         'icons/icon-192.png',
         'icons/icon-512.png',
-        'images/edukids-banner.png',
-        'uploads/BANER-1.png',
-        'uploads/BANER-2.png',
-        'uploads/BANER-3.png',
-        'uploads/screenshot1.png',
-        'uploads/screenshot2.png'
+        'images/edukids-banner.png'
       ],
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,webmanifest}'],
@@ -34,7 +29,6 @@ export default defineConfig(() => ({
         clientsClaim: true,
       },
       manifest: {
-        // ID estável e único para o PWA (não usar start_url)
         id: "https://edukidsspro.vercel.app",
         name: "EDUKIDS+",
         short_name: "EDUKIDS",
@@ -55,35 +49,6 @@ export default defineConfig(() => ({
             sizes: "192x192",
             type: "image/png",
             purpose: "any maskable"
-          },
-          {
-            src: "/icons/icon-512.png",
-            sizes: "512x512",
-            type: "image/png",
-            purpose: "any maskable"
-          }
-        ],
-        screenshots: [
-          {
-            src: "/images/edukids-banner.png",
-            type: "image/png",
-            sizes: "1600x900",
-            form_factor: "wide",
-            label: "Tela inicial do EDUKIDS+"
-          },
-          {
-            src: "/uploads/screenshot1.png",
-            type: "image/png",
-            sizes: "1080x1920",
-            form_factor: "narrow",
-            label: "Screenshot 1"
-          },
-          {
-            src: "/uploads/screenshot2.png",
-            type: "image/png",
-            sizes: "1080x1920",
-            form_factor: "narrow",
-            label: "Screenshot 2"
           }
         ],
         shortcuts: [
@@ -101,17 +66,6 @@ export default defineConfig(() => ({
           {
             name: "Play+ Trilhas",
             url: "/play-plus",
-            icons: [
-              {
-                src: "/icons/icon-192.png",
-                sizes: "192x192",
-                type: "image/png"
-              }
-            ]
-          },
-          {
-            name: "Loja EDUKIDS+",
-            url: "/store",
             icons: [
               {
                 src: "/icons/icon-192.png",
