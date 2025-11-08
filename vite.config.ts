@@ -16,10 +16,9 @@ export default defineConfig(() => ({
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
+      // Keep only the essential icon to avoid fetching/parsing problematic images during packaging.
       includeAssets: [
-        'icons/icon-192.png',
-        'icons/icon-512.png',
-        'images/edukids-banner.png'
+        'icons/icon-192.png'
       ],
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,webmanifest}'],
@@ -29,7 +28,7 @@ export default defineConfig(() => ({
         clientsClaim: true,
       },
       manifest: {
-        id: "https://edukidsspro.vercel.app",
+        id: "https://edukidsspro.supabase.co", // stable id (kept short)
         name: "EDUKIDS+",
         short_name: "EDUKIDS",
         description: "Aprendizagem lúdica e interativa para crianças — explore atividades, trilhas de estudo, missões diárias e jogos educativos.",
