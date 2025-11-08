@@ -1,46 +1,74 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { showError } from "@/utils/toast";
 
-/**
- * GlobalErrorLogger
- *
- * Instala listeners para:
- *  - window 'error' (runtime exceptions)
- *  - window 'unhandledrejection' (promise rejections, chunk load failures)
- *
- * Quando ocorrer um erro, exibe um toast e registra no console para ajudar a debugar no preview/Vercel.
- */
+const buildFriendlyMessage = (rawMessage?: string) => {
+  if (!rawMessage) {
+    return "Ops! Algo inesperado aconteceu. Recarregue o app e tente novamente.";
+  }
+
+  const normalized = rawMessage.toLowerCase();
+
+  if (
+    normalized.includes("failed to fetch") ||
+    normalized.includes("networkerror when attempting to fetch resource")
+  ) {
+    return "Não foi possível conectar com o servidor. Verifique sua internet e tente novamente.";
+  }
+
+  if (
+    normalized.includes("loading chunk") ||
+    normalized.includes("dynamically imported module")
+  ) {
+    return "Detectamos uma atualização do aplicativo. Recarregue para continuar.";
+  }
+
+  if (
+    normalized.includes("service worker") &&
+    normalized.includes("typeerror")
+  ) {
+    return "O modo offline não inicializou corretamente. Feche e abra o app para concluir a atualização.";
+  }
+
+  return `Erro: ${rawMessage}`;
+};
+
 const GlobalErrorLogger = () => {
+  const lastMessageRef = useRef<string | null>(null);
+
   useEffect(() => {
     const onError = (event: ErrorEvent) => {
       try {
-        const msg = event?.message ?? "Erro JS desconhecido";
-        const src = event?.filename ? ` em ${event.filename}:${event.lineno}:${event.colno}` : "";
+        const rawMessage = event?.message || event?.error?.message;
+        const friendlyMessage = buildFriendlyMessage(rawMessage);
+
+        // Avoid duplicating identical alerts
+        if (lastMessageRef.current !== friendlyMessage) {
+          lastMessageRef.current = friendlyMessage;
+          showError(friendlyMessage);
+        }
+
         console.error("GlobalErrorLogger caught error:", event.error ?? event.message, event);
-        showError(`Erro: ${msg}${src}. Veja console para mais detalhes.`);
-      } catch (e) {
-        // swallow
-        // eslint-disable-next-line no-console
-        console.error("GlobalErrorLogger handler failed", e);
+      } catch (handlerError) {
+        console.error("GlobalErrorLogger handler failed", handlerError);
       }
     };
 
     const onUnhandledRejection = (event: PromiseRejectionEvent) => {
       try {
-        const reason = (event?.reason && (typeof event.reason === "string" ? event.reason : (event.reason.message ?? JSON.stringify(event.reason)))) ?? "Rejeição de Promise";
-        console.error("GlobalErrorLogger caught unhandledrejection:", event.reason, event);
-        // Special-case common chunk load failure text to give clearer hint
-        if (String(reason).toLowerCase().includes("failed to fetch") || String(reason).toLowerCase().includes("loading chunk")) {
-          showError("Falha ao carregar recurso (chunk). Verifique a URL de assets e abra o console (Network) para ver 404.");
-        } else {
-          showError(`Rejeição não tratada: ${String(reason).slice(0, 120)}`);
+        const reason = event?.reason;
+        const rawMessage = typeof reason === "string" ? reason : reason?.message;
+        const friendlyMessage = buildFriendlyMessage(rawMessage);
+
+        if (lastMessageRef.current !== friendlyMessage) {
+          lastMessageRef.current = friendlyMessage;
+          showError(friendlyMessage);
         }
-      } catch (e) {
-        // swallow
-        // eslint-disable-next-line no-console
-        console.error("GlobalErrorLogger rejection handler failed", e);
+
+        console.error("GlobalErrorLogger caught unhandledrejection:", reason, event);
+      } catch (handlerError) {
+        console.error("GlobalErrorLogger rejection handler failed", handlerError);
       }
     };
 
