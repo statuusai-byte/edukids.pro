@@ -16,19 +16,45 @@ export default defineConfig(() => ({
     VitePWA({
       registerType: "autoUpdate",
       injectRegister: "auto",
-      includeAssets: [
-        "icons/icon-192.png",
-        "icons/icon-512.png",
-      ],
       workbox: {
-        globPatterns: ["**/*.{js,css,html,svg,png,webmanifest}"],
+        globPatterns: ["**/*.{js,css,html,svg,png,ico,webmanifest}"],
         navigateFallback: "/index.html",
         navigateFallbackDenylist: [/^\/\.well-known\//],
         skipWaiting: true,
         clientsClaim: true,
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/eylmcfxdbwqbmfubojty\.supabase\.co\/.*/i,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'supabase-api-cache',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 * 7 // 1 semana
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
+          },
+          {
+            urlPattern: /^https:\/\/images\.unsplash\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'unsplash-images-cache',
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 dias
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
+          }
+        ]
       },
       manifest: {
-        id: "https://edukidsspro.supabase.co",
+        id: "/",
         name: "EDUKIDS+",
         short_name: "EDUKIDS",
         description:
@@ -56,6 +82,22 @@ export default defineConfig(() => ({
             type: "image/png",
             purpose: "any",
           },
+        ],
+        screenshots: [
+          {
+            src: "/uploads/screenshot1.png",
+            sizes: "1080x2340",
+            type: "image/png",
+            form_factor: "narrow",
+            label: "Tela de Atividades"
+          },
+          {
+            src: "/uploads/screenshot2.png",
+            sizes: "1080x2340",
+            type: "image/png",
+            form_factor: "narrow",
+            label: "Tela de Lição"
+          }
         ],
         shortcuts: [
           {
@@ -92,11 +134,6 @@ export default defineConfig(() => ({
             id: "app.vercel.edukidsspro.twa",
           },
         ],
-        serviceworker: {
-          src: "/sw.js",
-          scope: "/",
-          type: "classic",
-        },
       },
     }),
   ],
