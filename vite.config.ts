@@ -54,7 +54,7 @@ export default defineConfig(() => ({
           },
           {
             src: "/icons/icon-512.png",
-            sizes: "512x512",
+            sizes: "192x192",
             type: "image/png",
             purpose: "any maskable"
           }
