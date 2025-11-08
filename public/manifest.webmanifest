@@ -49,6 +49,20 @@
       "type": "image/png",
       "form_factor": "wide",
       "label": "Visão Geral do Aplicativo"
+    },
+    {
+      "src": "/uploads/BANER-2.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Recursos do App"
+    },
+    {
+      "src": "/uploads/BANER-3.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Jogue e Aprenda"
     }
   ],
   "shortcuts": [

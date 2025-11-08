@@ -15,7 +15,7 @@ export default defineConfig(() => ({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      injectRegister: "auto",
+      injectRegister: null, // Alterado para permitir o registro manual
       workbox: {
         globPatterns: ["**/*.{js,css,html,svg,png,ico,webmanifest}"],
         navigateFallback: "/index.html",
@@ -53,8 +53,6 @@ export default defineConfig(() => ({
           }
         ]
       },
-      // O manifesto agora está em public/manifest.webmanifest
-      // O plugin irá detectá-lo e usá-lo como base automaticamente.
     }),
   ],
   resolve: {
