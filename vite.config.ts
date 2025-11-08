@@ -30,7 +30,8 @@ export default defineConfig(() => ({
         clientsClaim: true,
       },
       manifest: {
-        id: "/",
+        // ID estável e único para o PWA (não usar start_url)
+        id: "https://edukidsspro.vercel.app",
         name: "EDUKIDS+",
         short_name: "EDUKIDS",
         description: "Aprendizagem lúdica e interativa para crianças — explore atividades, trilhas de estudo, missões diárias e jogos educativos.",
