@@ -42,6 +42,13 @@
       "type": "image/png",
       "form_factor": "narrow",
       "label": "Tela de Lição"
+    },
+    {
+      "src": "/uploads/BANER-1.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Visão Geral do Aplicativo"
     }
   ],
   "shortcuts": [
