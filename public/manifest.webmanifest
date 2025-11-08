@@ -46,5 +46,21 @@
         }
       ]
     }
+  ],
+  "screenshots": [
+    {
+      "src": "/images/edukids-banner.png",
+      "sizes": "1600x900",
+      "type": "image/png",
+      "label": "Tela inicial do EDUKIDS+",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/uploads/Captura_de_tela_2025-11-04_115828.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "label": "Interface do aplicativo (exemplo de lição)",
+      "form_factor": "narrow"
+    }
   ]
 }
