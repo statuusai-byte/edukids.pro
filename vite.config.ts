@@ -20,7 +20,11 @@ export default defineConfig(() => ({
         'icons/icon-192.png',
         'icons/icon-512.png',
         'images/edukids-banner.png',
-        'uploads/Captura_de_tela_2025-11-04_115828.png'
+        'uploads/screenshot-1600x900-1.png',
+        'uploads/screenshot-1600x900-2.png',
+        'uploads/screenshot-1600x900-3.png',
+        'uploads/screenshot-phone-1.png',
+        'uploads/screenshot-phone-2.png'
       ],
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,webmanifest}'],
@@ -31,7 +35,7 @@ export default defineConfig(() => ({
       },
       manifest: {
         // ID estável e único para o PWA (não usar start_url)
-        id: "https://edukidsspro.vercel.app",
+        id: "https://edukidsspro.supabase.co",
         name: "EDUKIDS+",
         short_name: "EDUKIDS",
         description: "Aprendizagem lúdica e interativa para crianças — explore atividades, trilhas de estudo, missões diárias e jogos educativos.",
@@ -54,7 +58,7 @@ export default defineConfig(() => ({
           },
           {
             src: "/icons/icon-512.png",
-            sizes: "192x192",
+            sizes: "512x512",
             type: "image/png",
             purpose: "any maskable"
           }
@@ -68,10 +72,39 @@ export default defineConfig(() => ({
             label: "Tela inicial do EDUKIDS+"
           },
           {
-            src: "/uploads/Captura_de_tela_2025-11-04_115828.png",
+            src: "/uploads/screenshot-1600x900-1.png",
             type: "image/png",
+            sizes: "1600x900",
+            form_factor: "wide",
+            label: "Banner promocional 1"
+          },
+          {
+            src: "/uploads/screenshot-1600x900-2.png",
+            type: "image/png",
+            sizes: "1600x900",
+            form_factor: "wide",
+            label: "Banner promocional 2"
+          },
+          {
+            src: "/uploads/screenshot-1600x900-3.png",
+            type: "image/png",
+            sizes: "1600x900",
+            form_factor: "wide",
+            label: "Banner promocional 3"
+          },
+          {
+            src: "/uploads/screenshot-phone-1.png",
+            type: "image/png",
+            sizes: "1080x1920",
             form_factor: "narrow",
-            label: "Interface principal do app"
+            label: "Captura (phone) 1"
+          },
+          {
+            src: "/uploads/screenshot-phone-2.png",
+            type: "image/png",
+            sizes: "1080x1920",
+            form_factor: "narrow",
+            label: "Captura (phone) 2"
           }
         ],
         shortcuts: [

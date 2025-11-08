@@ -57,10 +57,38 @@
       "form_factor": "wide"
     },
     {
-      "src": "/uploads/Captura_de_tela_2025-11-04_115828.png",
+      "src": "/uploads/screenshot-1600x900-1.png",
+      "sizes": "1600x900",
+      "type": "image/png",
+      "label": "Banner promocional 1",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/uploads/screenshot-1600x900-2.png",
+      "sizes": "1600x900",
+      "type": "image/png",
+      "label": "Banner promocional 2",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/uploads/screenshot-1600x900-3.png",
+      "sizes": "1600x900",
+      "type": "image/png",
+      "label": "Banner promocional 3",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/uploads/screenshot-phone-1.png",
       "sizes": "1080x1920",
       "type": "image/png",
-      "label": "Interface do aplicativo (exemplo de lição)",
+      "label": "Captura (phone) 1",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/uploads/screenshot-phone-2.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "label": "Captura (phone) 2",
       "form_factor": "narrow"
     }
   ]
