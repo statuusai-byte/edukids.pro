@@ -304,13 +304,11 @@ const Settings = () => {
         open={pinModalOpen}
         onOpenChange={afterPinModalChange}
         mode={pinMode}
-        onSuccess={() => {
-          if (pinMode === "verify" && pendingActionRef.current) {
+        onVerified={() => {
+          if (pendingActionRef.current) {
             pendingActionRef.current();
             pendingActionRef.current = null;
           }
-          setPinModalOpen(false);
-          setParentPinExists(hasParentPin());
         }}
       />
     </div>
