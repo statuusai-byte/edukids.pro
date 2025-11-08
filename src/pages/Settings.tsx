@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useAge } from "@/context/AgeContext";
-import { Trash2, ShieldCheck, ShieldX, FileText, Info, LogOut } from "lucide-react";
+import { Trash2, ShieldCheck, ShieldX, Info, LogOut } from "lucide-react";
 import { useProfile } from "@/context/ProfileContext";
 import { AvatarUploader } from "@/components/AvatarUploader";
 import { useProgress } from "@/hooks/use-progress";
@@ -20,7 +20,6 @@ import {
 } from "@/utils/parental";
 import { useSupabase } from "@/context/SupabaseContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Link } from "react-router-dom";
 
 const Settings = () => {
   const { ageGroup, setAgeGroup } = useAge();
@@ -55,7 +54,6 @@ const Settings = () => {
       showSuccess("Avatar atualizado com sucesso!");
     } catch (error) {
       dismissToast(toastId);
-      // The context already shows an error toast, no need for another one.
       console.error(error);
     }
   };
@@ -69,7 +67,7 @@ const Settings = () => {
       showSuccess("Nome atualizado!");
     } catch (error) {
       dismissToast(toastId);
-      setCurrentName(name); // Revert on error
+      setCurrentName(name);
     }
   };
 
@@ -283,32 +281,20 @@ const Settings = () => {
 
         <Card className="glass-card">
           <CardHeader>
-            <CardTitle>Sessão</CardTitle>
-            <CardDescription>Encerrar a sessão atual para acessar com outra conta.</CardDescription>
+            <CardTitle>Conta</CardTitle>
+            <CardDescription>Gerencie sua sessão e dados da conta.</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
             <Button variant="outline" onClick={signOut} className="w-full">
-              <LogOut className="mr-2 h-4 w-4" /> Sair (Logout)
+              <LogOut className="mr-2 h-4 w-4" /> Sair da Conta
             </Button>
-          </CardContent>
-        </Card>
-
-        <Card className="glass-card border-red-500/50">
-          <CardHeader>
-            <CardTitle className="text-red-400">Zona de Perigo</CardTitle>
-            <CardDescription>Ações irreversíveis relacionadas à sua conta.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <div>
-                <Label className="font-bold text-foreground">Excluir Conta Permanentemente</Label>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Esta ação removerá permanentemente sua conta e todos os dados associados do nosso sistema. Esta ação não pode ser desfeita.
-                </p>
-              </div>
-              <Button variant="destructive" onClick={handlePermanentDelete}>
-                <Trash2 className="mr-2 h-4 w-4" /> Excluir Minha Conta
+            <div className="pt-4 border-t border-white/10">
+              <Button variant="destructive" onClick={handlePermanentDelete} className="w-full">
+                <Trash2 className="mr-2 h-4 w-4" /> Excluir Conta Permanentemente
               </Button>
+              <p className="text-xs text-muted-foreground mt-2">
+                Esta ação é irreversível e apagará todos os seus dados.
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -316,12 +302,15 @@ const Settings = () => {
 
       <ParentalPinModal
         open={pinModalOpen}
-        mode={pinMode}
         onOpenChange={afterPinModalChange}
-        onVerified={() => {
-          const fn = pendingActionRef.current;
-          pendingActionRef.current = null;
-          if (fn) fn();
+        mode={pinMode}
+        onSuccess={() => {
+          if (pinMode === "verify" && pendingActionRef.current) {
+            pendingActionRef.current();
+            pendingActionRef.current = null;
+          }
+          setPinModalOpen(false);
+          setParentPinExists(hasParentPin());
         }}
       />
     </div>
