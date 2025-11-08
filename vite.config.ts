@@ -16,25 +16,34 @@ export default defineConfig(() => ({
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
+      includeAssets: [
+        'icons/icon-192.png',
+        'icons/icon-512.png',
+        'images/edukids-banner.png',
+        'uploads/Captura_de_tela_2025-11-04_115828.png'
+      ],
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,webmanifest}'],
-        // Impede que navegações para /.well-known/* caiam no fallback do SPA
+        navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/\.well-known\//],
-        // Força o novo Service Worker a assumir o controle imediatamente
         skipWaiting: true,
         clientsClaim: true,
       },
       manifest: {
+        id: "/",
         name: "EDUKIDS+",
         short_name: "EDUKIDS",
-        description: "Aprendizagem lúdica e interativa para crianças — EduKids+",
-        theme_color: "#7c3aed",
-        background_color: "#0f172a",
-        start_url: "/",
+        description: "Aprendizagem lúdica e interativa para crianças — explore atividades, trilhas de estudo, missões diárias e jogos educativos.",
+        lang: "pt-BR",
+        dir: "ltr",
+        start_url: "/?source=pwa",
         scope: "/",
         display: "standalone",
-        display_override: ["standalone", "fullscreen"],
+        display_override: ["standalone", "fullscreen", "minimal-ui"],
         orientation: "portrait",
+        theme_color: "#7c3aed",
+        background_color: "#0f172a",
+        categories: ["education", "kids", "games"],
         icons: [
           {
             src: "/icons/icon-192.png",
@@ -49,8 +58,67 @@ export default defineConfig(() => ({
             purpose: "any maskable"
           }
         ],
-        categories: ["education", "kids", "games"],
-        lang: "pt-BR",
+        screenshots: [
+          {
+            src: "/images/edukids-banner.png",
+            type: "image/png",
+            sizes: "1600x900",
+            form_factor: "wide",
+            label: "Tela inicial do EDUKIDS+"
+          },
+          {
+            src: "/uploads/Captura_de_tela_2025-11-04_115828.png",
+            type: "image/png",
+            form_factor: "narrow",
+            label: "Interface principal do app"
+          }
+        ],
+        shortcuts: [
+          {
+            name: "Atividades",
+            url: "/activities",
+            icons: [
+              {
+                src: "/icons/icon-192.png",
+                sizes: "192x192",
+                type: "image/png"
+              }
+            ]
+          },
+          {
+            name: "Play+ Trilhas",
+            url: "/play-plus",
+            icons: [
+              {
+                src: "/icons/icon-192.png",
+                sizes: "192x192",
+                type: "image/png"
+              }
+            ]
+          },
+          {
+            name: "Loja EDUKIDS+",
+            url: "/store",
+            icons: [
+              {
+                src: "/icons/icon-192.png",
+                sizes: "192x192",
+                type: "image/png"
+              }
+            ]
+          }
+        ],
+        launch_handler: {
+          client_mode: "focus-existing"
+        },
+        handle_links: "preferred",
+        prefer_related_applications: false,
+        related_applications: [
+          {
+            platform: "play",
+            id: "app.vercel.edukidsspro.twa"
+          }
+        ]
       },
     }),
   ],
