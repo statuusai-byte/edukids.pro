@@ -1,18 +1,14 @@
 {
-  "id": "/",
   "name": "EDUKIDS+",
   "short_name": "EDUKIDS",
   "description": "Aprendizagem lúdica e interativa para crianças — explore atividades, trilhas de estudo, missões diárias e jogos educativos.",
   "lang": "pt-BR",
-  "dir": "ltr",
   "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",
-  "display_override": ["standalone", "fullscreen", "minimal-ui"],
   "orientation": "portrait",
   "theme_color": "#7c3aed",
   "background_color": "#0f172a",
-  "categories": ["education", "kids", "games"],
   "icons": [
     {
       "src": "/icons/icon-192.png",
@@ -22,24 +18,9 @@
     },
     {
       "src": "/icons/icon-512.png",
-      "sizes": "512x512",
+      "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "/images/edukids-banner.png",
-      "type": "image/png",
-      "sizes": "1600x900",
-      "form_factor": "wide",
-      "label": "Tela inicial do EDUKIDS+"
-    },
-    {
-      "src": "/uploads/Captura_de_tela_2025-11-04_115828.png",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Interface principal do app"
     }
   ],
   "shortcuts": [
@@ -64,28 +45,6 @@
           "type": "image/png"
         }
       ]
-    },
-    {
-      "name": "Loja EDUKIDS+",
-      "url": "/store",
-      "icons": [
-        {
-          "src": "/icons/icon-192.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ]
-    }
-  ],
-  "launch_handler": {
-    "client_mode": "focus-existing"
-  },
-  "handle_links": "preferred",
-  "prefer_related_applications": false,
-  "related_applications": [
-    {
-      "platform": "play",
-      "id": "app.vercel.edukidsspro.twa"
     }
   ]
 }
