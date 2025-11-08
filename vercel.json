@@ -1,10 +1,13 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "rewrites": [
+  "routes": [
     {
-      "source": "/((?!\\.well-known\\/).*)",
-      "destination": "/index.html"
+      "handle": "filesystem"
+    },
+    {
+      "src": "/((?!\\.well-known\\/).*)",
+      "dest": "/index.html"
     }
   ],
   "headers": [
