@@ -1,16 +1,12 @@
 import { useEffect, useState } from 'react';
-import type { ElementType } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabase } from '@/context/SupabaseContext';
 import { achievements } from '@/data/achievementsData';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
-import { Award, BookOpen, Brain, Lock, Sigma, Star, Trophy } from 'lucide-react';
+import { Icon } from '@/components/Icon';
 import { cn } from '@/lib/utils';
 import { readLocal } from '@/utils/achievements';
-
-const iconMap: Record<string, ElementType> = {
-  Star, Award, Trophy, Brain, Sigma, BookOpen,
-};
+import { Sparkles } from 'lucide-react';
 
 const AchievementsPage = () => {
   const { user } = useSupabase();
@@ -37,7 +33,7 @@ const AchievementsPage = () => {
 
       if (error) {
         console.error('Error fetching achievements:', error);
-        setUnlockedIds(localSet);
+        setUnlockedIds(localSet); // Fallback para dados locais em caso de erro
       } else {
         const remoteSet = new Set((data ?? []).map((a: any) => a.achievement_id));
         const union = new Set<string>([...Array.from(localSet), ...Array.from(remoteSet)]);
@@ -50,7 +46,12 @@ const AchievementsPage = () => {
   }, [user]);
 
   if (loading) {
-    return <div>Carregando conquistas...</div>;
+    return (
+      <div className="flex h-40 w-full items-center justify-center">
+        <Sparkles className="h-8 w-8 animate-spin text-primary" />
+        <span className="ml-2">Carregando medalhas...</span>
+      </div>
+    );
   }
 
   return (
@@ -59,13 +60,12 @@ const AchievementsPage = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {achievements.map((ach) => {
           const isUnlocked = unlockedIds.has(ach.id);
-          const IconComponent = iconMap[ach.icon as string] || Lock;
 
           return (
             <Card key={ach.id} className={cn("glass-card transition-all", isUnlocked ? "border-yellow-400/50" : "opacity-60")}>
               <CardHeader className="flex flex-row items-center gap-4 space-y-0">
                 <div className={cn("p-3 rounded-lg", isUnlocked ? "bg-yellow-400/20" : "bg-secondary")}>
-                  <IconComponent className={cn("h-8 w-8", isUnlocked ? "text-yellow-400" : "text-muted-foreground")} />
+                  <Icon name={ach.icon} className={cn("h-8 w-8", isUnlocked ? "text-yellow-400" : "text-muted-foreground")} />
                 </div>
                 <div>
                   <CardTitle className={cn(isUnlocked ? "text-yellow-300" : "")}>{ach.title}</CardTitle>
