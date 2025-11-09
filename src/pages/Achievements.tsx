@@ -59,7 +59,7 @@ const AchievementsPage = () => {
     };
 
     fetchAchievements();
-  }, [user?.id]);
+  }, [user]);
 
   return (
     <div>
