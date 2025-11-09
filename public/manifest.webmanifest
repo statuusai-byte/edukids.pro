@@ -1,18 +1,11 @@
 {
-  "id": "/",
-  "name": "EDUKIDS+",
-  "short_name": "EDUKIDS",
-  "description": "Aprendizagem lúdica e interativa para crianças — explore atividades, trilhas de estudo, missões diárias e jogos educativos.",
-  "lang": "pt-BR",
-  "dir": "ltr",
-  "start_url": "/?source=pwa",
-  "scope": "/",
+  "name": "EDUKIDS+ — Aprendizagem Lúdica para Crianças",
+  "short_name": "EDUKIDS+",
+  "description": "Explore atividades, cursos e jogos educativos para crianças — Aprender nunca foi tão divertido.",
+  "start_url": "/",
   "display": "standalone",
-  "display_override": ["standalone", "fullscreen", "minimal-ui"],
-  "orientation": "portrait",
-  "theme_color": "#7c3aed",
   "background_color": "#0f172a",
-  "categories": ["education", "kids", "games"],
+  "theme_color": "#7c3aed",
   "icons": [
     {
       "src": "/icons/icon-192.png",
@@ -24,93 +17,51 @@
       "src": "/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ],
   "screenshots": [
     {
       "src": "/uploads/screenshot-mobile-1.png",
-      "sizes": "1080x2340",
+      "sizes": "540x960",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Tela de Atividades por Matéria"
+      "label": "Tela de Atividades"
     },
     {
       "src": "/uploads/screenshot-mobile-2.png",
-      "sizes": "1080x2340",
+      "sizes": "540x960",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Lição Interativa com Quiz"
+      "label": "Tela de Lição Interativa"
     },
     {
       "src": "/uploads/screenshot-mobile-3.png",
-      "sizes": "1080x2340",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Jornada de Aprendizagem Play+"
-    },
-    {
-      "src": "/uploads/screenshot-mobile-4.png",
-      "sizes": "1080x2340",
+      "sizes": "540x960",
       "type": "image/png",
       "form_factor": "narrow",
       "label": "Painel de Controle dos Pais"
     },
     {
-      "src": "/uploads/BANER-1.png",
-      "sizes": "1920x1080",
+      "src": "/uploads/screenshot-mobile-4.png",
+      "sizes": "540x960",
       "type": "image/png",
-      "form_factor": "wide",
-      "label": "Visão Geral do Aplicativo"
+      "form_factor": "narrow",
+      "label": "Loja e Assinatura Premium"
     },
     {
-      "src": "/uploads/BANER-2.png",
-      "sizes": "1920x1080",
+      "src": "/uploads/screenshot1.png",
+      "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "Recursos do App"
+      "label": "Visão Geral das Matérias"
     },
     {
-      "src": "/uploads/BANER-3.png",
-      "sizes": "1920x1080",
+      "src": "/uploads/screenshot2.png",
+      "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "Jogue e Aprenda"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "Atividades",
-      "url": "/activities",
-      "icons": [
-        {
-          "src": "/icons/icon-192.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ]
-    },
-    {
-      "name": "Play+ Trilhas",
-      "url": "/play-plus",
-      "icons": [
-        {
-          "src": "/icons/icon-192.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ]
-    }
-  ],
-  "launch_handler": {
-    "client_mode": "focus-existing"
-  },
-  "handle_links": "preferred",
-  "prefer_related_applications": true,
-  "related_applications": [
-    {
-      "platform": "play",
-      "id": "app.vercel.edukidsspro.twa"
+      "label": "Exemplo de Jogo de Matemática"
     }
   ]
 }
