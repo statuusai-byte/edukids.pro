@@ -7,6 +7,7 @@ import { ProfileProvider } from "./context/ProfileContext";
 import { SupabaseProvider } from "./context/SupabaseContext";
 import { PremiumProvider } from "./context/PremiumContext";
 import { HintsProvider } from "./context/HintsContext";
+import { ThemeProvider } from "./context/ThemeContext";
 import { Sparkles } from "lucide-react";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import AmbientBackground from "@/components/AmbientBackground";
@@ -91,27 +92,29 @@ const AppRoutes = () => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AmbientBackground>
-      <BrowserRouter>
-        <SupabaseProvider>
-          <AgeProvider>
-            <ProfileProvider>
-              <PremiumProvider>
-                <HintsProvider>
-                  <SonnerToaster />
-                  <GlobalErrorLogger />
-                  <ErrorBoundary>
-                    <Suspense fallback={<Fallback />}>
-                      <AppRoutes />
-                    </Suspense>
-                  </ErrorBoundary>
-                </HintsProvider>
-              </PremiumProvider>
-            </ProfileProvider>
-          </AgeProvider>
-        </SupabaseProvider>
-      </BrowserRouter>
-    </AmbientBackground>
+    <ThemeProvider defaultTheme="dark" storageKey="edukids-theme">
+      <AmbientBackground>
+        <BrowserRouter>
+          <SupabaseProvider>
+            <AgeProvider>
+              <ProfileProvider>
+                <PremiumProvider>
+                  <HintsProvider>
+                    <SonnerToaster />
+                    <GlobalErrorLogger />
+                    <ErrorBoundary>
+                      <Suspense fallback={<Fallback />}>
+                        <AppRoutes />
+                      </Suspense>
+                    </ErrorBoundary>
+                  </HintsProvider>
+                </PremiumProvider>
+              </ProfileProvider>
+            </AgeProvider>
+          </SupabaseProvider>
+        </BrowserRouter>
+      </AmbientBackground>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 

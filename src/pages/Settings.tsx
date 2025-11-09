@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useAge } from "@/context/AgeContext";
-import { Trash2, ShieldCheck, ShieldX, Info, LogOut } from "lucide-react";
+import { Trash2, ShieldCheck, ShieldX, Info, LogOut, Sun, Moon } from "lucide-react";
 import { useProfile } from "@/context/ProfileContext";
 import { AvatarUploader } from "@/components/AvatarUploader";
 import { useProgress } from "@/hooks/use-progress";
@@ -20,11 +20,13 @@ import {
 } from "@/utils/parental";
 import { useSupabase } from "@/context/SupabaseContext";
 import { supabase } from "@/integrations/supabase/client";
+import { useTheme } from "@/context/ThemeContext";
 
 const Settings = () => {
   const { ageGroup, setAgeGroup } = useAge();
   const { name, setName, avatarUrl, setAvatarFile, isLoading: isProfileLoading } = useProfile();
   const { clearAll } = useProgress();
+  const { theme, setTheme } = useTheme();
   const [uiSounds, setUiSounds] = useState(true);
 
   const [currentName, setCurrentName] = useState(name);
@@ -216,9 +218,19 @@ const Settings = () => {
         <Card className="glass-card">
           <CardHeader>
             <CardTitle>Preferências do Aplicativo</CardTitle>
-            <CardDescription>Opções de notificações, sons e dados.</CardDescription>
+            <CardDescription>Opções de tema, notificações, sons e dados.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="theme-switcher" className="flex items-center gap-2">
+                <Sun className="h-5 w-5" /> Tema do Aplicativo <Moon className="h-5 w-5" />
+              </Label>
+              <Switch
+                id="theme-switcher"
+                checked={theme === 'dark'}
+                onCheckedChange={(isDark) => setTheme(isDark ? 'dark' : 'light')}
+              />
+            </div>
             <div className="flex items-center justify-between">
               <Label htmlFor="progress-reports">Relatórios de progresso por e-mail</Label>
               <Switch id="progress-reports" defaultChecked />
