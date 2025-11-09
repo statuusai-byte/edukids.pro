@@ -43,6 +43,13 @@
       "label": "Tela de Lição"
     },
     {
+      "src": "/uploads/screenshot1.png",
+      "sizes": "1080x2340",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Navegação Principal"
+    },
+    {
       "src": "/uploads/BANER-1.png",
       "sizes": "1920x1080",
       "type": "image/png",
