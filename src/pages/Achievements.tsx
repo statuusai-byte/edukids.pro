@@ -6,7 +6,23 @@ import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Icon } from '@/components/Icon';
 import { cn } from '@/lib/utils';
 import { readLocal } from '@/utils/achievements';
-import { Sparkles } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const AchievementsSkeleton = () => (
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    {Array.from({ length: 6 }).map((_, i) => (
+      <Card key={i} className="glass-card">
+        <CardHeader className="flex flex-row items-center gap-4 space-y-0">
+          <Skeleton className="h-14 w-14 rounded-lg" />
+          <div className="space-y-2 flex-grow">
+            <Skeleton className="h-5 w-3/4" />
+            <Skeleton className="h-4 w-full" />
+          </div>
+        </CardHeader>
+      </Card>
+    ))}
+  </div>
+);
 
 const AchievementsPage = () => {
   const { user } = useSupabase();
@@ -43,39 +59,34 @@ const AchievementsPage = () => {
     };
 
     fetchAchievements();
-  }, [user]);
-
-  if (loading) {
-    return (
-      <div className="flex h-40 w-full items-center justify-center">
-        <Sparkles className="h-8 w-8 animate-spin text-primary" />
-        <span className="ml-2">Carregando medalhas...</span>
-      </div>
-    );
-  }
+  }, [user?.id]);
 
   return (
     <div>
       <h1 className="text-4xl font-bold tracking-tighter mb-8">Medalhas e Conquistas</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {achievements.map((ach) => {
-          const isUnlocked = unlockedIds.has(ach.id);
+      {loading ? (
+        <AchievementsSkeleton />
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {achievements.map((ach) => {
+            const isUnlocked = unlockedIds.has(ach.id);
 
-          return (
-            <Card key={ach.id} className={cn("glass-card transition-all", isUnlocked ? "border-yellow-400/50" : "opacity-60")}>
-              <CardHeader className="flex flex-row items-center gap-4 space-y-0">
-                <div className={cn("p-3 rounded-lg", isUnlocked ? "bg-yellow-400/20" : "bg-secondary")}>
-                  <Icon name={ach.icon} className={cn("h-8 w-8", isUnlocked ? "text-yellow-400" : "text-muted-foreground")} />
-                </div>
-                <div>
-                  <CardTitle className={cn(isUnlocked ? "text-yellow-300" : "")}>{ach.title}</CardTitle>
-                  <p className="text-sm text-muted-foreground">{ach.description}</p>
-                </div>
-              </CardHeader>
-            </Card>
-          );
-        })}
-      </div>
+            return (
+              <Card key={ach.id} className={cn("glass-card transition-all", isUnlocked ? "border-yellow-400/50" : "opacity-60")}>
+                <CardHeader className="flex flex-row items-center gap-4 space-y-0">
+                  <div className={cn("p-3 rounded-lg", isUnlocked ? "bg-yellow-400/20" : "bg-secondary")}>
+                    <Icon name={ach.icon} className={cn("h-8 w-8", isUnlocked ? "text-yellow-400" : "text-muted-foreground")} />
+                  </div>
+                  <div>
+                    <CardTitle className={cn(isUnlocked ? "text-yellow-300" : "")}>{ach.title}</CardTitle>
+                    <p className="text-sm text-muted-foreground">{ach.description}</p>
+                  </div>
+                </CardHeader>
+              </Card>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };
