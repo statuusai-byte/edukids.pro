@@ -28,6 +28,7 @@ const AchievementsPage = () => {
   const { user } = useSupabase();
   const [unlockedIds, setUnlockedIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
+  const userId = user?.id;
 
   useEffect(() => {
     const fetchAchievements = async () => {
@@ -36,7 +37,7 @@ const AchievementsPage = () => {
       // Começa com as conquistas locais (offline)
       const localSet = readLocal();
 
-      if (!user) {
+      if (!userId) {
         setUnlockedIds(localSet);
         setLoading(false);
         return;
@@ -45,7 +46,7 @@ const AchievementsPage = () => {
       const { data, error } = await supabase
         .from('user_achievements')
         .select('achievement_id')
-        .eq('user_id', user.id);
+        .eq('user_id', userId);
 
       if (error) {
         console.error('Error fetching achievements:', error);
@@ -59,7 +60,7 @@ const AchievementsPage = () => {
     };
 
     fetchAchievements();
-  }, [user]);
+  }, [userId]);
 
   return (
     <div>
