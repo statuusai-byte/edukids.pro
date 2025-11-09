@@ -29,25 +29,32 @@
   ],
   "screenshots": [
     {
-      "src": "/uploads/screenshot1.png",
+      "src": "/uploads/screenshot-mobile-1.png",
       "sizes": "1080x2340",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Tela de Atividades"
+      "label": "Tela de Atividades por Matéria"
     },
     {
-      "src": "/uploads/screenshot2.png",
+      "src": "/uploads/screenshot-mobile-2.png",
       "sizes": "1080x2340",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Tela de Lição"
+      "label": "Lição Interativa com Quiz"
     },
     {
-      "src": "/uploads/screenshot1.png",
+      "src": "/uploads/screenshot-mobile-3.png",
       "sizes": "1080x2340",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Navegação Principal"
+      "label": "Jornada de Aprendizagem Play+"
+    },
+    {
+      "src": "/uploads/screenshot-mobile-4.png",
+      "sizes": "1080x2340",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Painel de Controle dos Pais"
     },
     {
       "src": "/uploads/BANER-1.png",
