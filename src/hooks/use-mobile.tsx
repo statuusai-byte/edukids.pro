@@ -18,8 +18,8 @@ function computeIsMobile() {
   let pointerCoarse = false;
   if (matchMediaAvailable) {
     const mql = window.matchMedia("(pointer: coarse)");
-    if (mql) {
-      pointerCoarse = mql.matches;
+    if (mql && mql.matches) {
+      pointerCoarse = true;
     }
   }
 
@@ -34,9 +34,11 @@ function computeIsMobile() {
 }
 
 export function useIsMobile() {
-  const [isMobile, setIsMobile] = React.useState<boolean>(() => computeIsMobile());
+  // Inicializa como false no lado do servidor/build
+  const [isMobile, setIsMobile] = React.useState<boolean>(false);
 
   React.useEffect(() => {
+    // Apenas executa a lógica de detecção no lado do cliente
     const onResize = () => setIsMobile(computeIsMobile());
 
     // Ouve mudanças de tamanho e de pointer
