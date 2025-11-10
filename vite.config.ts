@@ -14,6 +14,7 @@ export default defineConfig(() => ({
     dyadComponentTagger(),
     react(),
     VitePWA({
+      manifest: false, // Adicionado para desativar a geração automática de manifesto
       registerType: "prompt",
       injectRegister: null, // Permite o registro manual via hook
       workbox: {
