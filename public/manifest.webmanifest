@@ -1,11 +1,12 @@
 {
-  "name": "EDUKIDS+ — Aprendizagem Lúdica para Crianças",
+  "name": "EDUKIDS+ — Aprendizagem Lúdica",
   "short_name": "EDUKIDS+",
-  "description": "Explore atividades, cursos e jogos educativos para crianças — Aprender nunca foi tão divertido.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#7c3aed",
+  "orientation": "portrait-primary",
+  "description": "Explore atividades, cursos e jogos educativos para crianças — Aprender nunca foi tão divertido.",
   "icons": [
     {
       "src": "/icons/icon-192.png",
@@ -23,45 +24,47 @@
   "screenshots": [
     {
       "src": "/uploads/screenshot-mobile-1.png",
-      "sizes": "540x960",
+      "sizes": "1080x2340",
       "type": "image/png",
       "form_factor": "narrow",
       "label": "Tela de Atividades"
     },
     {
       "src": "/uploads/screenshot-mobile-2.png",
-      "sizes": "540x960",
+      "sizes": "1080x2340",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Tela de Lição Interativa"
+      "label": "Página de Lição Interativa"
     },
     {
       "src": "/uploads/screenshot-mobile-3.png",
-      "sizes": "540x960",
+      "sizes": "1080x2340",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Painel de Controle dos Pais"
+      "label": "Loja Premium e de Dicas"
     },
     {
       "src": "/uploads/screenshot-mobile-4.png",
-      "sizes": "540x960",
+      "sizes": "1080x2340",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Loja e Assinatura Premium"
+      "label": "Painel dos Pais"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Atividades",
+      "short_name": "Atividades",
+      "description": "Ir para a tela de atividades",
+      "url": "/activities",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "src": "/uploads/screenshot1.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Visão Geral das Matérias"
-    },
-    {
-      "src": "/uploads/screenshot2.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Exemplo de Jogo de Matemática"
+      "name": "Play+",
+      "short_name": "Play+",
+      "description": "Acessar as Trilhas de Estudo e Missões",
+      "url": "/play-plus",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }
