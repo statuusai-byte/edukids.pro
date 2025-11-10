@@ -1,12 +1,9 @@
-import { useEffect, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { useSupabase } from '@/context/SupabaseContext';
-import { achievements } from '@/data/achievementsData';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Icon } from '@/components/Icon';
 import { cn } from '@/lib/utils';
-import { readLocal } from '@/utils/achievements';
 import { Skeleton } from '@/components/ui/skeleton';
+import { achievements } from '@/data/achievementsData';
+import { useAchievementsContext } from '@/context/AchievementsContext';
 
 const AchievementsSkeleton = () => (
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -25,49 +22,12 @@ const AchievementsSkeleton = () => (
 );
 
 const AchievementsPage = () => {
-  const { user } = useSupabase();
-  const [unlockedIds, setUnlockedIds] = useState<Set<string>>(new Set());
-  const [loading, setLoading] = useState(true); // Apenas para o carregamento inicial do localStorage
-  const userId = user?.id;
-
-  // Efeito para carregar dados locais imediatamente
-  useEffect(() => {
-    const localSet = readLocal();
-    setUnlockedIds(localSet);
-    setLoading(false);
-  }, []);
-
-  // Efeito para sincronizar com o Supabase em segundo plano
-  useEffect(() => {
-    const syncWithSupabase = async () => {
-      if (!userId) {
-        return; // Não está logado, não há o que sincronizar
-      }
-
-      const { data, error } = await supabase
-        .from('user_achievements')
-        .select('achievement_id')
-        .eq('user_id', userId);
-
-      if (error) {
-        console.error('Error fetching achievements:', error);
-      } else {
-        // Mescla os dados remotos com os dados já exibidos
-        const remoteSet = new Set((data ?? []).map((a: any) => a.achievement_id));
-        setUnlockedIds(prevIds => {
-          const union = new Set<string>([...Array.from(prevIds), ...Array.from(remoteSet)]);
-          return union;
-        });
-      }
-    };
-
-    syncWithSupabase();
-  }, [userId]);
+  const { unlockedIds, isLoading } = useAchievementsContext();
 
   return (
     <div>
       <h1 className="text-4xl font-bold tracking-tighter mb-8">Medalhas e Conquistas</h1>
-      {loading ? (
+      {isLoading ? (
         <AchievementsSkeleton />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

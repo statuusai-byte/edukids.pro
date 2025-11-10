@@ -8,6 +8,7 @@ import { SupabaseProvider } from "./context/SupabaseContext";
 import { PremiumProvider } from "./context/PremiumContext";
 import { HintsProvider } from "./context/HintsContext";
 import { ThemeProvider } from "./context/ThemeContext";
+import { AchievementsProvider } from "./context/AchievementsContext";
 import { Sparkles } from "lucide-react";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import AmbientBackground from "@/components/AmbientBackground";
@@ -101,14 +102,16 @@ const App = () => (
               <ProfileProvider>
                 <PremiumProvider>
                   <HintsProvider>
-                    <SonnerToaster />
-                    <GlobalErrorLogger />
-                    <PwaUpdatePrompt />
-                    <ErrorBoundary>
-                      <Suspense fallback={<Fallback />}>
-                        <AppRoutes />
-                      </Suspense>
-                    </ErrorBoundary>
+                    <AchievementsProvider>
+                      <SonnerToaster />
+                      <GlobalErrorLogger />
+                      <PwaUpdatePrompt />
+                      <ErrorBoundary>
+                        <Suspense fallback={<Fallback />}>
+                          <AppRoutes />
+                        </Suspense>
+                      </ErrorBoundary>
+                    </AchievementsProvider>
                   </HintsProvider>
                 </PremiumProvider>
               </ProfileProvider>
