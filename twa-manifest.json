@@ -3,7 +3,7 @@
   "host": "edukidsspro.vercel.app",
   "name": "EduKids+",
   "launcherName": "EduKids+",
-  "display": "standalone",
+  "display": "fullscreen",
   "themeColor": "#7c3aed",
   "themeColorDark": "#0f172a",
   "navigationColor": "#0f172a",
