@@ -3,7 +3,7 @@
   "short_name": "EduKids+",
   "description": "Explore atividades, cursos e jogos educativos para crianças — Aprender nunca foi tão divertido.",
   "start_url": "/",
-  "display": "fullscreen",
+  "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#0f172a",
   "theme_color": "#7c3aed",
