@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSupabase } from "@/context/SupabaseContext";
 import { supabase } from "@/integrations/supabase/client";
-import { syncAchievements } from "@/utils/achievements";
 import { useAchievementsContext } from "@/context/AchievementsContext";
 
 const STORAGE_KEY = "edukids_progress_v1";
 
-type ProgressMap = Record<string, boolean>;
+export type ProgressMap = Record<string, boolean>;
 
 function makeKey(subject: string, activity: string, moduleId: string, lessonId: string) {
   return `${subject}::${activity}::${moduleId}::${lessonId}`;
@@ -14,7 +13,7 @@ function makeKey(subject: string, activity: string, moduleId: string, lessonId: 
 
 export function useProgress() {
   const { user } = useSupabase();
-  const { refreshAchievements } = useAchievementsContext();
+  const { checkForNewAchievements, refreshAchievements } = useAchievementsContext();
   const [progress, setProgress] = useState<ProgressMap>({});
   const [isSyncing, setIsSyncing] = useState(true);
 
@@ -88,9 +87,7 @@ export function useProgress() {
         console.error("Failed to save merged progress to localStorage:", err);
       }
 
-      // Sincroniza conquistas após sincronizar progresso
-      await syncAchievements(user.id, mergedProgress);
-      await refreshAchievements(); // Notifica o contexto para atualizar
+      await refreshAchievements();
 
       setIsSyncing(false);
     };
@@ -123,8 +120,7 @@ export function useProgress() {
       setProgress(next);
       persistLocal(next);
 
-      await syncAchievements(user?.id, next);
-      await refreshAchievements();
+      await checkForNewAchievements(next);
 
       if (user) {
         const { error } = await supabase.from("user_progress").insert({ user_id: user.id, lesson_key: key });
@@ -133,7 +129,7 @@ export function useProgress() {
         }
       }
     },
-    [progress, persistLocal, user, refreshAchievements]
+    [progress, persistLocal, user, checkForNewAchievements]
   );
 
   const unmarkLesson = useCallback(
@@ -146,8 +142,7 @@ export function useProgress() {
       setProgress(next);
       persistLocal(next);
 
-      await syncAchievements(user?.id, next);
-      await refreshAchievements();
+      await checkForNewAchievements(next);
 
       if (user) {
         const { error } = await supabase.from("user_progress").delete().match({ user_id: user.id, lesson_key: key });
@@ -156,7 +151,7 @@ export function useProgress() {
         }
       }
     },
-    [progress, persistLocal, user, refreshAchievements]
+    [progress, persistLocal, user, checkForNewAchievements]
   );
 
   const clearAll = useCallback(async () => {
@@ -164,8 +159,7 @@ export function useProgress() {
     setProgress(next);
     persistLocal(next);
 
-    await syncAchievements(user?.id, next);
-    await refreshAchievements();
+    await checkForNewAchievements(next);
 
     if (user) {
       const { error } = await supabase.from("user_progress").delete().match({ user_id: user.id });
@@ -173,7 +167,7 @@ export function useProgress() {
         console.error("Failed to clear all progress in Supabase:", error);
       }
     }
-  }, [persistLocal, user, refreshAchievements]);
+  }, [persistLocal, user, checkForNewAchievements]);
 
   return {
     progress,

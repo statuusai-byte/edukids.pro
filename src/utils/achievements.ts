@@ -44,6 +44,7 @@ export function computeAchievements(progress: ProgressMap): Set<string> {
 
   if (completedKeys.length >= 1) unlocked.add("first_step");
   if (completedKeys.length >= 10) unlocked.add("ten_lessons");
+  if (completedKeys.length >= 50) unlocked.add("fifty_lessons");
 
   // Polímata: completar pelo menos 1 lição em 5 matérias diferentes
   const subjectsCompleted = new Set<string>();
@@ -68,30 +69,23 @@ export function computeAchievements(progress: ProgressMap): Set<string> {
 }
 
 // Sincroniza conquistas com Supabase (inserindo as que faltam) e salva localmente
-export async function syncAchievements(userId: string | null | undefined, progress: ProgressMap) {
-  const computed = computeAchievements(progress);
+export async function persistAchievements(userId: string | null | undefined, unlockedIds: Set<string>) {
+  saveLocal(Array.from(unlockedIds));
 
-  // Atualiza local
-  const localPrev = readLocal();
-  const localUnion = new Set([...Array.from(localPrev), ...Array.from(computed)]);
-  saveLocal(Array.from(localUnion));
+  if (!userId) return;
 
-  // Se não logado, encerra aqui
-  if (!userId) return computed;
-
-  // Busca remotas
   const { data, error } = await supabase
     .from("user_achievements")
     .select("achievement_id")
     .eq("user_id", userId);
 
   if (error) {
-    console.error("Failed to fetch user achievements:", error);
-    return computed;
+    console.error("Failed to fetch user achievements for sync:", error);
+    return;
   }
 
   const remoteSet = new Set<string>(data?.map((r: any) => r.achievement_id) ?? []);
-  const missing = Array.from(computed).filter((id) => !remoteSet.has(id));
+  const missing = Array.from(unlockedIds).filter((id) => !remoteSet.has(id));
 
   if (missing.length > 0) {
     const rows = missing.map((id) => ({ user_id: userId, achievement_id: id }));
@@ -100,6 +94,4 @@ export async function syncAchievements(userId: string | null | undefined, progre
       console.error("Failed to insert achievements:", insertError);
     }
   }
-
-  return computed;
 }

@@ -1,12 +1,16 @@
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { useSupabase } from './SupabaseContext';
-import { readLocal } from '@/utils/achievements';
+import { readLocal, computeAchievements, persistAchievements } from '@/utils/achievements';
 import { supabase } from '@/integrations/supabase/client';
+import { achievements as allAchievementsData } from '@/data/achievementsData';
+import { toast } from 'sonner';
+import type { ProgressMap } from '@/hooks/use-progress';
 
 interface AchievementsContextType {
   unlockedIds: Set<string>;
   isLoading: boolean;
   refreshAchievements: () => Promise<void>;
+  checkForNewAchievements: (progress: ProgressMap) => Promise<void>;
 }
 
 const AchievementsContext = createContext<AchievementsContextType | undefined>(undefined);
@@ -44,8 +48,27 @@ export const AchievementsProvider = ({ children }: { children: ReactNode }) => {
     fetchAndSetAchievements();
   }, [fetchAndSetAchievements]);
 
+  const checkForNewAchievements = useCallback(async (progress: ProgressMap) => {
+    const previouslyUnlocked = unlockedIds;
+    const allCurrentlyEarned = computeAchievements(progress);
+
+    const newlyUnlockedIds = [...allCurrentlyEarned].filter(id => !previouslyUnlocked.has(id));
+
+    if (newlyUnlockedIds.length > 0) {
+      newlyUnlockedIds.forEach(id => {
+        const achievement = allAchievementsData.find(a => a.id === id);
+        if (achievement) {
+          toast.success(`🏅 Medalha Desbloqueada: ${achievement.title}`);
+        }
+      });
+
+      await persistAchievements(user?.id, allCurrentlyEarned);
+      setUnlockedIds(allCurrentlyEarned);
+    }
+  }, [unlockedIds, user]);
+
   return (
-    <AchievementsContext.Provider value={{ unlockedIds, isLoading, refreshAchievements: fetchAndSetAchievements }}>
+    <AchievementsContext.Provider value={{ unlockedIds, isLoading, refreshAchievements: fetchAndSetAchievements, checkForNewAchievements }}>
       {children}
     </AchievementsContext.Provider>
   );
