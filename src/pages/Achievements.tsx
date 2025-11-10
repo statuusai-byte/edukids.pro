@@ -27,24 +27,23 @@ const AchievementsSkeleton = () => (
 const AchievementsPage = () => {
   const { user } = useSupabase();
   const [unlockedIds, setUnlockedIds] = useState<Set<string>>(new Set());
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // Apenas para o carregamento inicial do localStorage
   const userId = user?.id;
 
+  // Efeito para carregar dados locais imediatamente
   useEffect(() => {
-    const fetchAchievements = async () => {
-      setLoading(true);
-      
-      // 1. Carrega dados locais imediatamente para uma UI rápida
-      const localSet = readLocal();
-      setUnlockedIds(localSet);
-      
-      // 2. Se não houver usuário, para por aqui.
+    const localSet = readLocal();
+    setUnlockedIds(localSet);
+    setLoading(false);
+  }, []);
+
+  // Efeito para sincronizar com o Supabase em segundo plano
+  useEffect(() => {
+    const syncWithSupabase = async () => {
       if (!userId) {
-        setLoading(false);
-        return;
+        return; // Não está logado, não há o que sincronizar
       }
 
-      // 3. Busca dados remotos em segundo plano
       const { data, error } = await supabase
         .from('user_achievements')
         .select('achievement_id')
@@ -52,18 +51,17 @@ const AchievementsPage = () => {
 
       if (error) {
         console.error('Error fetching achievements:', error);
-        // Em caso de erro, mantém os dados locais
       } else {
-        // 4. Mescla dados remotos com os locais e atualiza a UI
+        // Mescla os dados remotos com os dados já exibidos
         const remoteSet = new Set((data ?? []).map((a: any) => a.achievement_id));
-        const union = new Set<string>([...Array.from(localSet), ...Array.from(remoteSet)]);
-        setUnlockedIds(union);
+        setUnlockedIds(prevIds => {
+          const union = new Set<string>([...Array.from(prevIds), ...Array.from(remoteSet)]);
+          return union;
+        });
       }
-      
-      setLoading(false);
     };
 
-    fetchAchievements();
+    syncWithSupabase();
   }, [userId]);
 
   return (
