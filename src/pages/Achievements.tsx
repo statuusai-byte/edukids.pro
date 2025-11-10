@@ -33,16 +33,18 @@ const AchievementsPage = () => {
   useEffect(() => {
     const fetchAchievements = async () => {
       setLoading(true);
-
-      // Começa com as conquistas locais (offline)
+      
+      // 1. Carrega dados locais imediatamente para uma UI rápida
       const localSet = readLocal();
-
+      setUnlockedIds(localSet);
+      
+      // 2. Se não houver usuário, para por aqui.
       if (!userId) {
-        setUnlockedIds(localSet);
         setLoading(false);
         return;
       }
 
+      // 3. Busca dados remotos em segundo plano
       const { data, error } = await supabase
         .from('user_achievements')
         .select('achievement_id')
@@ -50,12 +52,14 @@ const AchievementsPage = () => {
 
       if (error) {
         console.error('Error fetching achievements:', error);
-        setUnlockedIds(localSet); // Fallback para dados locais em caso de erro
+        // Em caso de erro, mantém os dados locais
       } else {
+        // 4. Mescla dados remotos com os locais e atualiza a UI
         const remoteSet = new Set((data ?? []).map((a: any) => a.achievement_id));
         const union = new Set<string>([...Array.from(localSet), ...Array.from(remoteSet)]);
         setUnlockedIds(union);
       }
+      
       setLoading(false);
     };
 
