@@ -6,14 +6,29 @@ export function usePrefersReducedMotion() {
   useEffect(() => {
     if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return;
     
-    const mql = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let mql: MediaQueryList | null = null;
+    try {
+      mql = window.matchMedia('(prefers-reduced-motion: reduce)');
+    } catch (e) {
+      console.error("Failed to initialize matchMedia for reduced motion:", e);
+      return;
+    }
     
-    if (!mql) return; // Safety check if matchMedia returns null/undefined unexpectedly
+    if (!mql) return;
     
     const handler = () => setReduced(mql.matches);
     handler();
-    mql.addEventListener?.('change', handler);
-    return () => mql.removeEventListener?.('change', handler);
+    
+    // Use addEventListener if available, otherwise fallback to the legacy method if it exists
+    if (mql.addEventListener) {
+      mql.addEventListener('change', handler);
+      return () => mql.removeEventListener('change', handler);
+    } else if (mql.addListener) {
+      mql.addListener(handler);
+      return () => mql.removeListener(handler);
+    }
+    
+    return () => {};
   }, []);
 
   return reduced;
