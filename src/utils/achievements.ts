@@ -4,14 +4,17 @@ import { subjectsData } from "@/data/activitiesData";
 export type ProgressMap = Record<string, boolean>;
 
 const LOCAL_KEY = "edukids_achievements_unlocked_v1";
+const isBrowser = typeof window !== 'undefined';
 
 function saveLocal(ids: string[]) {
+  if (!isBrowser) return;
   try {
     localStorage.setItem(LOCAL_KEY, JSON.stringify(Array.from(new Set(ids))));
   } catch {}
 }
 
 export function readLocal(): Set<string> {
+  if (!isBrowser) return new Set();
   try {
     const raw = localStorage.getItem(LOCAL_KEY);
     if (!raw) return new Set();
