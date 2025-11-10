@@ -4,6 +4,7 @@ const PREMIUM_STORAGE_KEY = 'edukids_is_premium';
 
 // Helper to read from storage safely
 const getStoredPremiumStatus = (): boolean => {
+  if (typeof window === 'undefined') return false;
   try {
     return localStorage.getItem(PREMIUM_STORAGE_KEY) === 'true';
   } catch (error) {
@@ -13,12 +14,14 @@ const getStoredPremiumStatus = (): boolean => {
 };
 
 export function usePremiumStatus() {
-  const [isPremium, setIsPremium] = useState(getStoredPremiumStatus);
-  const [isLoading, setIsLoading] = useState(true); // Keep loading state for initial check
+  // Inicializa como false para evitar chamadas síncronas no build
+  const [isPremium, setIsPremium] = useState(false); 
+  const [isLoading, setIsLoading] = useState(true); 
 
   // Effect for initial load and setting up listener
   useEffect(() => {
-    // Initial status is already set by useState, so we just need to turn off loading
+    // Load initial status here, after mounting
+    setIsPremium(getStoredPremiumStatus());
     setIsLoading(false);
 
     // Function to handle storage changes
@@ -39,6 +42,7 @@ export function usePremiumStatus() {
 
   // These functions will now trigger updates for any component using the hook
   const activatePremium = useCallback(() => {
+    if (typeof window === 'undefined') return;
     try {
       localStorage.setItem(PREMIUM_STORAGE_KEY, 'true');
       setIsPremium(true);
@@ -50,6 +54,7 @@ export function usePremiumStatus() {
   }, []);
 
   const deactivatePremium = useCallback(() => {
+    if (typeof window === 'undefined') return;
     try {
       localStorage.setItem(PREMIUM_STORAGE_KEY, 'false');
       setIsPremium(false);
