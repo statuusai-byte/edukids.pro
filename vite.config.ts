@@ -14,14 +14,12 @@ export default defineConfig(() => ({
     dyadComponentTagger(),
     react(),
     VitePWA({
-      registerType: "autoUpdate",
-      injectRegister: null, // Alterado para permitir o registro manual
+      registerType: "prompt",
+      injectRegister: null, // Permite o registro manual via hook
       workbox: {
         globPatterns: ["**/*.{js,css,html,svg,png,ico,webmanifest}"],
         navigateFallback: "/index.html",
         navigateFallbackDenylist: [/^\/\.well-known\//],
-        skipWaiting: true,
-        clientsClaim: true,
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/eylmcfxdbwqbmfubojty\.supabase\.co\/.*/i,
