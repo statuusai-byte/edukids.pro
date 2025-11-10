@@ -15,9 +15,13 @@ function computeIsMobile() {
 
   const matchMediaAvailable = typeof window.matchMedia === "function";
 
-  const pointerCoarse = matchMediaAvailable
-    ? window.matchMedia("(pointer: coarse)")?.matches ?? false
-    : false;
+  let pointerCoarse = false;
+  if (matchMediaAvailable) {
+    const mql = window.matchMedia("(pointer: coarse)");
+    if (mql) {
+      pointerCoarse = mql.matches;
+    }
+  }
 
   const widthBased = window.innerWidth < MOBILE_BREAKPOINT;
 
@@ -41,8 +45,11 @@ export function useIsMobile() {
     let mql: MediaQueryList | null = null;
     if (typeof window.matchMedia === "function") {
       mql = window.matchMedia("(pointer: coarse)");
-      mql.addEventListener?.("change", onResize);
-      mql.addListener?.(onResize);
+      // Need to check mql before adding listeners
+      if (mql) {
+        mql.addEventListener?.("change", onResize);
+        mql.addListener?.(onResize);
+      }
     }
 
     // Inicializa estado

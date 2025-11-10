@@ -5,7 +5,11 @@ export function usePrefersReducedMotion() {
 
   useEffect(() => {
     if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return;
+    
     const mql = window.matchMedia('(prefers-reduced-motion: reduce)');
+    
+    if (!mql) return; // Safety check if matchMedia returns null/undefined unexpectedly
+    
     const handler = () => setReduced(mql.matches);
     handler();
     mql.addEventListener?.('change', handler);

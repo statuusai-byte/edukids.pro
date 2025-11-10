@@ -11,7 +11,8 @@ export function useIsInstalled(): boolean {
     if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return;
 
     // A media query `display-mode: standalone` é o padrão moderno para PWAs.
-    const isStandalone = window.matchMedia('(display-mode: standalone)')?.matches ?? false;
+    const mql = window.matchMedia('(display-mode: standalone)');
+    const isStandalone = mql ? mql.matches : false;
     
     // `navigator.standalone` é uma propriedade legada específica da Apple para iOS.
     // É bom verificar para maior compatibilidade.
