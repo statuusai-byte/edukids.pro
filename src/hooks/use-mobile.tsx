@@ -30,16 +30,19 @@ function computeIsMobile() {
   const widthBased = window.innerWidth < MOBILE_BREAKPOINT;
 
   // Ordem de decisão:
-  // 1) userAgentData.mobile (quando disponível)
-  // 2) pointer: coarse (telas de toque)
-  // 3) largura da viewport
   if (uaDataMobile !== undefined) return uaDataMobile || pointerCoarse || widthBased;
   return pointerCoarse || widthBased;
 }
 
+// Função para obter o estado inicial seguro
+function getInitialIsMobile() {
+  if (typeof window === "undefined") return false;
+  return computeIsMobile();
+}
+
 export function useIsMobile() {
-  // Inicializa como false no lado do servidor/build
-  const [isMobile, setIsMobile] = React.useState<boolean>(false);
+  // Inicializa o estado com a detecção real no cliente, ou false no servidor
+  const [isMobile, setIsMobile] = React.useState<boolean>(getInitialIsMobile);
 
   React.useEffect(() => {
     // Apenas executa a lógica de detecção no lado do cliente
@@ -63,8 +66,8 @@ export function useIsMobile() {
       }
     }
 
-    // Inicializa estado
-    onResize();
+    // Inicializa estado (já feito pelo useState, mas mantemos o onResize para garantir)
+    // onResize();
 
     return () => {
       window.removeEventListener("resize", onResize);
