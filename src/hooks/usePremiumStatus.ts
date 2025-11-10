@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 
 const PREMIUM_STORAGE_KEY = 'edukids_is_premium';
 
-// Helper to read from storage safely
+// Helper para ler do storage com segurança (apenas usado dentro de useEffect)
 const getStoredPremiumStatus = (): boolean => {
   if (typeof window === 'undefined') return false;
   try {
@@ -14,24 +14,24 @@ const getStoredPremiumStatus = (): boolean => {
 };
 
 export function usePremiumStatus() {
-  // Inicializa como false para evitar chamadas síncronas no build
+  // Inicializa como false (valor seguro para SSR/build)
   const [isPremium, setIsPremium] = useState(false); 
   const [isLoading, setIsLoading] = useState(true); 
 
-  // Effect for initial load and setting up listener
+  // Effect para carregamento inicial e configuração do listener
   useEffect(() => {
-    // Load initial status here, after mounting
+    // 1. Carrega o status inicial aqui, após a montagem
     setIsPremium(getStoredPremiumStatus());
     setIsLoading(false);
 
-    // Function to handle storage changes
+    // 2. Função para lidar com mudanças no storage
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === PREMIUM_STORAGE_KEY) {
         setIsPremium(getStoredPremiumStatus());
       }
     };
 
-    // Add event listener for changes in other tabs/windows
+    // Adiciona event listener para mudanças em outras abas/janelas
     window.addEventListener('storage', handleStorageChange);
 
     // Cleanup listener on unmount
@@ -40,13 +40,13 @@ export function usePremiumStatus() {
     };
   }, []);
 
-  // These functions will now trigger updates for any component using the hook
+  // Funções de controle
   const activatePremium = useCallback(() => {
     if (typeof window === 'undefined') return;
     try {
       localStorage.setItem(PREMIUM_STORAGE_KEY, 'true');
       setIsPremium(true);
-      // Manually dispatch a storage event so the current window also reacts
+      // Manualmente dispara um evento de storage para que a janela atual também reaja
       window.dispatchEvent(new StorageEvent('storage', { key: PREMIUM_STORAGE_KEY }));
     } catch (error) {
       console.error("Failed to save premium status:", error);
