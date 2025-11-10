@@ -8,14 +8,11 @@ import { SupabaseProvider } from "./context/SupabaseContext";
 import { PremiumProvider } from "./context/PremiumContext";
 import { HintsProvider } from "./context/HintsContext";
 import { ThemeProvider } from "./context/ThemeContext";
-import { AchievementsProvider } from "./context/AchievementsContext";
 import { Sparkles } from "lucide-react";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import AmbientBackground from "@/components/AmbientBackground";
 import RequireAuth from "@/components/RequireAuth";
 import GlobalErrorLogger from "@/components/GlobalErrorLogger";
-import PwaUpdatePrompt from "@/components/PwaUpdatePrompt";
-import ClientOnly from "@/components/ClientOnly"; // Importando o novo componente
 
 // Lazy pages/components
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -103,18 +100,13 @@ const App = () => (
               <ProfileProvider>
                 <PremiumProvider>
                   <HintsProvider>
-                    <AchievementsProvider>
-                      <ClientOnly>
-                        <SonnerToaster />
-                        <GlobalErrorLogger />
-                        <PwaUpdatePrompt />
-                      </ClientOnly>
-                      <ErrorBoundary>
-                        <Suspense fallback={<Fallback />}>
-                          <AppRoutes />
-                        </Suspense>
-                      </ErrorBoundary>
-                    </AchievementsProvider>
+                    <SonnerToaster />
+                    <GlobalErrorLogger />
+                    <ErrorBoundary>
+                      <Suspense fallback={<Fallback />}>
+                        <AppRoutes />
+                      </Suspense>
+                    </ErrorBoundary>
                   </HintsProvider>
                 </PremiumProvider>
               </ProfileProvider>

@@ -1,9 +1,12 @@
+import { useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useSupabase } from '@/context/SupabaseContext';
+import { achievements } from '@/data/achievementsData';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Icon } from '@/components/Icon';
 import { cn } from '@/lib/utils';
+import { readLocal } from '@/utils/achievements';
 import { Skeleton } from '@/components/ui/skeleton';
-import { achievements } from '@/data/achievementsData';
-import { useAchievementsContext } from '@/context/AchievementsContext';
 
 const AchievementsSkeleton = () => (
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -22,12 +25,47 @@ const AchievementsSkeleton = () => (
 );
 
 const AchievementsPage = () => {
-  const { unlockedIds, isLoading } = useAchievementsContext();
+  const { user } = useSupabase();
+  const [unlockedIds, setUnlockedIds] = useState<Set<string>>(new Set());
+  const [loading, setLoading] = useState(true);
+  const userId = user?.id;
+
+  useEffect(() => {
+    const fetchAchievements = async () => {
+      setLoading(true);
+
+      // Começa com as conquistas locais (offline)
+      const localSet = readLocal();
+
+      if (!userId) {
+        setUnlockedIds(localSet);
+        setLoading(false);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('user_achievements')
+        .select('achievement_id')
+        .eq('user_id', userId);
+
+      if (error) {
+        console.error('Error fetching achievements:', error);
+        setUnlockedIds(localSet); // Fallback para dados locais em caso de erro
+      } else {
+        const remoteSet = new Set((data ?? []).map((a: any) => a.achievement_id));
+        const union = new Set<string>([...Array.from(localSet), ...Array.from(remoteSet)]);
+        setUnlockedIds(union);
+      }
+      setLoading(false);
+    };
+
+    fetchAchievements();
+  }, [userId]);
 
   return (
     <div>
       <h1 className="text-4xl font-bold tracking-tighter mb-8">Medalhas e Conquistas</h1>
-      {isLoading ? (
+      {loading ? (
         <AchievementsSkeleton />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

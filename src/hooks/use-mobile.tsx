@@ -3,8 +3,6 @@ import * as React from "react";
 const MOBILE_BREAKPOINT = 768;
 
 function computeIsMobile() {
-  if (typeof window === "undefined") return false;
-
   // Prefer capabilities over width
   const uaDataMobile =
     // @ts-expect-error userAgentData nem sempre existe
@@ -13,60 +11,46 @@ function computeIsMobile() {
         !!navigator.userAgentData.mobile
       : undefined;
 
-  const matchMediaAvailable = typeof window.matchMedia === "function";
+  const pointerCoarse =
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(pointer: coarse)").matches;
 
-  let pointerCoarse = false;
-  if (matchMediaAvailable) {
-    try {
-      const mql = window.matchMedia("(pointer: coarse)");
-      if (mql && mql.matches) {
-        pointerCoarse = true;
-      }
-    } catch (e) {
-      console.error("Error checking pointer: coarse", e);
-    }
-  }
-
-  const widthBased = window.innerWidth < MOBILE_BREAKPOINT;
+  const widthBased =
+    typeof window !== "undefined" ? window.innerWidth < MOBILE_BREAKPOINT : false;
 
   // Ordem de decisão:
+  // 1) userAgentData.mobile (quando disponível)
+  // 2) pointer: coarse (telas de toque)
+  // 3) largura da viewport
   if (uaDataMobile !== undefined) return uaDataMobile || pointerCoarse || widthBased;
   return pointerCoarse || widthBased;
 }
 
 export function useIsMobile() {
-  // Inicializa o estado como false para evitar chamadas síncronas a APIs do navegador durante o build.
-  const [isMobile, setIsMobile] = React.useState<boolean>(false);
+  const [isMobile, setIsMobile] = React.useState<boolean>(() => computeIsMobile());
 
   React.useEffect(() => {
-    // Apenas executa a lógica de detecção no lado do cliente
-    if (typeof window === "undefined") return;
-
     const onResize = () => setIsMobile(computeIsMobile());
 
-    // Define o estado inicial após a montagem
-    onResize();
-
-    // Ouve mudanças de tamanho
+    // Ouve mudanças de tamanho e de pointer
     window.addEventListener("resize", onResize);
 
     let mql: MediaQueryList | null = null;
     if (typeof window.matchMedia === "function") {
-      try {
-        mql = window.matchMedia("(pointer: coarse)");
-        // Adiciona listener moderno
-        if (mql) {
-          mql.addEventListener?.("change", onResize);
-        }
-      } catch (e) {
-        console.error("Failed to set up matchMedia listener:", e);
-      }
+      mql = window.matchMedia("(pointer: coarse)");
+      mql.addEventListener?.("change", onResize);
+      mql.addListener?.(onResize);
     }
+
+    // Inicializa estado
+    onResize();
 
     return () => {
       window.removeEventListener("resize", onResize);
       if (mql) {
         mql.removeEventListener?.("change", onResize);
+        mql.removeListener?.(onResize);
       }
     };
   }, []);

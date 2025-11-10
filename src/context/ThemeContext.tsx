@@ -23,32 +23,23 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 export function ThemeProvider({
   children,
   defaultTheme = 'dark',
-  storageKey = 'edukids-theme',
+  storageKey = 'vite-ui-theme',
   ...props
 }: ThemeProviderProps) {
-  // Inicializa com um valor padrão seguro. A leitura do localStorage será feita no useEffect.
-  const [theme, setTheme] = useState<Theme>(defaultTheme);
+  const [theme, setTheme] = useState<Theme>(
+    () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
+  );
 
-  // Este useEffect só roda no cliente, após a montagem.
-  useEffect(() => {
-    let storedTheme: Theme;
-    try {
-      storedTheme = (localStorage.getItem(storageKey) as Theme) || defaultTheme;
-    } catch {
-      storedTheme = defaultTheme;
-    }
-    setTheme(storedTheme);
-  }, [storageKey, defaultTheme]);
-
-  // Este useEffect aplica a classe de tema ao HTML.
   useEffect(() => {
     const root = window.document.documentElement;
+
     root.classList.remove('light', 'dark');
 
     if (theme === 'system') {
       const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
         ? 'dark'
         : 'light';
+
       root.classList.add(systemTheme);
       return;
     }
@@ -59,11 +50,7 @@ export function ThemeProvider({
   const value = {
     theme,
     setTheme: (newTheme: Theme) => {
-      try {
-        localStorage.setItem(storageKey, newTheme);
-      } catch (e) {
-        console.error("Failed to set theme in localStorage", e);
-      }
+      localStorage.setItem(storageKey, newTheme);
       setTheme(newTheme);
     },
   };

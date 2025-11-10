@@ -3,10 +3,7 @@ type SoundType = 'click' | 'success' | 'error' | 'navigate';
 const DEFAULT_THEME = 'nebula';
 const SOUND_ENABLED_KEY = 'edukids_sound_enabled';
 
-const isBrowser = typeof window !== 'undefined';
-
 export const getSoundEnabled = (): boolean => {
-  if (!isBrowser) return true; // Padrão seguro durante o build
   try {
     const raw = localStorage.getItem(SOUND_ENABLED_KEY);
     if (raw === null) return true; // padrão: sons ligados
@@ -17,7 +14,6 @@ export const getSoundEnabled = (): boolean => {
 };
 
 export const setSoundEnabled = (enabled: boolean) => {
-  if (!isBrowser) return;
   try {
     localStorage.setItem(SOUND_ENABLED_KEY, String(enabled));
   } catch {
@@ -26,7 +22,7 @@ export const setSoundEnabled = (enabled: boolean) => {
 };
 
 export const playSound = (type: SoundType) => {
-  if (!isBrowser || !getSoundEnabled()) return;
+  if (!getSoundEnabled()) return;
 
   try {
     const soundPath = `/sounds/${DEFAULT_THEME}/${type}.mp3`;

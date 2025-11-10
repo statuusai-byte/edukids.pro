@@ -2,9 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 
 const PREMIUM_STORAGE_KEY = 'edukids_is_premium';
 
-// Helper para ler do storage com segurança (apenas usado dentro de useEffect)
+// Helper to read from storage safely
 const getStoredPremiumStatus = (): boolean => {
-  if (typeof window === 'undefined') return false;
   try {
     return localStorage.getItem(PREMIUM_STORAGE_KEY) === 'true';
   } catch (error) {
@@ -14,24 +13,22 @@ const getStoredPremiumStatus = (): boolean => {
 };
 
 export function usePremiumStatus() {
-  // Inicializa como false (valor seguro para SSR/build)
-  const [isPremium, setIsPremium] = useState(false); 
-  const [isLoading, setIsLoading] = useState(true); 
+  const [isPremium, setIsPremium] = useState(getStoredPremiumStatus);
+  const [isLoading, setIsLoading] = useState(true); // Keep loading state for initial check
 
-  // Effect para carregamento inicial e configuração do listener
+  // Effect for initial load and setting up listener
   useEffect(() => {
-    // 1. Carrega o status inicial aqui, após a montagem
-    setIsPremium(getStoredPremiumStatus());
+    // Initial status is already set by useState, so we just need to turn off loading
     setIsLoading(false);
 
-    // 2. Função para lidar com mudanças no storage
+    // Function to handle storage changes
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === PREMIUM_STORAGE_KEY) {
         setIsPremium(getStoredPremiumStatus());
       }
     };
 
-    // Adiciona event listener para mudanças em outras abas/janelas
+    // Add event listener for changes in other tabs/windows
     window.addEventListener('storage', handleStorageChange);
 
     // Cleanup listener on unmount
@@ -40,13 +37,12 @@ export function usePremiumStatus() {
     };
   }, []);
 
-  // Funções de controle
+  // These functions will now trigger updates for any component using the hook
   const activatePremium = useCallback(() => {
-    if (typeof window === 'undefined') return;
     try {
       localStorage.setItem(PREMIUM_STORAGE_KEY, 'true');
       setIsPremium(true);
-      // Manualmente dispara um evento de storage para que a janela atual também reaja
+      // Manually dispatch a storage event so the current window also reacts
       window.dispatchEvent(new StorageEvent('storage', { key: PREMIUM_STORAGE_KEY }));
     } catch (error) {
       console.error("Failed to save premium status:", error);
@@ -54,7 +50,6 @@ export function usePremiumStatus() {
   }, []);
 
   const deactivatePremium = useCallback(() => {
-    if (typeof window === 'undefined') return;
     try {
       localStorage.setItem(PREMIUM_STORAGE_KEY, 'false');
       setIsPremium(false);

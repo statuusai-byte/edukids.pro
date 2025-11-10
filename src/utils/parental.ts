@@ -3,10 +3,7 @@
 const PIN_HASH_KEY = "edukids_parent_pin_hash";
 const REQUIRE_PIN_KEY = "edukids_require_parent_pin";
 
-const isBrowser = typeof window !== 'undefined';
-
 async function hashString(text: string) {
-  if (!isBrowser) return "";
   const enc = new TextEncoder();
   const data = enc.encode(text);
   const hashBuffer = await crypto.subtle.digest("SHA-256", data);
@@ -16,7 +13,6 @@ async function hashString(text: string) {
 }
 
 export async function setParentPin(pin: string) {
-  if (!isBrowser) return;
   try {
     const h = await hashString(pin);
     localStorage.setItem(PIN_HASH_KEY, h);
@@ -26,7 +22,6 @@ export async function setParentPin(pin: string) {
 }
 
 export function removeParentPin() {
-  if (!isBrowser) return;
   try {
     localStorage.removeItem(PIN_HASH_KEY);
   } catch (e) {
@@ -35,7 +30,6 @@ export function removeParentPin() {
 }
 
 export async function verifyParentPin(pin: string) {
-  if (!isBrowser) return false;
   try {
     const stored = localStorage.getItem(PIN_HASH_KEY);
     if (!stored) return false;
@@ -48,7 +42,6 @@ export async function verifyParentPin(pin: string) {
 }
 
 export function hasParentPin() {
-  if (!isBrowser) return false;
   try {
     return !!localStorage.getItem(PIN_HASH_KEY);
   } catch {
@@ -57,7 +50,6 @@ export function hasParentPin() {
 }
 
 export function requirePinForPurchasesGet(): boolean {
-  if (!isBrowser) return false;
   try {
     return localStorage.getItem(REQUIRE_PIN_KEY) === "true";
   } catch {
@@ -66,7 +58,6 @@ export function requirePinForPurchasesGet(): boolean {
 }
 
 export function requirePinForPurchasesSet(value: boolean) {
-  if (!isBrowser) return;
   try {
     localStorage.setItem(REQUIRE_PIN_KEY, value ? "true" : "false");
   } catch {

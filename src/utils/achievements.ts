@@ -4,17 +4,14 @@ import { subjectsData } from "@/data/activitiesData";
 export type ProgressMap = Record<string, boolean>;
 
 const LOCAL_KEY = "edukids_achievements_unlocked_v1";
-const isBrowser = typeof window !== 'undefined';
 
 function saveLocal(ids: string[]) {
-  if (!isBrowser) return;
   try {
     localStorage.setItem(LOCAL_KEY, JSON.stringify(Array.from(new Set(ids))));
   } catch {}
 }
 
 export function readLocal(): Set<string> {
-  if (!isBrowser) return new Set();
   try {
     const raw = localStorage.getItem(LOCAL_KEY);
     if (!raw) return new Set();
@@ -47,7 +44,6 @@ export function computeAchievements(progress: ProgressMap): Set<string> {
 
   if (completedKeys.length >= 1) unlocked.add("first_step");
   if (completedKeys.length >= 10) unlocked.add("ten_lessons");
-  if (completedKeys.length >= 50) unlocked.add("fifty_lessons");
 
   // Polímata: completar pelo menos 1 lição em 5 matérias diferentes
   const subjectsCompleted = new Set<string>();
@@ -72,23 +68,30 @@ export function computeAchievements(progress: ProgressMap): Set<string> {
 }
 
 // Sincroniza conquistas com Supabase (inserindo as que faltam) e salva localmente
-export async function persistAchievements(userId: string | null | undefined, unlockedIds: Set<string>) {
-  saveLocal(Array.from(unlockedIds));
+export async function syncAchievements(userId: string | null | undefined, progress: ProgressMap) {
+  const computed = computeAchievements(progress);
 
-  if (!userId) return;
+  // Atualiza local
+  const localPrev = readLocal();
+  const localUnion = new Set([...Array.from(localPrev), ...Array.from(computed)]);
+  saveLocal(Array.from(localUnion));
 
+  // Se não logado, encerra aqui
+  if (!userId) return computed;
+
+  // Busca remotas
   const { data, error } = await supabase
     .from("user_achievements")
     .select("achievement_id")
     .eq("user_id", userId);
 
   if (error) {
-    console.error("Failed to fetch user achievements for sync:", error);
-    return;
+    console.error("Failed to fetch user achievements:", error);
+    return computed;
   }
 
   const remoteSet = new Set<string>(data?.map((r: any) => r.achievement_id) ?? []);
-  const missing = Array.from(unlockedIds).filter((id) => !remoteSet.has(id));
+  const missing = Array.from(computed).filter((id) => !remoteSet.has(id));
 
   if (missing.length > 0) {
     const rows = missing.map((id) => ({ user_id: userId, achievement_id: id }));
@@ -97,4 +100,6 @@ export async function persistAchievements(userId: string | null | undefined, unl
       console.error("Failed to insert achievements:", insertError);
     }
   }
+
+  return computed;
 }

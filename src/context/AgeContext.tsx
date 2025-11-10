@@ -11,12 +11,10 @@ interface AgeContextType {
 const AgeContext = createContext<AgeContextType | undefined>(undefined);
 
 export const AgeProvider = ({ children }: { children: ReactNode }) => {
-  // Inicializa como null (valor seguro para SSR/build)
   const [ageGroup, setAgeGroupState] = useState<AgeGroup>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // A leitura do localStorage ocorre apenas no lado do cliente
     try {
       const storedAgeGroup = localStorage.getItem('edukids_age_group') as AgeGroup;
       if (storedAgeGroup) {
@@ -30,8 +28,6 @@ export const AgeProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const setAgeGroup = (newAgeGroup: AgeGroup) => {
-    // A escrita no localStorage também é protegida
-    if (typeof window === 'undefined') return;
     try {
       if (newAgeGroup) {
         localStorage.setItem('edukids_age_group', newAgeGroup);
