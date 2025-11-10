@@ -40,13 +40,16 @@ export function ThemeProvider({
   );
 
   useEffect(() => {
+    if (typeof window === 'undefined') return; // CRITICAL: Ensure execution only in browser
+
     const root = window.document.documentElement;
 
     root.classList.remove('light', 'dark');
 
     if (theme === 'system') {
       if (typeof window.matchMedia === 'function') {
-        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+        const mql = window.matchMedia('(prefers-color-scheme: dark)');
+        const systemTheme = (mql && mql.matches)
           ? 'dark'
           : 'light';
         root.classList.add(systemTheme);
