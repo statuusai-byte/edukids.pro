@@ -15,6 +15,7 @@ import AmbientBackground from "@/components/AmbientBackground";
 import RequireAuth from "@/components/RequireAuth";
 import GlobalErrorLogger from "@/components/GlobalErrorLogger";
 import PwaUpdatePrompt from "@/components/PwaUpdatePrompt";
+import ClientOnly from "@/components/ClientOnly"; // Importando o novo componente
 
 // Lazy pages/components
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -103,9 +104,11 @@ const App = () => (
                 <PremiumProvider>
                   <HintsProvider>
                     <AchievementsProvider>
-                      <SonnerToaster />
-                      <GlobalErrorLogger />
-                      <PwaUpdatePrompt />
+                      <ClientOnly>
+                        <SonnerToaster />
+                        <GlobalErrorLogger />
+                        <PwaUpdatePrompt />
+                      </ClientOnly>
                       <ErrorBoundary>
                         <Suspense fallback={<Fallback />}>
                           <AppRoutes />
