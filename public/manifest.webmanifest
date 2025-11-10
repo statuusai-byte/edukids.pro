@@ -1,5 +1,5 @@
 {
-  "name": "EduKids+",
+  "name": "EduKids+ | Aprendizagem Lúdica",
   "short_name": "EduKids+",
   "description": "Explore atividades, cursos e jogos educativos para crianças — Aprender nunca foi tão divertido.",
   "start_url": "/",
@@ -7,6 +7,7 @@
   "orientation": "portrait-primary",
   "background_color": "#0f172a",
   "theme_color": "#7c3aed",
+  "categories": ["education", "kids", "games", "books_and_reference"],
   "icons": [
     {
       "src": "/icons/icon-192.png",
@@ -19,6 +20,67 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/uploads/screenshot-areas-de-estudo.png",
+      "type": "image/png",
+      "sizes": "1080x2340",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/uploads/screenshot-play-plus.png",
+      "type": "image/png",
+      "sizes": "1080x2340",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/uploads/screenshot-loja.png",
+      "type": "image/png",
+      "sizes": "1080x2340",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/uploads/screenshot-painel-dos-pais.png",
+      "type": "image/png",
+      "sizes": "1080x2340",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Atividades",
+      "short_name": "Atividades",
+      "description": "Ver todas as áreas de estudo",
+      "url": "/activities",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Play+",
+      "short_name": "Play+",
+      "description": "Acessar trilhas de estudo e missões",
+      "url": "/play-plus",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Loja",
+      "short_name": "Loja",
+      "description": "Ver planos e pacotes de dicas",
+      "url": "/store",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }

@@ -3,7 +3,7 @@
   "host": "edukidsspro.vercel.app",
   "name": "EduKids+",
   "launcherName": "EduKids+",
-  "display": "fullscreen",
+  "display": "standalone",
   "themeColor": "#7c3aed",
   "themeColorDark": "#0f172a",
   "navigationColor": "#0f172a",
@@ -21,9 +21,28 @@
   },
   "appVersionName": "1.0.2",
   "appVersionCode": 3,
-  "shortcuts": [],
+  "shortcuts": [
+    {
+      "name": "Atividades",
+      "shortName": "Atividades",
+      "url": "/activities",
+      "iconUrl": "https://edukidsspro.vercel.app/icons/icon-192.png"
+    },
+    {
+      "name": "Play+",
+      "shortName": "Play+",
+      "url": "/play-plus",
+      "iconUrl": "https://edukidsspro.vercel.app/icons/icon-192.png"
+    },
+    {
+      "name": "Loja",
+      "shortName": "Loja",
+      "url": "/store",
+      "iconUrl": "https://edukidsspro.vercel.app/icons/icon-192.png"
+    }
+  ],
   "generatorApp": "bubblewrap-cli",
-  "webManifestUrl": "https://edukidsspro.vercel.app/manifest.json",
+  "webManifestUrl": "https://edukidsspro.vercel.app/manifest.webmanifest",
   "fallbackType": "customtabs",
   "features": {
     "playBilling": {
