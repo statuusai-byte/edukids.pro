@@ -17,9 +17,13 @@ function computeIsMobile() {
 
   let pointerCoarse = false;
   if (matchMediaAvailable) {
-    const mql = window.matchMedia("(pointer: coarse)");
-    if (mql && mql.matches) {
-      pointerCoarse = true;
+    try {
+      const mql = window.matchMedia("(pointer: coarse)");
+      if (mql && mql.matches) {
+        pointerCoarse = true;
+      }
+    } catch (e) {
+      console.error("Error checking pointer: coarse", e);
     }
   }
 
@@ -39,18 +43,23 @@ export function useIsMobile() {
 
   React.useEffect(() => {
     // Apenas executa a lógica de detecção no lado do cliente
+    if (typeof window === "undefined") return;
+
     const onResize = () => setIsMobile(computeIsMobile());
 
-    // Ouve mudanças de tamanho e de pointer
+    // Ouve mudanças de tamanho
     window.addEventListener("resize", onResize);
 
     let mql: MediaQueryList | null = null;
     if (typeof window.matchMedia === "function") {
-      mql = window.matchMedia("(pointer: coarse)");
-      // Need to check mql before adding listeners
-      if (mql) {
-        mql.addEventListener?.("change", onResize);
-        mql.addListener?.(onResize);
+      try {
+        mql = window.matchMedia("(pointer: coarse)");
+        // Adiciona listener moderno
+        if (mql) {
+          mql.addEventListener?.("change", onResize);
+        }
+      } catch (e) {
+        console.error("Failed to set up matchMedia listener:", e);
       }
     }
 
@@ -61,7 +70,6 @@ export function useIsMobile() {
       window.removeEventListener("resize", onResize);
       if (mql) {
         mql.removeEventListener?.("change", onResize);
-        mql.removeListener?.(onResize);
       }
     };
   }, []);
