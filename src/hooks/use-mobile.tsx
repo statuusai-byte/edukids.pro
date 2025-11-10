@@ -34,21 +34,18 @@ function computeIsMobile() {
   return pointerCoarse || widthBased;
 }
 
-// Função para obter o estado inicial seguro
-function getInitialIsMobile() {
-  if (typeof window === "undefined") return false;
-  return computeIsMobile();
-}
-
 export function useIsMobile() {
-  // Inicializa o estado com a detecção real no cliente, ou false no servidor
-  const [isMobile, setIsMobile] = React.useState<boolean>(getInitialIsMobile);
+  // Inicializa o estado como false para evitar chamadas síncronas a APIs do navegador durante o build.
+  const [isMobile, setIsMobile] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     // Apenas executa a lógica de detecção no lado do cliente
     if (typeof window === "undefined") return;
 
     const onResize = () => setIsMobile(computeIsMobile());
+
+    // Define o estado inicial após a montagem
+    onResize();
 
     // Ouve mudanças de tamanho
     window.addEventListener("resize", onResize);
@@ -65,9 +62,6 @@ export function useIsMobile() {
         console.error("Failed to set up matchMedia listener:", e);
       }
     }
-
-    // Inicializa estado (já feito pelo useState, mas mantemos o onResize para garantir)
-    // onResize();
 
     return () => {
       window.removeEventListener("resize", onResize);

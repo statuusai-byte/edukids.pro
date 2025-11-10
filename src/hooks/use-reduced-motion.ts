@@ -1,18 +1,8 @@
 import { useEffect, useState } from 'react';
 
-function getInitialReducedMotion() {
-  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false;
-  try {
-    const mql = window.matchMedia('(prefers-reduced-motion: reduce)');
-    return mql ? mql.matches : false;
-  } catch (e) {
-    console.error("Failed to check initial reduced motion:", e);
-    return false;
-  }
-}
-
 export function usePrefersReducedMotion() {
-  const [reduced, setReduced] = useState(getInitialReducedMotion);
+  // Inicializa como false para evitar chamadas síncronas a APIs do navegador durante o build.
+  const [reduced, setReduced] = useState(false);
 
   useEffect(() => {
     if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return;
@@ -28,9 +18,9 @@ export function usePrefersReducedMotion() {
     if (!mql) return;
     
     const handler = () => setReduced(mql.matches);
-    // handler(); // Já inicializado pelo useState
+    handler(); // Define o estado inicial após a montagem
     
-    // Use addEventListener se disponível
+    // Use addEventListener if available, otherwise fallback to the legacy method if it exists
     if (mql.addEventListener) {
       mql.addEventListener('change', handler);
       return () => mql.removeEventListener('change', handler);
