@@ -20,54 +20,49 @@ const initialState: ThemeProviderState = {
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
-function getInitialTheme(storageKey: string, defaultTheme: Theme): Theme {
-  if (typeof window === 'undefined') return defaultTheme;
-  try {
-    return (localStorage.getItem(storageKey) as Theme) || defaultTheme;
-  } catch {
-    return defaultTheme;
-  }
-}
-
 export function ThemeProvider({
   children,
   defaultTheme = 'dark',
-  storageKey = 'edukids-theme', // Changed default storageKey to match App.tsx usage
+  storageKey = 'edukids-theme',
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
-    () => getInitialTheme(storageKey, defaultTheme)
-  );
+  // Inicializa com um valor padrão seguro. A leitura do localStorage será feita no useEffect.
+  const [theme, setTheme] = useState<Theme>(defaultTheme);
 
+  // Este useEffect só roda no cliente, após a montagem.
   useEffect(() => {
-    if (typeof window === 'undefined') return; // CRITICAL: Ensure execution only in browser
+    let storedTheme: Theme;
+    try {
+      storedTheme = (localStorage.getItem(storageKey) as Theme) || defaultTheme;
+    } catch {
+      storedTheme = defaultTheme;
+    }
+    setTheme(storedTheme);
+  }, [storageKey, defaultTheme]);
 
+  // Este useEffect aplica a classe de tema ao HTML.
+  useEffect(() => {
     const root = window.document.documentElement;
-
     root.classList.remove('light', 'dark');
 
     if (theme === 'system') {
-      if (typeof window.matchMedia === 'function') {
-        const mql = window.matchMedia('(prefers-color-scheme: dark)');
-        const systemTheme = (mql && mql.matches)
-          ? 'dark'
-          : 'light';
-        root.classList.add(systemTheme);
-      } else {
-        // Fallback if matchMedia is unavailable (e.g., during SSR or in a limited environment)
-        root.classList.add(defaultTheme);
-      }
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light';
+      root.classList.add(systemTheme);
       return;
     }
 
     root.classList.add(theme);
-  }, [theme, defaultTheme]);
+  }, [theme]);
 
   const value = {
     theme,
     setTheme: (newTheme: Theme) => {
-      if (typeof window !== 'undefined') {
+      try {
         localStorage.setItem(storageKey, newTheme);
+      } catch (e) {
+        console.error("Failed to set theme in localStorage", e);
       }
       setTheme(newTheme);
     },
