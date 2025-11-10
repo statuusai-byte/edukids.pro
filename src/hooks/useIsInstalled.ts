@@ -8,8 +8,10 @@ export function useIsInstalled(): boolean {
   const [isInstalled, setIsInstalled] = useState(false);
 
   useEffect(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return;
+
     // A media query `display-mode: standalone` é o padrão moderno para PWAs.
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+    const isStandalone = window.matchMedia('(display-mode: standalone)')?.matches ?? false;
     
     // `navigator.standalone` é uma propriedade legada específica da Apple para iOS.
     // É bom verificar para maior compatibilidade.

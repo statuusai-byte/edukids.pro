@@ -23,7 +23,7 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 export function ThemeProvider({
   children,
   defaultTheme = 'dark',
-  storageKey = 'vite-ui-theme',
+  storageKey = 'edukids-theme', // Changed default storageKey to match App.tsx usage
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(
@@ -36,16 +36,20 @@ export function ThemeProvider({
     root.classList.remove('light', 'dark');
 
     if (theme === 'system') {
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
-        ? 'dark'
-        : 'light';
-
-      root.classList.add(systemTheme);
+      if (typeof window.matchMedia === 'function') {
+        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+          ? 'dark'
+          : 'light';
+        root.classList.add(systemTheme);
+      } else {
+        // Fallback if matchMedia is unavailable (e.g., during SSR or in a limited environment)
+        root.classList.add(defaultTheme);
+      }
       return;
     }
 
     root.classList.add(theme);
-  }, [theme]);
+  }, [theme, defaultTheme]);
 
   const value = {
     theme,
