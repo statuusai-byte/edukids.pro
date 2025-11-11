@@ -1,24 +1,27 @@
 {
-  "name": "EDUKIDS+ — Aprendizagem Lúdica",
+  "name": "EDUKIDS+",
   "short_name": "EDUKIDS+",
+  "description": "Aprenda, jogue e evolua — tudo em um só lugar. Atividades, cursos e jogos educativos para crianças.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#7c3aed",
-  "orientation": "portrait-primary",
-  "description": "Explore atividades, cursos e jogos educativos para crianças — Aprender nunca foi tão divertido.",
   "icons": [
     {
       "src": "/icons/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
     },
     {
       "src": "/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "maskable"
     }
   ],
   "screenshots": [
@@ -27,44 +30,29 @@
       "sizes": "1080x2340",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Tela de Atividades"
+      "label": "Tela inicial de atividades"
     },
     {
       "src": "/uploads/screenshot-mobile-2.png",
       "sizes": "1080x2340",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Página de Lição Interativa"
+      "label": "Página de lição e quiz"
     },
     {
       "src": "/uploads/screenshot-mobile-3.png",
       "sizes": "1080x2340",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Loja Premium e de Dicas"
+      "label": "Painel dos Pais"
     },
     {
       "src": "/uploads/screenshot-mobile-4.png",
       "sizes": "1080x2340",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Painel dos Pais"
+      "label": "Loja e Premium"
     }
   ],
-  "shortcuts": [
-    {
-      "name": "Atividades",
-      "short_name": "Atividades",
-      "description": "Ir para a tela de atividades",
-      "url": "/activities",
-      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
-    },
-    {
-      "name": "Play+",
-      "short_name": "Play+",
-      "description": "Acessar as Trilhas de Estudo e Missões",
-      "url": "/play-plus",
-      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
-    }
-  ]
+  "orientation": "portrait-primary"
 }
