@@ -26,7 +26,7 @@
     {
       "src": "/icons/icon-512.png",
       "sizes": "512x512",
-      "type": "image": "image/png",
+      "type": "image/png",
       "purpose": "any"
     },
     {
@@ -64,6 +64,20 @@
       "type": "image/png",
       "form_factor": "narrow",
       "label": "Painel dos Pais"
+    },
+    {
+      "src": "/uploads/screenshot-mobile-1.png",
+      "sizes": "2340x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Tela de Atividades (Wide)"
+    },
+    {
+      "src": "/uploads/screenshot-mobile-2.png",
+      "sizes": "2340x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Página de uma Lição (Wide)"
     }
   ]
 }
