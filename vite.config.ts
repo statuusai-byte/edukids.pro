@@ -5,7 +5,7 @@ import path from "path";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig(() => ({
-  base: "/",
+  base: "/", // Garantindo que o caminho base seja a raiz
   server: {
     host: "::",
     port: 8080,
