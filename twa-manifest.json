@@ -19,8 +19,8 @@
     "path": "C:\\Users\\diego\\Documents\\edukidsspro\\android.keystore",
     "alias": "edukidsspro"
   },
-  "appVersionName": "1.0.2",
-  "appVersionCode": 3,
+  "appVersionName": "1.0.3",
+  "appVersionCode": 4,
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
   "webManifestUrl": "https://edukidspro.vercel.app/manifest.json",
@@ -46,5 +46,5 @@
   "fileHandlers": [],
   "launchHandlerClientMode": "",
   "displayOverride": [],
-  "appVersion": "1.0.2"
+  "appVersion": "1.0.3"
 }
