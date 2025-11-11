@@ -1,4 +1,5 @@
 {
+  "id": "/",
   "name": "EDUKIDS+",
   "short_name": "EDUKIDS+",
   "description": "Aprenda brincando! Jogos educativos, trilhas de estudo e missões diárias para crianças de 4 a 12 anos.",
@@ -7,6 +8,14 @@
   "background_color": "#0f172a",
   "theme_color": "#7c3aed",
   "orientation": "portrait-primary",
+  "categories": ["education", "games", "kids"],
+  "prefer_related_applications": false,
+  "related_applications": [
+    {
+      "platform": "play",
+      "id": "app.vercel.edukidsspro.twa"
+    }
+  ],
   "icons": [
     {
       "src": "/icons/icon-192.png",
@@ -17,7 +26,7 @@
     {
       "src": "/icons/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png",
+      "type": "image": "image/png",
       "purpose": "any"
     },
     {
