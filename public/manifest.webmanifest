@@ -52,6 +52,13 @@
       "type": "image/png",
       "form_factor": "narrow",
       "label": "Loja e Premium"
+    },
+    {
+      "src": "/uploads/screenshot-mobile-5.png",
+      "sizes": "1080x2340",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Screenshot Adicional"
     }
   ],
   "orientation": "portrait-primary"
