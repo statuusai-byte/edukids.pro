@@ -1,8 +1,9 @@
 {
-  "name": "EDUKIDS+",
-  "short_name": "EDUKIDS+",
-  "description": "Aprenda, jogue e evolua — tudo em um só lugar. Atividades, cursos e jogos educativos para crianças.",
+  "name": "EduKids+",
+  "short_name": "EduKids+",
+  "description": "Aprenda, jogue e evolua — tudo em um só lugar.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#7c3aed",
@@ -16,12 +17,6 @@
       "src": "/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
-    },
-    {
-      "src": "/icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
     }
   ],
   "screenshots": [
@@ -29,37 +24,36 @@
       "src": "/uploads/screenshot-mobile-1.png",
       "sizes": "1080x2340",
       "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Tela inicial de atividades"
+      "platform": "narrow",
+      "label": "Tela de Atividades"
     },
     {
       "src": "/uploads/screenshot-mobile-2.png",
       "sizes": "1080x2340",
       "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Página de lição e quiz"
+      "platform": "narrow",
+      "label": "Lição e Quiz Interativo"
     },
     {
       "src": "/uploads/screenshot-mobile-3.png",
       "sizes": "1080x2340",
       "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Painel dos Pais"
+      "platform": "narrow",
+      "label": "Painel dos Pais (Controle de Tempo)"
     },
     {
       "src": "/uploads/screenshot-mobile-4.png",
       "sizes": "1080x2340",
       "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Loja e Premium"
+      "platform": "narrow",
+      "label": "Loja e Assinatura Premium"
     },
     {
       "src": "/uploads/screenshot-mobile-5.png",
       "sizes": "1080x2340",
       "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Screenshot Adicional"
+      "platform": "narrow",
+      "label": "Medalhas e Conquistas"
     }
-  ],
-  "orientation": "portrait-primary"
+  ]
 }
