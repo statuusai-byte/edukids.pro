@@ -17,7 +17,7 @@ export default defineConfig(() => ({
       registerType: "autoUpdate",
       injectRegister: "script", // Gera um script de registro para usarmos manualmente
       manifest: {
-        id: "https://edukidspro.vercel.app/",
+        id: "/",
         name: "EDUKIDS+",
         short_name: "EDUKIDS+",
         description: "Aprenda brincando! Jogos educativos, trilhas de estudo e missões diárias para crianças de 4 a 12 anos.",
