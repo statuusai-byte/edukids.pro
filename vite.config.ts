@@ -46,36 +46,6 @@ export default defineConfig(() => ({
             purpose: "maskable",
           },
         ],
-        screenshots: [
-          {
-            src: "/uploads/screenshot-mobile-1.png",
-            sizes: "1080x2340",
-            type: "image/png",
-            form_factor: "narrow",
-            label: "Tela de Atividades",
-          },
-          {
-            src: "/uploads/screenshot-mobile-2.png",
-            sizes: "1080x2340",
-            type: "image/png",
-            form_factor: "narrow",
-            label: "Página de uma Lição",
-          },
-          {
-            src: "/uploads/screenshot-mobile-3.png",
-            sizes: "1080x2340",
-            type: "image/png",
-            form_factor: "narrow",
-            label: "Loja Premium e de Dicas",
-          },
-          {
-            src: "/uploads/screenshot-mobile-4.png",
-            sizes: "1080x2340",
-            type: "image/png",
-            form_factor: "narrow",
-            label: "Painel dos Pais",
-          },
-        ],
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,svg,png,ico,webmanifest}"],
