@@ -36,49 +36,6 @@
       "purpose": "maskable"
     }
   ],
-  "screenshots": [
-    {
-      "src": "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1080&h=2340&fit=crop",
-      "sizes": "1080x2340",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Tela de Atividades"
-    },
-    {
-      "src": "https://images.unsplash.com/photo-1523050854805-93c81087b07f?q=80&w=1080&h=2340&fit=crop",
-      "sizes": "1080x2340",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Página de uma Lição"
-    },
-    {
-      "src": "https://images.unsplash.com/photo-1543269865-cbf42727486a?q=80&w=1080&h=2340&fit=crop",
-      "sizes": "1080x2340",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Loja Premium e de Dicas"
-    },
-    {
-      "src": "https://images.unsplash.com/photo-1522202176988-66273c824977?q=80&w=1080&h=2340&fit=crop",
-      "sizes": "1080x2340",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Painel dos Pais"
-    },
-    {
-      "src": "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=2340&h=1080&fit=crop",
-      "sizes": "2340x1080",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Tela de Atividades (Wide)"
-    },
-    {
-      "src": "https://images.unsplash.com/photo-1523050854805-93c81087b07f?q=80&w=2340&h=1080&fit=crop",
-      "sizes": "2340x1080",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Página de uma Lição (Wide)"
-    }
-  ],
+  "scope": "/",
   "iarc_rating_id": "e8d17982-1942-4989-b68d-229172222222"
 }
