@@ -1,7 +1,6 @@
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./globals.css";
-import { setupPwa } from "./pwa";
 
 // Render normal da aplicação
 const rootElement = typeof document !== "undefined" ? document.getElementById("root") : null;
@@ -14,5 +13,4 @@ if (rootElement) {
   console.error("Root element '#root' not found. Skipping React render.");
 }
 
-// Registra o Service Worker
-setupPwa();
+// O registro do Service Worker agora é feito automaticamente pelo vite-plugin-pwa
