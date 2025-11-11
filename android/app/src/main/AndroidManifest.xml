@@ -18,7 +18,7 @@
             <!-- URL padrão do TWA -->
             <meta-data
                 android:name="android.support.customtabs.trusted.DEFAULT_URL"
-                android:value="https://edukidsspro.vercel.app" />
+                android:value="https://edukidspro.vercel.app" />
 
             <!-- Intent filter para launcher -->
             <intent-filter>
@@ -33,7 +33,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
                     android:scheme="https"
-                    android:host="edukidsspro.vercel.app" />
+                    android:host="edukidspro.vercel.app" />
             </intent-filter>
         </activity>
 

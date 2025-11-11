@@ -1,6 +1,6 @@
 {
   "packageId": "app.vercel.edukidsspro.twa",
-  "host": "edukidsspro.vercel.app",
+  "host": "edukidspro.vercel.app",
   "name": "EduKids+",
   "launcherName": "EduKids+",
   "display": "standalone",
@@ -13,7 +13,7 @@
   "backgroundColor": "#0f172a",
   "enableNotifications": true,
   "startUrl": "/",
-  "iconUrl": "https://edukidsspro.vercel.app/icons/icon-512.png",
+  "iconUrl": "https://edukidspro.vercel.app/icons/icon-512.png",
   "splashScreenFadeOutDuration": 300,
   "signingKey": {
     "path": "C:\\Users\\diego\\Documents\\edukidsspro\\android.keystore",
@@ -23,7 +23,7 @@
   "appVersionCode": 3,
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
-  "webManifestUrl": "https://edukidsspro.vercel.app/manifest.json",
+  "webManifestUrl": "https://edukidspro.vercel.app/manifest.json",
   "fallbackType": "customtabs",
   "features": {
     "playBilling": {
@@ -36,7 +36,7 @@
   "enableSiteSettingsShortcut": true,
   "isChromeOSOnly": false,
   "isMetaQuest": false,
-  "fullScopeUrl": "https://edukidsspro.vercel.app/",
+  "fullScopeUrl": "https://edukidspro.vercel.app/",
   "minSdkVersion": 21,
   "orientation": "portrait-primary",
   "fingerprints": [],
