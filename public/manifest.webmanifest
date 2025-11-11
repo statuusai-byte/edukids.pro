@@ -5,18 +5,14 @@
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "background_color": "#0f172a",
   "theme_color": "#7c3aed",
+  "categories": ["education", "games", "kids"],
   "icons": [
     {
       "src": "/icons/icon-192.png",
-      "sizes": "144x144",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/icons/icon-192.png",
-      "sizes": "192x192",
+      "sizes": "144x144 192x192",
       "type": "image/png",
       "purpose": "any"
     },
@@ -24,13 +20,30 @@
       "src": "/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Atividades",
+      "short_name": "Atividades",
+      "description": "Ver todas as atividades de estudo",
+      "url": "/activities",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "src": "/icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
+      "name": "Play+",
+      "short_name": "Play+",
+      "description": "Acessar trilhas e missões do Play+",
+      "url": "/play-plus",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Painel dos Pais",
+      "short_name": "Pais",
+      "description": "Acessar o painel de controle dos pais",
+      "url": "/dashboard",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     }
   ],
   "screenshots": [
