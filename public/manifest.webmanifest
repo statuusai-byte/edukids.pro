@@ -1,7 +1,7 @@
 {
   "name": "EDUKIDS+",
   "short_name": "EDUKIDS+",
-  "description": "Aprenda, jogue e evolua — tudo em um só lugar. Conteúdo educativo e jogos para crianças de 4 a 12 anos.",
+  "description": "Aprenda brincando! Jogos educativos, trilhas de estudo e missões diárias para crianças de 4 a 12 anos.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0f172a",
@@ -25,6 +25,36 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/uploads/screenshot-mobile-1.png",
+      "sizes": "1080x2340",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Tela de Atividades"
+    },
+    {
+      "src": "/uploads/screenshot-mobile-2.png",
+      "sizes": "1080x2340",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Página de uma Lição"
+    },
+    {
+      "src": "/uploads/screenshot-mobile-3.png",
+      "sizes": "1080x2340",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Loja Premium e de Dicas"
+    },
+    {
+      "src": "/uploads/screenshot-mobile-4.png",
+      "sizes": "1080x2340",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Painel dos Pais"
     }
   ]
 }
