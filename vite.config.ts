@@ -15,7 +15,7 @@ export default defineConfig(() => ({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      injectRegister: "auto", // Permitir que o plugin gerencie o registro
+      injectRegister: "script", // Gera um script de registro para usarmos manualmente
       manifest: {
         name: "EDUKIDS+",
         short_name: "EDUKIDS+",
