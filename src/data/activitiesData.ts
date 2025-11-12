@@ -842,6 +842,26 @@ export const subjectsData: Subject[] = [
         id: "a1", title: "Cores e Formas", description: "Explore o mundo das cores e da criatividade.", ageGroups: ['4-6', '7-9'], icon: "Palette", modules: [
           {
             id: "a1-mod1", title: "Teoria das Cores", lessons: [
+              { 
+                id: "a1-l0", 
+                title: "Cores Primárias e Secundárias", 
+                content: `
+                  <p>As cores são a magia da arte! Existem cores que não podem ser criadas misturando outras: as <strong>cores primárias</strong>.</p>
+                  <ul>
+                    <li><strong>Vermelho</strong></li>
+                    <li><strong>Amarelo</strong></li>
+                    <li><strong>Azul</strong></li>
+                  </ul>
+                  <p>Quando misturamos duas cores primárias, criamos as <strong>cores secundárias</strong>:</p>
+                  <ul>
+                    <li>Vermelho + Amarelo = <strong>Laranja</strong></li>
+                    <li>Amarelo + Azul = <strong>Verde</strong></li>
+                    <li>Vermelho + Azul = <strong>Roxo</strong></li>
+                  </ul>
+                  <p>Tente misturar tintas para ver a mágica acontecer!</p>
+                `, 
+                type: "reading" 
+              },
               { id: "a1-l1", title: "Misturando as Cores", content: JSON.stringify(genColorMixingQuiz(FREE_QUIZ_COUNT)), type: "exercise" }
             ]
           }
