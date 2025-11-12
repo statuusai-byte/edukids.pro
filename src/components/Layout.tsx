@@ -11,6 +11,7 @@ import MobileTabBar from "@/components/MobileTabBar";
 import StudyAssistant from "@/components/StudyAssistant";
 import AgeGateModal from "@/components/AgeGateModal";
 import { useInterstitialAdManager } from "@/hooks/useInterstitialAdManager";
+import Header from "@/components/Header"; // Import Header
 
 type NavItem = {
   to: string;
@@ -148,6 +149,7 @@ const Layout = () => {
         className={cn("flex-1 overflow-x-hidden", !isMobile && "md:pl-24")}
         style={mobileShellStyle}
       >
+        {!isMobile && <Header />} {/* Add Header for desktop view */}
         <div
           className={cn(
             "mx-auto w-full max-w-7xl",
