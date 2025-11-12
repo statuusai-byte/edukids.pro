@@ -813,6 +813,17 @@ export const subjectsData: Subject[] = [
         id: "g1", title: "Mapas e Lugares", description: "Aprenda sobre estados, capitais e continentes.", ageGroups: ['7-9', '10-12'], icon: "Globe", modules: [
           {
             id: "g1-mod1", title: "Brasil e o Mundo", lessons: [
+              { 
+                id: "g1-l0", 
+                title: "O que são Mapas?", 
+                content: `
+                  <p>Um <strong>mapa</strong> é um desenho que nos ajuda a ver lugares grandes, como cidades, países ou o mundo inteiro, em uma folha de papel ou tela.</p>
+                  <p>Mapas usam <strong>símbolos</strong> e <strong>cores</strong> para representar coisas reais, como rios, montanhas e estradas. A <strong>rosa dos ventos</strong> (Norte, Sul, Leste, Oeste) nos ajuda a saber a direção.</p>
+                  <p>Existem muitos tipos de mapas: mapas de cidades, mapas de estradas e o <strong>mapa-múndi</strong>, que mostra todos os continentes e oceanos.</p>
+                  <p>Aprender a ler mapas é como ter um superpoder para explorar o mundo!</p>
+                `, 
+                type: "reading" 
+              },
               { id: "g1-l1", title: "Quiz de Capitais", content: JSON.stringify(genGeographyCapitals(PREMIUM_QUIZ_COUNT)), type: "exercise", premium: true }
             ]
           }
