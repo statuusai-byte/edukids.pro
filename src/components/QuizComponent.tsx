@@ -31,8 +31,10 @@ const QuizComponent = ({ questions, onQuizComplete, triggerHint, onHintSuggested
   const [, setIncorrectAttempts] = useState(0); // counts wrong attempts for current question
   const [showHintSuggestion, setShowHintSuggestion] = useState(false); // when true, question is locked until hint is used
 
+  // Handle case where questions might be empty (should be caught by LessonPage, but safe check here)
+  const totalQuestions = questions.length;
   const currentQuestion = useMemo(() => questions[currentQuestionIndex], [questions, currentQuestionIndex]);
-  const isQuizFinished = currentQuestionIndex >= questions.length;
+  const isQuizFinished = currentQuestionIndex >= totalQuestions;
 
   // Reset per-question transient state
   useEffect(() => {
@@ -46,7 +48,7 @@ const QuizComponent = ({ questions, onQuizComplete, triggerHint, onHintSuggested
 
   // Apply hint elimination when parent triggers it
   useEffect(() => {
-    if (triggerHint && eliminatedOptions.length === 0 && !confirmedAnswer) {
+    if (triggerHint && eliminatedOptions.length === 0 && !confirmedAnswer && currentQuestion) {
       const incorrectOptions = currentQuestion.options.filter(
         (option) => option !== currentQuestion.correctAnswer
       );
@@ -70,6 +72,8 @@ const QuizComponent = ({ questions, onQuizComplete, triggerHint, onHintSuggested
       showError("Por favor, selecione uma resposta antes de confirmar.");
       return;
     }
+    
+    if (!currentQuestion) return; // Safety check
 
     // If correct, finalize as before
     if (selectedAnswer === currentQuestion.correctAnswer) {
@@ -97,10 +101,10 @@ const QuizComponent = ({ questions, onQuizComplete, triggerHint, onHintSuggested
     });
 
     showError("Ops! Resposta incorreta. Tente novamente.");
-  }, [selectedAnswer, currentQuestion.correctAnswer, onHintSuggested]);
+  }, [selectedAnswer, currentQuestion, onHintSuggested]);
 
   const handleNextQuestion = useCallback(() => {
-    if (currentQuestionIndex < questions.length - 1) {
+    if (currentQuestionIndex < totalQuestions - 1) {
       setCurrentQuestionIndex(prev => prev + 1);
       setSelectedAnswer(null);
       setConfirmedAnswer(null);
@@ -110,9 +114,9 @@ const QuizComponent = ({ questions, onQuizComplete, triggerHint, onHintSuggested
       if (onQuizComplete) {
         onQuizComplete(score);
       }
-      setCurrentQuestionIndex(questions.length); // mark quiz as finished
+      setCurrentQuestionIndex(totalQuestions); // mark quiz as finished
     }
-  }, [currentQuestionIndex, questions.length, onQuizComplete, score]);
+  }, [currentQuestionIndex, totalQuestions, onQuizComplete, score]);
 
   useEffect(() => {
     if (isCorrect === null) return;
@@ -120,26 +124,36 @@ const QuizComponent = ({ questions, onQuizComplete, triggerHint, onHintSuggested
     setAnimationClass(newAnimationClass);
     const timer = setTimeout(() => setAnimationClass(''), 500);
     return () => clearTimeout(timer);
-  }, [isCorrect]);
+  }, [isCorrect, selectedAnswer]);
+
+  if (totalQuestions === 0) {
+    // This case should ideally be handled by LessonPage, but we ensure safety here.
+    return (
+      <Card className="glass-card p-6 text-center">
+        <CardTitle className="text-3xl text-red-400 mb-4">Erro de Conteúdo</CardTitle>
+        <p className="text-xl">Nenhuma pergunta encontrada para este quiz.</p>
+      </Card>
+    );
+  }
 
   if (isQuizFinished) {
     return (
       <Card className="glass-card p-6 text-center">
         <CardTitle className="text-3xl text-primary mb-4">Quiz Concluído!</CardTitle>
-        <p className="text-xl">Você acertou {score} de {questions.length} perguntas.</p>
+        <p className="text-xl">Você acertou {score} de {totalQuestions} perguntas.</p>
         <p className="text-muted-foreground mt-2">Ótimo trabalho! Marque a lição como concluída para continuar.</p>
       </Card>
     );
   }
 
-  const progressValue = ((currentQuestionIndex + (confirmedAnswer !== null ? 1 : 0)) / questions.length) * 100;
+  const progressValue = ((currentQuestionIndex + (confirmedAnswer !== null ? 1 : 0)) / totalQuestions) * 100;
 
   return (
     <Card className={cn("glass-card p-6", animationClass)}>
       <CardHeader className="pb-4">
         <div className="flex justify-between items-center mb-2">
           <CardTitle className="text-xl text-muted-foreground">
-            Pergunta {currentQuestionIndex + 1} de {questions.length}
+            Pergunta {currentQuestionIndex + 1} de {totalQuestions}
           </CardTitle>
           <span className="text-lg font-bold text-primary">{score} pontos</span>
         </div>
@@ -215,7 +229,7 @@ const QuizComponent = ({ questions, onQuizComplete, triggerHint, onHintSuggested
 
           {confirmedAnswer !== null && (
             <Button onClick={handleNextQuestion} size="lg" className="w-full">
-              {currentQuestionIndex < questions.length - 1 ? 'Próxima Pergunta' : 'Finalizar Quiz'}
+              {currentQuestionIndex < totalQuestions - 1 ? 'Próxima Pergunta' : 'Finalizar Quiz'}
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           )}
