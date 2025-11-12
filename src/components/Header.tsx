@@ -16,7 +16,7 @@ import { useHintsContext } from "@/context/HintsContext";
 import { usePremium } from "@/context/PremiumContext";
 import { useTheme } from "@/context/ThemeContext";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { SheetTrigger } from "@/components/ui/sheet"; // Import SheetTrigger
+import { SheetTrigger } from "@/components/ui/sheet";
 
 const Header = () => {
   const { name, avatarUrl } = useProfile();
@@ -48,7 +48,7 @@ const Header = () => {
       </div>
       <div className="flex items-center gap-4">
         
-        {/* Theme Toggle Button */}
+        {/* Theme Toggle Button - Always visible on the right */}
         <Button variant="ghost" size="icon" className="rounded-full hover:bg-primary/10" onClick={toggleTheme}>
           {theme === 'dark' ? (
             <Sun className="h-6 w-6 text-yellow-400 hover:text-yellow-300" />

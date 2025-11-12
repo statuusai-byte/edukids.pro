@@ -1,64 +1,31 @@
-import { NavLink, Outlet } from "react-router-dom";
-import { Sparkles } from "lucide-react";
-import { Icon, type IconName } from "@/components/Icon";
+import { Outlet } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { useProfile } from "@/context/ProfileContext";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { getInitials } from "@/lib/get-initials";
 import { useIsMobile } from "@/hooks/use-mobile";
 import MobileSidebar from "@/components/MobileSidebar";
 import MobileTabBar from "@/components/MobileTabBar";
 import StudyAssistant from "@/components/StudyAssistant";
 import AgeGateModal from "@/components/AgeGateModal";
 import { useInterstitialAdManager } from "@/hooks/useInterstitialAdManager";
-import Header from "@/components/Header"; // Import Header
-
-type NavItem = {
-  to: string;
-  icon: IconName;
-  label: string;
-  color: string;
-};
-
-const navItems: NavItem[] = [
-  { to: "/activities", icon: "BookOpen", label: "Atividades", color: "text-cyan-400" },
-  { to: "/play-plus", icon: "PlaySquare", label: "Play+", color: "text-purple-400" },
-  { to: "/achievements", icon: "Trophy", label: "Medalhas", color: "text-yellow-400" },
-  { to: "/store", icon: "Store", label: "Loja", color: "text-green-400" },
-  { to: "/dashboard", icon: "User", label: "Painel dos Pais", color: "text-orange-400" },
-];
-
-const settingsItem: NavItem = {
-  to: "/settings",
-  icon: "Settings",
-  label: "Ajustes",
-  color: "text-slate-400",
-};
+import Header from "@/components/Header";
 
 const Layout = () => {
-  const { name, avatarUrl } = useProfile();
   const isMobile = useIsMobile();
   
   useInterstitialAdManager();
 
-  // Adjust padding for mobile to account for fixed header and tab bar
-  const mobileShellStyle = isMobile
-    ? {
-        paddingTop: "calc(env(safe-area-inset-top, 0px) + 5rem)", // 5rem = h-20 of Header
-        paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 5rem)", // 5rem = height of MobileTabBar
-        paddingLeft: "env(safe-area-inset-left, 0px)",
-        paddingRight: "env(safe-area-inset-right, 0px)",
-      }
-    : {
-        paddingTop: "calc(env(safe-area-inset-top, 0px) + 5rem)", // 5rem = h-20 of Header
-      };
+  // Calculate padding to offset the fixed Header (h-20 = 5rem) and MobileTabBar (h-20 approx)
+  const shellStyle = {
+    paddingTop: "calc(env(safe-area-inset-top, 0px) + 5rem)",
+    paddingBottom: isMobile ? "calc(env(safe-area-inset-bottom, 0px) + 5rem)" : "0",
+    minHeight: "100vh",
+  };
 
   return (
     <div className="flex flex-1 w-full text-foreground">
-      {/* Fixed Header for all screens */}
+      {/* Fixed Header for all screens (contains theme toggle) */}
       <Header />
 
-      {/* Mobile Navigation */}
+      {/* Mobile Navigation components (Sidebar is triggered by Header, TabBar is fixed bottom) */}
       {isMobile && (
         <>
           <MobileSidebar />
@@ -66,103 +33,14 @@ const Layout = () => {
         </>
       )}
 
-      {/* Desktop Sidebar (Removed for simplicity, using Header + MobileSidebar for all) */}
-      {!isMobile && (
-        <aside className="group fixed inset-y-0 left-0 z-20 hidden w-24 flex-col items-center border-r border-white/10 bg-secondary/30 backdrop-blur-xl py-6 transition-all duration-300 hover:w-64 md:flex">
-          <div className="mb-8 flex items-center justify-center">
-            <Sparkles size={34} className="text-primary" />
-          </div>
-
-          <nav className="flex flex-1 flex-col items-stretch gap-2 w-full px-4">
-            {navItems.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                className={({ isActive }) =>
-                  cn(
-                    "flex w-full items-center gap-4 rounded-xl p-3 transition-all duration-200",
-                    isActive
-                      ? "bg-gradient-to-r from-primary/10 to-primary/5 ring-1 ring-primary/20"
-                      : "hover:bg-white/5"
-                  )
-                }
-              >
-                {({ isActive }) => (
-                  <>
-                    <Icon
-                      name={item.icon}
-                      className={cn(
-                        "h-6 w-6 transition-colors",
-                        isActive ? item.color : "text-muted-foreground group-hover:text-foreground"
-                      )}
-                    />
-                    <span
-                      className={cn(
-                        "text-sm font-medium truncate opacity-0 transition-opacity duration-200 group-hover:opacity-100",
-                        isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
-                      )}
-                    >
-                      {item.label}
-                    </span>
-                  </>
-                )}
-              </NavLink>
-            ))}
-          </nav>
-
-          <div className="mt-auto flex w-full flex-col items-stretch gap-3 px-4">
-            <NavLink
-              to={settingsItem.to}
-              className={({ isActive }) =>
-                cn(
-                  "flex w-full items-center gap-4 rounded-xl p-3 transition-all duration-200",
-                  isActive ? "bg-white/5 ring-1 ring-primary/20" : "hover:bg-white/5"
-                )
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  <Icon
-                    name={settingsItem.icon}
-                    className={cn(
-                      "h-6 w-6 transition-colors",
-                      isActive ? settingsItem.color : "text-muted-foreground group-hover:text-foreground"
-                    )}
-                  />
-                  <span
-                    className={cn(
-                      "text-sm font-medium truncate opacity-0 transition-opacity duration-200 group-hover:opacity-100",
-                      isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
-                    )}
-                  >
-                    {settingsItem.label}
-                  </span>
-                </>
-              )}
-            </NavLink>
-
-            <div className="w-full flex items-center gap-4 p-3">
-              <Avatar className="h-10 w-10">
-                <AvatarImage src={avatarUrl ?? undefined} />
-                <AvatarFallback>{getInitials(name ?? "Anônimo")}</AvatarFallback>
-              </Avatar>
-              <div className="truncate opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-                <p className="text-sm font-semibold truncate">{name}</p>
-                <p className="text-xs text-muted-foreground truncate">Explorador</p>
-              </div>
-            </div>
-          </div>
-        </aside>
-      )}
-
       <main
-        className={cn("flex-1 overflow-x-hidden")}
-        style={mobileShellStyle}
+        className={cn("flex-1 overflow-x-hidden w-full")}
+        style={shellStyle}
       >
         <div
           className={cn(
             "mx-auto w-full max-w-7xl",
-            isMobile ? "px-4" : "py-10 md:py-12"
+            isMobile ? "px-4" : "py-10 md:py-12 px-6"
           )}
         >
           <div
