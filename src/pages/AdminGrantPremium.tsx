@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,6 +29,31 @@ export default function AdminGrantPremium() {
   const navigate = useNavigate();
 
   const allowedEmailsDescription = useMemo(() => (ADMIN_EMAILS as readonly string[]).join(", "), []);
+
+  const normalizedUserEmail = user?.email?.toLowerCase();
+  const isAuthorized = normalizedUserEmail ? (ADMIN_EMAILS as readonly string[]).includes(normalizedUserEmail) : false;
+
+  // Effect to ensure the logged-in admin user has the is_admin flag set in the DB
+  useEffect(() => {
+    if (isAuthorized && user && !authLoading) {
+      const ensureAdminStatus = async () => {
+        try {
+          // Attempt to set is_admin=true for the logged-in user
+          const { error } = await supabase
+            .from('profiles')
+            .upsert({ id: user.id, is_admin: true }, { onConflict: 'id' });
+          
+          if (error) {
+            console.error("Failed to ensure admin status:", error);
+          }
+        } catch (e) {
+          console.error("Error during admin status check:", e);
+        }
+      };
+      ensureAdminStatus();
+    }
+  }, [isAuthorized, user, authLoading]);
+
 
   // Seed local premium/profile for a given email (used for immediate local testing)
   const seedLocalPremiumFor = async (targetEmail: string) => {
@@ -68,6 +93,7 @@ export default function AdminGrantPremium() {
         body: JSON.stringify({ email: normalized }),
       };
 
+      // The Authorization header is automatically added by the Supabase client when invoking functions
       const { error } = await supabase.functions.invoke("grant-premium", invokeOptions);
 
       dismissToast(toastId);
@@ -151,9 +177,6 @@ export default function AdminGrantPremium() {
       setLoading(false);
     }
   };
-
-  const normalizedUserEmail = user?.email?.toLowerCase();
-  const isAuthorized = normalizedUserEmail ? (ADMIN_EMAILS as readonly string[]).includes(normalizedUserEmail) : false;
 
   if (authLoading) {
     return (
