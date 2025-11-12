@@ -4,8 +4,8 @@ import { useHints } from '@/hooks/useHints';
 interface HintsContextType {
   hints: number;
   isLoading: boolean;
-  addHints: (amount: number) => void;
-  useHint: () => boolean;
+  addHints: (amount: number) => Promise<void>;
+  useHint: () => Promise<boolean>;
 }
 
 const HintsContext = createContext<HintsContextType | undefined>(undefined);

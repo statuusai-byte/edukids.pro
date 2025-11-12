@@ -1,11 +1,11 @@
 import { NavLink, Link } from "react-router-dom";
-import { Sparkles, Menu, Gem, X } from "lucide-react";
+import { Sparkles, Gem, X } from "lucide-react";
 import { Icon, type IconName } from "@/components/Icon";
 import { cn } from "@/lib/utils";
 import { useProfile } from "@/context/ProfileContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/get-initials";
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetClose } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useMemo } from "react";
 import { usePremium } from "@/context/PremiumContext";
@@ -216,7 +216,8 @@ const MobileSidebar = () => {
               </div>
             </div>
           </div>
-        </SheetContent>
+        </div>
+      </SheetContent>
     </Sheet>
   );
 };

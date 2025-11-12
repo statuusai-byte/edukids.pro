@@ -13,7 +13,7 @@ const PREMIUM_LOCAL_FLAG = "edukids_is_premium"; // Kept for cleanup/legacy chec
 export default function TestAccount() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState(DEFAULT_EMAIL);
-  const [password, setPassword] = DEFAULT_PASSWORD;
+  const [password, setPassword] = useState(DEFAULT_PASSWORD);
   const navigate = useNavigate();
   const { startTrial } = usePremium(); // Use startTrial for test activation
 
