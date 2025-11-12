@@ -68,16 +68,14 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Missing email in request body' }), { status: 400, headers: corsHeaders })
     }
 
-    // List users and find by email (admin endpoint)
-    const listRes = await supabaseAdmin.auth.admin.listUsers();
-    if (listRes.error) throw listRes.error;
+    // Use getUserByEmail instead of listUsers
+    const { data: userData, error: userLookupError } = await supabaseAdmin.auth.admin.getUserByEmail(email);
 
-    const users = (listRes.data && (listRes.data as any).users) || [];
-    const user = users.find((u: any) => (u.email || '').toLowerCase() === email);
-
-    if (!user) {
+    if (userLookupError || !userData?.user) {
       return new Response(JSON.stringify({ error: 'User not found' }), { status: 404, headers: corsHeaders })
     }
+    
+    const user = userData.user;
 
     // Upsert into public.profiles to set is_premium = true
     const upsertRes = await supabaseAdmin

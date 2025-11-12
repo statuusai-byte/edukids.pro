@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { hasParentPin, setParentPin, verifyParentPin, removeParentPin } from "@/utils/parental";
-import { showSuccess, showError } from "@/utils/toast";
+import { showSuccess, showError, showLoading, dismissToast } from "@/utils/toast";
 
 interface ParentalPinModalProps {
   open: boolean;
@@ -21,9 +21,18 @@ const ParentalPinModal = ({ open, mode = "verify", onOpenChange, onVerified, tit
   const [pinConfirm, setPinConfirm] = useState("");
   const [existingPinExists, setExistingPinExists] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isCheckingPinStatus, setIsCheckingPinStatus] = useState(true);
 
   useEffect(() => {
-    setExistingPinExists(hasParentPin());
+    if (open) {
+      const checkPin = async () => {
+        setIsCheckingPinStatus(true);
+        const exists = await hasParentPin();
+        setExistingPinExists(exists);
+        setIsCheckingPinStatus(false);
+      };
+      checkPin();
+    }
   }, [open]);
 
   useEffect(() => {
@@ -44,10 +53,19 @@ const ParentalPinModal = ({ open, mode = "verify", onOpenChange, onVerified, tit
       return;
     }
     setLoading(true);
-    await setParentPin(pin);
-    setLoading(false);
-    showSuccess("PIN parental definido com sucesso.");
-    onOpenChange(false);
+    const toastId = showLoading("Salvando PIN...");
+    try {
+      await setParentPin(pin);
+      dismissToast(toastId);
+      showSuccess("PIN parental definido com sucesso.");
+      setExistingPinExists(true); // Update local state immediately
+      onOpenChange(false);
+    } catch (e) {
+      dismissToast(toastId);
+      // Error already shown by setParentPin/showError
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleVerify = async () => {
@@ -71,11 +89,22 @@ const ParentalPinModal = ({ open, mode = "verify", onOpenChange, onVerified, tit
       showError("PIN incorreto.");
       return;
     }
-    removeParentPin();
-    setLoading(false);
-    showSuccess("PIN parental removido.");
-    onOpenChange(false);
+    const toastId = showLoading("Removendo PIN...");
+    try {
+      await removeParentPin();
+      dismissToast(toastId);
+      showSuccess("PIN parental removido.");
+      setExistingPinExists(false); // Update local state immediately
+      onOpenChange(false);
+    } catch (e) {
+      dismissToast(toastId);
+      // Error already shown by removeParentPin/showError
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const isVerifyDisabled = loading || isCheckingPinStatus || !existingPinExists;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -95,7 +124,7 @@ const ParentalPinModal = ({ open, mode = "verify", onOpenChange, onVerified, tit
                 <Label>Confirme o PIN</Label>
                 <Input value={pinConfirm} onChange={(e) => setPinConfirm(e.target.value)} type="password" />
               </div>
-              <div className="text-sm text-muted-foreground">O PIN é armazenado localmente (hash). Ele será necessário para aprovar compras e ações sensíveis.</div>
+              <div className="text-sm text-muted-foreground">O PIN é armazenado de forma segura (hash) no servidor. Ele será necessário para aprovar compras e ações sensíveis.</div>
             </>
           ) : mode === "remove" ? (
             <>
@@ -103,7 +132,7 @@ const ParentalPinModal = ({ open, mode = "verify", onOpenChange, onVerified, tit
                 <Label>Digite seu PIN atual</Label>
                 <Input value={pin} onChange={(e) => setPin(e.target.value)} type="password" />
               </div>
-              <div className="text-sm text-muted-foreground">Ao confirmar, o PIN será removido e a exigência de verificação local será desativada.</div>
+              <div className="text-sm text-muted-foreground">Ao confirmar, o PIN será removido e a exigência de verificação será desativada.</div>
             </>
           ) : (
             <>
@@ -111,7 +140,11 @@ const ParentalPinModal = ({ open, mode = "verify", onOpenChange, onVerified, tit
                 <Label>Digite seu PIN</Label>
                 <Input value={pin} onChange={(e) => setPin(e.target.value)} type="password" />
               </div>
-              {!existingPinExists && <div className="text-sm text-muted-foreground">Nenhum PIN configurado — você pode defini-lo nas configurações.</div>}
+              {isCheckingPinStatus ? (
+                <div className="text-sm text-muted-foreground">Verificando status do PIN...</div>
+              ) : !existingPinExists && (
+                <div className="text-sm text-muted-foreground">Nenhum PIN configurado — você pode defini-lo nas configurações.</div>
+              )}
             </>
           )}
         </div>
@@ -124,7 +157,7 @@ const ParentalPinModal = ({ open, mode = "verify", onOpenChange, onVerified, tit
             ) : mode === "remove" ? (
               <Button variant="destructive" onClick={handleRemove} disabled={loading}>{loading ? "Removendo..." : "Remover PIN"}</Button>
             ) : (
-              <Button onClick={handleVerify} disabled={loading || !existingPinExists}>{loading ? "Verificando..." : "Verificar"}</Button>
+              <Button onClick={handleVerify} disabled={isVerifyDisabled}>{loading ? "Verificando..." : "Verificar"}</Button>
             )}
           </div>
         </DialogFooter>

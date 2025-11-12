@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useAge } from "@/context/AgeContext";
-import { Trash2, ShieldCheck, ShieldX, Info, LogOut, Sun, Moon } from "lucide-react";
+import { Trash2, ShieldCheck, ShieldX, Info, LogOut, Sun, Moon, Loader2 } from "lucide-react";
 import { useProfile } from "@/context/ProfileContext";
 import { AvatarUploader } from "@/components/AvatarUploader";
 import { useProgress } from "@/hooks/use-progress";
@@ -34,9 +34,17 @@ const Settings = () => {
   const [pinMode, setPinMode] = useState<"set" | "verify" | "remove">("set");
   const [requirePinForPurchases, setRequirePinForPurchases] = useState<boolean>(false);
   const [parentPinExists, setParentPinExists] = useState<boolean>(false);
+  const [isCheckingPinStatus, setIsCheckingPinStatus] = useState(true);
 
   const pendingActionRef = useRef<null | (() => void)>(null);
   const { signOut, user } = useSupabase();
+
+  const checkPinStatus = useCallback(async () => {
+    setIsCheckingPinStatus(true);
+    const exists = await hasParentPin();
+    setParentPinExists(exists);
+    setIsCheckingPinStatus(false);
+  }, []);
 
   useEffect(() => {
     setCurrentName(name);
@@ -45,8 +53,8 @@ const Settings = () => {
   useEffect(() => {
     setUiSounds(getSoundEnabled());
     setRequirePinForPurchases(requirePinForPurchasesGet());
-    setParentPinExists(hasParentPin());
-  }, []);
+    checkPinStatus();
+  }, [checkPinStatus]);
 
   const handleAvatarChange = async (file: File) => {
     const toastId = showLoading("Enviando novo avatar...");
@@ -97,7 +105,7 @@ const Settings = () => {
   };
 
   const requirePinChanged = (enabled: boolean) => {
-    if (enabled && !hasParentPin()) {
+    if (enabled && !parentPinExists) {
       showError("Defina um PIN parental antes de exigir PIN para compras.");
       setRequirePinForPurchases(false);
       requirePinForPurchasesSet(false);
@@ -109,7 +117,7 @@ const Settings = () => {
   };
 
   const onVerifyThenRun = (action: () => void) => {
-    if (hasParentPin()) {
+    if (parentPinExists) {
       pendingActionRef.current = action;
       setPinMode("verify");
       setPinModalOpen(true);
@@ -121,7 +129,8 @@ const Settings = () => {
   const afterPinModalChange = (open: boolean) => {
     setPinModalOpen(open);
     if (!open) {
-      setParentPinExists(hasParentPin());
+      // Re-check pin status after modal closes (in case set/remove was successful)
+      checkPinStatus();
     }
   };
 
@@ -267,10 +276,18 @@ const Settings = () => {
               <div>
                 <div className="font-medium">Status do PIN</div>
                 <div className="text-xs text-muted-foreground">
-                  {parentPinExists ? "PIN configurado neste dispositivo." : "Nenhum PIN definido."}
+                  {isCheckingPinStatus ? (
+                    <span className="flex items-center gap-1"><Loader2 className="h-3 w-3 animate-spin" /> Verificando...</span>
+                  ) : parentPinExists ? (
+                    "PIN configurado no servidor."
+                  ) : (
+                    "Nenhum PIN definido."
+                  )}
                 </div>
               </div>
-              {parentPinExists ? (
+              {isCheckingPinStatus ? (
+                <Button disabled variant="secondary"><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Carregando</Button>
+              ) : parentPinExists ? (
                 <Button variant="secondary" onClick={openRemovePin}>
                   <ShieldX className="mr-2 h-4 w-4" /> Remover PIN
                 </Button>
@@ -286,6 +303,7 @@ const Settings = () => {
                 id="require-pin"
                 checked={requirePinForPurchases}
                 onCheckedChange={requirePinChanged}
+                disabled={!parentPinExists}
               />
             </div>
           </CardContent>

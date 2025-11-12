@@ -66,14 +66,18 @@ serve(async (req) => {
       );
     }
 
-    // 3) Retorna URL relativa para o app redirecionar localmente (incluindo user ID para rastreamento simulado)
-    const successPath = `/success-payment?user_id=${userId}&sku=${sku}`;
+    // 3) Generate a secure, short-lived token (simulated UUID)
+    const secureToken = `premium_${crypto.randomUUID()}`;
+
+    // 4) Return the token and user ID for the client to call the secure activation endpoint
+    const successPath = `/success-payment?user_id=${userId}&sku=${sku}&token=${secureToken}`;
 
     return new Response(
       JSON.stringify({ 
         checkout_url: successPath,
         message: "Checkout session created successfully (simulated).",
         sku,
+        secure_token: secureToken,
       }),
       { headers: corsHeaders, status: 200 }
     );

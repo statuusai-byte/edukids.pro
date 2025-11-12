@@ -1,6 +1,8 @@
-// Parental PIN utilities — uses Web Crypto to hash PIN and stores hash in localStorage.
-// Note: This is a lightweight local-only parental gate. For production, prefer server-side parent-child linking and server-side checks.
-const PIN_HASH_KEY = "edukids_parent_pin_hash";
+// Parental PIN utilities — uses Supabase 'parents' table for secure storage.
+import { supabase } from "@/integrations/supabase/client";
+import { useSupabase } from "@/context/SupabaseContext";
+import { showError } from "./toast";
+
 const REQUIRE_PIN_KEY = "edukids_require_parent_pin";
 
 async function hashString(text: string) {
@@ -12,39 +14,102 @@ async function hashString(text: string) {
   return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
+/**
+ * Sets or updates the parent PIN hash in the Supabase 'parents' table.
+ * Requires the user to be logged in.
+ */
 export async function setParentPin(pin: string) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    showError("Você precisa estar logado para definir o PIN parental.");
+    return;
+  }
   try {
-    const h = await hashString(pin);
-    localStorage.setItem(PIN_HASH_KEY, h);
+    const pinHash = await hashString(pin);
+    
+    const { error } = await supabase
+      .from('parents')
+      .upsert({ user_id: user.id, pin_hash: pinHash }, { onConflict: 'user_id' });
+
+    if (error) throw error;
   } catch (e) {
-    console.error("Failed to set parent pin", e);
+    console.error("Failed to set parent pin in Supabase", e);
+    showError("Falha ao salvar o PIN no servidor.");
   }
 }
 
-export function removeParentPin() {
+/**
+ * Removes the parent PIN hash from the Supabase 'parents' table.
+ * Requires the user to be logged in.
+ */
+export async function removeParentPin() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    showError("Você precisa estar logado para remover o PIN parental.");
+    return;
+  }
   try {
-    localStorage.removeItem(PIN_HASH_KEY);
+    const { error } = await supabase
+      .from('parents')
+      .delete()
+      .eq('user_id', user.id);
+
+    if (error) throw error;
   } catch (e) {
-    console.error("Failed to remove parent pin", e);
+    console.error("Failed to remove parent pin from Supabase", e);
+    showError("Falha ao remover o PIN no servidor.");
   }
 }
 
+/**
+ * Verifies the provided PIN against the hash stored on the server.
+ * Uses a secure Edge Function to prevent client-side hash comparison.
+ */
 export async function verifyParentPin(pin: string) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    showError("Você precisa estar logado para verificar o PIN.");
+    return false;
+  }
+  
   try {
-    const stored = localStorage.getItem(PIN_HASH_KEY);
-    if (!stored) return false;
-    const h = await hashString(pin);
-    return h === stored;
+    const pinHash = await hashString(pin);
+    
+    // Call the secure Edge Function for verification
+    const { data, error } = await supabase.functions.invoke('verify-parent-pin', {
+      method: 'POST',
+      body: { pin_hash: pinHash },
+    });
+
+    if (error) throw error;
+
+    return (data as { verified: boolean })?.verified === true;
   } catch (e) {
-    console.error("Failed to verify parent pin", e);
+    console.error("Failed to verify parent pin securely", e);
+    showError("Falha na comunicação com o servidor de PIN.");
     return false;
   }
 }
 
-export function hasParentPin() {
+/**
+ * Checks if a parent PIN exists on the server for the current user.
+ */
+export async function hasParentPin(): Promise<boolean> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return false;
+  
   try {
-    return !!localStorage.getItem(PIN_HASH_KEY);
-  } catch {
+    const { data, error } = await supabase
+      .from('parents')
+      .select('user_id')
+      .eq('user_id', user.id)
+      .single();
+
+    if (error && error.code !== 'PGRST116') throw error; // PGRST116 = no rows found
+
+    return !!data;
+  } catch (e) {
+    console.error("Failed to check for parent pin existence", e);
     return false;
   }
 }

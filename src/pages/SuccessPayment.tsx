@@ -1,26 +1,45 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { usePremium } from '@/context/PremiumContext';
-import { showSuccess } from '@/utils/toast';
+import { showSuccess, showError } from '@/utils/toast';
 import { CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const SuccessPayment = () => {
-  const { activatePremium } = usePremium();
+  const { activatePremiumSecurely } = usePremium();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    // Ativa o status Premium no armazenamento local
-    activatePremium();
-    showSuccess("Assinatura Premium ativada com sucesso! Bem-vindo(a) ao EDUKIDS+.");
-    
-    // Redireciona para o dashboard após um pequeno atraso
-    const timer = setTimeout(() => {
-      navigate('/dashboard', { replace: true });
-    }, 3000);
+    const userId = searchParams.get('user_id');
+    const sku = searchParams.get('sku');
+    const token = searchParams.get('token');
 
-    return () => clearTimeout(timer);
-  }, [activatePremium, navigate]);
+    if (!userId || !sku || !token) {
+      showError("Pagamento inválido ou token de segurança ausente.");
+      navigate('/store', { replace: true });
+      return;
+    }
+
+    const activate = async () => {
+      const success = await activatePremiumSecurely(userId, token);
+      
+      if (success) {
+        showSuccess("Assinatura Premium ativada com sucesso! Bem-vindo(a) ao EDUKIDS+.");
+      } else {
+        showError("Falha ao ativar Premium. Tente recarregar ou entre em contato com o suporte.");
+      }
+      
+      // Redireciona para o dashboard após um pequeno atraso
+      const timer = setTimeout(() => {
+        navigate('/dashboard', { replace: true });
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    };
+
+    activate();
+  }, [activatePremiumSecurely, navigate, searchParams]);
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">

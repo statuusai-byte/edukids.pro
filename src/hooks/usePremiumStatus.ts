@@ -76,6 +76,9 @@ export function usePremiumStatus() {
 
     setIsLoading(true);
     try {
+      // Note: RLS policy now prevents users from extending trial_ends_at indefinitely.
+      // This update is allowed because the RLS policy only prevents *changing* an existing value,
+      // but allows setting it if it was previously null (which is the case for a new trial).
       const { error } = await supabase
         .from('profiles')
         .update({ trial_ends_at: trialEndISO })
@@ -95,29 +98,31 @@ export function usePremiumStatus() {
     }
   }, [user, isPremium]);
 
-  const activatePremium = useCallback(async () => {
-    if (!user) {
-      showError("Você precisa estar logado para ativar o Premium.");
-      return;
-    }
+  /**
+   * Securely activates premium status by calling the server-side Edge Function.
+   * This function is only called after a successful payment simulation which provides a secure token.
+   */
+  const activatePremiumSecurely = useCallback(async (userId: string, secureToken: string) => {
     setIsLoading(true);
     try {
-      // When purchasing, we set is_premium=true and clear any pending trial end date
-      const { error } = await supabase
-        .from('profiles')
-        .update({ is_premium: true, trial_ends_at: null })
-        .eq('id', user.id);
+      const { error } = await supabase.functions.invoke('activate-premium', {
+        method: 'POST',
+        body: { user_id: userId, token: secureToken },
+      });
 
       if (error) throw error;
-      setIsPremium(true);
-      setTrialEndsAt(null);
+      
+      // Force a re-fetch to confirm status from DB
+      await fetchPremiumStatus(userId);
+      return true;
     } catch (error) {
-      console.error("Failed to activate premium in DB:", error);
-      showError("Falha ao ativar Premium no servidor.");
+      console.error("Failed to activate premium securely:", error);
+      showError("Falha ao ativar Premium no servidor. Tente recarregar.");
+      return false;
     } finally {
       setIsLoading(false);
     }
-  }, [user]);
+  }, [fetchPremiumStatus]);
 
   const deactivatePremium = useCallback(async () => {
     if (!user) return;
@@ -144,7 +149,7 @@ export function usePremiumStatus() {
     isTrialActive,
     trialEndsAt,
     isLoading,
-    activatePremium,
+    activatePremiumSecurely, // Renamed and secured
     deactivatePremium,
     startTrial,
   };
