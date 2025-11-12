@@ -24,7 +24,7 @@ import { purchaseProduct } from "@/lib/capacitor";
 import FakeCheckoutModal from "@/components/FakeCheckoutModal";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { supabase } from "@/integrations/supabase/client"; // Import supabase client
+import { supabase } from "@/integrations/supabase/client";
 
 type HintPackage = {
   id: string;
@@ -83,7 +83,6 @@ const premiumFeatures = [
 ];
 
 const Store = () => {
-  // Removed 'activatePremium' from destructuring to fix TS error
   const { isPremium, isTrialActive, trialEndsAt, startTrial } = usePremium();
   const { user } = useSupabase();
   const { addHints } = useHintsContext();
@@ -301,7 +300,7 @@ const Store = () => {
               </div>
               <ul className="space-y-3 text-sm text-white/90">
                 {premiumFeatures.map((f) => (
-                  <li key={f} className="flex items-center gap-2">
+                  <li key={f} className="flex items-start gap-2">
                     <Check className="h-4 w-4 text-emerald-300" />
                     {f}
                   </li>
