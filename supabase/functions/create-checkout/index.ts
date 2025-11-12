@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts"
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -22,14 +23,31 @@ serve(async (req) => {
   }
   
   try {
-    // 1) Autenticação (simulada: requer token)
+    // 1) Autenticação: Verificar token e obter user ID
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), { 
+      return new Response(JSON.stringify({ error: 'Unauthorized: Missing Authorization header' }), { 
         status: 401, 
         headers: corsHeaders 
       });
     }
+    const token = authHeader.replace('Bearer ', '');
+
+    const supabaseAdmin = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '' // Use Service Role Key for secure token verification
+    );
+
+    const { data: { user }, error: userError } = await supabaseAdmin.auth.getUser(token);
+
+    if (userError || !user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized: Invalid token or user not found' }), { 
+        status: 401, 
+        headers: corsHeaders 
+      });
+    }
+    
+    const userId = user.id; // Securely obtained user ID
 
     // 2) Recebe e valida SKU (POST)
     if (req.method !== "POST") {
@@ -48,8 +66,8 @@ serve(async (req) => {
       );
     }
 
-    // 3) Retorna URL relativa para o app redirecionar localmente
-    const successPath = "/success-payment";
+    // 3) Retorna URL relativa para o app redirecionar localmente (incluindo user ID para rastreamento simulado)
+    const successPath = `/success-payment?user_id=${userId}&sku=${sku}`;
 
     return new Response(
       JSON.stringify({ 
