@@ -24,6 +24,7 @@ import { purchaseProduct } from "@/lib/capacitor";
 import FakeCheckoutModal from "@/components/FakeCheckoutModal";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { supabase } from "@/integrations/supabase/client"; // Import supabase client
 
 type HintPackage = {
   id: string;
@@ -82,7 +83,8 @@ const premiumFeatures = [
 ];
 
 const Store = () => {
-  const { isPremium, isTrialActive, trialEndsAt, startTrial, activatePremium } = usePremium();
+  // Removed 'activatePremium' from destructuring to fix TS error
+  const { isPremium, isTrialActive, trialEndsAt, startTrial } = usePremium();
   const { user } = useSupabase();
   const { addHints } = useHintsContext();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
@@ -103,12 +105,23 @@ const Store = () => {
         setIsCheckingOut(true);
         const loadingToast = showLoading("Processando assinatura...");
         try {
-          const success = await purchaseProduct(PRODUCTS.EDUKIDS_BASIC_MONTHLY);
+          // 1. Call Edge Function to create checkout session (simulated payment success)
+          const { data, error } = await supabase.functions.invoke('create-checkout', {
+            method: 'POST',
+            body: { sku: PRODUCTS.EDUKIDS_BASIC_MONTHLY },
+          });
+
           dismissToast(loadingToast);
-          if (success) {
-            await activatePremium(); 
-            navigate('/success-payment', { replace: true });
+
+          if (error) {
+            throw new Error(error.message);
           }
+          
+          const checkoutUrl = (data as { checkout_url: string }).checkout_url;
+          
+          // 2. Navigate to the success page which handles activation using the secure token
+          navigate(checkoutUrl, { replace: true });
+
         } catch (error: any) {
           console.error("Checkout failed:", error);
           dismissToast(loadingToast);
@@ -153,14 +166,18 @@ const Store = () => {
       price: pkg.price,
       onConfirm: async () => {
         const loading = showLoading(`Comprando ${pkg.name}...`);
-        // Simula a compra (real purchase logic would be here)
-        await new Promise(resolve => setTimeout(resolve, 1200));
-        
-        // Now relies on the database-backed addHints function
-        await addHints(pkg.amount); 
+        // Simulate purchase for hints (using native purchase logic for hints)
+        const success = await purchaseProduct(pkg.id);
         
         dismissToast(loading);
-        showSuccess(`${pkg.name} comprado! ${pkg.amount} dicas foram adicionadas ao seu saldo.`);
+
+        if (success) {
+          // Now relies on the database-backed addHints function
+          await addHints(pkg.amount); 
+          showSuccess(`${pkg.name} comprado! ${pkg.amount} dicas foram adicionadas ao seu saldo.`);
+        } else {
+          showError("Falha ao processar a compra de dicas.");
+        }
       },
     });
     setModalOpen(true);
