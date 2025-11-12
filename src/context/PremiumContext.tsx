@@ -3,9 +3,12 @@ import { usePremiumStatus } from '@/hooks/usePremiumStatus';
 
 interface PremiumContextType {
   isPremium: boolean;
+  isTrialActive: boolean;
+  trialEndsAt: string | null;
   isLoading: boolean;
   activatePremium: () => void;
   deactivatePremium: () => void;
+  startTrial: () => Promise<boolean>;
 }
 
 const PremiumContext = createContext<PremiumContextType | undefined>(undefined);

@@ -12,6 +12,7 @@ import {
   WifiOff,
   ListChecks,
   Target,
+  Clock,
 } from "lucide-react";
 import { usePremium } from "@/context/PremiumContext";
 import { showLoading, showError, dismissToast, showSuccess } from "@/utils/toast";
@@ -21,6 +22,8 @@ import { cn } from "@/lib/utils";
 import PRODUCTS from "@/config/products";
 import { purchaseProduct } from "@/lib/capacitor";
 import FakeCheckoutModal from "@/components/FakeCheckoutModal";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 type HintPackage = {
   id: string;
@@ -79,7 +82,7 @@ const premiumFeatures = [
 ];
 
 const Store = () => {
-  const { isPremium, activatePremium } = usePremium();
+  const { isPremium, isTrialActive, trialEndsAt, startTrial, activatePremium } = usePremium();
   const { user } = useSupabase();
   const { addHints } = useHintsContext();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
@@ -100,12 +103,9 @@ const Store = () => {
         setIsCheckingOut(true);
         const loadingToast = showLoading("Processando assinatura...");
         try {
-          // Note: purchaseProduct is simulated for web/TWA, but in a real app, 
-          // the success callback would trigger the server-side premium grant.
           const success = await purchaseProduct(PRODUCTS.EDUKIDS_BASIC_MONTHLY);
           dismissToast(loadingToast);
           if (success) {
-            // Since purchaseProduct is simulated to succeed, we activate premium locally (which updates DB now)
             await activatePremium(); 
             navigate('/success-payment', { replace: true });
           }
@@ -119,6 +119,28 @@ const Store = () => {
       },
     });
     setModalOpen(true);
+  };
+
+  const handleStartTrial = async () => {
+    if (!user) {
+      showError("Você precisa estar logado para iniciar o teste Premium.");
+      return;
+    }
+    setIsCheckingOut(true);
+    const loadingToast = showLoading("Iniciando teste Premium...");
+    try {
+      const success = await startTrial();
+      dismissToast(loadingToast);
+      if (success) {
+        showSuccess("Teste Premium de 7 dias ativado! Aproveite o Play+.");
+        navigate('/play-plus');
+      }
+    } catch (error) {
+      dismissToast(loadingToast);
+      showError("Falha ao iniciar o teste.");
+    } finally {
+      setIsCheckingOut(false);
+    }
   };
 
   const handleBuyHints = (pkg: HintPackage) => {
@@ -142,6 +164,62 @@ const Store = () => {
       },
     });
     setModalOpen(true);
+  };
+
+  const renderPremiumButton = () => {
+    if (isPremium) {
+      if (isTrialActive) {
+        const formattedDate = trialEndsAt ? format(new Date(trialEndsAt), "dd/MM/yyyy", { locale: ptBR }) : 'data desconhecida';
+        return (
+          <Button 
+            className="w-full bg-emerald-600 text-white font-bold"
+            disabled
+          >
+            <Clock className="mr-2 h-4 w-4" />
+            Teste Ativo (Expira em {formattedDate})
+          </Button>
+        );
+      }
+      return (
+        <Button 
+          className="w-full bg-green-600 text-white font-bold"
+          disabled
+        >
+          Você já é Premium
+        </Button>
+      );
+    }
+
+    // If trialEndsAt is null, the user hasn't used the trial yet.
+    const hasUsedTrial = trialEndsAt !== null;
+
+    return (
+      <>
+        {!hasUsedTrial && (
+          <Button
+            onClick={handleStartTrial}
+            className="w-full bg-sky-500 text-white font-bold shadow-md hover:bg-sky-600 mb-3"
+            disabled={isCheckingOut || !user}
+          >
+            {isCheckingOut ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              "Iniciar Teste Grátis de 7 Dias"
+            )}
+          </Button>
+        )}
+        <Button
+          onClick={handlePremiumCheckout}
+          className="w-full bg-yellow-300 text-black font-bold hover:bg-yellow-200"
+          disabled={isCheckingOut || !user}
+        >
+          Quero Assinar Agora (R$ 19,90/mês)
+        </Button>
+        {!user && (
+          <p className="text-xs text-center text-red-400 mt-2">Faça login para assinar ou iniciar o teste.</p>
+        )}
+      </>
+    );
   };
 
   return (
@@ -177,20 +255,8 @@ const Store = () => {
               </span>
             </div>
             <div className="flex flex-wrap gap-3">
-              <Button
-                onClick={handlePremiumCheckout}
-                className="bg-white text-black font-bold shadow-md hover:bg-white/90"
-                disabled={isCheckingOut}
-              >
-                {isCheckingOut ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Processando...
-                  </>
-                ) : (
-                  "Assinar Premium (R$ 19,90/mês)"
-                )}
-              </Button>
+              {/* Primary CTA area */}
+              {renderPremiumButton()}
               <Button variant="outline" className="border-white/40 text-white hover:bg-white/10" asChild>
                 <Link to="/test-account">Criar conta de teste</Link>
               </Button>
@@ -224,13 +290,7 @@ const Store = () => {
                   </li>
                 ))}
               </ul>
-              <Button
-                onClick={handlePremiumCheckout}
-                className="w-full bg-yellow-300 text-black font-bold hover:bg-yellow-200"
-                disabled={isPremium || isCheckingOut}
-              >
-                {isPremium ? "Você já é Premium" : "Quero ser Premium"}
-              </Button>
+              {renderPremiumButton()}
             </CardContent>
           </Card>
         </div>

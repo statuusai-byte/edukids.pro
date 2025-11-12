@@ -15,7 +15,7 @@ export default function TestAccount() {
   const [email, setEmail] = useState(DEFAULT_EMAIL);
   const [password, setPassword] = DEFAULT_PASSWORD;
   const navigate = useNavigate();
-  const { activatePremium } = usePremium(); // Use DB-backed activation
+  const { startTrial } = usePremium(); // Use startTrial for test activation
 
   const seedLocalProfileAndPackages = async () => {
     try {
@@ -74,22 +74,21 @@ export default function TestAccount() {
           // Authentication still failed — automatically fallback to local premium
           dismissToast(loadingToast);
           await seedLocalProfileAndPackages();
-          // Activate premium locally (which updates DB if user exists, or just sets local profile if not)
-          // NOTE: If user doesn't exist, this will fail silently on DB update, but local profile is set.
-          await activatePremium(); 
-          showSuccess("Autenticação online falhou; Premium ativado localmente para testes.");
+          // Start trial (which updates DB if user exists, or just sets local profile if not)
+          await startTrial(); 
+          showSuccess("Autenticação online falhou; Teste Premium ativado localmente.");
           navigate("/dashboard", { replace: true });
           setLoading(false);
           return;
         }
       }
 
-      // If authentication succeeded, seed local profile and activate premium in DB
+      // If authentication succeeded, seed local profile and start trial in DB
       await seedLocalProfileAndPackages();
-      await activatePremium();
+      await startTrial();
 
       dismissToast(loadingToast);
-      showSuccess("Conta de teste pronta com Premium ativado. Você será redirecionado(a).");
+      showSuccess("Conta de teste pronta com Teste Premium ativado. Você será redirecionado(a).");
 
       // small delay to let the toaster show
       setTimeout(() => {
@@ -101,11 +100,11 @@ export default function TestAccount() {
       // Automatic fallback on any unexpected error
       try {
         await seedLocalProfileAndPackages();
-        await activatePremium();
-        showSuccess("Ocorreu um erro, mas Premium foi ativado localmente para permitir testes.");
+        await startTrial();
+        showSuccess("Ocorreu um erro, mas Teste Premium foi ativado localmente para permitir testes.");
         navigate("/dashboard", { replace: true });
       } catch (e) {
-        showError("Falha ao ativar Premium localmente.");
+        showError("Falha ao ativar Teste Premium localmente.");
       }
     } finally {
       setLoading(false);
@@ -114,19 +113,18 @@ export default function TestAccount() {
 
   const handleActivateLocalOnly = async () => {
     try {
-      // We rely on activatePremium to handle the DB update and local state update in the hook.
-      // If the user is not logged in, activatePremium will show an error, but we still seed the profile.
+      // We rely on startTrial to handle the DB update and local state update in the hook.
       await seedLocalProfileAndPackages();
       
-      // If the user is logged in, this will activate premium in DB.
+      // If the user is logged in, this will start the trial in DB.
       // If not logged in, the hook will handle the error, but the local profile is set.
-      await activatePremium(); 
+      await startTrial(); 
 
-      showSuccess("Premium ativado (ou perfil local configurado) para este dispositivo.");
+      showSuccess("Teste Premium ativado (ou perfil local configurado) para este dispositivo.");
       // Redirect to dashboard so user can check premium areas
       navigate("/dashboard", { replace: true });
     } catch (e) {
-      showError("Falha ao ativar Premium localmente.");
+      showError("Falha ao ativar Teste Premium localmente.");
     }
   };
 
@@ -160,7 +158,7 @@ export default function TestAccount() {
 
           <div className="flex flex-col gap-3">
             <Button onClick={handleCreateAndLogin} disabled={loading} className="bg-primary">
-              {loading ? "Processando..." : "Criar / Entrar e Ativar Premium"}
+              {loading ? "Processando..." : "Criar / Entrar e Ativar Teste Premium"}
             </Button>
 
             <Button variant="outline" onClick={() => {
@@ -180,7 +178,7 @@ export default function TestAccount() {
             </Button>
 
             <Button onClick={handleActivateLocalOnly} className="bg-yellow-400 text-black">
-              Ativar Premium localmente (sem login)
+              Ativar Teste Premium localmente (sem login)
             </Button>
           </div>
 
