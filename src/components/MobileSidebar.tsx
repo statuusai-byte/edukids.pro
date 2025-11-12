@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/get-initials";
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { usePremium } from "@/context/PremiumContext";
 
 type NavItem = {
@@ -38,27 +38,14 @@ const MobileSidebar = () => {
     () => (name?.trim()?.length ? name : "Explorador EDUKIDS"),
     [name],
   );
-  const [isOpen, setIsOpen] = useState(false);
   const { isPremium } = usePremium();
-
-  const handleNavClick = () => setIsOpen(false);
 
   const avatarInitials = useMemo(() => getInitials(displayName), [displayName]);
 
+  // We rely on the Sheet component to manage its own open state when triggered by Header
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger asChild>
-        <Button
-          type="button"
-          variant="default"
-          size="icon"
-          className="fixed left-4 top-4 z-50 bg-white text-black shadow-md hover:bg-gray-100 md:hidden"
-        >
-          <Menu className="h-6 w-6" />
-          <span className="sr-only">Abrir menu</span>
-        </Button>
-      </SheetTrigger>
-
+    <Sheet>
+      {/* SheetTrigger is now in Header.tsx */}
       <SheetContent
         side="left"
         className="w-72 overflow-hidden border-r border-white/10 bg-transparent p-0"
@@ -98,46 +85,46 @@ const MobileSidebar = () => {
 
             <nav className="flex-1 space-y-2 overflow-y-auto pr-1">
               {navItems.map((item) => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  onClick={handleNavClick}
-                  className={({ isActive }) =>
-                    cn(
-                      "group flex items-center gap-3 rounded-2xl border border-transparent px-3 py-3 transition-all duration-200",
-                      isActive
-                        ? "border-primary/40 bg-primary/12 shadow-[0_0_30px_rgba(124,58,237,0.35)]"
-                        : "bg-white/[0.04] hover:bg-white/[0.09]",
-                    )
-                  }
-                >
-                  {({ isActive }) => (
-                    <>
-                      <div
-                        className={cn(
-                          "flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 transition-transform duration-200",
-                          isActive ? "scale-105" : "group-hover:scale-105",
-                        )}
-                      >
-                        <Icon
-                          name={item.icon}
+                <SheetClose asChild key={item.to}>
+                  <NavLink
+                    to={item.to}
+                    className={({ isActive }) =>
+                      cn(
+                        "group flex items-center gap-3 rounded-2xl border border-transparent px-3 py-3 transition-all duration-200",
+                        isActive
+                          ? "border-primary/40 bg-primary/12 shadow-[0_0_30px_rgba(124,58,237,0.35)]"
+                          : "bg-white/[0.04] hover:bg-white/[0.09]",
+                      )
+                    }
+                  >
+                    {({ isActive }) => (
+                      <>
+                        <div
                           className={cn(
-                            "h-5 w-5 transition-colors",
-                            isActive ? item.color : "text-white/65 group-hover:text-white",
+                            "flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 transition-transform duration-200",
+                            isActive ? "scale-105" : "group-hover:scale-105",
                           )}
-                        />
-                      </div>
-                      <span
-                        className={cn(
-                          "text-sm font-medium transition-colors",
-                          isActive ? "text-white" : "text-white/70 group-hover:text-white",
-                        )}
-                      >
-                        {item.label}
-                      </span>
-                    </>
-                  )}
-                </NavLink>
+                        >
+                          <Icon
+                            name={item.icon}
+                            className={cn(
+                              "h-5 w-5 transition-colors",
+                              isActive ? item.color : "text-white/65 group-hover:text-white",
+                            )}
+                          />
+                        </div>
+                        <span
+                          className={cn(
+                            "text-sm font-medium transition-colors",
+                            isActive ? "text-white" : "text-white/70 group-hover:text-white",
+                          )}
+                        >
+                          {item.label}
+                        </span>
+                      </>
+                    )}
+                  </NavLink>
+                </SheetClose>
               ))}
             </nav>
 
@@ -176,7 +163,6 @@ const MobileSidebar = () => {
                       asChild
                       size="sm"
                       className="mt-1 w-full rounded-xl bg-white text-primary font-bold hover:bg-white/90"
-                      onClick={handleNavClick}
                     >
                       <Link to="/store">Ver planos e vantagens</Link>
                     </Button>
@@ -184,38 +170,39 @@ const MobileSidebar = () => {
                 </div>
               )}
 
-              <NavLink
-                to={settingsItem.to}
-                onClick={handleNavClick}
-                className={({ isActive }) =>
-                  cn(
-                    "group flex items-center gap-3 rounded-2xl border border-transparent px-3 py-3 transition-all duration-200",
-                    isActive ? "border-white/20 bg-white/10" : "bg-white/[0.04] hover:bg-white/[0.09]",
-                  )
-                }
-              >
-                {({ isActive }) => (
-                  <>
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/6">
-                      <Icon
-                        name={settingsItem.icon}
+              <SheetClose asChild>
+                <NavLink
+                  to={settingsItem.to}
+                  className={({ isActive }) =>
+                    cn(
+                      "group flex items-center gap-3 rounded-2xl border border-transparent px-3 py-3 transition-all duration-200",
+                      isActive ? "border-white/20 bg-white/10" : "bg-white/[0.04] hover:bg-white/[0.09]",
+                    )
+                  }
+                >
+                  {({ isActive }) => (
+                    <>
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/6">
+                        <Icon
+                          name={settingsItem.icon}
+                          className={cn(
+                            "h-5 w-5 transition-colors",
+                            isActive ? settingsItem.color : "text-white/65 group-hover:text-white",
+                          )}
+                        />
+                      </div>
+                      <span
                         className={cn(
-                          "h-5 w-5 transition-colors",
-                          isActive ? settingsItem.color : "text-white/65 group-hover:text-white",
+                          "text-sm font-medium",
+                          isActive ? "text-white" : "text-white/70 group-hover:text-white",
                         )}
-                      />
-                    </div>
-                    <span
-                      className={cn(
-                        "text-sm font-medium",
-                        isActive ? "text-white" : "text-white/70 group-hover:text-white",
-                      )}
-                    >
-                      {settingsItem.label}
-                    </span>
-                  </>
-                )}
-              </NavLink>
+                      >
+                        {settingsItem.label}
+                      </span>
+                    </>
+                  )}
+                </NavLink>
+              </SheetClose>
 
               <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3 shadow-inner shadow-black/10">
                 <Avatar className="h-10 w-10">
@@ -229,8 +216,7 @@ const MobileSidebar = () => {
               </div>
             </div>
           </div>
-        </div>
-      </SheetContent>
+        </SheetContent>
     </Sheet>
   );
 };

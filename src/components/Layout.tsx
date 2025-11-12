@@ -41,23 +41,33 @@ const Layout = () => {
   
   useInterstitialAdManager();
 
+  // Adjust padding for mobile to account for fixed header and tab bar
   const mobileShellStyle = isMobile
     ? {
-        paddingTop: "env(safe-area-inset-top, 1rem)",
-        paddingBottom: "calc(env(safe-area-inset-bottom, 1rem) + 5rem)",
-        paddingLeft: "env(safe-area-inset-left, 1rem)",
-        paddingRight: "env(safe-area-inset-right, 1rem)",
+        paddingTop: "calc(env(safe-area-inset-top, 0px) + 5rem)", // 5rem = h-20 of Header
+        paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 5rem)", // 5rem = height of MobileTabBar
+        paddingLeft: "env(safe-area-inset-left, 0px)",
+        paddingRight: "env(safe-area-inset-right, 0px)",
       }
-    : undefined;
+    : {
+        paddingTop: "calc(env(safe-area-inset-top, 0px) + 5rem)", // 5rem = h-20 of Header
+      };
 
   return (
     <div className="flex flex-1 w-full text-foreground">
-      {isMobile ? (
+      {/* Fixed Header for all screens */}
+      <Header />
+
+      {/* Mobile Navigation */}
+      {isMobile && (
         <>
           <MobileSidebar />
           <MobileTabBar />
         </>
-      ) : (
+      )}
+
+      {/* Desktop Sidebar (Removed for simplicity, using Header + MobileSidebar for all) */}
+      {!isMobile && (
         <aside className="group fixed inset-y-0 left-0 z-20 hidden w-24 flex-col items-center border-r border-white/10 bg-secondary/30 backdrop-blur-xl py-6 transition-all duration-300 hover:w-64 md:flex">
           <div className="mb-8 flex items-center justify-center">
             <Sparkles size={34} className="text-primary" />
@@ -146,14 +156,13 @@ const Layout = () => {
       )}
 
       <main
-        className={cn("flex-1 overflow-x-hidden", !isMobile && "md:pl-24")}
+        className={cn("flex-1 overflow-x-hidden")}
         style={mobileShellStyle}
       >
-        {!isMobile && <Header />} {/* Add Header for desktop view */}
         <div
           className={cn(
             "mx-auto w-full max-w-7xl",
-            isMobile ? "" : "py-10 md:py-12"
+            isMobile ? "px-4" : "py-10 md:py-12"
           )}
         >
           <div
@@ -169,7 +178,7 @@ const Layout = () => {
             <div
               className={cn(
                 "relative z-10",
-                isMobile ? "px-4 pt-16 pb-24" : "px-6 py-8 sm:px-8 sm:py-10 md:px-14 md:py-14"
+                isMobile ? "px-6 py-8 sm:px-8 sm:py-10" : "px-6 py-8 sm:px-8 sm:py-10 md:px-14 md:py-14"
               )}
             >
               <Outlet />
