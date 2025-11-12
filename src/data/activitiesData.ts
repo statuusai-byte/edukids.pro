@@ -237,6 +237,22 @@ function genGeographyCapitals(count: number): QuizQuestion[] {
   return out;
 }
 
+function genHistoryFactsQuiz(count: number): QuizQuestion[] {
+  const questions = [
+    { q: 'Quem liderou a chegada dos portugueses ao Brasil em 1500?', a: 'Pedro Álvares Cabral', options: ['Cristóvão Colombo', 'Vasco da Gama', 'Dom Pedro I'] },
+    { q: 'Qual era o nome do povo que já vivia no Brasil antes da chegada dos portugueses?', a: 'Indígenas', options: ['Espanhóis', 'Africanos', 'Italianos'] },
+    { q: 'Em que ano o Brasil foi descoberto pelos portugueses?', a: '1500', options: ['1492', '1822', '1900'] },
+    { q: 'Qual foi a primeira riqueza explorada pelos portugueses no Brasil?', a: 'Pau-Brasil', options: ['Ouro', 'Café', 'Açúcar'] },
+    { q: 'Quem proclamou a Independência do Brasil em 1822?', a: 'Dom Pedro I', options: ['Tiradentes', 'Princesa Isabel', 'Pedro Álvares Cabral'] },
+  ];
+  const out: QuizQuestion[] = [];
+  for (let i = 0; i < count; i++) {
+    const qData = questions[i % questions.length];
+    out.push({ question: qData.q, options: makeOptions(qData.a, qData.options), correctAnswer: qData.a });
+  }
+  return out;
+}
+
 function genEnglishAnimals(count: number): QuizQuestion[] {
   const animals = [
     { en: 'dog', pt: 'cachorro' }, { en: 'cat', pt: 'gato' }, { en: 'bird', pt: 'pássaro' },
@@ -779,7 +795,7 @@ export const subjectsData: Subject[] = [
                 `, 
                 type: "reading" 
               },
-              { id: "h1-l2", title: "Quiz de Fatos Históricos", content: JSON.stringify(genGeographyCapitals(PREMIUM_QUIZ_COUNT)), type: "exercise", premium: true }
+              { id: "h1-l2", title: "Quiz de Fatos Históricos", content: JSON.stringify(genHistoryFactsQuiz(PREMIUM_QUIZ_COUNT)), type: "exercise", premium: true }
             ]
           }
         ]
