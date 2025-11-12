@@ -37,7 +37,7 @@
   "isChromeOSOnly": false,
   "isMetaQuest": false,
   "fullScopeUrl": "https://edukidspro.vercel.app/",
-  "minSdkVersion": 21,
+  "minSdkVersion": 22,
   "orientation": "portrait-primary",
   "fingerprints": [],
   "additionalTrustedOrigins": [],
@@ -45,6 +45,5 @@
   "protocolHandlers": [],
   "fileHandlers": [],
   "launchHandlerClientMode": "",
-  "displayOverride": [],
-  "appVersion": "1.0.3"
+  "displayOverride": []
 }
