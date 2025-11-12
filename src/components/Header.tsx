@@ -1,4 +1,4 @@
-import { Bell, LogOut, Settings, User, Gem, Lightbulb } from "lucide-react";
+import { Bell, LogOut, Settings, User, Gem, Lightbulb, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -14,12 +14,18 @@ import { useProfile } from "@/context/ProfileContext";
 import { useSupabase } from "@/context/SupabaseContext";
 import { useHintsContext } from "@/context/HintsContext";
 import { usePremium } from "@/context/PremiumContext";
+import { useTheme } from "@/context/ThemeContext"; // Import useTheme
 
 const Header = () => {
   const { name, avatarUrl } = useProfile();
   const { signOut } = useSupabase();
   const { hints } = useHintsContext();
   const { isPremium } = usePremium();
+  const { theme, setTheme } = useTheme(); // Use theme context
+
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
 
   return (
     <header className="sticky top-0 z-10 flex h-20 items-center justify-between bg-background/80 backdrop-blur-lg px-4 sm:px-6">
@@ -29,6 +35,17 @@ const Header = () => {
         </h1>
       </div>
       <div className="flex items-center gap-4">
+        
+        {/* Theme Toggle Button */}
+        <Button variant="ghost" size="icon" className="rounded-full hover:bg-primary/10" onClick={toggleTheme}>
+          {theme === 'dark' ? (
+            <Sun className="h-6 w-6 text-yellow-400 hover:text-yellow-300" />
+          ) : (
+            <Moon className="h-6 w-6 text-slate-600 hover:text-slate-700" />
+          )}
+          <span className="sr-only">Alternar tema</span>
+        </Button>
+
         <Button variant="ghost" size="icon" className="rounded-full hover:bg-primary/10">
           <Bell className="h-6 w-6 text-muted-foreground hover:text-primary" />
           <span className="sr-only">Notificações</span>
