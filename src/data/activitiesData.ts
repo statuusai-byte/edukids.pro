@@ -485,7 +485,6 @@ export const subjectsData: Subject[] = [
                   <p>Para calcular a área de um <strong>retângulo</strong> ou <strong>quadrado</strong>, você precisa multiplicar a largura pela altura.</p>
                   <p><strong>Fórmula:</strong> Área = Largura × Altura</p>
                   <p>Se um tapete tem 2 metros de largura e 3 metros de altura, a área dele é 2 x 3 = 6 metros quadrados (6 m²).</p>
-                  <p>Entender a área nos ajuda a saber quanto de tinta precisamos para pintar uma parede ou quanto de grama precisamos para um jardim!</p>
                 `, 
                 type: "reading" 
               }
@@ -939,6 +938,21 @@ export const subjectsData: Subject[] = [
             id: "ef1-mod1",
             title: "Primeiros Passos Financeiros",
             lessons: [
+              { 
+                id: "ef1-l0", 
+                title: "O que é Dinheiro?", 
+                content: `
+                  <p>O <strong>dinheiro</strong> é uma ferramenta que usamos para trocar por coisas que precisamos ou queremos, como comida, brinquedos ou ingressos de cinema.</p>
+                  <p>Antigamente, as pessoas trocavam objetos (escambo), mas hoje usamos moedas e notas. O dinheiro tem três funções principais:</p>
+                  <ol>
+                    <li><strong>Meio de Troca:</strong> Usamos para comprar.</li>
+                    <li><strong>Unidade de Valor:</strong> Ajuda a saber quanto vale cada coisa.</li>
+                    <li><strong>Reserva de Valor:</strong> Podemos guardar (poupar) para usar no futuro.</li>
+                  </ol>
+                  <p>Aprender a usar o dinheiro com sabedoria é muito importante para o futuro!</p>
+                `, 
+                type: "reading" 
+              },
               { id: "ef1-l1", title: "Quiz: O que é Poupar?", content: JSON.stringify(genFinancialLiteracyQuiz(FREE_QUIZ_COUNT)), type: "exercise" },
               { id: "ef1-l2", title: "Quiz Avançado: Investimentos e Juros", content: JSON.stringify(genAdvancedFinancialLiteracyQuiz(PREMIUM_QUIZ_COUNT)), type: "exercise", premium: true }
             ]
