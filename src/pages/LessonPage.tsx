@@ -182,6 +182,20 @@ const LessonPage = () => {
               onRequestHint={handleUseHint}
             />
           );
+        } else {
+          // Case: Quiz content was parsed but resulted in 0 questions (e.g., generator failed)
+          return (
+            <div className="glass-card p-6">
+              <h3 className="text-xl font-semibold">Conteúdo indisponível</h3>
+              <p className="text-sm text-muted-foreground mt-2">
+                O quiz foi carregado, mas não contém perguntas. Tente recarregar ou volte mais tarde.
+              </p>
+              <div className="mt-4 flex gap-2">
+                <Button onClick={() => window.location.reload()}>Recarregar</Button>
+                <Button variant="outline" onClick={() => navigate(`/activities/${subject.slug}`)}>Voltar</Button>
+              </div>
+            </div>
+          );
         }
       } catch (e) { 
         console.error("Failed to parse quiz content:", e);
