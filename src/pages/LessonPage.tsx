@@ -148,7 +148,8 @@ const LessonPage = () => {
       return;
     }
     if (hints > 0) {
-      if (useHint()) {
+      const hintUsedSuccessfully = await useHint();
+      if (hintUsedSuccessfully) {
         setHintTriggered(true);
         showSuccess("Dica usada! Seu saldo foi atualizado.");
         return;

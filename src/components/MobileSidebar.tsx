@@ -211,6 +211,7 @@ const MobileSidebar = () => {
             </div>
           </div>
         </div>
+      </div>
     </SheetContent>
   );
 };
