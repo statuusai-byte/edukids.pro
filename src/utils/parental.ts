@@ -1,6 +1,5 @@
 // Parental PIN utilities — uses Supabase 'parents' table for secure storage.
 import { supabase } from "@/integrations/supabase/client";
-import { useSupabase } from "@/context/SupabaseContext";
 import { showError } from "./toast";
 
 const REQUIRE_PIN_KEY = "edukids_require_parent_pin";
