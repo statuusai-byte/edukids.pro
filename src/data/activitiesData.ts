@@ -375,6 +375,22 @@ function genAdvancedFinancialLiteracyQuiz(count: number): QuizQuestion[] {
   return out;
 }
 
+function genLogicQuiz(count: number): QuizQuestion[] {
+  const questions = [
+    { q: 'SE o semáforo estiver VERMELHO, ENTÃO o que você faz?', a: 'Parar', options: ['Acelerar', 'Buzinar', 'Virar à direita'] },
+    { q: 'SE você tem 5 maçãs e come 2, ENTÃO quantas maçãs sobram?', a: '3', options: ['7', '2', '5'] },
+    { q: 'SE está chovendo E você não tem guarda-chuva, ENTÃO o que acontece?', a: 'Você se molha', options: ['Você fica seco', 'O sol aparece', 'Você voa'] },
+    { q: 'SE o botão for VERDE, ENTÃO a porta abre. O botão é AZUL. O que acontece?', a: 'A porta não abre', options: ['A porta abre', 'A luz pisca', 'O alarme toca'] },
+    { q: 'SE o número é maior que 10, ENTÃO é grande. O número é 8. O que é 8?', a: 'Não é grande', options: ['É grande', 'É igual a 10', 'É um número primo'] },
+  ];
+  const out: QuizQuestion[] = [];
+  for (let i = 0; i < count; i++) {
+    const qData = questions[i % questions.length];
+    out.push({ question: qData.q, options: makeOptions(qData.a, qData.options), correctAnswer: qData.a });
+  }
+  return out;
+}
+
 /* ---------- subjectsData export ---------- */
 
 export const subjectsData: Subject[] = [
@@ -485,6 +501,7 @@ export const subjectsData: Subject[] = [
                   <p>Para calcular a área de um <strong>retângulo</strong> ou <strong>quadrado</strong>, você precisa multiplicar a largura pela altura.</p>
                   <p><strong>Fórmula:</strong> Área = Largura × Altura</p>
                   <p>Se um tapete tem 2 metros de largura e 3 metros de altura, a área dele é 2 x 3 = 6 metros quadrados (6 m²).</p>
+                  <p>Entender a área nos ajuda a saber quanto de tinta precisamos para pintar uma parede ou quanto de grama precisamos para um jardim!</p>
                 `, 
                 type: "reading" 
               }
@@ -914,6 +931,11 @@ export const subjectsData: Subject[] = [
                 `, 
                 type: "reading" 
               }
+            ]
+          },
+          {
+            id: "pr1-mod3", title: "Testando a Lógica", lessons: [
+              { id: "pr1-l3", title: "Quiz: Regras de SE-ENTÃO", content: JSON.stringify(genLogicQuiz(FREE_QUIZ_COUNT)), type: "exercise" }
             ]
           }
         ]
