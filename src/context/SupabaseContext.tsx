@@ -164,6 +164,8 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
     } else {
       setUser(null);
       setSession(null);
+      // Force navigation to a public route to ensure clean unmount of protected components
+      navigate('/login', { replace: true });
     }
   };
 
