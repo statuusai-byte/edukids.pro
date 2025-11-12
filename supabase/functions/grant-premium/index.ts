@@ -17,13 +17,16 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405, headers: corsHeaders })
     }
 
-    const body = await req.json().catch(() => ({}));
-    const email = (body.email || '').toString().trim().toLowerCase();
-    if (!email) {
-      return new Response(JSON.stringify({ error: 'Missing email in request body' }), { status: 400, headers: corsHeaders })
+    // --- START SECURITY CHECK: Verify caller identity and admin status ---
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: 'Unauthorized: Missing Authorization header' }), { 
+        status: 401, 
+        headers: corsHeaders 
+      });
     }
+    const token = authHeader.replace('Bearer ', '');
 
-    // Admin client with service role key
     const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 
@@ -32,6 +35,38 @@ serve(async (req) => {
     }
 
     const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+    // 1. Verify caller identity using the token
+    const { data: { user: callerUser }, error: userError } = await supabaseAdmin.auth.getUser(token);
+    
+    if (userError || !callerUser) {
+      return new Response(JSON.stringify({ error: 'Unauthorized: Invalid token or user not found' }), { 
+        status: 401, 
+        headers: corsHeaders 
+      });
+    }
+    
+    // 2. Check if caller is an admin by querying the profiles table
+    const { data: profileData, error: profileError } = await supabaseAdmin
+      .from('profiles')
+      .select('is_admin')
+      .eq('id', callerUser.id)
+      .single();
+
+    if (profileError || !profileData || !profileData.is_admin) {
+      console.warn(`Unauthorized attempt to grant premium by user ID: ${callerUser.id}`);
+      return new Response(JSON.stringify({ error: 'Forbidden: Caller is not authorized to grant premium' }), { 
+        status: 403, 
+        headers: corsHeaders 
+      });
+    }
+    // --- END SECURITY CHECK ---
+
+    const body = await req.json().catch(() => ({}));
+    const email = (body.email || '').toString().trim().toLowerCase();
+    if (!email) {
+      return new Response(JSON.stringify({ error: 'Missing email in request body' }), { status: 400, headers: corsHeaders })
+    }
 
     // List users and find by email (admin endpoint)
     const listRes = await supabaseAdmin.auth.admin.listUsers();
