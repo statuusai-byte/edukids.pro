@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 const DEFAULT_EMAIL = "eduki.teste@gmail.com";
 const DEFAULT_PASSWORD = "12121212";
+const PREMIUM_LOCAL_FLAG = "edukids_is_premium";
 
 export default function TestAccount() {
   const [loading, setLoading] = useState(false);
@@ -16,7 +17,7 @@ export default function TestAccount() {
 
   const seedLocalPremium = async () => {
     try {
-      localStorage.setItem("edukids_is_premium", "true");
+      localStorage.setItem(PREMIUM_LOCAL_FLAG, "true");
       // mark profile
       const profile = {
         name: "Test User",
@@ -34,6 +35,8 @@ export default function TestAccount() {
         "ingles",
       ];
       localStorage.setItem("edukids_help_packages", JSON.stringify(allPackages));
+      // Dispara um evento para que o hook usePremium reaja à mudança
+      window.dispatchEvent(new StorageEvent('storage', { key: PREMIUM_LOCAL_FLAG, newValue: 'true' }));
     } catch (e) {
       console.error("Failed to seed local premium:", e);
       throw e;
@@ -158,6 +161,7 @@ export default function TestAccount() {
                 localStorage.removeItem("edukids_is_premium");
                 localStorage.removeItem("edukids_profile");
                 localStorage.removeItem("edukids_help_packages");
+                window.dispatchEvent(new StorageEvent('storage', { key: PREMIUM_LOCAL_FLAG, newValue: 'false' }));
                 showSuccess("Dados locais de teste removidos.");
               } catch (e) {
                 showError("Falha ao limpar dados locais.");

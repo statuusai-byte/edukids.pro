@@ -40,6 +40,9 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
       const allPackages = ['matemantica', 'portugues', 'ciencias', 'historia', 'geografia', 'ingles'];
       localStorage.setItem('edukids_help_packages', JSON.stringify(allPackages));
       
+      // Dispara um evento para que o hook usePremium reaja à mudança
+      window.dispatchEvent(new StorageEvent('storage', { key: PREMIUM_LOCAL_FLAG, newValue: 'true' }));
+
       if (!wasAlreadyPremium) {
         showSuccess('Conta administradora com Premium ativado.');
       }
@@ -62,6 +65,8 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
         const wasAlreadyPremium = localStorage.getItem(PREMIUM_LOCAL_FLAG) === 'true';
         try {
           localStorage.setItem(PREMIUM_LOCAL_FLAG, 'true');
+          // Dispara um evento para que o hook usePremium reaja à mudança
+          window.dispatchEvent(new StorageEvent('storage', { key: PREMIUM_LOCAL_FLAG, newValue: 'true' }));
         } catch (e) {
           console.error('Local storage error while syncing premium:', e);
         }
@@ -147,6 +152,8 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
       localStorage.removeItem('edukids_help_packages');
       localStorage.removeItem('edukids_profile');
       localStorage.removeItem('edukids_force_premium_applied');
+      // Dispara evento para garantir que o estado reaja
+      window.dispatchEvent(new StorageEvent('storage', { key: PREMIUM_LOCAL_FLAG, newValue: 'false' }));
     } catch (e) {
       console.warn('Failed to clear local storage on sign out:', e);
     }
