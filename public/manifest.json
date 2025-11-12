@@ -8,6 +8,7 @@
   "background_color": "#0f172a",
   "theme_color": "#7c3aed",
   "orientation": "portrait-primary",
+  "scope": "/",
   "categories": ["education", "games", "kids"],
   "prefer_related_applications": false,
   "related_applications": [
@@ -27,15 +28,8 @@
       "src": "/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     }
   ],
-  "scope": "/",
   "iarc_rating_id": "e8d17982-1942-4989-b68d-229172222222"
 }
