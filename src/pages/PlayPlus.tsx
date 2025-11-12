@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Loader2 } from "lucide-react";
 import { useAge } from "@/context/AgeContext";
 import { useNavigate } from "react-router-dom";
 import DailyQuests from "@/components/DailyQuests";
@@ -9,8 +9,17 @@ import { Link } from "react-router-dom";
 
 const PlayPlus = () => {
   const { ageGroup } = useAge();
-  const { isPremium } = usePremium();
+  const { isPremium, isLoading: isPremiumLoading } = usePremium();
   const navigate = useNavigate();
+
+  if (isPremiumLoading) {
+    return (
+      <div className="flex h-40 items-center justify-center glass-card p-8">
+        <Loader2 className="h-8 w-8 animate-spin text-primary mr-3" />
+        <h1 className="text-xl font-bold">Carregando status Premium...</h1>
+      </div>
+    );
+  }
 
   if (!isPremium) {
     return (

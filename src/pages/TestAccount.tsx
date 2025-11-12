@@ -13,7 +13,7 @@ const PREMIUM_LOCAL_FLAG = "edukids_is_premium"; // Kept for cleanup/legacy chec
 export default function TestAccount() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState(DEFAULT_EMAIL);
-  const [password, setPassword] = useState(DEFAULT_PASSWORD);
+  const [password, setPassword] = DEFAULT_PASSWORD;
   const navigate = useNavigate();
   const { activatePremium } = usePremium(); // Use DB-backed activation
 
@@ -75,6 +75,7 @@ export default function TestAccount() {
           dismissToast(loadingToast);
           await seedLocalProfileAndPackages();
           // Activate premium locally (which updates DB if user exists, or just sets local profile if not)
+          // NOTE: If user doesn't exist, this will fail silently on DB update, but local profile is set.
           await activatePremium(); 
           showSuccess("Autenticação online falhou; Premium ativado localmente para testes.");
           navigate("/dashboard", { replace: true });
@@ -113,17 +114,15 @@ export default function TestAccount() {
 
   const handleActivateLocalOnly = async () => {
     try {
-      // This function is primarily for setting up the local profile/packages for testing
-      // and relies on the user being logged in for DB activation.
-      // Since this button is "Activate Premium locally (without login)", we only set local profile data.
-      // We manually set the local flag for the usePremiumStatus hook to work if the user is NOT logged in, 
-      // as a temporary measure for this specific test page.
+      // We rely on activatePremium to handle the DB update and local state update in the hook.
+      // If the user is not logged in, activatePremium will show an error, but we still seed the profile.
       await seedLocalProfileAndPackages();
       
-      localStorage.setItem(PREMIUM_LOCAL_FLAG, 'true');
-      window.dispatchEvent(new StorageEvent('storage', { key: PREMIUM_LOCAL_FLAG, newValue: 'true' }));
+      // If the user is logged in, this will activate premium in DB.
+      // If not logged in, the hook will handle the error, but the local profile is set.
+      await activatePremium(); 
 
-      showSuccess("Premium ativado localmente para este dispositivo.");
+      showSuccess("Premium ativado (ou perfil local configurado) para este dispositivo.");
       // Redirect to dashboard so user can check premium areas
       navigate("/dashboard", { replace: true });
     } catch (e) {
@@ -186,7 +185,7 @@ export default function TestAccount() {
           </div>
 
           <div className="text-xs text-muted-foreground mt-2">
-            <div>Nota: A ativação do premium aqui altera apenas o armazenamento local (útil para testes manuais).</div>
+            <div>Nota: A ativação do premium aqui tenta atualizar o banco de dados e o estado local.</div>
             <div className="mt-2">Se quiser, você pode ajustar as credenciais antes de pressionar o botão.</div>
           </div>
         </CardContent>
