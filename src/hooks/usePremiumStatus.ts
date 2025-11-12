@@ -1,63 +1,94 @@
 import { useState, useEffect, useCallback } from 'react';
-
-const PREMIUM_STORAGE_KEY = 'edukids_is_premium';
-
-// Helper to read from storage safely
-const getStoredPremiumStatus = (): boolean => {
-  try {
-    return localStorage.getItem(PREMIUM_STORAGE_KEY) === 'true';
-  } catch (error) {
-    console.error("Failed to read premium status from localStorage:", error);
-    return false;
-  }
-};
+import { useSupabase } from '@/context/SupabaseContext';
+import { supabase } from '@/integrations/supabase/client';
+import { showError } from '@/utils/toast';
 
 export function usePremiumStatus() {
-  const [isPremium, setIsPremium] = useState(getStoredPremiumStatus);
-  const [isLoading, setIsLoading] = useState(true); // Keep loading state for initial check
+  const { user, isLoading: isAuthLoading } = useSupabase();
+  const [isPremium, setIsPremium] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Effect for initial load and setting up listener
-  useEffect(() => {
-    // Initial status is already set by useState, so we just need to turn off loading
-    setIsLoading(false);
+  const fetchPremiumStatus = useCallback(async (userId: string) => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('is_premium')
+        .eq('id', userId)
+        .single();
 
-    // Function to handle storage changes
-    const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === PREMIUM_STORAGE_KEY) {
-        setIsPremium(getStoredPremiumStatus());
+      if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
+        throw error;
       }
-    };
 
-    // Add event listener for changes in other tabs/windows
-    window.addEventListener('storage', handleStorageChange);
-
-    // Cleanup listener on unmount
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
-
-  // These functions will now trigger updates for any component using the hook
-  const activatePremium = useCallback(() => {
-    try {
-      localStorage.setItem(PREMIUM_STORAGE_KEY, 'true');
-      setIsPremium(true);
-      // Manually dispatch a storage event so the current window also reacts
-      window.dispatchEvent(new StorageEvent('storage', { key: PREMIUM_STORAGE_KEY }));
+      const status = data?.is_premium ?? false;
+      setIsPremium(status);
+      return status;
     } catch (error) {
-      console.error("Failed to save premium status:", error);
-    }
-  }, []);
-
-  const deactivatePremium = useCallback(() => {
-    try {
-      localStorage.setItem(PREMIUM_STORAGE_KEY, 'false');
+      console.error("Failed to fetch premium status:", error);
       setIsPremium(false);
-      window.dispatchEvent(new StorageEvent('storage', { key: PREMIUM_STORAGE_KEY }));
-    } catch (error) {
-      console.error("Failed to save premium status:", error);
+      return false;
+    } finally {
+      setIsLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    if (isAuthLoading) {
+      setIsLoading(true);
+      return;
+    }
+    
+    if (user) {
+      fetchPremiumStatus(user.id);
+    } else {
+      // Not logged in, definitely not premium
+      setIsPremium(false);
+      setIsLoading(false);
+    }
+  }, [user, isAuthLoading, fetchPremiumStatus]);
+
+  // These functions now update the database and trigger a refetch/re-render
+  const activatePremium = useCallback(async () => {
+    if (!user) {
+      showError("Você precisa estar logado para ativar o Premium.");
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ is_premium: true })
+        .eq('id', user.id);
+
+      if (error) throw error;
+      setIsPremium(true);
+    } catch (error) {
+      console.error("Failed to activate premium in DB:", error);
+      showError("Falha ao ativar Premium no servidor.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user]);
+
+  const deactivatePremium = useCallback(async () => {
+    if (!user) return;
+    setIsLoading(true);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ is_premium: false })
+        .eq('id', user.id);
+
+      if (error) throw error;
+      setIsPremium(false);
+    } catch (error) {
+      console.error("Failed to deactivate premium in DB:", error);
+      showError("Falha ao desativar Premium no servidor.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user]);
 
   return {
     isPremium,

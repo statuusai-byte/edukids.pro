@@ -4,20 +4,21 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { showSuccess, showError, showLoading, dismissToast } from "@/utils/toast";
 import { useNavigate } from "react-router-dom";
+import { usePremium } from "@/context/PremiumContext"; // Import usePremium
 
 const DEFAULT_EMAIL = "eduki.teste@gmail.com";
 const DEFAULT_PASSWORD = "12121212";
-const PREMIUM_LOCAL_FLAG = "edukids_is_premium";
+const PREMIUM_LOCAL_FLAG = "edukids_is_premium"; // Kept for cleanup/legacy checks
 
 export default function TestAccount() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState(DEFAULT_EMAIL);
   const [password, setPassword] = useState(DEFAULT_PASSWORD);
   const navigate = useNavigate();
+  const { activatePremium } = usePremium(); // Use DB-backed activation
 
-  const seedLocalPremium = async () => {
+  const seedLocalProfileAndPackages = async () => {
     try {
-      localStorage.setItem(PREMIUM_LOCAL_FLAG, "true");
       // mark profile
       const profile = {
         name: "Test User",
@@ -35,10 +36,8 @@ export default function TestAccount() {
         "ingles",
       ];
       localStorage.setItem("edukids_help_packages", JSON.stringify(allPackages));
-      // Dispara um evento para que o hook usePremium reaja à mudança
-      window.dispatchEvent(new StorageEvent('storage', { key: PREMIUM_LOCAL_FLAG, newValue: 'true' }));
     } catch (e) {
-      console.error("Failed to seed local premium:", e);
+      console.error("Failed to seed local profile:", e);
       throw e;
     }
   };
@@ -62,7 +61,6 @@ export default function TestAccount() {
 
         // If signUp produced an error that is not "already registered", continue to fallback
         if (signUp.error && signUp.error.message && !/already registered/i.test(signUp.error.message)) {
-          // We'll fallback to local premium immediately below
           console.warn("Sign up returned an error; continuing to local fallback:", signUp.error.message);
         }
 
@@ -75,18 +73,19 @@ export default function TestAccount() {
         if (signIn2.error) {
           // Authentication still failed — automatically fallback to local premium
           dismissToast(loadingToast);
-          await seedLocalPremium();
+          await seedLocalProfileAndPackages();
+          // Activate premium locally (which updates DB if user exists, or just sets local profile if not)
+          await activatePremium(); 
           showSuccess("Autenticação online falhou; Premium ativado localmente para testes.");
           navigate("/dashboard", { replace: true });
           setLoading(false);
           return;
         }
-
-        // signIn2 succeeded -> proceed further
       }
 
-      // If initial signIn succeeded or signIn2 succeeded, seed local premium/profile for immediate access
-      await seedLocalPremium();
+      // If authentication succeeded, seed local profile and activate premium in DB
+      await seedLocalProfileAndPackages();
+      await activatePremium();
 
       dismissToast(loadingToast);
       showSuccess("Conta de teste pronta com Premium ativado. Você será redirecionado(a).");
@@ -100,7 +99,8 @@ export default function TestAccount() {
       console.error("Test account flow error:", error);
       // Automatic fallback on any unexpected error
       try {
-        await seedLocalPremium();
+        await seedLocalProfileAndPackages();
+        await activatePremium();
         showSuccess("Ocorreu um erro, mas Premium foi ativado localmente para permitir testes.");
         navigate("/dashboard", { replace: true });
       } catch (e) {
@@ -113,7 +113,16 @@ export default function TestAccount() {
 
   const handleActivateLocalOnly = async () => {
     try {
-      await seedLocalPremium();
+      // This function is primarily for setting up the local profile/packages for testing
+      // and relies on the user being logged in for DB activation.
+      // Since this button is "Activate Premium locally (without login)", we only set local profile data.
+      // We manually set the local flag for the usePremiumStatus hook to work if the user is NOT logged in, 
+      // as a temporary measure for this specific test page.
+      await seedLocalProfileAndPackages();
+      
+      localStorage.setItem(PREMIUM_LOCAL_FLAG, 'true');
+      window.dispatchEvent(new StorageEvent('storage', { key: PREMIUM_LOCAL_FLAG, newValue: 'true' }));
+
       showSuccess("Premium ativado localmente para este dispositivo.");
       // Redirect to dashboard so user can check premium areas
       navigate("/dashboard", { replace: true });
@@ -161,6 +170,7 @@ export default function TestAccount() {
                 localStorage.removeItem("edukids_is_premium");
                 localStorage.removeItem("edukids_profile");
                 localStorage.removeItem("edukids_help_packages");
+                localStorage.removeItem("edukids_hints_balance"); // Also clear old hints
                 window.dispatchEvent(new StorageEvent('storage', { key: PREMIUM_LOCAL_FLAG, newValue: 'false' }));
                 showSuccess("Dados locais de teste removidos.");
               } catch (e) {

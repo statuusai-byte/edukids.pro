@@ -100,10 +100,13 @@ const Store = () => {
         setIsCheckingOut(true);
         const loadingToast = showLoading("Processando assinatura...");
         try {
+          // Note: purchaseProduct is simulated for web/TWA, but in a real app, 
+          // the success callback would trigger the server-side premium grant.
           const success = await purchaseProduct(PRODUCTS.EDUKIDS_BASIC_MONTHLY);
           dismissToast(loadingToast);
           if (success) {
-            activatePremium();
+            // Since purchaseProduct is simulated to succeed, we activate premium locally (which updates DB now)
+            await activatePremium(); 
             navigate('/success-payment', { replace: true });
           }
         } catch (error: any) {
@@ -128,9 +131,12 @@ const Store = () => {
       price: pkg.price,
       onConfirm: async () => {
         const loading = showLoading(`Comprando ${pkg.name}...`);
-        // Simula a compra
+        // Simula a compra (real purchase logic would be here)
         await new Promise(resolve => setTimeout(resolve, 1200));
-        addHints(pkg.amount);
+        
+        // Now relies on the database-backed addHints function
+        await addHints(pkg.amount); 
+        
         dismissToast(loading);
         showSuccess(`${pkg.name} comprado! ${pkg.amount} dicas foram adicionadas ao seu saldo.`);
       },

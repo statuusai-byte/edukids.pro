@@ -1,55 +1,106 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useSupabase } from '@/context/SupabaseContext';
+import { supabase } from '@/integrations/supabase/client';
+import { showError } from '@/utils/toast';
 
-const HINTS_STORAGE_KEY = 'edukids_hints_balance';
+// Initial balance is 5, which is handled by the DB trigger on user creation.
+const INITIAL_BALANCE = 5;
 
 export function useHints() {
+  const { user, isLoading: isAuthLoading } = useSupabase();
   const [hints, setHints] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
-  const persist = useCallback((newBalance: number) => {
+  const fetchHints = useCallback(async (userId: string) => {
+    setIsLoading(true);
     try {
-      localStorage.setItem(HINTS_STORAGE_KEY, String(newBalance));
+      const { data, error } = await supabase
+        .from('user_hints')
+        .select('balance')
+        .eq('user_id', userId)
+        .single();
+
+      if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
+        throw error;
+      }
+
+      if (data) {
+        setHints(data.balance);
+      } else {
+        // If no row found, it means the trigger hasn't run yet or user is new.
+        // We insert the initial balance.
+        const { error: insertError } = await supabase
+          .from('user_hints')
+          .insert({ user_id: userId, balance: INITIAL_BALANCE });
+        
+        if (insertError) throw insertError;
+        setHints(INITIAL_BALANCE);
+      }
     } catch (error) {
-      console.error("Failed to save hints balance:", error);
+      console.error("Failed to load hints balance from Supabase:", error);
+      setHints(0);
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    try {
-      const storedHints = localStorage.getItem(HINTS_STORAGE_KEY);
-      // Se for a primeira vez do usuário (sem saldo salvo), ele ganha 5 dicas.
-      if (storedHints === null) {
-        setHints(5);
-        persist(5);
-      } else {
-        setHints(parseInt(storedHints, 10));
-      }
-    } catch (error) {
-      console.error("Failed to load hints balance:", error);
-    } finally {
+    if (isAuthLoading) {
+      setIsLoading(true);
+      return;
+    }
+    
+    if (user) {
+      fetchHints(user.id);
+    } else {
+      // Not logged in: hints are unavailable/zero
+      setHints(0);
       setIsLoading(false);
     }
-  }, [persist]);
+  }, [user, isAuthLoading, fetchHints]);
 
-  const addHints = useCallback((amount: number) => {
-    setHints(prev => {
-      const newBalance = prev + amount;
-      persist(newBalance);
-      return newBalance;
-    });
-  }, [persist]);
+  const updateHintsInDb = useCallback(async (newBalance: number) => {
+    if (!user) {
+      showError("Você precisa estar logado para gerenciar dicas.");
+      return false;
+    }
+    
+    const { error } = await supabase
+      .from('user_hints')
+      .update({ balance: newBalance, updated_at: new Date().toISOString() })
+      .eq('user_id', user.id);
 
-  const useHint = useCallback(() => {
+    if (error) {
+      console.error("Failed to update hints balance:", error);
+      showError("Falha ao atualizar dicas no servidor.");
+      // Re-fetch to restore correct state
+      fetchHints(user.id);
+      return false;
+    }
+    setHints(newBalance);
+    return true;
+  }, [user, fetchHints]);
+
+  const addHints = useCallback(async (amount: number) => {
+    if (!user) {
+      showError("Você precisa estar logado para adicionar dicas.");
+      return;
+    }
+    const newBalance = hints + amount;
+    await updateHintsInDb(newBalance);
+  }, [hints, user, updateHintsInDb]);
+
+  const useHint = useCallback(async () => {
+    if (!user) {
+      showError("Você precisa estar logado para usar dicas.");
+      return false;
+    }
     if (hints <= 0) {
       return false;
     }
-    setHints(prev => {
-      const newBalance = prev - 1;
-      persist(newBalance);
-      return newBalance;
-    });
-    return true;
-  }, [hints, persist]);
+    const newBalance = hints - 1;
+    return await updateHintsInDb(newBalance);
+  }, [hints, user, updateHintsInDb]);
 
   return {
     hints,

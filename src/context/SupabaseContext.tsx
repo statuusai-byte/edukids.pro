@@ -13,7 +13,6 @@ interface SupabaseContextType {
 
 const SupabaseContext = createContext<SupabaseContextType | undefined>(undefined);
 
-const PREMIUM_LOCAL_FLAG = 'edukids_is_premium';
 const ADMIN_EMAILS = ['statuus.ai@gmail.com', 'eduki.teste@gmail.com'];
 
 export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
@@ -27,10 +26,9 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
     return ADMIN_EMAILS.includes(email.toLowerCase());
   };
 
-  const applyLocalPremiumForAdmin = (targetEmail: string) => {
+  const applyLocalAdminProfile = (targetEmail: string) => {
     try {
-      const wasAlreadyPremium = localStorage.getItem(PREMIUM_LOCAL_FLAG) === 'true';
-      localStorage.setItem(PREMIUM_LOCAL_FLAG, 'true');
+      // Only set local profile data, not premium status flag
       const profile = {
         name: 'Administrador EDUKIDS+',
         avatarUrl: 'https://i.pravatar.cc/150?u=admin-edukids',
@@ -40,42 +38,10 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
       const allPackages = ['matemantica', 'portugues', 'ciencias', 'historia', 'geografia', 'ingles'];
       localStorage.setItem('edukids_help_packages', JSON.stringify(allPackages));
       
-      // Dispara um evento para que o hook usePremium reaja à mudança
-      window.dispatchEvent(new StorageEvent('storage', { key: PREMIUM_LOCAL_FLAG, newValue: 'true' }));
-
-      if (!wasAlreadyPremium) {
-        showSuccess('Conta administradora com Premium ativado.');
-      }
+      // Note: Premium status is now handled by usePremiumStatus fetching from DB.
+      showSuccess('Conta administradora detectada.');
     } catch (e) {
-      console.error('Failed to activate local premium for admin:', e);
-      showError('Falha ao aplicar modo Premium local.');
-    }
-  };
-
-  const syncPremiumFromProfile = async (userId: string | undefined) => {
-    if (!userId) return;
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('is_premium')
-        .eq('id', userId)
-        .single();
-
-      if (!error && data && (data as any).is_premium) {
-        const wasAlreadyPremium = localStorage.getItem(PREMIUM_LOCAL_FLAG) === 'true';
-        try {
-          localStorage.setItem(PREMIUM_LOCAL_FLAG, 'true');
-          // Dispara um evento para que o hook usePremium reaja à mudança
-          window.dispatchEvent(new StorageEvent('storage', { key: PREMIUM_LOCAL_FLAG, newValue: 'true' }));
-        } catch (e) {
-          console.error('Local storage error while syncing premium:', e);
-        }
-        if (!wasAlreadyPremium) {
-          showSuccess('Acesso Premium aplicado para sua conta.');
-        }
-      }
-    } catch (e) {
-      console.error('Failed to sync premium from profile:', e);
+      console.error('Failed to activate local admin profile:', e);
     }
   };
 
@@ -95,11 +61,8 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
         if (!isMounted) return;
         setSession(session);
         setUser(session?.user ?? null);
-        if (session?.user) {
-          if (session.user.email && emailIsAdmin(session.user.email)) {
-            applyLocalPremiumForAdmin(session.user.email);
-          }
-          await syncPremiumFromProfile(session.user.id);
+        if (session?.user && session.user.email && emailIsAdmin(session.user.email)) {
+          applyLocalAdminProfile(session.user.email);
         }
       } catch (error) {
         console.error("Error fetching initial session:", error);
@@ -127,13 +90,9 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
         if (_event === 'SIGNED_IN' && currentUser) {
           showSuccess('Login realizado com sucesso!');
           if (currentUser.email && emailIsAdmin(currentUser.email)) {
-            applyLocalPremiumForAdmin(currentUser.email);
+            applyLocalAdminProfile(currentUser.email);
           }
-          await syncPremiumFromProfile(currentUser.id);
         } else if (_event === 'SIGNED_OUT') {
-          // We intentionally avoid forcibly navigating to '/' here because
-          // sudden navigations are a common cause of 'jump back to home' issues
-          // on mobile when auth state fluctuates. Let the UI react naturally.
           showSuccess('Sessão encerrada.');
         }
       }
@@ -148,12 +107,12 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
 
   const signOut = async () => {
     try {
-      localStorage.removeItem('edukids_is_premium');
+      // Clear local storage items that were previously used for premium/hints/profile
+      localStorage.removeItem('edukids_is_premium'); // Legacy cleanup
+      localStorage.removeItem('edukids_hints_balance'); // Legacy cleanup
       localStorage.removeItem('edukids_help_packages');
       localStorage.removeItem('edukids_profile');
       localStorage.removeItem('edukids_force_premium_applied');
-      // Dispara evento para garantir que o estado reaja
-      window.dispatchEvent(new StorageEvent('storage', { key: PREMIUM_LOCAL_FLAG, newValue: 'false' }));
     } catch (e) {
       console.warn('Failed to clear local storage on sign out:', e);
     }
@@ -164,7 +123,6 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
     } else {
       setUser(null);
       setSession(null);
-      // Force navigation to a public route to ensure clean unmount of protected components
       navigate('/login', { replace: true });
     }
   };
