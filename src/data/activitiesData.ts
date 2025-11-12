@@ -426,14 +426,53 @@ export const subjectsData: Subject[] = [
         modules: [
           {
             id: "m3-mod1", title: "Frações e Decimais", lessons: [
-              { id: "m3-l1", title: "O que são Frações?", content: "Frações representam partes de um todo. 1/2 é uma metade. 1/4 é um quarto.", type: "reading" },
+              { 
+                id: "m3-l1", 
+                title: "O que são Frações?", 
+                content: `
+                  <p>As frações são uma forma de representar partes de um todo. Imagine que você tem uma pizza inteira. Se você a dividir em 4 pedaços iguais e comer 1, você comeu <strong>1/4</strong> da pizza.</p>
+                  <p>O número de cima (numerador) diz quantas partes você tem. O número de baixo (denominador) diz em quantas partes o todo foi dividido.</p>
+                  <ul>
+                    <li><strong>1/2:</strong> Uma parte de duas (metade).</li>
+                    <li><strong>3/4:</strong> Três partes de quatro.</li>
+                    <li><strong>4/4:</strong> Quatro partes de quatro (a pizza inteira!).</li>
+                  </ul>
+                  <p>As frações são muito importantes para dividir coisas, como doces, tempo ou até mesmo dinheiro!</p>
+                `, 
+                type: "reading" 
+              },
               { id: "m3-l2", title: "Exercícios com Frações", content: JSON.stringify(genDiv(PREMIUM_QUIZ_COUNT, 20)), type: "exercise", premium: true }
             ]
           },
           {
             id: "m3-mod2", title: "Geometria Básica", lessons: [
-              { id: "m3-l3", title: "Ângulos e Formas", content: "Um círculo tem 360 graus. Um ângulo reto, como o canto de um quadrado, tem 90 graus.", type: "reading" },
-              { id: "m3-l4", title: "Calculando Áreas", content: "Para calcular a área de um retângulo, multiplique a largura pela altura.", type: "reading" }
+              { 
+                id: "m3-l3", 
+                title: "Ângulos e Formas", 
+                content: `
+                  <p>A geometria é o estudo das formas e dos espaços. Tudo ao nosso redor tem uma forma geométrica!</p>
+                  <p>Um <strong>ângulo</strong> é a abertura entre duas linhas que se encontram. Pense nos ponteiros de um relógio:</p>
+                  <ul>
+                    <li>Um <strong>ângulo reto</strong> (como o canto de um quadrado) tem 90 graus.</li>
+                    <li>Um <strong>ângulo agudo</strong> é menor que 90 graus (ponta de uma faca).</li>
+                    <li>Um <strong>ângulo obtuso</strong> é maior que 90 graus (boca aberta).</li>
+                  </ul>
+                  <p>As formas básicas são: <strong>quadrado, círculo, triângulo e retângulo</strong>. Tente encontrar essas formas na sua casa!</p>
+                `, 
+                type: "reading" 
+              },
+              { 
+                id: "m3-l4", 
+                title: "Calculando Áreas", 
+                content: `
+                  <p>A <strong>área</strong> é o espaço que uma forma ocupa em uma superfície plana. É como medir o tamanho de um tapete ou de um campo de futebol.</p>
+                  <p>Para calcular a área de um <strong>retângulo</strong> ou <strong>quadrado</strong>, você precisa multiplicar a largura pela altura.</p>
+                  <p><strong>Fórmula:</strong> Área = Largura × Altura</p>
+                  <p>Se um tapete tem 2 metros de largura e 3 metros de altura, a área dele é 2 x 3 = 6 metros quadrados (6 m²).</p>
+                  <p>Entender a área nos ajuda a saber quanto de tinta precisamos para pintar uma parede ou quanto de grama precisamos para um jardim!</p>
+                `, 
+                type: "reading" 
+              }
             ]
           }
         ]
@@ -456,7 +495,24 @@ export const subjectsData: Subject[] = [
         modules: [
           {
             id: "p1-mod1", title: "O Alfabeto", lessons: [
-              { id: "p1-l1", title: "Conhecendo as Vogais", content: "As vogais são A, E, I, O, U. Elas estão em quase todas as palavras!", type: "reading" },
+              { 
+                id: "p1-l1", 
+                title: "Conhecendo as Vogais", 
+                content: `
+                  <p>O alfabeto tem muitas letras, mas cinco delas são muito especiais: as <strong>vogais</strong>!</p>
+                  <p>As vogais são: <strong>A, E, I, O, U</strong>.</p>
+                  <p>Elas são importantes porque dão som às palavras. Quase todas as palavras têm pelo menos uma vogal. Tente dizer as vogais bem alto!</p>
+                  <ul>
+                    <li><strong>A</strong> de Abacaxi</li>
+                    <li><strong>E</strong> de Elefante</li>
+                    <li><strong>I</strong> de Igreja</li>
+                    <li><strong>O</strong> de Ovo</li>
+                    <li><strong>U</strong> de Uva</li>
+                  </ul>
+                  <p>As outras letras são chamadas de consoantes. Juntas, vogais e consoantes formam todas as palavras que conhecemos!</p>
+                `, 
+                type: "reading" 
+              },
               { id: "p1-l2", title: "Jogo: Formando Palavras", content: "Junte as sílabas para formar a palavra correta.", type: "game", component: "FormandoPalavras" }
             ]
           }
@@ -490,12 +546,41 @@ export const subjectsData: Subject[] = [
         modules: [
           {
             id: "p3-mod1", title: "Verbos e Tempos", lessons: [
-              { id: "p3-l1", title: "Passado, Presente e Futuro", content: "Eu comi (passado), eu como (presente), eu comerei (futuro).", type: "reading", premium: true },
+              { 
+                id: "p3-l1", 
+                title: "Passado, Presente e Futuro", 
+                content: `
+                  <p>Os <strong>verbos</strong> são palavras que indicam ações, estados ou fenômenos da natureza. Eles nos dizem quando algo aconteceu.</p>
+                  <p>Existem três tempos principais:</p>
+                  <ul>
+                    <li><strong>Presente:</strong> Acontece agora. Ex: "Eu <strong>como</strong> uma maçã."</li>
+                    <li><strong>Passado (Pretérito):</strong> Já aconteceu. Ex: "Eu <strong>comi</strong> uma maçã."</li>
+                    <li><strong>Futuro:</strong> Vai acontecer. Ex: "Eu <strong>comerei</strong> uma maçã."</li>
+                  </ul>
+                  <p>Prestar atenção no tempo verbal ajuda a contar histórias na ordem certa!</p>
+                `, 
+                type: "reading", 
+                premium: true 
+              },
             ]
           },
           {
             id: "p3-mod2", title: "Pontuação", lessons: [
-              { id: "p3-l2", title: "Vírgula, Ponto e Interrogação", content: "A vírgula indica uma pausa. O ponto final encerra uma frase. A interrogação faz uma pergunta.", type: "reading" }
+              { 
+                id: "p3-l2", 
+                title: "Vírgula, Ponto e Interrogação", 
+                content: `
+                  <p>A <strong>pontuação</strong> é como as placas de trânsito da leitura. Elas nos dizem quando parar, respirar ou mudar o tom de voz.</p>
+                  <ul>
+                    <li><strong>Ponto Final (.):</strong> Usado para terminar uma frase. Indica que a ideia acabou.</li>
+                    <li><strong>Vírgula (,):</strong> Indica uma pequena pausa. Usada para separar itens em uma lista ou dar uma respirada.</li>
+                    <li><strong>Ponto de Interrogação (?):</strong> Usado no final de uma pergunta.</li>
+                    <li><strong>Ponto de Exclamação (!):</strong> Usado para mostrar surpresa, alegria ou susto.</li>
+                  </ul>
+                  <p>A pontuação correta faz toda a diferença para que o que você escreve seja entendido!</p>
+                `, 
+                type: "reading" 
+              }
             ]
           }
         ]
@@ -546,12 +631,41 @@ export const subjectsData: Subject[] = [
         modules: [
           {
             id: "c1-mod1", title: "Seres Vivos", lessons: [
-              { id: "c1-l1", title: "Animais e seus Sons", content: "O cachorro faz 'au au', o gato faz 'miau'!", type: "reading" },
+              { 
+                id: "c1-l1", 
+                title: "Animais e seus Sons", 
+                content: `
+                  <p>O mundo está cheio de animais incríveis! Cada um faz um som diferente para se comunicar:</p>
+                  <ul>
+                    <li>O <strong>cachorro</strong> faz "Au Au" e é nosso amigo.</li>
+                    <li>O <strong>gato</strong> faz "Miau" e adora dormir.</li>
+                    <li>A <strong>vaca</strong> faz "Muuu" e nos dá leite.</li>
+                    <li>O <strong>pato</strong> faz "Quack Quack" e adora nadar.</li>
+                  </ul>
+                  <p>Tente imitar o som do seu animal favorito!</p>
+                `, 
+                type: "reading" 
+              },
             ]
           },
           {
             id: "c1-mod2", title: "Os 5 Sentidos", lessons: [
-              { id: "c1-l2", title: "Ver, Ouvir, Cheirar, Tocar, Provar", content: "Usamos os olhos para ver, os ouvidos para ouvir...", type: "reading" },
+              { 
+                id: "c1-l2", 
+                title: "Ver, Ouvir, Cheirar, Tocar, Provar", 
+                content: `
+                  <p>Temos cinco superpoderes para conhecer o mundo: os <strong>cinco sentidos</strong>!</p>
+                  <ul>
+                    <li><strong>Visão:</strong> Usamos os <strong>olhos</strong> para ver as cores e as formas.</li>
+                    <li><strong>Audição:</strong> Usamos os <strong>ouvidos</strong> para ouvir músicas e a voz dos amigos.</li>
+                    <li><strong>Olfato:</strong> Usamos o <strong>nariz</strong> para cheirar flores e comidas gostosas.</li>
+                    <li><strong>Tato:</strong> Usamos a <strong>pele</strong> (principalmente as mãos) para sentir o que é macio ou áspero.</li>
+                    <li><strong>Paladar:</strong> Usamos a <strong>língua</strong> para sentir o gosto doce, salgado ou azedo.</li>
+                  </ul>
+                  <p>Eles trabalham juntos para nos manter seguros e nos ajudar a aprender!</p>
+                `, 
+                type: "reading" 
+              },
             ]
           }
         ]
@@ -565,7 +679,20 @@ export const subjectsData: Subject[] = [
         modules: [
           {
             id: "c2-mod1", title: "Corpo Humano", lessons: [
-              { id: "c2-l1", title: "Como o Corpo Funciona", content: "O corpo humano é incrível! O coração bate sem parar para levar sangue a todo lugar. Os pulmões nos ajudam a respirar o ar. E o cérebro é o chefe de tudo, nos ajuda a pensar, aprender e brincar!", type: "reading" },
+              { 
+                id: "c2-l1", 
+                title: "Como o Corpo Funciona", 
+                content: `
+                  <p>O corpo humano é uma máquina incrível! Ele tem partes que trabalham sem parar para nos manter vivos e saudáveis.</p>
+                  <ul>
+                    <li>O <strong>Coração</strong>: É como uma bomba que bate para levar o sangue (com comida e oxigênio) para todo o corpo.</li>
+                    <li>Os <strong>Pulmões</strong>: Nos ajudam a respirar, pegando o ar bom (oxigênio) e soltando o ar ruim.</li>
+                    <li>O <strong>Cérebro</strong>: É o chefe de tudo! Ele nos ajuda a pensar, aprender, lembrar e controlar nossos movimentos.</li>
+                  </ul>
+                  <p>Para manter essa máquina funcionando, precisamos de boa alimentação, água e muito exercício!</p>
+                `, 
+                type: "reading" 
+              },
               { id: "c2-l2", title: "Quiz: Órgãos do Corpo", content: JSON.stringify(genScienceBodyParts(PREMIUM_QUIZ_COUNT)), type: "exercise", premium: true }
             ]
           },
@@ -585,12 +712,46 @@ export const subjectsData: Subject[] = [
         modules: [
           {
             id: "c3-mod1", title: "Sistema Solar", lessons: [
-              { id: "c3-l1", title: "Conhecendo os Planetas", content: "Nosso sistema solar tem 8 planetas: Mercúrio, Vênus, Terra, Marte, Júpiter, Saturno, Urano e Netuno.", type: "reading" },
+              { 
+                id: "c3-l1", 
+                title: "Conhecendo os Planetas", 
+                content: `
+                  <p>Nosso <strong>Sistema Solar</strong> é composto pelo Sol (uma estrela gigante) e oito planetas que giram ao seu redor.</p>
+                  <p>A ordem dos planetas a partir do Sol é:</p>
+                  <ol>
+                    <li>Mercúrio (o mais rápido)</li>
+                    <li>Vênus (o mais quente)</li>
+                    <li><strong>Terra</strong> (nosso lar!)</li>
+                    <li>Marte (o planeta vermelho)</li>
+                    <li>Júpiter (o maior de todos)</li>
+                    <li>Saturno (com seus anéis famosos)</li>
+                    <li>Urano (o planeta deitado)</li>
+                    <li>Netuno (o mais distante e frio)</li>
+                  </ol>
+                  <p>Lembre-se: a Terra é o único planeta que conhecemos que tem vida!</p>
+                `, 
+                type: "reading" 
+              },
             ]
           },
           {
             id: "c3-mod2", title: "Sustentabilidade", lessons: [
-              { id: "c3-l2", title: "Reciclagem e Meio Ambiente", content: "Separar o lixo é muito importante para ajudar o planeta!", type: "reading" },
+              { 
+                id: "c3-l2", 
+                title: "Reciclagem e Meio Ambiente", 
+                content: `
+                  <p><strong>Sustentabilidade</strong> significa cuidar do nosso planeta para que ele continue bom para nós e para as futuras gerações.</p>
+                  <p>Uma das formas mais importantes de ajudar é a <strong>reciclagem</strong>. Reciclar é transformar lixo velho em algo novo.</p>
+                  <ul>
+                    <li><strong>Azul:</strong> Papel</li>
+                    <li><strong>Vermelho:</strong> Plástico</li>
+                    <li><strong>Verde:</strong> Vidro</li>
+                    <li><strong>Amarelo:</strong> Metal</li>
+                  </ul>
+                  <p>Ao separar o lixo, economizamos energia, água e evitamos que mais lixo vá para a natureza.</p>
+                `, 
+                type: "reading" 
+              },
             ]
           }
         ]
@@ -608,7 +769,16 @@ export const subjectsData: Subject[] = [
         id: "h1", title: "História do Brasil", description: "Eventos que moldaram o nosso país.", ageGroups: ['7-9', '10-12'], icon: "Landmark", modules: [
           {
             id: "h1-mod1", title: "Descobrimento e Colonização", lessons: [
-              { id: "h1-l1", title: "A Chegada dos Portugueses", content: "Em 1500, navegadores portugueses liderados por Pedro Álvares Cabral chegaram ao Brasil. Eles estavam tentando encontrar um novo caminho para as Índias, mas acabaram descobrindo uma nova terra, cheia de riquezas naturais e povos indígenas que já viviam aqui.", type: "reading" },
+              { 
+                id: "h1-l1", 
+                title: "A Chegada dos Portugueses", 
+                content: `
+                  <p>Em <strong>1500</strong>, navegadores portugueses liderados por <strong>Pedro Álvares Cabral</strong> chegaram ao Brasil. Eles estavam tentando encontrar um novo caminho para as Índias, mas acabaram descobrindo uma nova terra.</p>
+                  <p>Quando chegaram, o Brasil não estava vazio. Ele já era habitado por milhares de <strong>povos indígenas</strong>, que tinham suas próprias culturas, línguas e formas de viver.</p>
+                  <p>Os portugueses começaram a explorar a terra, buscando riquezas como o <strong>Pau-Brasil</strong>, e assim começou o período de colonização, que durou mais de 300 anos.</p>
+                `, 
+                type: "reading" 
+              },
               { id: "h1-l2", title: "Quiz de Fatos Históricos", content: JSON.stringify(genGeographyCapitals(PREMIUM_QUIZ_COUNT)), type: "exercise", premium: true }
             ]
           }
@@ -663,12 +833,41 @@ export const subjectsData: Subject[] = [
         id: "pr1", title: "Lógica e Algoritmos", description: "Dê os primeiros passos para criar jogos e apps.", ageGroups: ['10-12'], icon: "Code", modules: [
           {
             id: "pr1-mod1", title: "O que é um Algoritmo?", lessons: [
-              { id: "pr1-l1", title: "Passo a Passo", content: "Um algoritmo é como uma receita de bolo: uma lista de passos para resolver um problema. Ex: 1. Pegue o pão. 2. Passe manteiga. 3. Coma.", type: "reading" }
+              { 
+                id: "pr1-l1", 
+                title: "Passo a Passo", 
+                content: `
+                  <p>Um <strong>algoritmo</strong> é como uma receita de bolo ou um mapa do tesouro: é uma lista de passos claros e organizados para resolver um problema ou completar uma tarefa.</p>
+                  <p>Pense em como você se prepara para a escola:</p>
+                  <ol>
+                    <li>Acordar.</li>
+                    <li>Escovar os dentes.</li>
+                    <li>Tomar café da manhã.</li>
+                    <li>Vestir o uniforme.</li>
+                    <li>Ir para a escola.</li>
+                  </ol>
+                  <p>Se você pular um passo, o resultado pode não ser o esperado! Os computadores usam algoritmos para fazer tudo, desde somar números até rodar seus jogos favoritos.</p>
+                `, 
+                type: "reading" 
+              }
             ]
           },
           {
             id: "pr1-mod2", title: "Lógica Condicional", lessons: [
-              { id: "pr1-l2", title: "Pensando com 'SE-ENTÃO'", content: "Na programação, usamos a lógica 'SE-ENTÃO'. É como tomar uma decisão. SE estiver chovendo, ENTÃO eu pego um guarda-chuva. SE a luz estiver verde, ENTÃO eu posso atravessar a rua. Os computadores usam essa lógica para fazer tudo!", type: "reading" }
+              { 
+                id: "pr1-l2", 
+                title: "Pensando com 'SE-ENTÃO'", 
+                content: `
+                  <p>A <strong>Lógica Condicional</strong> é a base da programação. Ela funciona com a regra do "SE isso acontecer, ENTÃO faça aquilo".</p>
+                  <p>É como tomar decisões:</p>
+                  <ul>
+                    <li><strong>SE</strong> estiver chovendo, <strong>ENTÃO</strong> eu pego um guarda-chuva.</li>
+                    <li><strong>SE</strong> eu terminar minha lição, <strong>ENTÃO</strong> eu posso brincar.</li>
+                  </ul>
+                  <p>Os computadores usam essa lógica para decidir o que fazer. Se você clicar em um botão (SE), o programa abre uma nova tela (ENTÃO). É simples assim!</p>
+                `, 
+                type: "reading" 
+              }
             ]
           }
         ]

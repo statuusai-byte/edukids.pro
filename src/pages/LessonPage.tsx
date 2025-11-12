@@ -12,6 +12,7 @@ import { usePremium } from "@/context/PremiumContext";
 import { useHintsContext } from "@/context/HintsContext";
 import { useScreenTime } from "@/hooks/use-screen-time";
 import LocalErrorBoundary from "@/components/LocalErrorBoundary";
+import { cn } from "@/lib/utils"; // Import cn for utility classes
 
 // Lazy load game components for better performance
 const gameComponentMap: Record<string, LazyExoticComponent<ComponentType<any>>> = {
@@ -198,7 +199,29 @@ const LessonPage = () => {
         );
       }
     }
-    return <p className="text-foreground/90 mb-4">{lesson.content}</p>;
+    
+    // Handle 'reading' type content
+    if (lesson.type === 'reading' && lesson.content) {
+      return (
+        <Card className="glass-card p-6">
+          <CardContent>
+            <div className={cn("prose prose-invert max-w-none", "prose-p:text-foreground/90 prose-strong:text-primary prose-li:text-foreground/90 prose-ul:list-disc prose-ul:pl-5")}>
+              <div dangerouslySetInnerHTML={{ __html: lesson.content }} />
+            </div>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    // Fallback for empty content
+    return (
+      <div className="glass-card p-6">
+        <h3 className="text-xl font-semibold">Conteúdo em construção</h3>
+        <p className="text-sm text-muted-foreground mt-2">
+          Esta lição de leitura ainda não tem conteúdo. Volte mais tarde!
+        </p>
+      </div>
+    );
   };
 
   const isInteractive = lesson.type === 'game' || lesson.type === 'exercise';
