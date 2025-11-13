@@ -11,13 +11,14 @@ import { Sheet } from "@/components/ui/sheet";
 
 const Layout = () => {
   const isMobile = useIsMobile();
-  
+
   useInterstitialAdManager();
 
-  // Calculate padding to offset the fixed Header (h-20 = 5rem) and MobileTabBar (h-20 approx)
   const shellStyle = {
     paddingTop: "calc(env(safe-area-inset-top, 0px) + 5rem)",
-    paddingBottom: isMobile ? "calc(env(safe-area-inset-bottom, 0px) + 5rem)" : "0",
+    paddingBottom: isMobile
+      ? "calc(env(safe-area-inset-bottom, 0px) + 5rem)"
+      : "0",
     minHeight: "100vh",
   };
 
@@ -33,21 +34,18 @@ const Layout = () => {
           </>
         )}
 
-        <main
-          className={cn("flex-1 overflow-x-hidden w-full")}
-          style={shellStyle}
-        >
+        <main className={cn("flex-1 overflow-x-hidden w-full")} style={shellStyle}>
           <div
             className={cn(
               "mx-auto w-full max-w-7xl",
-              isMobile ? "px-4" : "py-10 md:py-12 px-6"
+              isMobile ? "px-4" : "py-10 md:py-12 px-6",
             )}
           >
             <div
               className={cn(
                 "relative rounded-2xl bg-secondary/70 shadow-xl shadow-black/30",
                 "md:rounded-3xl md:border md:border-white/10 md:bg-secondary/60 md:shadow-[0_25px_120px_rgba(76,29,149,0.35)] md:backdrop-blur-2xl",
-                "md:overflow-hidden"
+                "md:overflow-hidden",
               )}
             >
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.12),transparent_65%)]" />
@@ -56,7 +54,9 @@ const Layout = () => {
               <div
                 className={cn(
                   "relative z-10",
-                  isMobile ? "px-6 py-8 sm:px-8 sm:py-10" : "px-6 py-8 sm:px-8 sm:py-10 md:px-14 md:py-14"
+                  isMobile
+                    ? "px-6 py-8 sm:px-8 sm:py-10"
+                    : "px-6 py-8 sm:px-8 sm:py-10 md:px-14 md:py-14",
                 )}
               >
                 <Outlet />
@@ -65,9 +65,11 @@ const Layout = () => {
             </div>
           </div>
 
-          {/* Footer com link para Política de Privacidade */}
           <footer className="mx-auto w-full max-w-7xl px-6 py-6 text-center text-xs text-muted-foreground">
-            <a href="/privacy-policy" className="underline hover:text-foreground">
+            <a
+              href="/privacy-policy/index.html"
+              className="underline hover:text-foreground"
+            >
               Política de Privacidade
             </a>
           </footer>
