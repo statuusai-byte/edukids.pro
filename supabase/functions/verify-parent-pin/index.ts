@@ -1,8 +1,9 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0'
 
+const allowedOrigin = 'https://edukidspro.vercel.app';
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': allowedOrigin,
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Content-Type': 'application/json',
 }
@@ -31,7 +32,7 @@ serve(async (req) => {
     const { data: { user }, error: userError } = await supabaseAdmin.auth.getUser(token);
 
     if (userError || !user) {
-      return new Response(JSON.stringify({ error: 'Unauthorized: Invalid token or user not found' }), { 
+      return new Response(JSON.stringify({ error: 'Unauthorized: Invalid token' }), { 
         status: 401, 
         headers: corsHeaders 
       });
@@ -63,6 +64,6 @@ serve(async (req) => {
     return new Response(JSON.stringify({ verified }), { status: 200, headers: corsHeaders });
   } catch (error) {
     console.error('verify-parent-pin error:', error);
-    return new Response(JSON.stringify({ error: String(error?.message ?? error) }), { status: 500, headers: corsHeaders });
+    return new Response(JSON.stringify({ error: 'An internal error occurred.' }), { status: 500, headers: corsHeaders });
   }
 });

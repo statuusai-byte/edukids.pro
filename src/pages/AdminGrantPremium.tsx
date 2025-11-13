@@ -9,7 +9,6 @@ import { useSupabase } from "@/context/SupabaseContext";
 
 const ADMIN_EMAILS = ["statuus.ai@gmail.com", "eduki.teste@gmail.com"] as const;
 const DEFAULT_ADMIN_EMAIL = ADMIN_EMAILS[0];
-const PREMIUM_LOCAL_FLAG = "edukids_is_premium";
 
 /**
  * Helper to normalize an email string:
@@ -54,25 +53,6 @@ export default function AdminGrantPremium() {
     }
   }, [isAuthorized, user, authLoading]);
 
-
-  // Seed local premium/profile for a given email (used for immediate local testing)
-  const seedLocalPremiumFor = async (targetEmail: string) => {
-    try {
-      localStorage.setItem(PREMIUM_LOCAL_FLAG, "true");
-      const profile = {
-        name: "Administrador EDUKIDS+",
-        avatarUrl: "https://i.pravatar.cc/150?u=admin-edukids",
-        email: targetEmail,
-      };
-      localStorage.setItem("edukids_profile", JSON.stringify(profile));
-      const allPackages = ["matematica", "portugues", "ciencias", "historia", "geografia", "ingles"];
-      localStorage.setItem("edukids_help_packages", JSON.stringify(allPackages));
-    } catch (e) {
-      console.error("Failed to seed local premium:", e);
-      throw e;
-    }
-  };
-
   const handleGrantPremium = async (createIfMissing: boolean) => {
     setLoading(true);
     setResult(null);
@@ -106,9 +86,7 @@ export default function AdminGrantPremium() {
         return;
       }
 
-      await seedLocalPremiumFor(normalized);
-
-      showSuccess("Premium concedido e ativado localmente para " + normalized);
+      showSuccess("Premium concedido para " + normalized);
       setResult("Sucesso! Premium concedido para o usuário: " + normalized);
 
       setTimeout(() => {
@@ -146,12 +124,7 @@ export default function AdminGrantPremium() {
           results.push(`${normalized}: erro (${error.message || String(error)})`);
           console.error("Error granting premium for", normalized, error);
         } else {
-          try {
-            await seedLocalPremiumFor(normalized);
-            results.push(`${normalized}: sucesso`);
-          } catch (seedingError) {
-            results.push(`${normalized}: sucesso (falha ao marcar localmente)`);
-          }
+          results.push(`${normalized}: sucesso`);
         }
       }
 
@@ -221,7 +194,6 @@ export default function AdminGrantPremium() {
         <CardContent className="space-y-4">
           <p className="text-sm text-muted-foreground">
             Use esta ferramenta para criar um usuário (se necessário) e conceder o status Premium no sistema.
-            Isso também ativa o Premium localmente para este dispositivo.
           </p>
 
           <div className="space-y-2">
@@ -268,7 +240,7 @@ export default function AdminGrantPremium() {
 
           <div className="mt-3 text-xs text-muted-foreground">
             <p>
-              Esta ação invoca a função <code>grant-premium</code> do Supabase Edge Function para atualizar o perfil do usuário no banco de dados e também salva o status Premium localmente.
+              Esta ação invoca a função <code>grant-premium</code> do Supabase Edge Function para atualizar o perfil do usuário no banco de dados.
             </p>
             <p className="mt-1">
               Obs: endereços com vírgula serão normalizados para usar ponto (ex.: <code>statuus,ai@gmail.com</code> → <code>statuus.ai@gmail.com</code>).

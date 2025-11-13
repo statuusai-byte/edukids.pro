@@ -18,7 +18,7 @@ const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 
 const DEFAULT_PROFILE: Profile = {
   name: 'Alex',
-  avatarUrl: 'https://i.pravatar.cc/150?u=a042581f4e29026704d',
+  avatarUrl: null, // Default avatar is handled by UI fallback
 };
 
 export const ProfileProvider = ({ children }: { children: ReactNode }) => {
@@ -47,13 +47,25 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
 
       if (data) {
         const fullName = [data.first_name, data.last_name].filter(Boolean).join(' ');
+        let signedAvatarUrl: string | null = null;
+
+        if (data.avatar_url) {
+          const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+            .from('avatars')
+            .createSignedUrl(data.avatar_url, 3600); // 1 hour expiry
+
+          if (signedUrlError) {
+            console.error("Failed to create signed URL for avatar", signedUrlError);
+          } else {
+            signedAvatarUrl = signedUrlData.signedUrl;
+          }
+        }
+        
         setProfile({
           name: fullName || 'Explorador',
-          avatarUrl: data.avatar_url,
+          avatarUrl: signedAvatarUrl,
         });
       } else {
-        // Profile not found, which can happen if the trigger fails or runs late.
-        // We'll use a default and the first setName/setAvatarFile will create the record via upsert.
         setProfile({ name: 'Explorador', avatarUrl: null });
       }
     } catch (error) {
@@ -95,7 +107,7 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const fileExt = file.name.split('.').pop();
-    const filePath = `${user.id}/${Math.random()}.${fileExt}`;
+    const filePath = `${user.id}/${crypto.randomUUID()}.${fileExt}`;
 
     const { error: uploadError } = await supabase.storage
       .from('avatars')
@@ -107,15 +119,9 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
       throw uploadError;
     }
 
-    const { data } = supabase.storage
-      .from('avatars')
-      .getPublicUrl(filePath);
-      
-    const publicUrl = data.publicUrl;
-
     const { error: updateError } = await supabase
       .from('profiles')
-      .upsert({ id: user.id, avatar_url: publicUrl, updated_at: new Date().toISOString() });
+      .upsert({ id: user.id, avatar_url: filePath, updated_at: new Date().toISOString() });
 
     if (updateError) {
       showError("Falha ao salvar o novo avatar.");
@@ -123,7 +129,18 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
       throw updateError;
     }
 
-    setProfile(prev => ({ ...prev, avatarUrl: publicUrl }));
+    // Fetch a new signed URL to display the new avatar immediately
+    const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+      .from('avatars')
+      .createSignedUrl(filePath, 3600);
+
+    if (signedUrlError) {
+      showError("Falha ao carregar a prévia do novo avatar.");
+      console.error(signedUrlError);
+      setProfile(prev => ({ ...prev, avatarUrl: null }));
+    } else {
+      setProfile(prev => ({ ...prev, avatarUrl: signedUrlData.signedUrl }));
+    }
   };
 
   return (

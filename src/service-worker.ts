@@ -14,7 +14,6 @@ declare const self: ServiceWorkerGlobalScope & {
 
 const STATIC_CACHE = "edukids-static-v1";
 const IMAGES_CACHE = "edukids-images-v1";
-const SUPABASE_CACHE = "edukids-supabase-v1";
 
 self.skipWaiting();
 clientsClaim();
@@ -62,14 +61,8 @@ registerRoute(
   })
 );
 
-// Supabase requests - network first with fallback cache
-registerRoute(
-  ({ url }) => url.origin.includes("supabase.co"),
-  new NetworkFirst({
-    cacheName: SUPABASE_CACHE,
-    networkTimeoutSeconds: 10,
-  })
-);
+// Supabase API requests are NOT cached to prevent storing sensitive user data.
+// They will be handled by the network.
 
 // Default handler to avoid uncached requests failing silently
 setDefaultHandler(

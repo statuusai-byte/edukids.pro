@@ -13,37 +13,11 @@ interface SupabaseContextType {
 
 const SupabaseContext = createContext<SupabaseContextType | undefined>(undefined);
 
-const ADMIN_EMAILS = ['statuus.ai@gmail.com', 'eduki.teste@gmail.com'];
-
 export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
-
-  const emailIsAdmin = (email: string | null | undefined) => {
-    if (!email) return false;
-    return ADMIN_EMAILS.includes(email.toLowerCase());
-  };
-
-  const applyLocalAdminProfile = (targetEmail: string) => {
-    try {
-      // Only set local profile data, not premium status flag
-      const profile = {
-        name: 'Administrador EDUKIDS+',
-        avatarUrl: 'https://i.pravatar.cc/150?u=admin-edukids',
-        email: targetEmail,
-      };
-      localStorage.setItem('edukids_profile', JSON.stringify(profile));
-      const allPackages = ['matemantica', 'portugues', 'ciencias', 'historia', 'geografia', 'ingles'];
-      localStorage.setItem('edukids_help_packages', JSON.stringify(allPackages));
-      
-      // Note: Premium status is now handled by usePremiumStatus fetching from DB.
-      showSuccess('Conta administradora detectada.');
-    } catch (e) {
-      console.error('Failed to activate local admin profile:', e);
-    }
-  };
 
   useEffect(() => {
     let isMounted = true;
@@ -61,9 +35,6 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
         if (!isMounted) return;
         setSession(session);
         setUser(session?.user ?? null);
-        if (session?.user && session.user.email && emailIsAdmin(session.user.email)) {
-          applyLocalAdminProfile(session.user.email);
-        }
       } catch (error) {
         console.error("Error fetching initial session:", error);
         if (isMounted) {
@@ -89,9 +60,6 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
 
         if (_event === 'SIGNED_IN' && currentUser) {
           showSuccess('Login realizado com sucesso!');
-          if (currentUser.email && emailIsAdmin(currentUser.email)) {
-            applyLocalAdminProfile(currentUser.email);
-          }
         } else if (_event === 'SIGNED_OUT') {
           showSuccess('Sessão encerrada.');
         }
@@ -106,10 +74,10 @@ export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
   }, [navigate]);
 
   const signOut = async () => {
+    // Clear any potentially sensitive local storage on sign out
     try {
-      // Clear local storage items that were previously used for premium/hints/profile
-      localStorage.removeItem('edukids_is_premium'); // Legacy cleanup
-      localStorage.removeItem('edukids_hints_balance'); // Legacy cleanup
+      localStorage.removeItem('edukids_is_premium');
+      localStorage.removeItem('edukids_hints_balance');
       localStorage.removeItem('edukids_help_packages');
       localStorage.removeItem('edukids_profile');
       localStorage.removeItem('edukids_force_premium_applied');

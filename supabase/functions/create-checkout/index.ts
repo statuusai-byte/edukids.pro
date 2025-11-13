@@ -1,8 +1,9 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0'
 
+const allowedOrigin = 'https://edukidspro.vercel.app';
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': allowedOrigin,
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Content-Type': 'application/json',
@@ -41,7 +42,7 @@ serve(async (req) => {
     const { data: { user }, error: userError } = await supabaseAdmin.auth.getUser(token);
 
     if (userError || !user) {
-      return new Response(JSON.stringify({ error: 'Unauthorized: Invalid token or user not found' }), { 
+      return new Response(JSON.stringify({ error: 'Unauthorized: Invalid token' }), { 
         status: 401, 
         headers: corsHeaders 
       });
@@ -61,7 +62,7 @@ serve(async (req) => {
     }
     if (!ALLOWED_SKUS.has(sku)) {
       return new Response(
-        JSON.stringify({ error: `Invalid sku '${sku}'. Allowed: ${Array.from(ALLOWED_SKUS).join(", ")}` }),
+        JSON.stringify({ error: `Invalid sku '${sku}'.` }),
         { status: 400, headers: corsHeaders }
       );
     }
@@ -80,12 +81,9 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Failed to create checkout session' }), { status: 500, headers: corsHeaders });
     }
 
-    // 4) Return the token and user ID for the client to call the secure activation endpoint
-    const successPath = `/success-payment?user_id=${userId}&sku=${sku}&token=${secureToken}`;
-
+    // 4) Return the token in the response body, not the URL
     return new Response(
       JSON.stringify({ 
-        checkout_url: successPath,
         message: "Checkout session created successfully (simulated).",
         sku,
         secure_token: secureToken,
@@ -94,8 +92,8 @@ serve(async (req) => {
       { headers: corsHeaders, status: 200 }
     );
   } catch (error: any) {
-    console.error(error);
-    return new Response(JSON.stringify({ error: error?.message ?? "Internal error" }), {
+    console.error("create-checkout error:", error);
+    return new Response(JSON.stringify({ error: "An internal error occurred." }), {
       headers: corsHeaders,
       status: 500,
     });

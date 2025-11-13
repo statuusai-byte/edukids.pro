@@ -1,8 +1,9 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0'
 
+const allowedOrigin = 'https://edukidspro.vercel.app';
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': allowedOrigin,
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Content-Type': 'application/json',
 }
@@ -31,7 +32,7 @@ serve(async (req) => {
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-      return new Response(JSON.stringify({ error: 'Server not configured with SUPABASE_URL / SERVICE_ROLE_KEY' }), { status: 500, headers: corsHeaders })
+      return new Response(JSON.stringify({ error: 'Server configuration error' }), { status: 500, headers: corsHeaders })
     }
 
     const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
@@ -40,7 +41,7 @@ serve(async (req) => {
     const { data: { user: callerUser }, error: userError } = await supabaseAdmin.auth.getUser(token);
     
     if (userError || !callerUser) {
-      return new Response(JSON.stringify({ error: 'Unauthorized: Invalid token or user not found' }), { 
+      return new Response(JSON.stringify({ error: 'Unauthorized: Invalid token' }), { 
         status: 401, 
         headers: corsHeaders 
       });
@@ -55,7 +56,7 @@ serve(async (req) => {
 
     if (profileError || !profileData || !profileData.is_admin) {
       console.warn(`Unauthorized attempt to grant premium by user ID: ${callerUser.id}`);
-      return new Response(JSON.stringify({ error: 'Forbidden: Caller is not authorized to grant premium' }), { 
+      return new Response(JSON.stringify({ error: 'Forbidden: Caller is not authorized' }), { 
         status: 403, 
         headers: corsHeaders 
       });
@@ -89,6 +90,6 @@ serve(async (req) => {
     return new Response(JSON.stringify({ message: 'Premium granted', user_id: user.id }), { status: 200, headers: corsHeaders });
   } catch (error) {
     console.error('grant-premium error:', error);
-    return new Response(JSON.stringify({ error: String(error?.message ?? error) }), { status: 500, headers: corsHeaders });
+    return new Response(JSON.stringify({ error: 'An internal error occurred.' }), { status: 500, headers: corsHeaders });
   }
 });

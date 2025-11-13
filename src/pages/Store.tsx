@@ -116,10 +116,13 @@ const Store = () => {
             throw new Error(error.message);
           }
           
-          const checkoutUrl = (data as { checkout_url: string }).checkout_url;
+          const { secure_token, sku } = data as { secure_token: string; sku: string };
           
-          // 2. Navigate to the success page which handles activation using the secure token
-          navigate(checkoutUrl, { replace: true });
+          // 2. Navigate to the success page with the token in the navigation state (not URL)
+          navigate('/success-payment', { 
+            replace: true,
+            state: { userId: user.id, sku, token: secure_token }
+          });
 
         } catch (error: any) {
           console.error("Checkout failed:", error);

@@ -12,7 +12,8 @@ import { usePremium } from "@/context/PremiumContext";
 import { useHintsContext } from "@/context/HintsContext";
 import { useScreenTime } from "@/hooks/use-screen-time";
 import LocalErrorBoundary from "@/components/LocalErrorBoundary";
-import { cn } from "@/lib/utils"; // Import cn for utility classes
+import { cn } from "@/lib/utils";
+import DOMPurify from 'dompurify';
 
 // Lazy load game components for better performance
 const gameComponentMap: Record<string, LazyExoticComponent<ComponentType<any>>> = {
@@ -217,11 +218,12 @@ const LessonPage = () => {
     
     // Handle 'reading' type content
     if (lesson.type === 'reading' && lesson.content) {
+      const cleanHtml = DOMPurify.sanitize(lesson.content);
       return (
         <Card className="glass-card p-6">
           <CardContent>
             <div className={cn("prose prose-invert max-w-none", "prose-p:text-foreground/90 prose-strong:text-primary prose-li:text-foreground/90 prose-ul:list-disc prose-ul:pl-5")}>
-              <div dangerouslySetInnerHTML={{ __html: lesson.content }} />
+              <div dangerouslySetInnerHTML={{ __html: cleanHtml }} />
             </div>
           </CardContent>
         </Card>

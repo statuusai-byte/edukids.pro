@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { usePremium } from '@/context/PremiumContext';
 import { showSuccess, showError } from '@/utils/toast';
 import { CheckCircle } from 'lucide-react';
@@ -8,12 +8,10 @@ import { Button } from '@/components/ui/button';
 const SuccessPayment = () => {
   const { activatePremiumSecurely } = usePremium();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const location = useLocation();
 
   useEffect(() => {
-    const userId = searchParams.get('user_id');
-    const sku = searchParams.get('sku');
-    const token = searchParams.get('token');
+    const { userId, sku, token } = location.state || {};
 
     if (!userId || !sku || !token) {
       showError("Pagamento inválido ou token de segurança ausente.");
@@ -39,7 +37,7 @@ const SuccessPayment = () => {
     };
 
     activate();
-  }, [activatePremiumSecurely, navigate, searchParams]);
+  }, [activatePremiumSecurely, navigate, location.state]);
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
