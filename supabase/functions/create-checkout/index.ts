@@ -69,6 +69,17 @@ serve(async (req) => {
     // 3) Generate a secure, short-lived token (simulated UUID)
     const secureToken = `premium_${crypto.randomUUID()}`;
 
+    // 3.b) Persist the token for one-time use (expires in 1 hour)
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString(); // 1 hour
+    const { error: insertError } = await supabaseAdmin
+      .from('premium_tokens')
+      .insert([{ user_id: userId, token: secureToken, sku, expires_at: expiresAt }]);
+
+    if (insertError) {
+      console.error("Failed to persist checkout token:", insertError);
+      return new Response(JSON.stringify({ error: 'Failed to create checkout session' }), { status: 500, headers: corsHeaders });
+    }
+
     // 4) Return the token and user ID for the client to call the secure activation endpoint
     const successPath = `/success-payment?user_id=${userId}&sku=${sku}&token=${secureToken}`;
 
@@ -78,6 +89,7 @@ serve(async (req) => {
         message: "Checkout session created successfully (simulated).",
         sku,
         secure_token: secureToken,
+        expires_at: expiresAt,
       }),
       { headers: corsHeaders, status: 200 }
     );
