@@ -28,6 +28,7 @@ const Register = lazy(() => import("./pages/Register"));
 const SuccessPayment = lazy(() => import("./pages/SuccessPayment"));
 const AchievementsPage = lazy(() => import("./pages/Achievements"));
 const Home = lazy(() => import("./pages/Home"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 
 const queryClient = new QueryClient();
 
@@ -53,6 +54,7 @@ const AppRoutes = () => (
       />
       <Route path="/play-plus" element={<PlayPlus />} />
       <Route path="/store" element={<Store />} />
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
     </Route>
 
     <Route
