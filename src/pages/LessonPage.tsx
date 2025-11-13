@@ -28,7 +28,7 @@ const LessonPage = () => {
   const { isLessonCompleted, markLessonCompleted } = useProgress();
   const { isPremium } = usePremium();
   const { hints, useHint, addHints } = useHintsContext();
-  const { isBlocked, limitMinutes, startSession, stopSession } = useScreenTime();
+  const { isBlocked, startSession, stopSession } = useScreenTime();
   
   const [hintTriggered, setHintTriggered] = useState(false);
   // key to force remount of lazy game components on retry
