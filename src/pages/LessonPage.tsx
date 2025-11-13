@@ -14,6 +14,7 @@ import { useScreenTime } from "@/hooks/use-screen-time";
 import LocalErrorBoundary from "@/components/LocalErrorBoundary";
 import { cn } from "@/lib/utils";
 import DOMPurify from 'dompurify';
+import { supabase } from "@/integrations/supabase/client"; // NEW: fetch premium content server-side
 
 // Lazy load game components for better performance
 const gameComponentMap: Record<string, LazyExoticComponent<ComponentType<any>>> = {
@@ -32,6 +33,12 @@ const LessonPage = () => {
   const [hintTriggered, setHintTriggered] = useState(false);
   // key to force remount of lazy game components on retry
   const [gameResetKey, setGameResetKey] = useState(0);
+
+  // New state for premium content fetch
+  const [isPremiumLoading, setIsPremiumLoading] = useState(false);
+  const [premiumFetchError, setPremiumFetchError] = useState<string | null>(null);
+  const [premiumJson, setPremiumJson] = useState<any | null>(null);
+  const [premiumHtml, setPremiumHtml] = useState<string | null>(null);
 
   const { subject, activity, module, lesson, lessonIndex, moduleIndex } = useMemo(() => {
     const s = subjectsData.find(sub => sub.slug === subjectSlug);
@@ -57,7 +64,63 @@ const LessonPage = () => {
 
   useEffect(() => {
     setHintTriggered(false);
+    // clear premium content state when lesson changes
+    setPremiumJson(null);
+    setPremiumHtml(null);
+    setPremiumFetchError(null);
   }, [lessonId]);
+
+  // Fetch premium content if lesson is premium
+  useEffect(() => {
+    if (!lesson || !lesson.premium) return;
+
+    let mounted = true;
+    const fetchPremium = async () => {
+      setIsPremiumLoading(true);
+      setPremiumFetchError(null);
+      try {
+        // Build the same key used by progress sync: subject::activity::module::lesson
+        const lessonKey = `${subject?.slug ?? ""}::${activityId}::${moduleId}::${lessonId}`;
+
+        const { data, error } = await supabase
+          .from('premium_content')
+          .select('content_json, content_html')
+          .eq('lesson_key', lessonKey)
+          .single();
+
+        if (!mounted) return;
+
+        if (error) {
+          // If error arises because of RLS (not premium or unauthenticated), surface a friendly message
+          console.error("Failed to fetch premium content:", error);
+          setPremiumFetchError("Conteúdo Premium indisponível. Faça login e assine para acessar.");
+          setPremiumJson(null);
+          setPremiumHtml(null);
+          setIsPremiumLoading(false);
+          return;
+        }
+
+        if (!data) {
+          setPremiumFetchError("Conteúdo Premium não encontrado. Tente novamente mais tarde.");
+          setIsPremiumLoading(false);
+          return;
+        }
+
+        // content_json is used for structured exercises/quizzes; content_html for reading lessons.
+        setPremiumJson(data.content_json ?? null);
+        setPremiumHtml(data.content_html ?? null);
+        setIsPremiumLoading(false);
+      } catch (e) {
+        console.error("Unexpected error fetching premium content:", e);
+        setPremiumFetchError("Erro ao carregar conteúdo Premium. Tente novamente mais tarde.");
+        setIsPremiumLoading(false);
+      }
+    };
+
+    fetchPremium();
+
+    return () => { mounted = false; };
+  }, [lesson, subject?.slug, activityId, moduleId, lessonId]);
 
   if (!subject || !activity || !module || !lesson) {
     return (
@@ -70,43 +133,44 @@ const LessonPage = () => {
     );
   }
 
-  if (lesson.premium && !isPremium) {
+  if (lesson.premium && !isPremium && !premiumFetchError) {
+    // If user is not premium and we have no explicit fetch error from the server yet,
+    // show a brief loading state while server denies access; otherwise show locked message.
+    if (isPremiumLoading) {
+      return (
+        <div className="min-h-screen flex items-center justify-center p-4">
+          <div className="glass-card p-8 text-center">
+            <Sparkles className="h-8 w-8 animate-spin text-primary mx-auto mb-3" />
+            <div>Carregando conteúdo Premium...</div>
+          </div>
+        </div>
+      );
+    }
+    // If not premium and fetch didn't return data, show locked card (fetch error will be set after attempt)
+  }
+
+  if (lesson.premium && premiumFetchError) {
+    // Show a friendly locked view (user may be unauthenticated or not premium).
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="w-full max-w-xl glass-card p-8 text-center">
           <Lock className="h-16 w-16 text-yellow-400 mx-auto mb-4" />
           <h1 className="text-3xl font-bold mb-2">Conteúdo Premium</h1>
           <p className="text-muted-foreground mb-4">
-            Esta lição faz parte do conteúdo Premium do EDUKIDS+. Assine para desbloquear quizzes avançados, lições extras e dicas ilimitadas.
+            {premiumFetchError}
           </p>
           <div className="flex items-center justify-center gap-3 mt-4">
             <Button onClick={() => navigate('/store')} className="bg-yellow-400 text-black">
               Assinar Premium
             </Button>
-            <Button variant="outline" onClick={() => navigate('/test-account')}>
-              Ativar Premium (Teste)
+            <Button variant="outline" onClick={() => navigate('/login')}>
+              Entrar / Criar Conta
             </Button>
           </div>
           <p className="text-xs text-muted-foreground mt-4">
-            Assinantes têm acesso a exercícios adicionais, relatórios de desempenho detalhados e experiência sem anúncios.
+            Assinantes têm acesso a exercícios avançados, lições extras e dicas ilimitadas.
           </p>
         </div>
-      </div>
-    );
-  }
-
-  if (isBlocked) {
-    return (
-      <div className="text-center py-16 glass-card rounded-lg">
-        <Lock className="h-12 w-12 text-red-400 mx-auto mb-4" />
-        <h2 className="text-2xl font-bold">Tempo de Tela Esgotado</h2>
-        <p className="text-muted-foreground mt-2">
-          O limite de {limitMinutes} minutos foi atingido. O acesso às atividades está bloqueado.
-        </p>
-        <p className="text-sm text-muted-foreground mt-4">
-          Para continuar, um adulto deve desativar o bloqueio ou aumentar o limite no Painel dos Pais.
-        </p>
-        <RouterLink to="/dashboard" className="mt-4 inline-block text-primary underline">Ir para Painel dos Pais</RouterLink>
       </div>
     );
   }
@@ -160,6 +224,69 @@ const LessonPage = () => {
   }, [isPremium, hints, useHint]);
 
   const renderLessonContent = () => {
+    // PREMIUM lesson -> prefer database content that was fetched
+    if (lesson.premium) {
+      if (isPremiumLoading) {
+        return (
+          <div className="flex h-40 items-center justify-center">
+            <Sparkles className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        );
+      }
+
+      if (premiumJson) {
+        // premiumJson expected to be an array of QuizQuestion objects
+        try {
+          const questions: QuizQuestion[] = premiumJson as QuizQuestion[];
+          if (questions.length > 0) {
+            return (
+              <QuizComponent
+                questions={questions}
+                onQuizComplete={markCompleted}
+                triggerHint={hintTriggered}
+                onRequestHint={handleUseHint}
+              />
+            );
+          }
+          return (
+            <div className="glass-card p-6">
+              <h3 className="text-xl font-semibold">Conteúdo Premium indisponível</h3>
+              <p className="text-sm text-muted-foreground mt-2">O conteúdo desta lição não contém perguntas no momento.</p>
+            </div>
+          );
+        } catch (e) {
+          console.error("Failed to parse premium JSON content:", e);
+          return (
+            <div className="glass-card p-6">
+              <h3 className="text-xl font-semibold">Erro ao carregar conteúdo</h3>
+              <p className="text-sm text-muted-foreground mt-2">Não foi possível carregar as perguntas desta lição. Tente recarregar ou volte mais tarde.</p>
+            </div>
+          );
+        }
+      }
+
+      if (premiumHtml) {
+        const cleanHtml = DOMPurify.sanitize(premiumHtml);
+        return (
+          <Card className="glass-card p-6">
+            <CardContent>
+              <div className={cn("prose prose-invert max-w-none", "prose-p:text-foreground/90 prose-strong:text-primary prose-li:text-foreground/90 prose-ul:list-disc prose-ul:pl-5")}>
+                <div dangerouslySetInnerHTML={{ __html: cleanHtml }} />
+              </div>
+            </CardContent>
+          </Card>
+        );
+      }
+
+      // If premium and we have neither JSON nor HTML (but no explicit error), show placeholder
+      return (
+        <div className="glass-card p-6 text-center">
+          <h3 className="text-xl font-semibold">Carregando conteúdo Premium...</h3>
+        </div>
+      );
+    }
+
+    // Non-premium logic remains unchanged:
     if (lesson.type === 'game' && lesson.component) {
       const GameComponent = gameComponentMap[lesson.component];
       if (GameComponent) {
@@ -185,7 +312,6 @@ const LessonPage = () => {
             />
           );
         } else {
-          // Case: Quiz content was parsed but resulted in 0 questions (e.g., generator failed)
           return (
             <div className="glass-card p-6">
               <h3 className="text-xl font-semibold">Conteúdo indisponível</h3>
