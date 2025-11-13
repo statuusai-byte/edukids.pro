@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0'
-import * as bcrypt from "https://deno.land/x/bcrypt@0.4.1/mod.ts"
+import bcrypt from "https://esm.sh/bcryptjs@2.4.3"
 
 const allowedOrigin = 'https://edukidspro.vercel.app';
 const corsHeaders = {
@@ -73,8 +73,8 @@ serve(async (req) => {
       return new Response(JSON.stringify({ verified: false }), { status: 200, headers: corsHeaders });
     }
 
-    // Compare using bcrypt.compare (slow, salted)
-    const verified = await bcrypt.compare(pin, storedHash);
+    // Compare using bcryptjs.compareSync (pure JS, bundler-friendly)
+    const verified = bcrypt.compareSync(pin, storedHash);
 
     return new Response(JSON.stringify({ verified }), { status: 200, headers: corsHeaders });
   } catch (error) {

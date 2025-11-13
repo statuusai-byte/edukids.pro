@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0'
-import * as bcrypt from "https://deno.land/x/bcrypt@0.4.0/mod.ts"
+import bcrypt from "https://esm.sh/bcryptjs@2.4.3"
 
 const allowedOrigin = 'https://edukidspro.vercel.app';
 const corsHeaders = {
@@ -54,8 +54,9 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: 'PIN must be provided and be at least 6 characters' }), { status: 400, headers: corsHeaders })
     }
 
-    // Hash using bcrypt with a reasonable cost (default from library)
-    const hashed = await bcrypt.hash(pin);
+    // Hash using bcryptjs.hashSync with salt rounds 10 (reasonable cost)
+    const saltRounds = 10;
+    const hashed = bcrypt.hashSync(pin, saltRounds);
 
     // Upsert into parents table (service role)
     const { error: upsertError } = await supabaseAdmin
