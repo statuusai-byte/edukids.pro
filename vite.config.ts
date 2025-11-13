@@ -5,7 +5,7 @@ import path from "path";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig(() => ({
-  base: "/", // Garantindo que o caminho base seja a raiz
+  base: "/",
   server: {
     host: "::",
     port: 8080,
@@ -14,77 +14,111 @@ export default defineConfig(() => ({
     dyadComponentTagger(),
     react(),
     VitePWA({
+      strategies: "injectManifest",
+      srcDir: "src",
+      filename: "service-worker.ts",
       registerType: "autoUpdate",
-      injectRegister: "script", // Gera um script de registro para usarmos manualmente
+      injectRegister: false,
+      includeAssets: [
+        "favicon.ico",
+        "icons/icon-192.png",
+        "icons/icon-512.png",
+        "images/edukids-banner.png"
+      ],
       manifest: {
-        id: "urn:edukidsspro:app",
         name: "EDUKIDS+",
         short_name: "EDUKIDS+",
+        id: "urn:edukidsspro:app",
+        lang: "pt-BR",
+        dir: "ltr",
         description: "Aprenda brincando! Jogos educativos, trilhas de estudo e missões diárias para crianças de 4 a 12 anos.",
         start_url: "/",
+        scope: "/",
         display: "standalone",
+        display_override: ["standalone", "fullscreen"],
+        orientation: "portrait-primary",
         background_color: "#0f172a",
         theme_color: "#7c3aed",
-        orientation: "portrait-primary",
+        categories: ["education", "games", "kids"],
         icons: [
           {
             src: "/icons/icon-192.png",
             sizes: "192x192",
             type: "image/png",
-            purpose: "any",
+            purpose: "any"
           },
           {
             src: "/icons/icon-512.png",
             sizes: "512x512",
             type: "image/png",
-            purpose: "any",
-          },
-          {
-            src: "/icons/icon-512.png",
-            sizes: "512x512",
-            type: "image/png",
-            purpose: "maskable",
-          },
+            purpose: "any maskable"
+          }
         ],
-        // Screenshots removidos daqui, mantendo apenas no public/manifest.json
-      },
-      workbox: {
-        globPatterns: ["**/*.{js,css,html,svg,png,ico,webmanifest}"],
-        navigateFallback: "/index.html",
-        navigateFallbackDenylist: [/^\/\.well-known\//],
-        skipWaiting: true,
-        clientsClaim: true,
-        runtimeCaching: [
+        shortcuts: [
           {
-            urlPattern: /^https:\/\/eylmcfxdbwqbmfubojty\.supabase\.co\/.*/i,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'supabase-api-cache',
-              expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24 * 7 // 1 semana
-              },
-              cacheableResponse: {
-                statuses: [0, 200]
+            name: "Atividades",
+            short_name: "Estudar",
+            description: "Ir direto para as atividades por faixa etária.",
+            url: "/activities",
+            icons: [
+              {
+                src: "/icons/icon-192.png",
+                sizes: "192x192",
+                type: "image/png"
               }
-            }
+            ]
           },
           {
-            urlPattern: /^https:\/\/images\.unsplash\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'unsplash-images-cache',
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 dias
-              },
-              cacheableResponse: {
-                statuses: [0, 200]
+            name: "Play+ Missões",
+            short_name: "Play+",
+            description: "Abrir as trilhas Play+ e missões diárias.",
+            url: "/play-plus",
+            icons: [
+              {
+                src: "/icons/icon-192.png",
+                sizes: "192x192",
+                type: "image/png"
               }
-            }
+            ]
+          }
+        ],
+        screenshots: [
+          {
+            src: "/uploads/screenshot-mobile-1.png",
+            sizes: "1080x1920",
+            type: "image/png",
+            platform: "mobile",
+            label: "Tela inicial de atividades"
+          },
+          {
+            src: "/uploads/screenshot-mobile-2.png",
+            sizes: "1080x1920",
+            type: "image/png",
+            platform: "mobile",
+            label: "Página de lição e quiz"
+          },
+          {
+            src: "/uploads/screenshot-mobile-3.png",
+            sizes: "1080x1920",
+            type: "image/png",
+            platform: "mobile",
+            label: "Painel dos Pais"
+          },
+          {
+            src: "/uploads/screenshot-mobile-4.png",
+            sizes: "1080x1920",
+            type: "image/png",
+            platform: "mobile",
+            label: "Loja Premium"
           }
         ]
       },
+      devOptions: {
+        enabled: true,
+        suppressWarnings: true,
+        navigateFallback: "index.html",
+        type: "module"
+      }
     }),
   ],
   resolve: {

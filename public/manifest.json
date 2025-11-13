@@ -1,22 +1,19 @@
 {
-  "id": "urn:edukidsspro:app",
   "name": "EDUKIDS+",
   "short_name": "EDUKIDS+",
+  "id": "urn:edukidsspro:app",
+  "lang": "pt-BR",
+  "dir": "ltr",
   "description": "Aprenda brincando! Jogos educativos, trilhas de estudo e missões diárias para crianças de 4 a 12 anos.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "display_override": ["standalone", "fullscreen"],
+  "orientation": "portrait-primary",
   "background_color": "#0f172a",
   "theme_color": "#7c3aed",
-  "orientation": "portrait-primary",
-  "scope": "/",
   "categories": ["education", "games", "kids"],
-  "prefer_related_applications": true,
-  "related_applications": [
-    {
-      "platform": "play",
-      "id": "app.vercel.edukidsspro.twa"
-    }
-  ],
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/icons/icon-192.png",
@@ -29,6 +26,34 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Atividades",
+      "short_name": "Estudar",
+      "description": "Ir direto para as atividades por faixa etária.",
+      "url": "/activities",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Play+ Missões",
+      "short_name": "Play+",
+      "description": "Abrir as trilhas Play+ e missões diárias.",
+      "url": "/play-plus",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
     }
   ],
   "screenshots": [
@@ -60,6 +85,5 @@
       "platform": "mobile",
       "label": "Loja Premium"
     }
-  ],
-  "iarc_rating_id": "e8d17982-1942-4989-b68d-229172222222"
+  ]
 }
