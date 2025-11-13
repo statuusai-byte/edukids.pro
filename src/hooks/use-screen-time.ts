@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSupabase } from "@/context/SupabaseContext";
 import { supabase } from "@/integrations/supabase/client";
+import { showError } from "@/utils/toast"; // Import showError
 
 const STORAGE_LIMIT_KEY = "edukids_screen_time_limit_minutes";
 const STORAGE_BLOCK_KEY = "edukids_screen_time_block_enabled";
@@ -123,35 +124,53 @@ export function useScreenTime() {
     }
   }, []);
 
-  // When user sets limit or block, we also update the profile via Supabase (authenticated).
-  const updateProfileServer = useCallback(async (payload: { screen_time_limit_minutes?: number | null; screen_time_block_enabled?: boolean } ) => {
-    if (!user) return;
+  /**
+   * Securely updates screen time settings via Edge Function, requiring the PIN.
+   */
+  const updateProfileServer = useCallback(async (pin: string, payload: { screen_time_limit_minutes?: number | null; screen_time_block_enabled?: boolean } ) => {
+    if (!user) {
+      showError("Você precisa estar logado para alterar as configurações de tempo de tela.");
+      return false;
+    }
+    
     try {
-      const { error } = await supabase
-        .from("profiles")
-        .update({ ...payload, updated_at: new Date().toISOString() })
-        .eq("id", user.id);
+      const { error } = await supabase.functions.invoke('update-screen-time', {
+        method: 'POST',
+        body: { pin, ...payload },
+      });
 
       if (error) {
         console.error("Failed to update profile screen time settings:", error);
+        showError("Falha ao salvar as configurações. PIN incorreto ou erro no servidor.");
+        return false;
       }
+      return true;
     } catch (e) {
       console.error("Failed to update profile on server:", e);
+      showError("Erro de comunicação ao salvar as configurações.");
+      return false;
     }
   }, [user]);
 
   // API
-  const setLimitMinutes = useCallback((minutes: number | null) => {
-    setLimitMinutesState(minutes);
-    persistLimitLocal(minutes);
-    // Try to persist on server (best-effort)
-    updateProfileServer({ screen_time_limit_minutes: minutes });
+  const setLimitMinutes = useCallback(async (minutes: number | null, pin: string) => {
+    const success = await updateProfileServer(pin, { screen_time_limit_minutes: minutes });
+    if (success) {
+      setLimitMinutesState(minutes);
+      persistLimitLocal(minutes);
+      return true;
+    }
+    return false;
   }, [persistLimitLocal, updateProfileServer]);
 
-  const setBlockEnabled = useCallback((enabled: boolean) => {
-    setBlockEnabledState(enabled);
-    persistBlockFlagLocal(enabled);
-    updateProfileServer({ screen_time_block_enabled: enabled });
+  const setBlockEnabled = useCallback(async (enabled: boolean, pin: string) => {
+    const success = await updateProfileServer(pin, { screen_time_block_enabled: enabled });
+    if (success) {
+      setBlockEnabledState(enabled);
+      persistBlockFlagLocal(enabled);
+      return true;
+    }
+    return false;
   }, [persistBlockFlagLocal, updateProfileServer]);
 
   const resetToday = useCallback(() => {

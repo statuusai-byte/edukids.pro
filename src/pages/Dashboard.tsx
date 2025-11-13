@@ -2,15 +2,16 @@ import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, Clock, TrendingUp, CheckCircle, Gauge, Heart, LogOut, ShieldCheck, Trophy } from "lucide-react";
 import { TiltCard } from "@/components/TiltCard";
 import { subjectsData } from "@/data/activitiesData";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import { useProgress } from "@/hooks/use-progress";
 import { useScreenTime } from "@/hooks/use-screen-time";
 import { useAge } from "@/context/AgeContext";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import ParentalPinModal from "@/components/ParentalPinModal";
-import { hasParentPin } from "@/utils/parental";
+import { hasParentPin } from "@/utils/parental-helpers";
 import { useSupabase } from "@/context/SupabaseContext";
+import { showSuccess, showError } from "@/utils/toast";
 
 const Dashboard = () => {
   const { progress } = useProgress();
@@ -21,24 +22,71 @@ const Dashboard = () => {
   const [isPinVerified, setIsPinVerified] = useState(false);
   const [pinModalOpen, setPinModalOpen] = useState(false);
   const [pinMode, setPinMode] = useState<"set" | "verify" | "remove">("verify");
+  const pendingActionRef = useRef<null | ((pin: string) => void)>(null); // Action now requires PIN
 
+  // Initial check for dashboard access
   useEffect(() => {
-    const pinExists = hasParentPin();
-    if (!pinExists) {
-      setPinMode("set");
-    } else {
-      setPinMode("verify");
-    }
-    setPinModalOpen(true);
+    const checkPin = async () => {
+      const pinExists = await hasParentPin();
+      if (!pinExists) {
+        setPinMode("set");
+      } else {
+        setPinMode("verify");
+      }
+      setPinModalOpen(true);
+    };
+    checkPin();
   }, []);
 
-  const handlePinVerified = () => {
+  const handlePinVerified = (pin: string) => {
     setIsPinVerified(true);
     setPinModalOpen(false);
+    if (pendingActionRef.current) {
+      pendingActionRef.current(pin);
+      pendingActionRef.current = null;
+    }
   };
 
   const handlePinModalClose = (open: boolean) => {
     setPinModalOpen(open);
+  };
+
+  const onVerifyThenRun = useCallback((action: (pin: string) => void) => {
+    // We assume PIN exists since the user had to verify it to enter the dashboard,
+    // but we re-verify for sensitive actions.
+    pendingActionRef.current = action;
+    setPinMode("verify");
+    setPinModalOpen(true);
+  }, []);
+
+  const handleLimitChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const v = e.target.value;
+    const newLimit = v === '' ? null : Math.max(1, Math.min(600, Number(v)));
+    
+    if (newLimit === limitMinutes) return;
+
+    onVerifyThenRun(async (pin) => {
+      const success = await setLimitMinutes(newLimit, pin);
+      if (success) {
+        showSuccess("Limite de tempo de tela atualizado.");
+      } else {
+        // If update failed, the hook setter will revert the state, but we ensure the UI reflects the failure.
+        // We rely on the hook to handle the failure state.
+      }
+    });
+  };
+
+  const handleBlockToggle = (enabled: boolean) => {
+    if (enabled === blockEnabled) return;
+
+    onVerifyThenRun(async (pin) => {
+      const success = await setBlockEnabled(enabled, pin);
+      if (success) {
+        showSuccess(`Bloqueio de tempo de tela ${enabled ? 'ativado' : 'desativado'}.`);
+      } else {
+        // If update failed, the hook setter will revert the state, but we ensure the UI reflects the failure.
+      }
+    });
   };
 
   const completedLessons = useMemo(() => Object.keys(progress).length, [progress]);
@@ -197,14 +245,9 @@ const Dashboard = () => {
                 className="w-28 p-2 rounded-md bg-secondary/40 border border-white/10"
                 value={limitMinutes ?? ''}
                 placeholder="Sem limite"
-                onChange={(e) => {
-                  const v = e.target.value;
-                  if (v === '') { setLimitMinutes(null); return; }
-                  const n = Math.max(1, Math.min(600, Number(v)));
-                  setLimitMinutes(Number.isNaN(n) ? null : n);
-                }}
+                onChange={handleLimitChange}
               />
-              <Button size="sm" variant={blockEnabled ? "default" : "secondary"} onClick={() => setBlockEnabled(!blockEnabled)}>
+              <Button size="sm" variant={blockEnabled ? "default" : "secondary"} onClick={() => handleBlockToggle(!blockEnabled)}>
                 {blockEnabled ? "Bloqueio Ativo" : "Bloqueio Desativado"}
               </Button>
             </div>
