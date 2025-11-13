@@ -43,9 +43,11 @@ const ParentalPinModal = ({ open, mode = "verify", onOpenChange, onVerified, tit
     }
   }, [open]);
 
+  const MIN_PIN_LENGTH = 6;
+
   const handleSet = async () => {
-    if (pin.length < 4) {
-      showError("O PIN deve ter ao menos 4 dígitos.");
+    if (pin.length < MIN_PIN_LENGTH) {
+      showError(`O PIN deve ter ao menos ${MIN_PIN_LENGTH} caracteres (recomendado números + letras).`);
       return;
     }
     if (pin !== pinConfirm) {
@@ -58,11 +60,11 @@ const ParentalPinModal = ({ open, mode = "verify", onOpenChange, onVerified, tit
       await setParentPin(pin);
       dismissToast(toastId);
       showSuccess("PIN parental definido com sucesso.");
-      setExistingPinExists(true); // Update local state immediately
+      setExistingPinExists(true);
       onOpenChange(false);
     } catch (e) {
       dismissToast(toastId);
-      // Error already shown by setParentPin/showError
+      // setParentPin already reports errors
     } finally {
       setLoading(false);
     }
@@ -94,11 +96,10 @@ const ParentalPinModal = ({ open, mode = "verify", onOpenChange, onVerified, tit
       await removeParentPin();
       dismissToast(toastId);
       showSuccess("PIN parental removido.");
-      setExistingPinExists(false); // Update local state immediately
+      setExistingPinExists(false);
       onOpenChange(false);
     } catch (e) {
       dismissToast(toastId);
-      // Error already shown by removeParentPin/showError
     } finally {
       setLoading(false);
     }
@@ -117,14 +118,14 @@ const ParentalPinModal = ({ open, mode = "verify", onOpenChange, onVerified, tit
           {mode === "set" ? (
             <>
               <div>
-                <Label>PIN (4+ dígitos)</Label>
+                <Label>PIN (mín. {MIN_PIN_LENGTH} caracteres — recom.: números + letras)</Label>
                 <Input value={pin} onChange={(e) => setPin(e.target.value)} type="password" />
               </div>
               <div>
                 <Label>Confirme o PIN</Label>
                 <Input value={pinConfirm} onChange={(e) => setPinConfirm(e.target.value)} type="password" />
               </div>
-              <div className="text-sm text-muted-foreground">O PIN é armazenado de forma segura (hash) no servidor. Ele será necessário para aprovar compras e ações sensíveis.</div>
+              <div className="text-sm text-muted-foreground">O PIN será enviado de forma segura ao servidor, onde será armazenado com um hash lento e salgado.</div>
             </>
           ) : mode === "remove" ? (
             <>
@@ -132,7 +133,7 @@ const ParentalPinModal = ({ open, mode = "verify", onOpenChange, onVerified, tit
                 <Label>Digite seu PIN atual</Label>
                 <Input value={pin} onChange={(e) => setPin(e.target.value)} type="password" />
               </div>
-              <div className="text-sm text-muted-foreground">Ao confirmar, o PIN será removido e a exigência de verificação será desativada.</div>
+              <div className="text-sm text-muted-foreground">Ao confirmar, o PIN será removido.</div>
             </>
           ) : (
             <>

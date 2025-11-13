@@ -19,7 +19,7 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405, headers: corsHeaders })
     }
 
-    // Require Authorization header: caller must be authenticated (the parent)
+    // Require Authorization header: caller must be authenticated
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
       return new Response(JSON.stringify({ error: 'Unauthorized: Missing Authorization header' }), { 
@@ -36,10 +36,9 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Server configuration error' }), { status: 500, headers: corsHeaders })
     }
 
-    // Use admin client (service role) to verify the caller's identity and read the stored hash
+    // Use admin client (service role) to verify the caller's identity
     const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    // Verify the caller identity using their JWT
     const { data: { user: callerUser }, error: userError } = await supabaseAdmin.auth.getUser(callerJwt);
     if (userError || !callerUser) {
       return new Response(JSON.stringify({ error: 'Unauthorized: Invalid token' }), { 
@@ -51,34 +50,26 @@ serve(async (req) => {
     const body = await req.json().catch(() => ({}));
     const pin = (body.pin || '').toString();
 
-    if (!pin) {
-      return new Response(JSON.stringify({ error: 'Missing pin' }), { status: 400, headers: corsHeaders })
+    if (!pin || pin.length < 6) {
+      return new Response(JSON.stringify({ error: 'PIN must be provided and be at least 6 characters' }), { status: 400, headers: corsHeaders })
     }
 
-    // Fetch stored bcrypt hash for the user
-    const { data: row, error: rowError } = await supabaseAdmin
+    // Hash using bcrypt with a reasonable cost (default from library)
+    const hashed = await bcrypt.hash(pin);
+
+    // Upsert into parents table (service role)
+    const { error: upsertError } = await supabaseAdmin
       .from('parents')
-      .select('pin_hash, user_id')
-      .eq('user_id', callerUser.id)
-      .single();
+      .upsert({ user_id: callerUser.id, pin_hash: hashed, created_at: new Date().toISOString() }, { onConflict: 'user_id' });
 
-    if (rowError) {
-      // No row or other error: respond false (but do not reveal specifics)
-      console.error("Error fetching parent pin row:", rowError);
-      return new Response(JSON.stringify({ verified: false }), { status: 200, headers: corsHeaders });
+    if (upsertError) {
+      console.error("Failed to upsert parent pin:", upsertError);
+      return new Response(JSON.stringify({ error: 'Failed to save PIN' }), { status: 500, headers: corsHeaders });
     }
 
-    const storedHash = row?.pin_hash;
-    if (!storedHash) {
-      return new Response(JSON.stringify({ verified: false }), { status: 200, headers: corsHeaders });
-    }
-
-    // Compare using bcrypt.compare (slow, salted)
-    const verified = await bcrypt.compare(pin, storedHash);
-
-    return new Response(JSON.stringify({ verified }), { status: 200, headers: corsHeaders });
+    return new Response(JSON.stringify({ message: 'PIN stored' }), { status: 200, headers: corsHeaders });
   } catch (error) {
-    console.error('verify-parent-pin error:', error);
+    console.error('set-parent-pin error:', error);
     return new Response(JSON.stringify({ error: 'An internal error occurred.' }), { status: 500, headers: corsHeaders });
   }
 });

@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useSupabase } from "@/context/SupabaseContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const STORAGE_LIMIT_KEY = "edukids_screen_time_limit_minutes";
 const STORAGE_BLOCK_KEY = "edukids_screen_time_block_enabled";
@@ -6,14 +8,15 @@ const STORAGE_TODAY_USAGE_KEY = "edukids_screen_time_today_minutes";
 const STORAGE_LAST_DAY_KEY = "edukids_screen_time_last_day";
 
 /**
- * Simple screen-time hook:
- * - Persist limit and block flag in localStorage
- * - Track today's usage in minutes (persisted)
- * - Provide startSession / stopSession to accumulate usage (call from app when lesson/game starts/stops)
- * - Provide resetToday and helpers to check blocked state
+ * Screen-time hook:
+ * - Persist limit and block flag in localStorage for offline use
+ * - When logged in, sync limit/block with user's profile on Supabase so parents cannot just flip localStorage
+ * - Track today's usage in minutes (persisted locally)
+ * - Provide startSession / stopSession to accumulate usage
  */
 
 export function useScreenTime() {
+  const { user } = useSupabase();
   const [limitMinutes, setLimitMinutesState] = useState<number | null>(null);
   const [blockEnabled, setBlockEnabledState] = useState<boolean>(false);
   const [todayUsage, setTodayUsage] = useState<number>(0);
@@ -45,6 +48,51 @@ export function useScreenTime() {
     }
   }, []);
 
+  // When user logs in, fetch their profile values for screen time (limit + block flag).
+  useEffect(() => {
+    let mounted = true;
+    const fetchProfileSettings = async () => {
+      if (!user) return;
+      try {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("screen_time_limit_minutes, screen_time_block_enabled")
+          .eq("id", user.id)
+          .single();
+
+        if (!mounted) return;
+
+        if (error) {
+          // If RLS prevents the read or other error, we safely ignore and keep local settings.
+          console.warn("Failed to fetch screen time settings from profile:", error);
+          return;
+        }
+
+        // If server has authoritative settings, override local values (and persist locally).
+        if (data?.screen_time_limit_minutes !== undefined) {
+          const val = data.screen_time_limit_minutes ?? null;
+          setLimitMinutesState(val);
+          try {
+            if (val === null) localStorage.removeItem(STORAGE_LIMIT_KEY);
+            else localStorage.setItem(STORAGE_LIMIT_KEY, String(val));
+          } catch {}
+        }
+        if (data?.screen_time_block_enabled !== undefined) {
+          const b = Boolean(data.screen_time_block_enabled);
+          setBlockEnabledState(b);
+          try {
+            localStorage.setItem(STORAGE_BLOCK_KEY, b ? "true" : "false");
+          } catch {}
+        }
+      } catch (e) {
+        console.error("Error while syncing screen time settings:", e);
+      }
+    };
+
+    fetchProfileSettings();
+    return () => { mounted = false; };
+  }, [user]);
+
   const persistUsage = useCallback((minutes: number) => {
     try {
       localStorage.setItem(STORAGE_TODAY_USAGE_KEY, String(minutes));
@@ -55,7 +103,7 @@ export function useScreenTime() {
     }
   }, []);
 
-  const persistLimit = useCallback((minutes: number | null) => {
+  const persistLimitLocal = useCallback((minutes: number | null) => {
     try {
       if (minutes === null) {
         localStorage.removeItem(STORAGE_LIMIT_KEY);
@@ -67,7 +115,7 @@ export function useScreenTime() {
     }
   }, []);
 
-  const persistBlockFlag = useCallback((enabled: boolean) => {
+  const persistBlockFlagLocal = useCallback((enabled: boolean) => {
     try {
       localStorage.setItem(STORAGE_BLOCK_KEY, enabled ? "true" : "false");
     } catch (e) {
@@ -75,16 +123,36 @@ export function useScreenTime() {
     }
   }, []);
 
+  // When user sets limit or block, we also update the profile via Supabase (authenticated).
+  const updateProfileServer = useCallback(async (payload: { screen_time_limit_minutes?: number | null; screen_time_block_enabled?: boolean } ) => {
+    if (!user) return;
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ ...payload, updated_at: new Date().toISOString() })
+        .eq("id", user.id);
+
+      if (error) {
+        console.error("Failed to update profile screen time settings:", error);
+      }
+    } catch (e) {
+      console.error("Failed to update profile on server:", e);
+    }
+  }, [user]);
+
   // API
   const setLimitMinutes = useCallback((minutes: number | null) => {
     setLimitMinutesState(minutes);
-    persistLimit(minutes);
-  }, [persistLimit]);
+    persistLimitLocal(minutes);
+    // Try to persist on server (best-effort)
+    updateProfileServer({ screen_time_limit_minutes: minutes });
+  }, [persistLimitLocal, updateProfileServer]);
 
   const setBlockEnabled = useCallback((enabled: boolean) => {
     setBlockEnabledState(enabled);
-    persistBlockFlag(enabled);
-  }, [persistBlockFlag]);
+    persistBlockFlagLocal(enabled);
+    updateProfileServer({ screen_time_block_enabled: enabled });
+  }, [persistBlockFlagLocal, updateProfileServer]);
 
   const resetToday = useCallback(() => {
     setTodayUsage(0);
@@ -104,7 +172,6 @@ export function useScreenTime() {
     // also create an interval to persist intermediate minutes each 60s
     if (intervalRef.current === null) {
       const id = window.setInterval(() => {
-        // add one minute to usage (but don't exceed large numbers)
         setTodayUsage((prev) => {
           const next = prev + 1;
           persistUsage(next);
