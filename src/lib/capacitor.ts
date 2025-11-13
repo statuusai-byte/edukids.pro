@@ -7,6 +7,13 @@
  * - At runtime, when running in a native container, these platform globals (Capacitor, AdMob, CdvPurchase)
  *   are expected to exist on globalThis. We access them via (globalThis as any) and provide safe fallbacks
  *   for web builds so bundlers do not attempt to resolve the native modules.
+ *
+ * Security improvement:
+ * - Ad unit IDs are now read from Vite environment variables:
+ *    VITE_ADMOB_INTERSTITIAL_ID
+ *    VITE_ADMOB_REWARD_ID
+ *
+ *   This allows rotating IDs without changing source code and reduces the exposure of hardcoded IDs.
  */
 
 import { showSuccess, showError } from "@/utils/toast";
@@ -45,13 +52,41 @@ const CdvPurchase = CdvPurchaseGlobal ?? {
 
 type AdOptions = { adId?: string; isTesting?: boolean; [k: string]: any };
 
+/**
+ * Read ad unit ids from environment variables (Vite):
+ * - VITE_ADMOB_INTERSTITIAL_ID
+ * - VITE_ADMOB_REWARD_ID
+ *
+ * If not provided, a fallback hardcoded id is used (kept for local dev convenience).
+ * A warning is emitted in production when env vars are missing to encourage proper configuration.
+ */
+const DEFAULT_INTERSTITIAL_ID = "ca-app-pub-472017295403326f";
+const DEFAULT_REWARDED_ID = "ca-app-pub-4720172954033263/2046840767";
+
+const interstitialAdId = (import.meta as any).env?.VITE_ADMOB_INTERSTITIAL_ID ?? DEFAULT_INTERSTITIAL_ID;
+const rewardAdId = (import.meta as any).env?.VITE_ADMOB_REWARD_ID ?? DEFAULT_REWARDED_ID;
+
+// Warn in production when env vars are not set so ops/dev notice and can rotate IDs properly
+if (!(import.meta as any).env?.VITE_ADMOB_INTERSTITIAL_ID && !(import.meta as any).env?.DEV) {
+  console.warn(
+    "[AdMob] VITE_ADMOB_INTERSTITIAL_ID not set — using fallback interstitial ad id. " +
+      "Set VITE_ADMOB_INTERSTITIAL_ID in your environment for production."
+  );
+}
+if (!(import.meta as any).env?.VITE_ADMOB_REWARD_ID && !(import.meta as any).env?.DEV) {
+  console.warn(
+    "[AdMob] VITE_ADMOB_REWARD_ID not set — using fallback rewarded ad id. " +
+      "Set VITE_ADMOB_REWARD_ID in your environment for production."
+  );
+}
+
 const interstitialOptions: AdOptions = {
-  adId: "ca-app-pub-472017295403326f", // Your Interstitial ID
+  adId: interstitialAdId,
   isTesting: import.meta.env.DEV,
 };
 
 const rewardOptions: AdOptions = {
-  adId: "ca-app-pub-4720172954033263/2046840767", // Your Rewarded Ad ID
+  adId: rewardAdId,
   isTesting: import.meta.env.DEV,
 };
 
