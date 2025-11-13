@@ -1,23 +1,26 @@
-const fs = require('fs');
-const path = require('path');
-
-module.exports = (req, res) => {
+module.exports = async (req, res) => {
   try {
-    const filePath = path.join(process.cwd(), 'public', 'icons', 'icon-192.png');
-    if (!fs.existsSync(filePath)) {
-      res.statusCode = 404;
+    const proto = req.headers['x-forwarded-proto'] || 'https';
+    const host = req.headers['x-forwarded-host'] || req.headers.host;
+    const url = `${proto}://${host}/icons/icon-192.png`;
+
+    const fetched = await fetch(url);
+    if (!fetched.ok) {
+      res.statusCode = fetched.status || 502;
       res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-      res.end('Icon not found');
+      res.end(`Failed to fetch the icon (status ${fetched.status})`);
       return;
     }
 
-    const data = fs.readFileSync(filePath);
-    res.setHeader('Content-Type', 'image/png');
-    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    const arrayBuffer = await fetched.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
     res.statusCode = 200;
-    res.end(data);
+    res.setHeader('Content-Type', fetched.headers.get('content-type') || 'image/png');
+    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    res.end(buffer);
   } catch (err) {
-    console.error('Error serving icon-192:', err);
+    console.error('Error proxying icon-192:', err);
     res.statusCode = 500;
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
     res.end('Internal server error');
