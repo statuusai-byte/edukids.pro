@@ -7,7 +7,7 @@ import StudyAssistant from "@/components/StudyAssistant";
 import AgeGateModal from "@/components/AgeGateModal";
 import { useInterstitialAdManager } from "@/hooks/useInterstitialAdManager";
 import Header from "@/components/Header";
-import { Sheet } from "@/components/ui/sheet"; // Import Sheet
+import { Sheet } from "@/components/ui/sheet";
 
 const Layout = () => {
   const isMobile = useIsMobile();
@@ -22,12 +22,10 @@ const Layout = () => {
   };
 
   return (
-    <Sheet> {/* Wrap the entire layout in Sheet */}
+    <Sheet>
       <div className="flex flex-1 w-full text-foreground">
-        {/* Fixed Header for all screens (contains theme toggle) */}
         <Header />
 
-        {/* Mobile Navigation components (Sidebar is triggered by Header, TabBar is fixed bottom) */}
         {isMobile && (
           <>
             <MobileSidebar />
@@ -66,6 +64,13 @@ const Layout = () => {
               </div>
             </div>
           </div>
+
+          {/* Footer com link para Política de Privacidade */}
+          <footer className="mx-auto w-full max-w-7xl px-6 py-6 text-center text-xs text-muted-foreground">
+            <a href="/privacy-policy" className="underline hover:text-foreground">
+              Política de Privacidade
+            </a>
+          </footer>
         </main>
 
         <StudyAssistant />
