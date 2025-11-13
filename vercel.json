@@ -15,7 +15,7 @@
       "destination": "/privacy-policy/index.html"
     },
     {
-      "source": "/((?!\\.well-known\\/).*)",
+      "source": "/((?!\\.well-known\\/|icons\\/|images\\/|uploads\\/|sounds\\/|manifest\\.json|robots\\.txt|service-worker\\.js|favicon\\.ico).*)",
       "destination": "/index.html"
     }
   ],
