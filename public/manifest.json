@@ -16,22 +16,16 @@
   "prefer_related_applications": false,
   "icons": [
     {
-      "src": "https://edukidspro.vercel.app/icons/icon-192.png",
+      "src": "/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://edukidspro.vercel.app/icons/icon-512.png",
+      "src": "/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "https://edukidspro.vercel.app/icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     }
   ],
   "shortcuts": [
@@ -42,7 +36,7 @@
       "url": "/activities",
       "icons": [
         {
-          "src": "https://edukidspro.vercel.app/icons/icon-192.png",
+          "src": "/icons/icon-192.png",
           "sizes": "192x192",
           "type": "image/png"
         }
@@ -55,7 +49,7 @@
       "url": "/play-plus",
       "icons": [
         {
-          "src": "https://edukidspro.vercel.app/icons/icon-192.png",
+          "src": "/icons/icon-192.png",
           "sizes": "192x192",
           "type": "image/png"
         }
@@ -64,32 +58,18 @@
   ],
   "screenshots": [
     {
-      "src": "https://edukidspro.vercel.app/uploads/screenshot-mobile-1.png",
+      "src": "/uploads/screenshot-mobile-1.png",
       "sizes": "1080x1920",
       "type": "image/png",
       "platform": "mobile",
       "label": "Tela inicial de atividades"
     },
     {
-      "src": "https://edukidspro.vercel.app/uploads/screenshot-mobile-2.png",
+      "src": "/uploads/screenshot-mobile-2.png",
       "sizes": "1080x1920",
       "type": "image/png",
       "platform": "mobile",
       "label": "Página de lição e quiz"
-    },
-    {
-      "src": "https://edukidspro.vercel.app/uploads/screenshot-mobile-3.png",
-      "sizes": "1080x1920",
-      "type": "image/png",
-      "platform": "mobile",
-      "label": "Painel dos Pais"
-    },
-    {
-      "src": "https://edukidspro.vercel.app/uploads/screenshot-mobile-4.png",
-      "sizes": "1080x1920",
-      "type": "image/png",
-      "platform": "mobile",
-      "label": "Loja Premium"
     }
   ]
 }
