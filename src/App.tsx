@@ -44,6 +44,7 @@ const AppRoutes = () => (
     <Route path="/login" element={<Login />} />
     <Route path="/register" element={<Register />} />
     <Route path="/success-payment" element={<SuccessPayment />} />
+    <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
     <Route element={<Layout />}>
       <Route path="/activities" element={<Activities />} />
@@ -54,7 +55,6 @@ const AppRoutes = () => (
       />
       <Route path="/play-plus" element={<PlayPlus />} />
       <Route path="/store" element={<Store />} />
-      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
     </Route>
 
     <Route
