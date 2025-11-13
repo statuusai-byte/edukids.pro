@@ -14,7 +14,6 @@ import AmbientBackground from "@/components/AmbientBackground";
 import RequireAuth from "@/components/RequireAuth";
 import GlobalErrorLogger from "@/components/GlobalErrorLogger";
 
-// Lazy pages/components
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Layout = lazy(() => import("./components/Layout"));
 const Activities = lazy(() => import("./pages/Activities"));
@@ -27,8 +26,6 @@ const LessonPage = lazy(() => import("./pages/LessonPage"));
 const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const SuccessPayment = lazy(() => import("./pages/SuccessPayment"));
-const TestAccount = lazy(() => import("./pages/TestAccount"));
-const AdminGrantPremium = lazy(() => import("./pages/AdminGrantPremium"));
 const AchievementsPage = lazy(() => import("./pages/Achievements"));
 const Home = lazy(() => import("./pages/Home"));
 
@@ -40,55 +37,39 @@ const Fallback = () => (
   </div>
 );
 
-const AppRoutes = () => {
-  const isDev = import.meta.env.MODE === "development";
-  const showAdminRoute = isDev;
+const AppRoutes = () => (
+  <Routes>
+    <Route path="/" element={<Home />} />
+    <Route path="/login" element={<Login />} />
+    <Route path="/register" element={<Register />} />
+    <Route path="/success-payment" element={<SuccessPayment />} />
 
-  return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/success-payment" element={<SuccessPayment />} />
-      <Route path="/test-account" element={<TestAccount />} />
-
-      {showAdminRoute && (
-        <Route
-          path="/admin/grant-premium"
-          element={
-            <RequireAuth>
-              <AdminGrantPremium />
-            </RequireAuth>
-          }
-        />
-      )}
-
-      {/* Rotas públicas que usam o layout principal */}
-      <Route element={<Layout />}>
-        <Route path="/activities" element={<Activities />} />
-        <Route path="/activities/:subject" element={<SubjectPage />} />
-        <Route path="/activities/:subject/:activityId/modules/:moduleId/lessons/:lessonId" element={<LessonPage />} />
-        <Route path="/play-plus" element={<PlayPlus />} />
-        <Route path="/store" element={<Store />} />
-      </Route>
-
-      {/* Rotas protegidas que exigem login */}
+    <Route element={<Layout />}>
+      <Route path="/activities" element={<Activities />} />
+      <Route path="/activities/:subject" element={<SubjectPage />} />
       <Route
-        element={
-          <RequireAuth>
-            <Layout />
-          </RequireAuth>
-        }
-      >
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/achievements" element={<AchievementsPage />} />
-      </Route>
+        path="/activities/:subject/:activityId/modules/:moduleId/lessons/:lessonId"
+        element={<LessonPage />}
+      />
+      <Route path="/play-plus" element={<PlayPlus />} />
+      <Route path="/store" element={<Store />} />
+    </Route>
 
-      <Route path="*" element={<NotFound />} />
-    </Routes>
-  );
-};
+    <Route
+      element={
+        <RequireAuth>
+          <Layout />
+        </RequireAuth>
+      }
+    >
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/settings" element={<Settings />} />
+      <Route path="/achievements" element={<AchievementsPage />} />
+    </Route>
+
+    <Route path="*" element={<NotFound />} />
+  </Routes>
+);
 
 const App = () => (
   <QueryClientProvider client={queryClient}>

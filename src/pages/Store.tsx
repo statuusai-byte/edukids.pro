@@ -104,7 +104,6 @@ const Store = () => {
         setIsCheckingOut(true);
         const loadingToast = showLoading("Processando assinatura...");
         try {
-          // 1. Call Edge Function to create checkout session (simulated payment success)
           const { data, error } = await supabase.functions.invoke('create-checkout', {
             method: 'POST',
             body: { sku: PRODUCTS.EDUKIDS_BASIC_MONTHLY },
@@ -115,13 +114,12 @@ const Store = () => {
           if (error) {
             throw new Error(error.message);
           }
-          
+
           const { secure_token, sku } = data as { secure_token: string; sku: string };
-          
-          // 2. Navigate to the success page with the token in the navigation state (not URL)
-          navigate('/success-payment', { 
+
+          navigate('/success-payment', {
             replace: true,
-            state: { userId: user.id, sku, token: secure_token }
+            state: { userId: user.id, sku, token: secure_token },
           });
 
         } catch (error: any) {
@@ -168,14 +166,12 @@ const Store = () => {
       price: pkg.price,
       onConfirm: async () => {
         const loading = showLoading(`Comprando ${pkg.name}...`);
-        // Simulate purchase for hints (using native purchase logic for hints)
         const success = await purchaseProduct(pkg.id);
-        
+
         dismissToast(loading);
 
         if (success) {
-          // Now relies on the database-backed addHints function
-          await addHints(pkg.amount); 
+          await addHints(pkg.amount);
           showSuccess(`${pkg.name} comprado! ${pkg.amount} dicas foram adicionadas ao seu saldo.`);
         } else {
           showError("Falha ao processar a compra de dicas.");
@@ -190,7 +186,7 @@ const Store = () => {
       if (isTrialActive) {
         const formattedDate = trialEndsAt ? format(new Date(trialEndsAt), "dd/MM/yyyy", { locale: ptBR }) : 'data desconhecida';
         return (
-          <Button 
+          <Button
             className="w-full bg-emerald-600 text-white font-bold"
             disabled
           >
@@ -200,7 +196,7 @@ const Store = () => {
         );
       }
       return (
-        <Button 
+        <Button
           className="w-full bg-green-600 text-white font-bold"
           disabled
         >
@@ -209,7 +205,6 @@ const Store = () => {
       );
     }
 
-    // If trialEndsAt is null, the user hasn't used the trial yet.
     const hasUsedTrial = trialEndsAt !== null;
 
     return (
@@ -253,7 +248,7 @@ const Store = () => {
             <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight">Loja EDUKIDS+</h1>
             <p className="max-w-2xl text-lg text-white/90">
               Libere o Play+ completo: Trilhas de Estudo e Missões Diárias, sem anúncios, com dicas ilimitadas e
-              novidades semanais. Diversão que ensina — do jeitinho certo para cada idade.
+              novidades semanais. Diversão que ensina — tudo personalizado para cada idade.
             </p>
             <div className="flex flex-wrap gap-3 text-xs text-white/80">
               <span className="flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5">
@@ -274,11 +269,7 @@ const Store = () => {
               </span>
             </div>
             <div className="flex flex-wrap gap-3">
-              {/* Primary CTA area */}
               {renderPremiumButton()}
-              <Button variant="outline" className="border-white/40 text-white hover:bg-white/10" asChild>
-                <Link to="/test-account">Criar conta de teste</Link>
-              </Button>
             </div>
           </div>
 

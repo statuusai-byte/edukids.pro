@@ -18,13 +18,37 @@ const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 
 const DEFAULT_PROFILE: Profile = {
   name: 'Alex',
-  avatarUrl: null, // Default avatar is handled by UI fallback
+  avatarUrl: null,
+};
+
+type AvatarSignedUrlPayload = {
+  signedUrl?: string | null;
 };
 
 export const ProfileProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useSupabase();
   const [profile, setProfile] = useState<Profile>(DEFAULT_PROFILE);
   const [isLoading, setIsLoading] = useState(true);
+
+  const fetchSignedAvatarUrl = useCallback(async (): Promise<string | null> => {
+    try {
+      const { data, error } = await supabase.functions.invoke('get-avatar-url', {
+        method: 'POST',
+        body: {},
+      });
+
+      if (error) {
+        console.error("Failed to request signed avatar URL:", error);
+        return null;
+      }
+
+      const payload = data as AvatarSignedUrlPayload | null;
+      return payload?.signedUrl ?? null;
+    } catch (error) {
+      console.error("Unexpected error while fetching signed avatar URL:", error);
+      return null;
+    }
+  }, []);
 
   const fetchProfile = useCallback(async () => {
     if (!user) {
@@ -41,40 +65,28 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
         .eq('id', user.id)
         .single();
 
-      if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
+      if (error && error.code !== 'PGRST116') {
         throw error;
       }
 
-      if (data) {
-        const fullName = [data.first_name, data.last_name].filter(Boolean).join(' ');
-        let signedAvatarUrl: string | null = null;
+      const fullName = [data?.first_name, data?.last_name].filter(Boolean).join(' ');
+      let signedAvatarUrl: string | null = null;
 
-        if (data.avatar_url) {
-          const { data: signedUrlData, error: signedUrlError } = await supabase.storage
-            .from('avatars')
-            .createSignedUrl(data.avatar_url, 3600); // 1 hour expiry
-
-          if (signedUrlError) {
-            console.error("Failed to create signed URL for avatar", signedUrlError);
-          } else {
-            signedAvatarUrl = signedUrlData.signedUrl;
-          }
-        }
-        
-        setProfile({
-          name: fullName || 'Explorador',
-          avatarUrl: signedAvatarUrl,
-        });
-      } else {
-        setProfile({ name: 'Explorador', avatarUrl: null });
+      if (data?.avatar_url) {
+        signedAvatarUrl = await fetchSignedAvatarUrl();
       }
+
+      setProfile({
+        name: fullName || 'Explorador',
+        avatarUrl: signedAvatarUrl,
+      });
     } catch (error) {
       console.error("Failed to load profile from Supabase", error);
-      setProfile(DEFAULT_PROFILE);
+      setProfile({ name: 'Explorador', avatarUrl: null });
     } finally {
       setIsLoading(false);
     }
-  }, [user]);
+  }, [user, fetchSignedAvatarUrl]);
 
   useEffect(() => {
     fetchProfile();
@@ -129,18 +141,12 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
       throw updateError;
     }
 
-    // Fetch a new signed URL to display the new avatar immediately
-    const { data: signedUrlData, error: signedUrlError } = await supabase.storage
-      .from('avatars')
-      .createSignedUrl(filePath, 3600);
-
-    if (signedUrlError) {
-      showError("Falha ao carregar a prévia do novo avatar.");
-      console.error(signedUrlError);
-      setProfile(prev => ({ ...prev, avatarUrl: null }));
-    } else {
-      setProfile(prev => ({ ...prev, avatarUrl: signedUrlData.signedUrl }));
+    const signedUrl = await fetchSignedAvatarUrl();
+    if (!signedUrl) {
+      showError("Não foi possível carregar a prévia do novo avatar.");
     }
+
+    setProfile(prev => ({ ...prev, avatarUrl: signedUrl }));
   };
 
   return (
