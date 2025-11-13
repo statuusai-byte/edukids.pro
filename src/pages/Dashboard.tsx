@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 import ParentalPinModal from "@/components/ParentalPinModal";
 import { hasParentPin } from "@/utils/parental-helpers";
 import { useSupabase } from "@/context/SupabaseContext";
-import { showSuccess, showError } from "@/utils/toast";
+import { showSuccess } from "@/utils/toast";
 
 const Dashboard = () => {
   const { progress } = useProgress();
