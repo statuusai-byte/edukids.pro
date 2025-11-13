@@ -1,44 +1,36 @@
 import { createClient } from "@supabase/supabase-js";
 
 /**
- * Supabase client initializer with safer behavior when VITE env vars are missing.
+ * Safer Supabase client initializer.
  *
- * - In production (import.meta.env.PROD) we require VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY and throw a clear error if absent.
- * - In development (import.meta.env.DEV) we provide a fallback URL + anon key to avoid failing the preview/build on systems
- *   where env vars weren't configured. This makes local dev and the preview environment more forgiving.
+ * Behavior:
+ * - Prefer VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY when provided.
+ * - If missing, warn loudly and fall back to development defaults so the app can still render
+ *   (prevents runtime white screen caused by throwing during module import).
  *
- * IMPORTANT: Do NOT rely on these fallbacks for production — set the VITE_SUPABASE_* env vars in your environment.
+ * IMPORTANT: Do not rely on the fallback values in production — set VITE_SUPABASE_URL and
+ * VITE_SUPABASE_ANON_KEY in your environment for real deployments.
  */
 
-// Read from Vite environment
 const env = (import.meta as any).env ?? {};
 const envUrl: string | undefined = env.VITE_SUPABASE_URL;
 const envAnon: string | undefined = env.VITE_SUPABASE_ANON_KEY;
 
-// Development fallback values (only used when import.meta.env.DEV is true)
+// Development fallback values (intended for local preview only)
 const DEV_FALLBACK_URL = "https://eylmcfxdbwqbmfubojty.supabase.co";
 const DEV_FALLBACK_ANON =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV5bG1jZnhkYndxYm1mdWJvanR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1ODIxMjAsImV4cCI6MjA3NzE1ODEyMH0.Anf1eXa7FFSYoW-Y1Lj4_9VpmKmxmSDuLBUMZxE3JGw";
 
-// Decide final values, allowing fallbacks in DEV only
-const SUPABASE_URL = envUrl ?? ((import.meta as any).env?.DEV ? DEV_FALLBACK_URL : undefined);
-const SUPABASE_ANON_KEY = envAnon ?? ((import.meta as any).env?.DEV ? DEV_FALLBACK_ANON : undefined);
+// Prefer env values; otherwise use fallback (so import-time never throws)
+const SUPABASE_URL = envUrl ?? DEV_FALLBACK_URL;
+const SUPABASE_ANON_KEY = envAnon ?? DEV_FALLBACK_ANON;
 
-if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-  // Provide a clear, actionable error for production environments
-  throw new Error(
-    "VITE_SUPABASE_URL and/or VITE_SUPABASE_ANON_KEY is not defined. " +
-      "Set them in your environment before running the app. " +
-      "For local development you can define them in a .env file or set them in your environment."
-  );
-}
-
-if ((import.meta as any).env?.DEV && (!envUrl || !envAnon)) {
-  // Warn when using development fallbacks so the developer knows to set proper env vars later
+if (!envUrl || !envAnon) {
+  // Provide a clear runtime warning (so the developer sees why the app is using fallbacks)
   // eslint-disable-next-line no-console
-  console.warn(
-    "[Supabase] Using development fallback for SUPABASE URL/ANON KEY because VITE env vars are not set. " +
-      "Do not use these fallbacks in production."
+  console.error(
+    "[Supabase] VITE_SUPABASE_URL and/or VITE_SUPABASE_ANON_KEY not set. " +
+      "The app will use development fallbacks so it can render, but you MUST set these variables in production."
   );
 }
 
