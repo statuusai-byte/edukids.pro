@@ -9,6 +9,8 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
+    "package-app": "node scripts/package-app.mjs",
+    "export": "node scripts/export-project.mjs",
     "package-app": "node scripts/package-app.mjs"
   },
   "dependencies": {
