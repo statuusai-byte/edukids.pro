@@ -17,7 +17,7 @@ export default defineConfig(() => ({
       strategies: "injectManifest",
       srcDir: "src",
       filename: "service-worker.ts",
-      registerType: "autoUpdate",
+      registerType: "prompt",
       injectRegister: false,
       includeAssets: [
         "favicon.ico",

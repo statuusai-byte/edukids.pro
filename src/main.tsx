@@ -1,10 +1,10 @@
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./globals.css";
-import { registerSW } from "virtual:pwa-register";
 
-// Registra o Service Worker
-registerSW({ immediate: true });
+// O registro do Service Worker agora é tratado pelo componente ReloadPrompt
+// import { registerSW } from "virtual:pwa-register";
+// registerSW({ immediate: true });
 
 // Render normal da aplicação
 const rootElement = typeof document !== "undefined" ? document.getElementById("root") : null;

@@ -13,6 +13,7 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import AmbientBackground from "@/components/AmbientBackground";
 import RequireAuth from "@/components/RequireAuth";
 import GlobalErrorLogger from "@/components/GlobalErrorLogger";
+import ReloadPrompt from "@/components/ReloadPrompt";
 
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Layout = lazy(() => import("./components/Layout"));
@@ -85,6 +86,7 @@ const App = () => (
                   <HintsProvider>
                     <SonnerToaster />
                     <GlobalErrorLogger />
+                    <ReloadPrompt />
                     <ErrorBoundary>
                       <Suspense fallback={<Fallback />}>
                         <AppRoutes />
