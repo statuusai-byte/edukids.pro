@@ -67,7 +67,7 @@ const Layout = () => {
 
           <footer className="mx-auto w-full max-w-7xl px-6 py-6 text-center text-xs text-muted-foreground">
             <a
-              href="/privacy-policy"
+              href="/privacy-policy/index.html"
               className="underline hover:text-foreground"
             >
               Política de Privacidade
