@@ -1,1 +1,0 @@
-& "CAMINHO_COMPLETO_DO_KEYTOOL" -printcert -jarfile "C:\Users\diego\OneDrive\edukidsss\android\app\release\app-release.apk"

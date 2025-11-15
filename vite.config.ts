@@ -84,28 +84,28 @@ export default defineConfig(() => ({
         ],
         screenshots: [
           {
-            src: "/uploads/screenshot-mobile-1.png",
+            src: "/images/screenshot-mobile-1.png",
             sizes: "1080x1920",
             type: "image/png",
             platform: "mobile",
             label: "Tela inicial de atividades"
           },
           {
-            src: "/uploads/screenshot-mobile-2.png",
+            src: "/images/screenshot-mobile-2.png",
             sizes: "1080x1920",
             type: "image/png",
             platform: "mobile",
             label: "Página de lição e quiz"
           },
           {
-            src: "/uploads/screenshot-mobile-3.png",
+            src: "/images/screenshot-mobile-3.png",
             sizes: "1080x1920",
             type: "image/png",
             platform: "mobile",
             label: "Painel dos Pais"
           },
           {
-            src: "/uploads/screenshot-mobile-4.png",
+            src: "/images/screenshot-mobile-4.png",
             sizes: "1080x1920",
             type: "image/png",
             platform: "mobile",
