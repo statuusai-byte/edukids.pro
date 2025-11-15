@@ -19,6 +19,14 @@
       "destination": "/manifest.webmanifest"
     },
     {
+      "source": "/favicon.ico",
+      "destination": "/favicon.ico"
+    },
+    {
+      "source": "/robots.txt",
+      "destination": "/robots.txt"
+    },
+    {
       "source": "/icons/:path*",
       "destination": "/icons/:path*"
     },
