@@ -87,28 +87,28 @@ export default defineConfig(() => ({
             src: "/images/screenshot-mobile-1.png",
             sizes: "1080x1920",
             type: "image/png",
-            platform: "mobile",
+            form_factor: "narrow",
             label: "Tela inicial de atividades"
           },
           {
             src: "/images/screenshot-mobile-2.png",
             sizes: "1080x1920",
             type: "image/png",
-            platform: "mobile",
+            form_factor: "narrow",
             label: "Página de lição e quiz"
           },
           {
             src: "/images/screenshot-mobile-3.png",
             sizes: "1080x1920",
             type: "image/png",
-            platform: "mobile",
+            form_factor: "narrow",
             label: "Painel dos Pais"
           },
           {
             src: "/images/screenshot-mobile-4.png",
             sizes: "1080x1920",
             type: "image/png",
-            platform: "mobile",
+            form_factor: "narrow",
             label: "Loja Premium"
           }
         ]
