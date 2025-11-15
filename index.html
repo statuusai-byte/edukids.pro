@@ -41,6 +41,25 @@
 
   <body>
     <div id="root"></div>
+
+    <script>
+      // Fallback registration: register a simple service worker at /service-worker.js so
+      // validators like PWABuilder can detect a working service worker at the site root.
+      (function() {
+        if ('serviceWorker' in navigator) {
+          // Register on load so we don't block parsing/render.
+          window.addEventListener('load', function () {
+            navigator.serviceWorker.register('/service-worker.js').then(function(reg) {
+              console.log('Fallback service worker registered:', reg.scope);
+            }).catch(function(err) {
+              // fail silently - this is only a detection aid for validators and won't break app if it fails
+              console.warn('Fallback service worker registration failed:', err);
+            });
+          });
+        }
+      })();
+    </script>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
