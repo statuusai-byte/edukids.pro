@@ -27,6 +27,10 @@
       "destination": "/uploads/:path*"
     },
     {
+      "source": "/images/:path*",
+      "destination": "/images/:path*"
+    },
+    {
       "source": "/.well-known/assetlinks.json",
       "destination": "/.well-known/assetlinks.json"
     },
@@ -94,6 +98,19 @@
     },
     {
       "source": "/uploads/(.*)",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "image/png"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/images/(.*)",
       "headers": [
         {
           "key": "Content-Type",
