@@ -10,6 +10,21 @@
       "source": "/privacy-policy/",
       "destination": "/privacy-policy/index.html"
     },
+
+    // Ensure static manifest and icons are served directly (prevent SPA catch-all serving index.html)
+    {
+      "source": "/manifest.json",
+      "destination": "/manifest.json"
+    },
+    {
+      "source": "/icons/:path*",
+      "destination": "/icons/:path*"
+    },
+    {
+      "source": "/.well-known/assetlinks.json",
+      "destination": "/.well-known/assetlinks.json"
+    },
+
     {
       "source": "/PRIVACY_POLICY.md",
       "destination": "/privacy-policy/index.html"
