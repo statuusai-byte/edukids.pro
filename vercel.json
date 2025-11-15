@@ -7,47 +7,7 @@
       "destination": "/privacy-policy/index.html"
     },
     {
-      "source": "/privacy-policy/",
-      "destination": "/privacy-policy/index.html"
-    },
-    {
-      "source": "/manifest.json",
-      "destination": "/manifest.json"
-    },
-    {
-      "source": "/manifest.webmanifest",
-      "destination": "/manifest.webmanifest"
-    },
-    {
-      "source": "/favicon.ico",
-      "destination": "/favicon.ico"
-    },
-    {
-      "source": "/robots.txt",
-      "destination": "/robots.txt"
-    },
-    {
-      "source": "/icons/:path*",
-      "destination": "/icons/:path*"
-    },
-    {
-      "source": "/uploads/:path*",
-      "destination": "/uploads/:path*"
-    },
-    {
-      "source": "/images/:path*",
-      "destination": "/images/:path*"
-    },
-    {
-      "source": "/.well-known/assetlinks.json",
-      "destination": "/.well-known/assetlinks.json"
-    },
-    {
-      "source": "/PRIVACY_POLICY.md",
-      "destination": "/privacy-policy/index.html"
-    },
-    {
-      "source": "/((?!\\.well-known\\/).*)",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ],
