@@ -20,7 +20,8 @@
     <meta name="description" content="Aprenda, jogue e evolua — tudo em um só lugar. Conteúdo educativo e jogos para crianças de 4 a 12 anos." />
     <meta name="color-scheme" content="dark light" />
 
-    <link rel="manifest" href="/manifest.webmanifest" />
+    <!-- Use the new manifest.json provided -->
+    <link rel="manifest" href="/manifest.json" />
     <link rel="icon" href="/icons/icon-512.png" type="image/png" />
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/icons/icon-512.png" />
@@ -52,7 +53,7 @@
             navigator.serviceWorker.register('/service-worker.js').then(function(reg) {
               console.log('Fallback service worker registered:', reg.scope);
             }).catch(function(err) {
-              // fail silently - this is only a detection aid for validators and won't break app if it fails
+              // fail silently - detection aid for validators and won't break app if it fails
               console.warn('Fallback service worker registration failed:', err);
             });
           });
