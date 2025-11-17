@@ -5,7 +5,7 @@ import { Suspense, lazy } from "react";
 import { AgeProvider } from "./context/AgeContext";
 import { ProfileProvider } from "./context/ProfileContext";
 import { SupabaseProvider } from "./context/SupabaseContext";
-import { PremiumProvider } from "./context/PremiumContext";
+import { PremiumProvider } from "./context/PremiumProvider";
 import { HintsProvider } from "./context/HintsContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { Sparkles } from "lucide-react";
@@ -28,7 +28,7 @@ const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const SuccessPayment = lazy(() => import("./pages/SuccessPayment"));
 const AchievementsPage = lazy(() => import("./pages/Achievements"));
-const Welcome = lazy(() => import("./pages/Welcome")); // Updated import
+const Home = lazy(() => import("./pages/Home")); // Revertendo para Home
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 
 const queryClient = new QueryClient();
@@ -41,8 +41,7 @@ const Fallback = () => (
 
 const AppRoutes = () => (
   <Routes>
-    <Route path="/" element={<Activities />} /> {/* Rota padrão agora é Activities */}
-    <Route path="/welcome" element={<Welcome />} /> {/* Home original movida para /welcome */}
+    <Route path="/" element={<Home />} /> {/* Rota padrão é Home */}
     <Route path="/login" element={<Login />} />
     <Route path="/register" element={<Register />} />
     <Route path="/success-payment" element={<SuccessPayment />} />

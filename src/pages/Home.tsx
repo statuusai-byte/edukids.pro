@@ -7,9 +7,16 @@ import { useSupabase } from "@/context/SupabaseContext";
 import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const Welcome: React.FC = () => {
+const Home: React.FC = () => {
   const navigate = useNavigate();
-  const { isLoading } = useSupabase(); // Keep isLoading check
+  const { user, isLoading } = useSupabase();
+
+  React.useEffect(() => {
+    // Se o usuário estiver logado, redireciona para as atividades.
+    if (!isLoading && user) {
+      navigate("/activities", { replace: true });
+    }
+  }, [user, isLoading, navigate]);
 
   const handleLoginClick = () => {
     navigate("/login");
@@ -77,9 +84,20 @@ const Welcome: React.FC = () => {
             Criar conta
           </Button>
         </div>
+        
+        {/* Adicionar um botão de acesso rápido para análise pública */}
+        <div className="mt-8 animate-fade-in-up" style={{ animationDelay: '0.7s' }}>
+          <Button 
+            variant="link" 
+            onClick={() => navigate("/activities")}
+            className="text-white/80 hover:text-white underline"
+          >
+            Continuar sem login (Acesso Rápido) →
+          </Button>
+        </div>
       </section>
     </main>
   );
 };
 
-export default Welcome;
+export default Home;
