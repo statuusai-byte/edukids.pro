@@ -138,8 +138,4 @@
   .text-shadow-none {
     text-shadow: none;
   }
-  /* New class for intense neon glow on text */
-  .text-neon-glow {
-    text-shadow: 0 0 8px rgba(124, 58, 237, 0.8), 0 0 16px rgba(236, 72, 153, 0.6);
-  }
 }

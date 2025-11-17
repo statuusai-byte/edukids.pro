@@ -114,8 +114,6 @@ const VOCAB_PAIRS = [
   { word: "Rápido", antonym: "Lento", synonym: "Veloz" },
   { word: "Quente", antonym: "Frio", synonym: "Morno" },
   { word: "Claro", antonym: "Escuro", synonym: "Brilhante" },
-  { word: "Forte", antonym: "Fraco", synonym: "Potente" },
-  { word: "Doce", antonym: "Salgado", synonym: "Açucarado" },
 ];
 
 function genVocabQuiz(count: number, type: 'antonym' | 'synonym'): QuizQuestion[] {
@@ -159,15 +157,13 @@ export const subjectsData: Subject[] = [
         modules: [
           {
             id: "m1-mod1", title: "Números de 1 a 20", lessons: [
-              // 4-6 anos: Números pequenos
-              { id: "m1-l1", title: "Reconhecendo Números", content: JSON.stringify(genAdd(FREE_QUIZ_COUNT, 10)), type: "exercise" },
-              { id: "m1-l2", title: "Primeiras Somas (até 10)", content: JSON.stringify(genAdd(FREE_QUIZ_COUNT, 5)), type: "exercise" }
+              { id: "m1-l1", title: "Reconhecendo Números", content: JSON.stringify(genAdd(FREE_QUIZ_COUNT, 20)), type: "exercise" },
+              { id: "m1-l2", title: "Primeiras Somas", content: JSON.stringify(genAdd(FREE_QUIZ_COUNT, 10)), type: "exercise" }
             ]
           },
           {
             id: "m1-mod2", title: "Introdução à Subtração", lessons: [
-              // 4-6 anos: Subtração simples (até 10)
-              { id: "m1-l3", title: "Tirando Objetos (até 10)", content: JSON.stringify(genSub(FREE_QUIZ_COUNT, 10)), type: "exercise" },
+              { id: "m1-l3", title: "Tirando Objetos", content: JSON.stringify(genSub(FREE_QUIZ_COUNT, 10)), type: "exercise" },
               { id: "m1-l4", title: "Jogo: Contando Frutas", content: "Conte as frutas na tela!", type: "game", component: "ContandoFrutas" }
             ]
           }
@@ -182,25 +178,23 @@ export const subjectsData: Subject[] = [
         modules: [
           {
             id: "m2-mod1", title: "Somas e Subtrações", lessons: [
-              // 7-9 anos: Números maiores
               { id: "m2-l1", title: "Somando até 100", content: JSON.stringify(genAdd(FREE_QUIZ_COUNT, 100)), type: "exercise" },
               { id: "m2-l2", title: "Subtraindo até 100", content: JSON.stringify(genSub(FREE_QUIZ_COUNT, 100)), type: "exercise" }
             ]
           },
           {
             id: "m2-mod2", title: "Multiplicação é Mágica", lessons: [
-              // PREMIUM
+              // PREMIUM: payload removed from client bundle. Content must be stored in DB under lesson key:
+              // "matematica::m2::m2-mod2::m2-l3"
               { id: "m2-l3", title: "Tabuadas Divertidas", type: "exercise", premium: true },
-              // Usando adição/subtração como placeholder para 'problemas'
-              { id: "m2-l4", title: "Resolvendo Problemas de Vezes (Simulado)", content: JSON.stringify(genAdd(FREE_QUIZ_COUNT, 50)), type: "exercise" }
+              { id: "m2-l4", title: "Resolvendo Problemas de Vezes", content: JSON.stringify(genAdd(FREE_QUIZ_COUNT, 50)), type: "exercise" }
             ]
           },
           {
             id: "m2-mod3", title: "Dividindo o Tesouro", lessons: [
-              // PREMIUM
+              // PREMIUM: payload removed from client bundle.
               { id: "m2-l5", title: "Dividindo em Partes Iguais", type: "exercise", premium: true },
-              // Usando subtração como placeholder para 'divisão e resto'
-              { id: "m2-l6", title: "Divisão e Resto (Simulado)", content: JSON.stringify(genSub(FREE_QUIZ_COUNT, 50)), type: "exercise" }
+              { id: "m2-l6", title: "Divisão e Resto", content: JSON.stringify(genSub(FREE_QUIZ_COUNT, 50)), type: "exercise" }
             ]
           }
         ]
@@ -223,7 +217,7 @@ export const subjectsData: Subject[] = [
                 `, 
                 type: "reading" 
               },
-              // PREMIUM
+              // PREMIUM: payload removed from client bundle.
               { id: "m3-l2", title: "Exercícios com Frações", type: "exercise", premium: true }
             ]
           },
@@ -272,7 +266,6 @@ export const subjectsData: Subject[] = [
                 title: "Conhecendo as Vogais", 
                 content: `
                   <p>O alfabeto tem muitas letras, mas cinco delas são muito especiais: as <strong>vogais</strong>!</p>
-                  <p>Elas são: A, E, I, O, U. Tente dizer o som de cada uma!</p>
                 `, 
                 type: "reading" 
               },
@@ -290,14 +283,14 @@ export const subjectsData: Subject[] = [
         modules: [
           {
             id: "p2-mod1", title: "Vocabulário", lessons: [
-              // 7-9 anos: Antônimos
+              // Corrigido: Usando genVocabQuiz para Antônimos
               { id: "p2-l1", title: "Quiz de Antônimos", content: JSON.stringify(genVocabQuiz(FREE_QUIZ_COUNT, 'antonym')), type: "exercise" }
             ]
           },
           {
             id: "p2-mod2", title: "Tipos de Palavras", lessons: [
-              // 7-9 anos: Sinônimos
-              { id: "p2-l2", title: "Quiz de Sinônimos", content: JSON.stringify(genVocabQuiz(FREE_QUIZ_COUNT, 'synonym')), type: "exercise" }
+              // Corrigido: Usando genVocabQuiz para Sinônimos
+              { id: "p2-l2", title: "Substantivos e Adjetivos", content: JSON.stringify(genVocabQuiz(FREE_QUIZ_COUNT, 'synonym')), type: "exercise" }
             ]
           }
         ]
@@ -315,17 +308,10 @@ export const subjectsData: Subject[] = [
                 id: "p3-l1", 
                 title: "Passado, Presente e Futuro", 
                 content: `
-                  <p>Os <strong>verbos</strong> são palavras que indicam ações, estados ou fenômenos da natureza. Eles mudam de forma (conjugação) para indicar quando a ação aconteceu.</p>
-                  <ul>
-                    <li><strong>Presente:</strong> Acontece agora (Eu como).</li>
-                    <li><strong>Passado (Pretérito):</strong> Já aconteceu (Eu comi).</li>
-                    <li><strong>Futuro:</strong> Vai acontecer (Eu comerei).</li>
-                  </ul>
+                  <p>Os <strong>verbos</strong> são palavras que indicam ações, estados ou fenômenos da natureza.</p>
                 `, 
                 type: "reading", 
               },
-              // PREMIUM: Quiz de conjugação
-              { id: "p3-l3", title: "Quiz: Conjugação Verbal", type: "exercise", premium: true }
             ]
           },
           {
@@ -334,12 +320,7 @@ export const subjectsData: Subject[] = [
                 id: "p3-l2", 
                 title: "Vírgula, Ponto e Interrogação", 
                 content: `
-                  <p>A <strong>pontuação</strong> é como as placas de trânsito da leitura. Elas nos dizem quando parar, respirar ou mudar a entonação.</p>
-                  <ul>
-                    <li><strong>Ponto final (.):</strong> Termina uma ideia.</li>
-                    <li><strong>Vírgula (,):</strong> Pausa curta, separa itens em uma lista.</li>
-                    <li><strong>Ponto de interrogação (?):</strong> Indica uma pergunta.</li>
-                  </ul>
+                  <p>A <strong>pontuação</strong> é como as placas de trânsito da leitura.</p>
                 `, 
                 type: "reading" 
               }
@@ -350,6 +331,8 @@ export const subjectsData: Subject[] = [
     ]
   },
 
+  /* Rest of subjects ... keep non-premium content in client, premium flagged lessons must be supplied from DB */
+
   {
     name: "Ciências",
     slug: "ciencias",
@@ -357,22 +340,6 @@ export const subjectsData: Subject[] = [
     color: "green",
     ageGroups: ['4-6', '7-9', '10-12'],
     activities: [
-      {
-        id: "c1",
-        title: "O Mundo ao Redor (4-6 anos)",
-        description: "Descobrindo animais, plantas e o clima.",
-        ageGroups: ['4-6'],
-        icon: "Apple",
-        modules: [
-          {
-            id: "c1-mod1", title: "Animais e Plantas", lessons: [
-              { id: "c1-l1", title: "Onde Vivem os Animais?", content: `<p>Os animais vivem em muitos lugares: na floresta, no mar, ou até na nossa casa! Vamos aprender sobre eles.</p>`, type: "reading" },
-              // PREMIUM: Quiz de classificação animal
-              { id: "c1-l2", title: "Quiz: Classificando Animais", type: "exercise", premium: true }
-            ]
-          }
-        ]
-      },
       {
         id: "c2",
         title: "O Planeta Terra (7-9 anos)",
@@ -386,15 +353,14 @@ export const subjectsData: Subject[] = [
                 <p>O corpo humano é uma máquina incrível! Ele é feito de ossos, músculos e órgãos que trabalham juntos.</p>
                 <p>O coração bombeia o sangue, os pulmões nos ajudam a respirar e o cérebro controla tudo.</p>
               `, type: "reading" },
-              // PREMIUM
+              // PREMIUM: payload removed from client bundle.
               { id: "c2-l2", title: "Quiz: Órgãos do Corpo", type: "exercise", premium: true }
             ]
           },
           {
             id: "c2-mod2", title: "Ciclos da Natureza", lessons: [
-              { id: "c2-l3", title: "O Ciclo da Água", content: `<p>A água viaja da terra para o céu e volta em forma de chuva. Isso se chama ciclo da água!</p>`, type: "reading" },
-              // PREMIUM
-              { id: "c2-l4", title: "Quiz: Estados da Água", type: "exercise", premium: true }
+              // Corrigido: Usando quiz de vocabulário como placeholder para exercício de ciências
+              { id: "c2-l3", title: "O Ciclo da Água", content: JSON.stringify(genVocabQuiz(FREE_QUIZ_COUNT, 'synonym')), type: "exercise" }
             ]
           }
         ]
@@ -418,11 +384,10 @@ export const subjectsData: Subject[] = [
                 title: "A Chegada dos Portugueses", 
                 content: `
                   <p>Em <strong>1500</strong>, navegadores portugueses liderados por <strong>Pedro Álvares Cabral</strong> chegaram ao Brasil.</p>
-                  <p>Antes disso, o Brasil já era habitado por diversos povos indígenas.</p>
                 `, 
                 type: "reading" 
               },
-              // PREMIUM
+              // PREMIUM: payload removed from client bundle.
               { id: "h1-l2", title: "Quiz de Fatos Históricos", type: "exercise", premium: true }
             ]
           }
@@ -446,12 +411,11 @@ export const subjectsData: Subject[] = [
                 id: "g1-l0", 
                 title: "O que são Mapas?", 
                 content: `
-                  <p>Um <strong>mapa</strong> é um desenho que nos ajuda a ver lugares grandes, como cidades, países e continentes.</p>
-                  <p>Eles usam símbolos e cores para representar rios, montanhas e fronteiras.</p>
+                  <p>Um <strong>mapa</strong> é um desenho que nos ajuda a ver lugares grandes.</p>
                 `, 
                 type: "reading" 
               },
-              // PREMIUM
+              // PREMIUM: payload removed from client bundle.
               { id: "g1-l1", title: "Quiz de Capitais", type: "exercise", premium: true }
             ]
           }
@@ -482,13 +446,13 @@ export const subjectsData: Subject[] = [
                 id: "ef1-l0", 
                 title: "O que é Dinheiro?", 
                 content: `
-                  <p>O <strong>dinheiro</strong> é uma ferramenta que usamos para trocar por coisas. Pode ser em moedas, notas ou cartões.</p>
+                  <p>O <strong>dinheiro</strong> é uma ferramenta que usamos para trocar por coisas.</p>
                 `, 
                 type: "reading" 
               },
-              // Usando quiz de vocabulário como placeholder para exercício de finanças
+              // Corrigido: Usando quiz de vocabulário como placeholder para exercício de finanças
               { id: "ef1-l1", title: "Quiz: O que é Poupar?", content: JSON.stringify(genVocabQuiz(FREE_QUIZ_COUNT, 'synonym')), type: "exercise" },
-              // PREMIUM
+              // PREMIUM: payload removed from client bundle.
               { id: "ef1-l2", title: "Quiz Avançado: Investimentos e Juros", type: "exercise", premium: true }
             ]
           }

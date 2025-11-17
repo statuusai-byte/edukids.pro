@@ -5,14 +5,12 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useSupabase } from "@/context/SupabaseContext";
 import { Sparkles } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const { user, isLoading } = useSupabase();
 
   React.useEffect(() => {
-    // Se o usuário estiver logado, redireciona para as atividades.
     if (!isLoading && user) {
       navigate("/activities", { replace: true });
     }
@@ -35,64 +33,30 @@ const Home: React.FC = () => {
   }
 
   return (
-    <main className="relative min-h-screen flex items-center justify-center p-6 overflow-hidden bg-cosmic-nebula bg-cover bg-center">
-      {/* Overlay para escurecer a nebulosa e aumentar o contraste */}
-      <div className="absolute inset-0 bg-black/70 z-0" />
-      
+    <main className="relative min-h-screen flex items-center justify-center p-6 overflow-hidden bg-starry-sky bg-cover bg-center">
+      <div className="absolute inset-0 bg-black/60 z-0" />
       <section className="relative z-10 max-w-4xl w-full text-center">
-        <h1 
-          className={cn(
-            "text-4xl sm:text-6xl font-extrabold mb-4 text-transparent bg-clip-text animate-fade-in-up",
-            "bg-gradient-to-r from-primary via-fuchsia-500 to-orange-400",
-            "text-neon-glow"
-          )} 
-          style={{ animationDelay: '0.1s' }}
-        >
+        <h1 className="text-4xl sm:text-6xl font-extrabold mb-4 text-white text-shadow-lg animate-fade-in-up">
           Bem-vindo ao EDUKIDS+
         </h1>
 
-        <p className="text-lg text-gray-300 mb-10 text-shadow-md animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
-          Aprenda e evolua — sua jornada pelo conhecimento começa agora.
+        <p className="text-lg text-gray-300 mb-8 text-shadow-md animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+          Aprenda, jogue e evolua — tudo em um só lugar.
         </p>
 
-        <div className={cn(
-          "flex flex-col sm:flex-row gap-4 max-w-md mx-auto p-6 rounded-3xl",
-          "bg-white/5 backdrop-blur-xl border border-white/10 shadow-[0_0_50px_rgba(124,58,237,0.25)]",
-          "animate-fade-in-up"
-        )} style={{ animationDelay: '0.5s' }}>
-          
-          {/* Botão Secundário (Entrar) - Ciano Neon Outline */}
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-md mx-auto animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
           <Button
             onClick={handleLoginClick}
-            className={cn(
-              "flex-1 py-3 bg-transparent text-cyan-400 border-2 border-cyan-400/50 hover:bg-cyan-400/10",
-              "shadow-[0_0_15px_rgba(52,211,255,0.5)]"
-            )}
+            className="flex-1 border border-white/20 text-white/90 py-3 bg-white/5 hover:bg-white/10 backdrop-blur-sm"
           >
             Entrar
           </Button>
 
-          {/* Botão Principal (Criar Conta) - Gradiente Roxo/Fúcsia */}
           <Button
             onClick={handleRegisterClick}
-            className={cn(
-              "flex-1 py-3 text-white font-bold",
-              "bg-gradient-to-r from-primary to-fuchsia-600 hover:brightness-110",
-              "shadow-[0_0_25px_rgba(236,72,153,0.6)]"
-            )}
+            className="flex-1 bg-primary text-primary-foreground py-3 hover:brightness-95"
           >
             Criar conta
-          </Button>
-        </div>
-        
-        {/* Adicionar um botão de acesso rápido para análise pública */}
-        <div className="mt-8 animate-fade-in-up" style={{ animationDelay: '0.7s' }}>
-          <Button 
-            variant="link" 
-            onClick={() => navigate("/activities")}
-            className="text-white/80 hover:text-white underline"
-          >
-            Continuar sem login (Acesso Rápido) →
           </Button>
         </div>
       </section>

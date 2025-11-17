@@ -20,8 +20,6 @@ module.exports = {
       backgroundImage: {
         'hero-desktop': "url('/hero-1920.png')",
         'hero-mobile': "url('/hero-mobile.png')",
-        // Imagem de nebulosa de alta resolução para o fundo de luxo
-        'cosmic-nebula': "url('https://images.unsplash.com/photo-1506318137071-a8e063b4be62?q=80&w=2000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
         'starry-sky': "url('https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?q=80&w=2000&auto=format&fit=crop')",
       },
       colors: {
