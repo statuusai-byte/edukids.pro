@@ -5,17 +5,11 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useSupabase } from "@/context/SupabaseContext";
 import { Sparkles } from "lucide-react";
-import { cn } from "@/lib/utils"; // Import cn for conditional styling
+import { cn } from "@/lib/utils";
 
-const Home: React.FC = () => {
+const Welcome: React.FC = () => {
   const navigate = useNavigate();
-  const { user, isLoading } = useSupabase();
-
-  React.useEffect(() => {
-    if (!isLoading && user) {
-      navigate("/activities", { replace: true });
-    }
-  }, [user, isLoading, navigate]);
+  const { isLoading } = useSupabase(); // Keep isLoading check
 
   const handleLoginClick = () => {
     navigate("/login");
@@ -43,7 +37,7 @@ const Home: React.FC = () => {
           className={cn(
             "text-4xl sm:text-6xl font-extrabold mb-4 text-transparent bg-clip-text animate-fade-in-up",
             "bg-gradient-to-r from-primary via-fuchsia-500 to-orange-400",
-            "text-neon-glow" // Aplica o brilho neon de luxo
+            "text-neon-glow"
           )} 
           style={{ animationDelay: '0.1s' }}
         >
@@ -56,7 +50,7 @@ const Home: React.FC = () => {
 
         <div className={cn(
           "flex flex-col sm:flex-row gap-4 max-w-md mx-auto p-6 rounded-3xl",
-          "bg-white/5 backdrop-blur-xl border border-white/10 shadow-[0_0_50px_rgba(124,58,237,0.25)]", // Glassmorphism de luxo
+          "bg-white/5 backdrop-blur-xl border border-white/10 shadow-[0_0_50px_rgba(124,58,237,0.25)]",
           "animate-fade-in-up"
         )} style={{ animationDelay: '0.5s' }}>
           
@@ -65,7 +59,7 @@ const Home: React.FC = () => {
             onClick={handleLoginClick}
             className={cn(
               "flex-1 py-3 bg-transparent text-cyan-400 border-2 border-cyan-400/50 hover:bg-cyan-400/10",
-              "shadow-[0_0_15px_rgba(52,211,255,0.5)]" // Brilho ciano
+              "shadow-[0_0_15px_rgba(52,211,255,0.5)]"
             )}
           >
             Entrar
@@ -77,7 +71,7 @@ const Home: React.FC = () => {
             className={cn(
               "flex-1 py-3 text-white font-bold",
               "bg-gradient-to-r from-primary to-fuchsia-600 hover:brightness-110",
-              "shadow-[0_0_25px_rgba(236,72,153,0.6)]" // Brilho fúcsia
+              "shadow-[0_0_25px_rgba(236,72,153,0.6)]"
             )}
           >
             Criar conta
@@ -88,4 +82,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default Welcome;

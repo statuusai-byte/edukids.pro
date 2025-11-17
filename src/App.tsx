@@ -28,7 +28,7 @@ const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const SuccessPayment = lazy(() => import("./pages/SuccessPayment"));
 const AchievementsPage = lazy(() => import("./pages/Achievements"));
-const Home = lazy(() => import("./pages/Home"));
+const Welcome = lazy(() => import("./pages/Welcome")); // Updated import
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 
 const queryClient = new QueryClient();
@@ -41,7 +41,8 @@ const Fallback = () => (
 
 const AppRoutes = () => (
   <Routes>
-    <Route path="/" element={<Home />} />
+    <Route path="/" element={<Activities />} /> {/* Rota padrão agora é Activities */}
+    <Route path="/welcome" element={<Welcome />} /> {/* Home original movida para /welcome */}
     <Route path="/login" element={<Login />} />
     <Route path="/register" element={<Register />} />
     <Route path="/success-payment" element={<SuccessPayment />} />
