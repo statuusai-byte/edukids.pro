@@ -108,8 +108,35 @@ function genSub(count: number, max = 100): QuizQuestion[] {
   return out;
 }
 
-/* For brevity the file keeps the rest of the free/generic generators used by non-premium lessons.
-   Premium lessons below will no longer include their generated payload to avoid bundling. */
+const VOCAB_PAIRS = [
+  { word: "Feliz", antonym: "Triste", synonym: "Alegre" },
+  { word: "Grande", antonym: "Pequeno", synonym: "Enorme" },
+  { word: "Rápido", antonym: "Lento", synonym: "Veloz" },
+  { word: "Quente", antonym: "Frio", synonym: "Morno" },
+  { word: "Claro", antonym: "Escuro", synonym: "Brilhante" },
+];
+
+function genVocabQuiz(count: number, type: 'antonym' | 'synonym'): QuizQuestion[] {
+  const out: QuizQuestion[] = [];
+  const pairs = shuffle([...VOCAB_PAIRS]);
+  
+  for (let i = 0; i < count; i++) {
+    const pair = pairs[i % pairs.length];
+    const questionType = type === 'antonym' ? 'Antônimo' : 'Sinônimo';
+    const correct = type === 'antonym' ? pair.antonym : pair.synonym;
+    
+    const wrongOptions = VOCAB_PAIRS
+      .filter(p => p.word !== pair.word)
+      .map(p => type === 'antonym' ? p.antonym : p.synonym);
+
+    out.push({
+      question: `Qual é o ${questionType} de "${pair.word}"?`,
+      options: makeOptions(correct, wrongOptions),
+      correctAnswer: correct,
+    });
+  }
+  return out;
+}
 
 /* ---------- subjectsData export ---------- */
 
@@ -256,12 +283,14 @@ export const subjectsData: Subject[] = [
         modules: [
           {
             id: "p2-mod1", title: "Vocabulário", lessons: [
-              { id: "p2-l1", title: "Quiz de Antônimos", content: JSON.stringify(genAdd(FREE_QUIZ_COUNT, 10)), type: "exercise" }
+              // Corrigido: Usando genVocabQuiz para Antônimos
+              { id: "p2-l1", title: "Quiz de Antônimos", content: JSON.stringify(genVocabQuiz(FREE_QUIZ_COUNT, 'antonym')), type: "exercise" }
             ]
           },
           {
             id: "p2-mod2", title: "Tipos de Palavras", lessons: [
-              { id: "p2-l2", title: "Substantivos e Adjetivos", content: JSON.stringify(genAdd(FREE_QUIZ_COUNT, 10)), type: "exercise" }
+              // Corrigido: Usando genVocabQuiz para Sinônimos
+              { id: "p2-l2", title: "Substantivos e Adjetivos", content: JSON.stringify(genVocabQuiz(FREE_QUIZ_COUNT, 'synonym')), type: "exercise" }
             ]
           }
         ]
@@ -320,14 +349,18 @@ export const subjectsData: Subject[] = [
         modules: [
           {
             id: "c2-mod1", title: "Corpo Humano", lessons: [
-              { id: "c2-l1", title: "Como o Corpo Funciona", content: JSON.stringify(genAdd(FREE_QUIZ_COUNT, 10)), type: "reading" },
+              { id: "c2-l1", title: "Como o Corpo Funciona", content: `
+                <p>O corpo humano é uma máquina incrível! Ele é feito de ossos, músculos e órgãos que trabalham juntos.</p>
+                <p>O coração bombeia o sangue, os pulmões nos ajudam a respirar e o cérebro controla tudo.</p>
+              `, type: "reading" },
               // PREMIUM: payload removed from client bundle.
               { id: "c2-l2", title: "Quiz: Órgãos do Corpo", type: "exercise", premium: true }
             ]
           },
           {
             id: "c2-mod2", title: "Ciclos da Natureza", lessons: [
-              { id: "c2-l3", title: "O Ciclo da Água", content: JSON.stringify(genAdd(FREE_QUIZ_COUNT, 10)), type: "exercise" }
+              // Corrigido: Usando quiz de vocabulário como placeholder para exercício de ciências
+              { id: "c2-l3", title: "O Ciclo da Água", content: JSON.stringify(genVocabQuiz(FREE_QUIZ_COUNT, 'synonym')), type: "exercise" }
             ]
           }
         ]
@@ -417,7 +450,8 @@ export const subjectsData: Subject[] = [
                 `, 
                 type: "reading" 
               },
-              { id: "ef1-l1", title: "Quiz: O que é Poupar?", content: JSON.stringify(genAdd(FREE_QUIZ_COUNT, 10)), type: "exercise" },
+              // Corrigido: Usando quiz de vocabulário como placeholder para exercício de finanças
+              { id: "ef1-l1", title: "Quiz: O que é Poupar?", content: JSON.stringify(genVocabQuiz(FREE_QUIZ_COUNT, 'synonym')), type: "exercise" },
               // PREMIUM: payload removed from client bundle.
               { id: "ef1-l2", title: "Quiz Avançado: Investimentos e Juros", type: "exercise", premium: true }
             ]

@@ -160,7 +160,10 @@ const QuizComponent = ({ questions, onQuizComplete, triggerHint, onHintSuggested
         <Progress value={progressValue} className="h-2 bg-white/10 [&>*]:bg-gradient-to-r [&>*]:from-green-400 [&>*]:to-yellow-400" />
       </CardHeader>
       <CardContent className="space-y-6">
-        <p className="text-2xl font-semibold text-foreground text-center">{currentQuestion.question}</p>
+        {/* Ensure question text wraps and is responsive */}
+        <p className="text-2xl font-semibold text-foreground text-center break-words min-h-[60px] flex items-center justify-center">
+          {currentQuestion.question}
+        </p>
 
         <div className="grid grid-cols-1 gap-4">
           {currentQuestion.options.map((option, index) => {
@@ -168,7 +171,7 @@ const QuizComponent = ({ questions, onQuizComplete, triggerHint, onHintSuggested
             const isCorrectOption = currentQuestion.correctAnswer === option;
             const isEliminated = eliminatedOptions.includes(option);
 
-            let buttonClasses = "h-16 text-lg transition-all duration-200 justify-center";
+            let buttonClasses = "h-auto min-h-16 text-lg transition-all duration-200 justify-center text-wrap text-left px-4 py-3";
             let buttonVariant: 'default' | 'outline' | 'destructive' = 'outline';
 
             // If the question was finalized (confirmedAnswer set because user got it right),
@@ -208,9 +211,9 @@ const QuizComponent = ({ questions, onQuizComplete, triggerHint, onHintSuggested
                 className={buttonClasses}
                 variant={buttonVariant}
               >
-                {option}
-                {confirmedAnswer !== null && isCorrectOption && <CheckCircle className="ml-3 h-5 w-5" />}
-                {confirmedAnswer !== null && confirmedAnswer === option && !isCorrectOption && <XCircle className="ml-3 h-5 w-5" />}
+                <span className="flex-1 text-left">{option}</span>
+                {confirmedAnswer !== null && isCorrectOption && <CheckCircle className="ml-3 h-5 w-5 flex-shrink-0" />}
+                {confirmedAnswer !== null && confirmedAnswer === option && !isCorrectOption && <XCircle className="ml-3 h-5 w-5 flex-shrink-0" />}
               </Button>
             );
           })}
