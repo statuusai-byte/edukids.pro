@@ -11,7 +11,6 @@ import { ThemeProvider } from "./context/ThemeContext";
 import { Sparkles } from "lucide-react";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import AmbientBackground from "@/components/AmbientBackground";
-// import RequireAuth from "@/components/RequireAuth"; // Removido
 import GlobalErrorLogger from "@/components/GlobalErrorLogger";
 import ReloadPrompt from "@/components/ReloadPrompt";
 
@@ -24,12 +23,9 @@ const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Settings = lazy(() => import("./pages/Settings"));
 const SubjectPage = lazy(() => import("./pages/SubjectPage"));
 const LessonPage = lazy(() => import("./pages/LessonPage"));
-// const Login = lazy(() => import("./pages/Login")); // Removido
-// const Register = lazy(() => import("./pages/Register")); // Removido
-// const SuccessPayment = lazy(() => import("./pages/SuccessPayment")); // Removido
 const AchievementsPage = lazy(() => import("./pages/Achievements"));
-// const Home = lazy(() => import("./pages/Home")); // Removido
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const Home = lazy(() => import("./pages/Home")); // Restaurado
 
 const queryClient = new QueryClient();
 
@@ -41,9 +37,8 @@ const Fallback = () => (
 
 const AppRoutes = () => (
   <Routes>
-    {/* Redireciona a raiz para a página principal de atividades */}
-    <Route path="/" element={<Navigate to="/activities" replace />} />
-    {/* Rotas de autenticação removidas */}
+    {/* Rota raiz restaurada */}
+    <Route path="/" element={<Home />} />
 
     <Route element={<Layout />}>
       <Route path="/activities" element={<Activities />} />
@@ -56,7 +51,7 @@ const AppRoutes = () => (
       <Route path="/store" element={<Store />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       
-      {/* Rotas anteriormente protegidas, agora liberadas */}
+      {/* Rotas internas */}
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/settings" element={<Settings />} />
       <Route path="/achievements" element={<AchievementsPage />} />

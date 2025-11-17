@@ -39,11 +39,8 @@ const AgeSelectionModal = ({ open, onOpenChange, action }: AgeSelectionModalProp
     setAgeGroup(selected as any);
     onOpenChange(false);
 
-    if (action === "cadastrar") {
-      navigate("/register");
-    } else {
-      navigate("/login");
-    }
+    // Em modo liberado, sempre navegamos para /activities após a seleção de idade.
+    navigate("/activities");
   };
 
   return (
@@ -54,10 +51,10 @@ const AgeSelectionModal = ({ open, onOpenChange, action }: AgeSelectionModalProp
             <Rocket className="h-6 w-6 text-primary" />
           </div>
           <DialogTitle className="text-2xl font-bold">
-            {action === "cadastrar" ? "Crie a conta e comece" : "Bem-vindo de volta!"}
+            Selecione a Faixa Etária
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            Antes de continuar, selecione a faixa etária do explorador.
+            Para personalizar as atividades, selecione a faixa etária do explorador.
           </DialogDescription>
         </DialogHeader>
 
@@ -82,7 +79,7 @@ const AgeSelectionModal = ({ open, onOpenChange, action }: AgeSelectionModalProp
             <div className="flex w-full justify-between items-center gap-3">
               <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
               <Button onClick={handleConfirm} disabled={!selected} className="bg-primary">
-                {action === "cadastrar" ? "Continuar para Cadastro" : "Continuar para Entrar"}
+                Começar a Explorar
               </Button>
             </div>
           </DialogFooter>
