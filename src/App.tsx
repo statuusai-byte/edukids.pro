@@ -5,7 +5,7 @@ import { Suspense, lazy } from "react";
 import { AgeProvider } from "./context/AgeContext";
 import { ProfileProvider } from "./context/ProfileContext";
 import { SupabaseProvider } from "./context/SupabaseContext";
-import { PremiumProvider } from "./context/PremiumProvider";
+import { PremiumProvider } from "./context/PremiumContext";
 import { HintsProvider } from "./context/HintsContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { Sparkles } from "lucide-react";
