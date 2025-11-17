@@ -17,7 +17,7 @@ import {
   hasParentPin,
   requirePinForPurchasesGet,
   requirePinForPurchasesSet,
-} from "@/utils/parental-helpers"; // UPDATED IMPORT
+} from "@/utils/parental-helpers";
 import { useSupabase } from "@/context/SupabaseContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useTheme } from "@/context/ThemeContext";
