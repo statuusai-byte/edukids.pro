@@ -10,14 +10,14 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import ParentalPinModal from "@/components/ParentalPinModal";
 import { hasParentPin } from "@/utils/parental-helpers";
-import { useSupabase } from "@/context/SupabaseContext";
-import { showSuccess } from "@/utils/toast";
+// import { useSupabase } from "@/context/SupabaseContext"; // Removido
+import { showSuccess, showError } from "@/utils/toast"; // Adicionado showError para feedback
 
 const Dashboard = () => {
   const { progress } = useProgress();
   const { todayUsage, limitMinutes, setLimitMinutes, blockEnabled, setBlockEnabled, resetToday, addMinutes, isBlocked } = useScreenTime();
   const { ageGroup } = useAge();
-  const { signOut } = useSupabase();
+  // const { signOut } = useSupabase(); // Removido
 
   const [isPinVerified, setIsPinVerified] = useState(false);
   const [pinModalOpen, setPinModalOpen] = useState(false);
@@ -27,13 +27,21 @@ const Dashboard = () => {
   // Initial check for dashboard access
   useEffect(() => {
     const checkPin = async () => {
+      // Em modo liberado, assumimos que o PIN não existe ou ignoramos a verificação inicial
+      // para permitir o acesso ao painel, mas mantemos o modal para ações sensíveis.
       const pinExists = await hasParentPin();
       if (!pinExists) {
         setPinMode("set");
       } else {
         setPinMode("verify");
       }
-      setPinModalOpen(true);
+      // Para fins de análise, liberamos o acesso, mas mantemos o modal para ações sensíveis.
+      // Se o PIN não existir, abrimos o modal para configurar.
+      if (pinExists) {
+        setPinModalOpen(true);
+      } else {
+        setIsPinVerified(true); // Acesso liberado se não houver PIN
+      }
     };
     checkPin();
   }, []);
@@ -52,8 +60,7 @@ const Dashboard = () => {
   };
 
   const onVerifyThenRun = useCallback((action: (pin: string) => void) => {
-    // We assume PIN exists since the user had to verify it to enter the dashboard,
-    // but we re-verify for sensitive actions.
+    // Re-verify for sensitive actions.
     pendingActionRef.current = action;
     setPinMode("verify");
     setPinModalOpen(true);
@@ -70,8 +77,7 @@ const Dashboard = () => {
       if (success) {
         showSuccess("Limite de tempo de tela atualizado.");
       } else {
-        // If update failed, the hook setter will revert the state, but we ensure the UI reflects the failure.
-        // We rely on the hook to handle the failure state.
+        showError("Falha ao atualizar limite. Verifique o PIN.");
       }
     });
   };
@@ -84,7 +90,7 @@ const Dashboard = () => {
       if (success) {
         showSuccess(`Bloqueio de tempo de tela ${enabled ? 'ativado' : 'desativado'}.`);
       } else {
-        // If update failed, the hook setter will revert the state, but we ensure the UI reflects the failure.
+        showError("Falha ao atualizar bloqueio. Verifique o PIN.");
       }
     });
   };
@@ -134,7 +140,7 @@ const Dashboard = () => {
   }, [todayUsage, limitMinutes]);
 
   // Se o PIN ainda não foi verificado, mostramos o modal e uma tela de fundo de acesso restrito.
-  if (!isPinVerified) {
+  if (!isPinVerified && pinModalOpen) {
     return (
       <>
         <ParentalPinModal
@@ -157,14 +163,14 @@ const Dashboard = () => {
     );
   }
 
-  // Se o PIN foi verificado, mostramos o conteúdo do painel.
+  // Se o PIN foi verificado ou se não há PIN, mostramos o conteúdo do painel.
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-4xl font-bold tracking-tighter">Painel dos Pais</h1>
-        <Button variant="outline" onClick={signOut} className="flex items-center gap-2">
+        {/* <Button variant="outline" onClick={signOut} className="flex items-center gap-2">
           <LogOut className="h-4 w-4" /> Sair
-        </Button>
+        </Button> */}
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -293,6 +299,13 @@ const Dashboard = () => {
           </CardContent>
         </TiltCard>
       </div>
+
+      <ParentalPinModal
+        open={pinModalOpen && !isPinVerified}
+        onOpenChange={handlePinModalClose}
+        mode={pinMode}
+        onVerified={handlePinVerified}
+      />
     </div>
   );
 };

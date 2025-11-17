@@ -1,6 +1,6 @@
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import { AgeProvider } from "./context/AgeContext";
 import { ProfileProvider } from "./context/ProfileContext";
@@ -11,7 +11,7 @@ import { ThemeProvider } from "./context/ThemeContext";
 import { Sparkles } from "lucide-react";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import AmbientBackground from "@/components/AmbientBackground";
-import RequireAuth from "@/components/RequireAuth";
+// import RequireAuth from "@/components/RequireAuth"; // Removido
 import GlobalErrorLogger from "@/components/GlobalErrorLogger";
 import ReloadPrompt from "@/components/ReloadPrompt";
 
@@ -24,11 +24,11 @@ const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Settings = lazy(() => import("./pages/Settings"));
 const SubjectPage = lazy(() => import("./pages/SubjectPage"));
 const LessonPage = lazy(() => import("./pages/LessonPage"));
-const Login = lazy(() => import("./pages/Login"));
-const Register = lazy(() => import("./pages/Register"));
-const SuccessPayment = lazy(() => import("./pages/SuccessPayment"));
+// const Login = lazy(() => import("./pages/Login")); // Removido
+// const Register = lazy(() => import("./pages/Register")); // Removido
+// const SuccessPayment = lazy(() => import("./pages/SuccessPayment")); // Removido
 const AchievementsPage = lazy(() => import("./pages/Achievements"));
-const Home = lazy(() => import("./pages/Home"));
+// const Home = lazy(() => import("./pages/Home")); // Removido
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 
 const queryClient = new QueryClient();
@@ -41,10 +41,9 @@ const Fallback = () => (
 
 const AppRoutes = () => (
   <Routes>
-    <Route path="/" element={<Home />} />
-    <Route path="/login" element={<Login />} />
-    <Route path="/register" element={<Register />} />
-    <Route path="/success-payment" element={<SuccessPayment />} />
+    {/* Redireciona a raiz para a página principal de atividades */}
+    <Route path="/" element={<Navigate to="/activities" replace />} />
+    {/* Rotas de autenticação removidas */}
 
     <Route element={<Layout />}>
       <Route path="/activities" element={<Activities />} />
@@ -56,15 +55,8 @@ const AppRoutes = () => (
       <Route path="/play-plus" element={<PlayPlus />} />
       <Route path="/store" element={<Store />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-    </Route>
-
-    <Route
-      element={
-        <RequireAuth>
-          <Layout />
-        </RequireAuth>
-      }
-    >
+      
+      {/* Rotas anteriormente protegidas, agora liberadas */}
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/settings" element={<Settings />} />
       <Route path="/achievements" element={<AchievementsPage />} />

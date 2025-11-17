@@ -1,4 +1,4 @@
-import { Bell, LogOut, Settings, User, Gem, Lightbulb, Sun, Moon, Menu } from "lucide-react";
+import { Bell, Settings, User, Gem, Lightbulb, Sun, Moon, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,7 +11,6 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
 import { useProfile } from "@/context/ProfileContext";
-import { useSupabase } from "@/context/SupabaseContext";
 import { useHintsContext } from "@/context/HintsContext";
 import { usePremium } from "@/context/PremiumContext";
 import { useTheme } from "@/context/ThemeContext";
@@ -20,7 +19,7 @@ import { SheetTrigger } from "@/components/ui/sheet";
 
 const Header = () => {
   const { name, avatarUrl } = useProfile();
-  const { signOut } = useSupabase();
+  // const { signOut } = useSupabase(); // Removido
   const { hints } = useHintsContext();
   const { isPremium } = usePremium();
   const { theme, setTheme } = useTheme();
@@ -94,10 +93,10 @@ const Header = () => {
             <DropdownMenuItem asChild>
               <Link to="/settings"><Settings className="mr-2 h-4 w-4" /> Configurações</Link>
             </DropdownMenuItem>
-            <DropdownMenuSeparator className="bg-white/10" />
+            {/* <DropdownMenuSeparator className="bg-white/10" />
             <DropdownMenuItem onClick={signOut}>
               <LogOut className="mr-2 h-4 w-4" /> Sair
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

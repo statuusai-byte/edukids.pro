@@ -18,8 +18,8 @@ import {
   requirePinForPurchasesGet,
   requirePinForPurchasesSet,
 } from "@/utils/parental-helpers";
-import { useSupabase } from "@/context/SupabaseContext";
-import { supabase } from "@/integrations/supabase/client";
+// import { useSupabase } from "@/context/SupabaseContext"; // Removido
+// import { supabase } from "@/integrations/supabase/client"; // Removido
 import { useTheme } from "@/context/ThemeContext";
 
 const Settings = () => {
@@ -37,13 +37,17 @@ const Settings = () => {
   const [isCheckingPinStatus, setIsCheckingPinStatus] = useState(true);
 
   const pendingActionRef = useRef<null | (() => void)>(null);
-  const { signOut, user } = useSupabase();
+  // const { signOut, user } = useSupabase(); // Removido
 
   const checkPinStatus = useCallback(async () => {
     setIsCheckingPinStatus(true);
-    const exists = await hasParentPin();
-    setParentPinExists(exists);
+    // Em modo liberado, assumimos que o PIN não existe, mas mantemos a função para simulação.
+    // Para fins de teste, vamos simular que o PIN não existe.
+    setParentPinExists(false); 
     setIsCheckingPinStatus(false);
+    // const exists = await hasParentPin(); // Removido
+    // setParentPinExists(exists); // Removido
+    // setIsCheckingPinStatus(false); // Removido
   }, []);
 
   useEffect(() => {
@@ -135,24 +139,7 @@ const Settings = () => {
   };
 
   const handlePermanentDelete = () => {
-    const runPermanentDeletion = async () => {
-      const loadingToast = showLoading("Excluindo sua conta permanentemente...");
-      try {
-        const { error } = await supabase.functions.invoke("delete-user");
-        if (error) throw new Error(error.message);
-        await signOut();
-        dismissToast(loadingToast);
-        showSuccess("Sua conta foi excluída permanentemente.");
-      } catch (error: any) {
-        dismissToast(loadingToast);
-        showError(`Falha ao excluir a conta: ${error.message}`);
-      }
-    };
-
-    if (!window.confirm("ATENÇÃO: Esta ação é PERMANENTE e IRREVERSÍVEL. Todos os seus dados, incluindo perfil, progresso e compras, serão excluídos para sempre. Deseja continuar?")) {
-      return;
-    }
-    onVerifyThenRun(runPermanentDeletion);
+    showError("Exclusão de conta desativada em modo liberado.");
   };
 
   return (
@@ -191,12 +178,12 @@ const Settings = () => {
             <div className="space-y-2">
               <Label>Email da conta</Label>
               <Input
-                value={user?.email ?? "Conta local (sem login)"}
+                value={"Modo Liberado (Sem Login)"}
                 disabled
                 className="bg-secondary/60 border-white/20 text-muted-foreground"
               />
               <p className="text-xs text-muted-foreground">
-                Este é o e-mail usado para entrar no EDUKIDS+. Para alterá-lo, utilize o painel do responsável ou entre em contato com o suporte.
+                O aplicativo está em modo de análise. O login está desativado.
               </p>
             </div>
 
@@ -242,7 +229,7 @@ const Settings = () => {
             </div>
             <div className="flex items-center justify-between">
               <Label htmlFor="progress-reports">Relatórios de progresso por e-mail</Label>
-              <Switch id="progress-reports" defaultChecked />
+              <Switch id="progress-reports" defaultChecked disabled />
             </div>
             <div className="flex items-center justify-between">
               <Label htmlFor="in-app-notifications">Notificações no aplicativo</Label>
@@ -277,7 +264,7 @@ const Settings = () => {
                 <div className="font-medium">Status do PIN</div>
                 <div className="text-xs text-muted-foreground">
                   {isCheckingPinStatus ? (
-                    <span className="flex items-center gap-1"><Loader2 className="h-3 w-3 animate-spin" /> Verificando...</span>
+                    <span className="flex items-center gap-1"><Loader2 className="h-3 w-3 animate-spin" /> Carregando...</span>
                   ) : parentPinExists ? (
                     "PIN configurado no servidor."
                   ) : (
@@ -288,11 +275,11 @@ const Settings = () => {
               {isCheckingPinStatus ? (
                 <Button disabled variant="secondary"><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Carregando</Button>
               ) : parentPinExists ? (
-                <Button variant="secondary" onClick={openRemovePin}>
+                <Button variant="secondary" onClick={openRemovePin} disabled>
                   <ShieldX className="mr-2 h-4 w-4" /> Remover PIN
                 </Button>
               ) : (
-                <Button onClick={openSetPin}>
+                <Button onClick={openSetPin} disabled>
                   <ShieldCheck className="mr-2 h-4 w-4" /> Definir PIN
                 </Button>
               )}
@@ -306,6 +293,9 @@ const Settings = () => {
                 disabled={!parentPinExists}
               />
             </div>
+            <p className="text-xs text-red-400">
+              Ações de PIN desativadas em modo liberado.
+            </p>
           </CardContent>
         </Card>
 
@@ -315,15 +305,15 @@ const Settings = () => {
             <CardDescription>Gerencie sua sessão e dados da conta.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Button variant="outline" onClick={signOut} className="w-full">
-              <LogOut className="mr-2 h-4 w-4" /> Sair da Conta
+            <Button variant="outline" disabled className="w-full">
+              <LogOut className="mr-2 h-4 w-4" /> Sair da Conta (Desativado)
             </Button>
             <div className="pt-4 border-t border-white/10">
-              <Button variant="destructive" onClick={handlePermanentDelete} className="w-full">
-                <Trash2 className="mr-2 h-4 w-4" /> Excluir Conta Permanentemente
+              <Button variant="destructive" onClick={handlePermanentDelete} className="w-full" disabled>
+                <Trash2 className="mr-2 h-4 w-4" /> Excluir Conta Permanentemente (Desativado)
               </Button>
               <p className="text-xs text-muted-foreground mt-2">
-                Esta ação é irreversível e apagará todos os seus dados.
+                O login está desativado.
               </p>
             </div>
           </CardContent>
