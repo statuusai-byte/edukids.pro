@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSupabase } from "@/context/SupabaseContext";
 import { supabase } from "@/integrations/supabase/client";
 import { showError } from "@/utils/toast"; // Import showError
@@ -178,7 +178,7 @@ export function useScreenTime() {
     persistUsage(0);
   }, [persistUsage]);
 
-  const isBlocked = useCallback(() => {
+  const isBlocked = useMemo(() => {
     if (!blockEnabled || limitMinutes === null) return false;
     return todayUsage >= limitMinutes;
   }, [blockEnabled, limitMinutes, todayUsage]);
@@ -250,7 +250,7 @@ export function useScreenTime() {
     setBlockEnabled,
     todayUsage,
     resetToday,
-    isBlocked: isBlocked(),
+    isBlocked,
     startSession,
     stopSession,
     addMinutes,
