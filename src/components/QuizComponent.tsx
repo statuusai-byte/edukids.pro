@@ -171,6 +171,7 @@ const QuizComponent = ({ questions, onQuizComplete, triggerHint, onHintSuggested
             const isCorrectOption = currentQuestion.correctAnswer === option;
             const isEliminated = eliminatedOptions.includes(option);
 
+            // Ensure buttons are tall enough and text wraps
             let buttonClasses = "h-auto min-h-16 text-lg transition-all duration-200 justify-center text-wrap text-left px-4 py-3";
             let buttonVariant: 'default' | 'outline' | 'destructive' = 'outline';
 
