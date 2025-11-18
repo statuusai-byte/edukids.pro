@@ -14,7 +14,7 @@ const tabs: TabItem[] = [
   { to: "/play-plus", icon: "PlaySquare", label: "Play+", color: "text-purple-400" },
   { to: "/achievements", icon: "Trophy", label: "Medalhas", color: "text-yellow-400" },
   { to: "/store", icon: "Store", label: "Loja", color: "text-green-400" },
-  { to: "/dashboard", icon: "User", label: "Pais", color: "text-orange-400" },
+  { to: "/dashboard", icon: "User", label: "Painel dos Pais", color: "text-orange-400" },
 ];
 
 const isActivePath = (pathname: string, target: string) => {
