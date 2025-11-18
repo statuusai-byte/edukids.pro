@@ -41,8 +41,13 @@ const Header = () => {
             </Button>
           </SheetTrigger>
         )}
-        <h1 className="text-3xl font-bold tracking-tighter bg-gradient-to-r from-primary via-fuchsia-500 to-orange-400 text-transparent bg-clip-text">
-          EDUKIDS+
+        <h1 className="relative text-3xl font-bold tracking-tighter">
+          <span className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-pink-500 to-yellow-400 bg-clip-text text-transparent blur-md opacity-75">
+            EDUKIDS+
+          </span>
+          <span className="relative bg-gradient-to-r from-cyan-400 via-pink-500 to-yellow-400 bg-clip-text text-transparent">
+            EDUKIDS+
+          </span>
         </h1>
       </div>
       <div className="flex items-center gap-4">
