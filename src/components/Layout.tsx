@@ -14,7 +14,8 @@ const Layout = () => {
   const isMobile = useIsMobile();
   useInterstitialAdManager();
 
-  const fullWidthRoutes = ['/', '/login', '/register', '/privacy-policy'];
+  // Estas rotas estão dentro do layout, mas não precisam do estilo de contêiner (controlam a própria largura)
+  const fullWidthRoutes = ['/privacy-policy'];
   const isFullWidth = fullWidthRoutes.includes(location.pathname) || location.pathname.startsWith('/success-payment');
 
   return (
@@ -25,7 +26,9 @@ const Layout = () => {
         <main
           className={cn(
             'flex-grow',
-            isFullWidth ? 'pt-20' : 'container mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-24 md:pb-8'
+            isFullWidth
+              ? 'pt-28 pb-24 md:pb-8'
+              : 'container mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-24 md:pb-8'
           )}
         >
           <Outlet />

@@ -38,10 +38,13 @@ const App = () => {
                 <PremiumProvider>
                   <HintsProvider>
                     <Routes>
+                      {/* Rotas independentes que NÃO usam o Layout principal */}
+                      <Route path="/" element={<Home />} />
+                      <Route path="/login" element={<Login />} />
+                      <Route path="/register" element={<Register />} />
+
+                      {/* Rotas do aplicativo que USAM o Layout principal */}
                       <Route element={<Layout />}>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/register" element={<Register />} />
                         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                         <Route path="/success-payment" element={<SuccessPayment />} />
 
