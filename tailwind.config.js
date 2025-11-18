@@ -120,7 +120,7 @@ module.exports = {
         "incorrect-answer-shake": "incorrect-answer-shake 0.5s ease-in-out",
         "slow-glow": "slow-glow 4s ease-in-out infinite",
         "float-subtle": "float-subtle 10s ease-in-out infinite",
-        "pulse-subtle": "pulse-subtle 2s ease-out infinite",
+        "pulse-subtle": "pulse-subtle 2s ease-in-out infinite",
       },
     },
   },
