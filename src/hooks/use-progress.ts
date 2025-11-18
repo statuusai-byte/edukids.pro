@@ -4,11 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { syncAchievements } from "@/utils/achievements";
 
 const STORAGE_KEY = "edukids_progress_v1";
+const UPLOAD_BATCH_SIZE = 100; // Enviar progresso em lotes de 100
 
 type ProgressMap = Record<string, boolean>;
 
 function makeKey(subject: string, activity: string, moduleId: string, lessonId: string) {
-  return `${subject}::${activity}::${moduleId}::${lessonId}`;
+  return `${subject}::${activity}::${moduleId}::${moduleId}::${lessonId}`;
 }
 
 export function useProgress() {
@@ -33,21 +34,25 @@ export function useProgress() {
   useEffect(() => {
     const syncWithSupabase = async () => {
       if (!user) {
+        console.log("[Sync] User not logged in, skipping Supabase sync.");
         return;
       }
 
+      console.log("[Sync] Starting synchronization with Supabase for user:", user.id);
       setIsSyncing(true);
       
+      console.log("[Sync] Fetching remote progress...");
       const { data: remoteData, error: fetchError } = await supabase
         .from("user_progress")
         .select("lesson_key")
         .eq("user_id", user.id);
 
       if (fetchError) {
-        console.error("Failed to fetch progress from Supabase:", fetchError);
+        console.error("[Sync] Failed to fetch progress from Supabase:", fetchError);
         setIsSyncing(false);
         return;
       }
+      console.log(`[Sync] Successfully fetched ${remoteData.length} remote progress items.`);
 
       const remoteProgress: ProgressMap = {};
       remoteData.forEach(item => {
@@ -61,35 +66,50 @@ export function useProgress() {
           localProgress = JSON.parse(raw);
         }
       } catch (err) {
-        console.error("Failed to parse local progress during sync:", err);
+        console.error("[Sync] Failed to parse local progress during sync:", err);
       }
 
       const mergedProgress = { ...localProgress, ...remoteProgress };
       
       const itemsToUpload = Object.keys(localProgress).filter(key => !remoteProgress[key]);
       if (itemsToUpload.length > 0) {
-        const recordsToInsert = itemsToUpload.map(key => ({
-          user_id: user.id,
-          lesson_key: key,
-        }));
+        console.log(`[Sync] Found ${itemsToUpload.length} local items to upload in batches.`);
         
-        const { error: uploadError } = await supabase.from("user_progress").insert(recordsToInsert);
-        if (uploadError) {
-          console.error("Failed to upload local progress to Supabase:", uploadError);
+        for (let i = 0; i < itemsToUpload.length; i += UPLOAD_BATCH_SIZE) {
+          const batch = itemsToUpload.slice(i, i + UPLOAD_BATCH_SIZE);
+          const recordsToInsert = batch.map(key => ({
+            user_id: user.id,
+            lesson_key: key,
+          }));
+
+          console.log(`[Sync] Uploading batch ${i / UPLOAD_BATCH_SIZE + 1}...`);
+          const { error: uploadError } = await supabase.from("user_progress").insert(recordsToInsert);
+          
+          if (uploadError) {
+            console.error(`[Sync] Failed to upload batch:`, uploadError);
+            // Decide se quer parar ou continuar em caso de erro de lote
+            break; 
+          } else {
+            console.log(`[Sync] Batch uploaded successfully.`);
+          }
         }
+      } else {
+        console.log("[Sync] No new local items to upload.");
       }
 
       setProgress(mergedProgress);
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(mergedProgress));
       } catch (err) {
-        console.error("Failed to save merged progress to localStorage:", err);
+        console.error("[Sync] Failed to save merged progress to localStorage:", err);
       }
 
-      // Sincroniza conquistas após sincronizar progresso
+      console.log("[Sync] Syncing achievements...");
       await syncAchievements(user.id, mergedProgress);
+      console.log("[Sync] Achievements sync complete.");
 
       setIsSyncing(false);
+      console.log("[Sync] Synchronization finished.");
     };
 
     syncWithSupabase();

@@ -39,4 +39,11 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     persistSession: true,
     autoRefreshToken: true,
   },
+  global: {
+    fetch: (input, init) => {
+      // Aumenta o tempo limite para 20 segundos para evitar timeouts em redes lentas
+      const signal = AbortSignal.timeout(20000);
+      return fetch(input, { ...init, signal });
+    },
+  },
 });
