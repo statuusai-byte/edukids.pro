@@ -40,7 +40,7 @@ const Home = () => {
           Bem-vindo ao EDUKIDS+
         </h1>
         <p className="mt-4 text-xl text-white/80 text-shadow-md">
-          Aprenda, jogue e evolua. Conteúdo educativo e jogos para crianças de 4 a 12 anos.
+          Explore um universo de conhecimento. Conteúdo educativo e interativo para crianças de 4 a 12 anos.
         </p>
 
         <div className="mt-8 space-y-4">
