@@ -2,11 +2,19 @@ import { Auth } from '@supabase/auth-ui-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate, Link } from 'react-router-dom';
 import { useEffect } from 'react';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Loader2 } from 'lucide-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
+import { useSupabase } from '@/context/SupabaseContext';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { user, isLoading } = useSupabase();
+
+  useEffect(() => {
+    if (!isLoading && user) {
+      navigate('/activities', { replace: true });
+    }
+  }, [user, isLoading, navigate]);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
@@ -17,6 +25,14 @@ const Login = () => {
 
     return () => subscription.unsubscribe();
   }, [navigate]);
+
+  if (isLoading || user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-starry-sky bg-cover bg-center">
+        <Loader2 className="h-12 w-12 animate-spin text-white" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-starry-sky bg-cover bg-center">

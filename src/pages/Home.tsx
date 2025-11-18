@@ -1,8 +1,27 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Rocket, UserPlus } from 'lucide-react';
+import { Rocket, UserPlus, Loader2 } from 'lucide-react';
+import { useSupabase } from '@/context/SupabaseContext';
+import { useEffect } from 'react';
 
 const Home = () => {
+  const { user, isLoading } = useSupabase();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isLoading && user) {
+      navigate('/activities', { replace: true });
+    }
+  }, [user, isLoading, navigate]);
+
+  if (isLoading || user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-starry-sky bg-cover bg-center">
+        <Loader2 className="h-12 w-12 animate-spin text-white" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center text-center p-4 bg-starry-sky bg-cover bg-center text-white">
       <main className="z-10">
