@@ -1,21 +1,39 @@
 import { Outlet, useLocation } from 'react-router-dom';
-import Header from './Header';
+import Header from '@/components/Header';
+import MobileTabBar from '@/components/MobileTabBar';
+import AmbientBackground from '@/components/AmbientBackground';
+import StudyAssistant from '@/components/StudyAssistant';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { Sheet } from '@/components/ui/sheet';
+import MobileSidebar from '@/components/MobileSidebar';
 import { cn } from '@/lib/utils';
+import { useInterstitialAdManager } from '@/hooks/useInterstitialAdManager';
 
 const Layout = () => {
   const location = useLocation();
-  const isHomePage = location.pathname === '/';
+  const isMobile = useIsMobile();
+  useInterstitialAdManager();
+
+  const fullWidthRoutes = ['/', '/login', '/register', '/privacy-policy'];
+  const isFullWidth = fullWidthRoutes.includes(location.pathname) || location.pathname.startsWith('/success-payment');
 
   return (
-    <div className="min-h-screen bg-background font-sans antialiased">
-      <Header />
-      <main className={cn(
-        "container mx-auto px-4 py-8",
-        !isHomePage && "mt-20" // Adiciona margem superior em todas as páginas, exceto na home
-      )}>
-        <Outlet />
-      </main>
-    </div>
+    <AmbientBackground>
+      <Sheet>
+        <MobileSidebar />
+        <Header />
+        <main
+          className={cn(
+            'flex-grow',
+            isFullWidth ? 'pt-20' : 'container mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-24 md:pb-8'
+          )}
+        >
+          <Outlet />
+        </main>
+        {isMobile && <MobileTabBar />}
+        <StudyAssistant />
+      </Sheet>
+    </AmbientBackground>
   );
 };
 

@@ -1,53 +1,76 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Toaster } from './components/ui/sonner';
-import { AuthProvider } from './context/AuthContext';
-import { ProfileProvider } from './context/ProfileContext';
-import { AgeProvider } from './context/AgeContext';
-import { ScreenTimeProvider } from './context/ScreenTimeContext';
+import { Toaster } from '@/components/ui/sonner';
+import { SupabaseProvider } from '@/context/SupabaseContext';
+import { ProfileProvider } from '@/context/ProfileContext';
+import { AgeProvider } from '@/context/AgeContext';
+import { ThemeProvider } from '@/context/ThemeContext';
+import { PremiumProvider } from '@/context/PremiumContext';
+import { HintsProvider } from '@/context/HintsContext';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
+import GlobalErrorLogger from '@/components/GlobalErrorLogger';
+import ReloadPrompt from '@/components/ReloadPrompt';
 
-import Layout from './components/Layout';
-import ProtectedRoute from './components/ProtectedRoute';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-import Activities from './pages/Activities';
-import ActivityDetail from './pages/ActivityDetail';
-import Dashboard from './pages/Dashboard';
-import Settings from './pages/Settings';
-import About from './pages/About';
-import NotFound from './pages/NotFound';
+import Layout from '@/components/Layout';
+import ProtectedRoute from '@/components/ProtectedRoute';
+import Home from '@/pages/Home';
+import Login from '@/pages/Login';
+import Register from '@/pages/Register';
+import Activities from '@/pages/Activities';
+import SubjectPage from '@/pages/SubjectPage';
+import LessonPage from '@/pages/LessonPage';
+import Dashboard from '@/pages/Dashboard';
+import Settings from '@/pages/Settings';
+import NotFound from '@/pages/NotFound';
+import Store from '@/pages/Store';
+import AchievementsPage from '@/pages/Achievements';
+import PlayPlus from '@/pages/PlayPlus';
+import PrivacyPolicy from '@/pages/PrivacyPolicy';
+import SuccessPayment from '@/pages/SuccessPayment';
 
-function App() {
+const App = () => {
   return (
-    <Router>
-      <AuthProvider>
-        <ProfileProvider>
-          <AgeProvider>
-            <ScreenTimeProvider>
-              <Routes>
-                <Route element={<Layout />}>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/signup" element={<Signup />} />
-                  <Route path="/about" element={<About />} />
-                  
-                  <Route element={<ProtectedRoute />}>
-                    <Route path="/activities" element={<Activities />} />
-                    <Route path="/activities/:subjectSlug" element={<ActivityDetail />} />
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/settings" element={<Settings />} />
-                  </Route>
+    <ErrorBoundary>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <Router>
+          <SupabaseProvider>
+            <ProfileProvider>
+              <AgeProvider>
+                <PremiumProvider>
+                  <HintsProvider>
+                    <Routes>
+                      <Route element={<Layout />}>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} />
+                        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                        <Route path="/success-payment" element={<SuccessPayment />} />
 
-                  <Route path="*" element={<NotFound />} />
-                </Route>
-              </Routes>
-            </ScreenTimeProvider>
-          </AgeProvider>
-        </ProfileProvider>
-      </AuthProvider>
-      <Toaster />
-    </Router>
+                        <Route element={<ProtectedRoute />}>
+                          <Route path="/activities" element={<Activities />} />
+                          <Route path="/activities/:subject" element={<SubjectPage />} />
+                          <Route path="/activities/:subject/:activityId/modules/:moduleId/lessons/:lessonId" element={<LessonPage />} />
+                          <Route path="/dashboard" element={<Dashboard />} />
+                          <Route path="/settings" element={<Settings />} />
+                          <Route path="/store" element={<Store />} />
+                          <Route path="/achievements" element={<AchievementsPage />} />
+                          <Route path="/play-plus" element={<PlayPlus />} />
+                        </Route>
+
+                        <Route path="*" element={<NotFound />} />
+                      </Route>
+                    </Routes>
+                    <Toaster richColors />
+                    <GlobalErrorLogger />
+                    <ReloadPrompt />
+                  </HintsProvider>
+                </PremiumProvider>
+              </AgeProvider>
+            </ProfileProvider>
+          </SupabaseProvider>
+        </Router>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
-}
+};
 
 export default App;
