@@ -341,6 +341,26 @@ export const subjectsData: Subject[] = [
     ageGroups: ['4-6', '7-9', '10-12'],
     activities: [
       {
+        id: "c1",
+        title: "Descobrindo o Mundo (4-6 anos)",
+        description: "Conheça os animais, as plantas e o nosso planeta.",
+        ageGroups: ['4-6'],
+        icon: "Globe",
+        modules: [
+          {
+            id: "c1-mod1", title: "Mundo Animal", lessons: [
+              { id: "c1-l1", title: "Animais da Fazenda", content: `
+                <p>Na fazenda vivem muitos animais! Temos a <strong>vaca</strong> que nos dá leite, a <strong>galinha</strong> que bota ovos e o <strong>cavalo</strong> que corre pelos campos.</p>
+                <p>Cada animal tem um som diferente. Você sabe imitar o som de um porco?</p>
+              `, type: "reading" },
+              { id: "c1-l2", title: "Animais Selvagens", content: `
+                <p>Longe da cidade, na floresta, vivem os animais selvagens! O <strong>leão</strong> é o rei da selva, o <strong>macaco</strong> pula de galho em galho e a <strong>girafa</strong> tem um pescoço bem comprido.</p>
+              `, type: "reading" }
+            ]
+          },
+        ]
+      },
+      {
         id: "c2",
         title: "O Planeta Terra (7-9 anos)",
         description: "Explore o corpo humano, o ciclo da água e os ecossistemas.",

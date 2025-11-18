@@ -1,7 +1,7 @@
-import { Bell, Lightbulb, Sun, Moon, Menu } from "lucide-react";
+import { Bell, Lightbulb, Sun, Moon, Menu, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useProfile } from "@/context/ProfileContext";
 import { useHintsContext } from "@/context/HintsContext";
 import { usePremium } from "@/context/PremiumContext";
@@ -9,28 +9,50 @@ import { useTheme } from "@/context/ThemeContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { SheetTrigger } from "@/components/ui/sheet";
 
+const TOP_LEVEL_ROUTES = new Set([
+  "/activities",
+  "/play-plus",
+  "/achievements",
+  "/store",
+  "/dashboard",
+  "/settings",
+]);
+
 const Header = () => {
   const { name, avatarUrl } = useProfile();
   const { hints } = useHintsContext();
   const { isPremium } = usePremium();
   const { theme, setTheme } = useTheme();
   const isMobile = useIsMobile();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const isTopLevel = TOP_LEVEL_ROUTES.has(location.pathname);
 
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 flex h-20 items-center justify-between bg-background/80 backdrop-blur-lg px-4 sm:px-6 border-b border-white/10">
       <div className="flex items-center gap-4">
-        {isMobile && (
+        {isMobile && !isTopLevel ? (
+          <Button variant="ghost" size="icon" className="rounded-full hover:bg-primary/10" onClick={handleBack}>
+            <ArrowLeft className="h-6 w-6 text-muted-foreground hover:text-primary" />
+            <span className="sr-only">Voltar</span>
+          </Button>
+        ) : isMobile ? (
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon" className="rounded-full hover:bg-primary/10">
               <Menu className="h-6 w-6 text-muted-foreground hover:text-primary" />
               <span className="sr-only">Abrir menu</span>
             </Button>
           </SheetTrigger>
-        )}
+        ) : null}
         <h1 className="relative text-3xl font-bold tracking-tighter">
           <span className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-pink-500 to-yellow-400 bg-clip-text text-transparent blur-md opacity-75">
             EDUKIDS+
