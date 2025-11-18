@@ -1,83 +1,49 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Sparkles, User, LogIn, Rocket, Loader2 } from "lucide-react";
-import AgeSelectionModal from "@/components/AgeSelectionModal";
-import { useAge } from "@/context/AgeContext";
-import { useNavigate, Link } from "react-router-dom";
-import { cn } from "@/lib/utils";
-import { useSupabase } from "@/context/SupabaseContext";
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Sparkles, Rocket, BookOpen } from 'lucide-react';
 
 const Home = () => {
-  const { ageGroup } = useAge();
-  const { session, isLoading } = useSupabase();
-  const navigate = useNavigate();
-  const [modalOpen, setModalOpen] = useState(false);
-
-  const handleActionClick = () => {
-    if (ageGroup) {
-      navigate("/activities");
-      return;
-    }
-    setModalOpen(true);
-  };
-
-  if (isLoading) {
-    return (
-      <div className="min-h-[100dvh] flex items-center justify-center">
-        <Loader2 className="h-12 w-12 animate-spin text-primary" />
-      </div>
-    );
-  }
-
   return (
-    <div className={cn(
-      "min-h-[100dvh] flex flex-col items-center justify-center text-center p-4",
-      "bg-starry-sky bg-cover bg-center"
-    )}>
-      <div className="relative z-10 max-w-lg mx-auto glass-card p-8 md:p-12">
-        <Sparkles className="h-12 w-12 text-yellow-400 mx-auto mb-4 animate-slow-glow" />
-        <h1 className="text-5xl font-extrabold tracking-tighter text-shadow-lg">
-          Bem-vindo ao EDUKIDS+
-        </h1>
-        <p className="mt-4 text-xl text-white/80 text-shadow-md">
-          Explore um universo de conhecimento. Conteúdo educativo e interativo para crianças de 4 a 12 anos.
-        </p>
-
-        <div className="mt-8 space-y-4">
-          {session ? (
-            <Button 
-              size="lg" 
-              className="w-full bg-primary hover:bg-primary/90"
-              onClick={handleActionClick}
-            >
-              <Rocket className="mr-2 h-5 w-5" />
-              {ageGroup ? `Continuar como Explorador (${ageGroup})` : 'Selecionar Idade e Começar'}
+    <div className="min-h-screen bg-starry-sky bg-cover bg-center text-white">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-black/50 p-4 sm:p-8">
+        <main className="text-center max-w-3xl">
+          <Sparkles className="h-12 w-12 text-yellow-400 mx-auto mb-4 animate-slow-glow" />
+          <h1 className="text-5xl font-extrabold tracking-tighter text-shadow-lg">
+            Bem-vindo ao{' '}
+            <span className="relative">
+              <span className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-pink-500 to-yellow-400 bg-clip-text text-transparent blur-md opacity-75">
+                EDUKIDS+
+              </span>
+              <span className="relative bg-gradient-to-r from-cyan-400 via-pink-500 to-yellow-400 bg-clip-text text-transparent">
+                EDUKIDS+
+              </span>
+            </span>
+          </h1>
+          <p className="mt-4 text-xl text-white/80 text-shadow-md">
+            A plataforma onde o aprendizado se transforma em uma aventura espacial!
+          </p>
+          
+          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Button asChild size="lg" className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-6 px-8 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg border-2 border-white/20">
+              <Link to="/activities">
+                <Rocket className="mr-2 h-5 w-5" />
+                Começar a Aventura
+              </Link>
             </Button>
-          ) : (
-            <>
-              <Button asChild size="lg" className="w-full bg-primary hover:bg-primary/90">
-                <Link to="/login">
-                  <LogIn className="mr-2 h-5 w-5" /> Entrar
-                </Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="w-full border-white/20 text-white hover:bg-white/10">
-                <Link to="/register">
-                  <User className="mr-2 h-5 w-5" /> CRIAR CONTA
-                </Link>
-              </Button>
-            </>
-          )}
-        </div>
-        
-        <p className="mt-6 text-xs text-muted-foreground">
-          {session ? "Seu progresso será salvo na sua conta." : "Crie uma conta para salvar seu progresso."}
-        </p>
-      </div>
+            <Button asChild variant="outline" size="lg" className="bg-transparent border-2 border-white/50 text-white hover:bg-white/10 hover:text-white font-bold py-6 px-8 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg">
+              <Link to="/about">
+                <BookOpen className="mr-2 h-5 w-5" />
+                Saber Mais
+              </Link>
+            </Button>
+          </div>
+        </main>
 
-      <AgeSelectionModal
-        open={modalOpen}
-        onOpenChange={setModalOpen}
-      />
+        <footer className="absolute bottom-8 text-center text-white/60">
+          <p>&copy; {new Date().getFullYear()} EDUKIDS+. Todos os direitos reservados.</p>
+          <p className="text-sm mt-1">Feito com ❤️ para os pequenos exploradores do conhecimento.</p>
+        </footer>
+      </div>
     </div>
   );
 };
