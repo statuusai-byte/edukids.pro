@@ -30,7 +30,7 @@ const Login = () => {
         </div>
         <Auth
           supabaseClient={supabase}
-          providers={[]}
+          providers={['google']}
           localization={{
             variables: {
               sign_in: {

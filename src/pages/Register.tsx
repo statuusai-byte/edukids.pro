@@ -32,7 +32,7 @@ const Register = () => {
         <Auth
           supabaseClient={supabase}
           view="sign_up"
-          providers={[]}
+          providers={['google']}
           localization={{
             variables: {
               sign_up: {
