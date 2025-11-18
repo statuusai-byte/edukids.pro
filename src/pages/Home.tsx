@@ -10,9 +10,8 @@ const Home = () => {
   const { ageGroup } = useAge();
   const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
-  const [actionType, setActionType] = useState<"entrar" | "cadastrar" | null>(null);
 
-  const handleActionClick = (action: "entrar" | "cadastrar") => {
+  const handleActionClick = () => {
     // Em modo liberado, se a idade já estiver definida, vamos direto para /activities
     if (ageGroup) {
       navigate("/activities");
@@ -20,7 +19,6 @@ const Home = () => {
     }
     
     // Se a idade não estiver definida, abrimos o modal de seleção de idade
-    setActionType(action);
     setModalOpen(true);
   };
 
@@ -58,7 +56,7 @@ const Home = () => {
               <Button 
                 size="lg" 
                 className="w-full bg-primary hover:bg-primary/90"
-                onClick={() => handleActionClick("entrar")}
+                onClick={handleActionClick}
               >
                 <LogIn className="mr-2 h-5 w-5" /> Começar a Explorar
               </Button>
@@ -66,7 +64,7 @@ const Home = () => {
                 size="lg" 
                 variant="outline" 
                 className="w-full border-white/20 text-white hover:bg-white/10"
-                onClick={() => handleActionClick("cadastrar")}
+                onClick={handleActionClick}
               >
                 <User className="mr-2 h-5 w-5" /> Definir Idade
               </Button>
