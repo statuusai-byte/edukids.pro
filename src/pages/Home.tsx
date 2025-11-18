@@ -25,8 +25,13 @@ const Home = () => {
   return (
     <div className="min-h-screen flex flex-col text-center p-4 bg-starry-sky bg-cover bg-center text-white">
       <header className="w-full p-6 z-20">
-        <h1 className="text-3xl font-bold text-white text-shadow-md tracking-wider">
-          EDUKIDS TOP
+        <h1 className="relative text-4xl font-bold tracking-tighter">
+          <span className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-pink-500 to-yellow-400 bg-clip-text text-transparent blur-md opacity-75">
+            EDUKIDS TOP
+          </span>
+          <span className="relative bg-gradient-to-r from-cyan-400 via-pink-500 to-yellow-400 bg-clip-text text-transparent">
+            EDUKIDS TOP
+          </span>
         </h1>
       </header>
       <main className="flex-grow flex flex-col items-center justify-center z-10">
