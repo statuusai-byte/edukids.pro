@@ -4,7 +4,6 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import MobileSidebar from "@/components/MobileSidebar";
 import MobileTabBar from "@/components/MobileTabBar";
 import StudyAssistant from "@/components/StudyAssistant";
-import AgeGateModal from "@/components/AgeGateModal";
 import { useInterstitialAdManager } from "@/hooks/useInterstitialAdManager";
 import Header from "@/components/Header";
 import { Sheet } from "@/components/ui/sheet";
@@ -60,7 +59,6 @@ const Layout = () => {
                 )}
               >
                 <Outlet />
-                <AgeGateModal />
               </div>
             </div>
           </div>
