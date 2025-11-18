@@ -1,12 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useSupabase } from '@/context/SupabaseContext';
 import { showError } from '@/utils/toast';
 
 // Em modo liberado, as dicas são sempre 0, a menos que sejam adicionadas localmente.
 const INITIAL_BALANCE = 0;
 
 export function useHints() {
-  const { user, isLoading: isAuthLoading } = useSupabase();
   const [hints, setHints] = useState(INITIAL_BALANCE);
   const [isLoading, setIsLoading] = useState(false);
 

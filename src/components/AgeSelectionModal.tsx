@@ -14,12 +14,9 @@ import { useAge } from "@/context/AgeContext";
 import { useNavigate } from "react-router-dom";
 import { Rocket } from "lucide-react";
 
-type ActionType = "entrar" | "cadastrar";
-
 interface AgeSelectionModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  action: ActionType | null;
 }
 
 const AGE_OPTIONS: Array<{ id: string; label: string }> = [
@@ -28,7 +25,7 @@ const AGE_OPTIONS: Array<{ id: string; label: string }> = [
   { id: "10-12", label: "10-12 anos" },
 ];
 
-const AgeSelectionModal = ({ open, onOpenChange, action }: AgeSelectionModalProps) => {
+const AgeSelectionModal = ({ open, onOpenChange }: AgeSelectionModalProps) => {
   const { setAgeGroup } = useAge();
   const [selected, setSelected] = useState<string | null>(null);
   const navigate = useNavigate();

@@ -1,5 +1,4 @@
-import { createContext, useState, useContext, useEffect, ReactNode, useCallback } from 'react';
-import { useSupabase } from './SupabaseContext';
+import { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import { showError } from '@/utils/toast';
 
 interface Profile {

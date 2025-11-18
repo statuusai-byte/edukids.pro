@@ -82,7 +82,6 @@ const Home = () => {
       <AgeSelectionModal
         open={modalOpen}
         onOpenChange={setModalOpen}
-        action={actionType}
       />
     </div>
   );

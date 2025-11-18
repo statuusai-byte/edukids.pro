@@ -14,12 +14,9 @@ import { showSuccess, showError, showLoading, dismissToast } from "@/utils/toast
 import { getSoundEnabled, setSoundEnabled } from "@/utils/sound";
 import ParentalPinModal from "@/components/ParentalPinModal";
 import {
-  hasParentPin,
   requirePinForPurchasesGet,
   requirePinForPurchasesSet,
 } from "@/utils/parental-helpers";
-// import { useSupabase } from "@/context/SupabaseContext"; // Removido
-// import { supabase } from "@/integrations/supabase/client"; // Removido
 import { useTheme } from "@/context/ThemeContext";
 
 const Settings = () => {
@@ -37,7 +34,6 @@ const Settings = () => {
   const [isCheckingPinStatus, setIsCheckingPinStatus] = useState(true);
 
   const pendingActionRef = useRef<null | (() => void)>(null);
-  // const { signOut, user } = useSupabase(); // Removido
 
   const checkPinStatus = useCallback(async () => {
     setIsCheckingPinStatus(true);
@@ -45,9 +41,6 @@ const Settings = () => {
     // Para fins de teste, vamos simular que o PIN não existe.
     setParentPinExists(false); 
     setIsCheckingPinStatus(false);
-    // const exists = await hasParentPin(); // Removido
-    // setParentPinExists(exists); // Removido
-    // setIsCheckingPinStatus(false); // Removido
   }, []);
 
   useEffect(() => {
@@ -118,16 +111,6 @@ const Settings = () => {
     setRequirePinForPurchases(enabled);
     requirePinForPurchasesSet(enabled);
     showSuccess(enabled ? "PIN exigido para compras." : "PIN não será exigido para compras.");
-  };
-
-  const onVerifyThenRun = (action: () => void) => {
-    if (parentPinExists) {
-      pendingActionRef.current = action;
-      setPinMode("verify");
-      setPinModalOpen(true);
-    } else {
-      action();
-    }
   };
 
   const afterPinModalChange = (open: boolean) => {

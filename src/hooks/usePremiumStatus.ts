@@ -1,9 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useSupabase } from '@/context/SupabaseContext';
 import { showError } from '@/utils/toast';
 
 export function usePremiumStatus() {
-  const { user, isLoading: isAuthLoading } = useSupabase();
   const [isPremium, setIsPremium] = useState(false);
   const [trialEndsAt, setTrialEndsAt] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false); // Always false in free mode
@@ -20,10 +18,6 @@ export function usePremiumStatus() {
   }, [trialEndsAt]);
 
   // Stubs para funções que dependem de autenticação/DB
-  const fetchPremiumStatus = useCallback(async (_userId: string) => {
-    return false;
-  }, []);
-
   const startTrial = useCallback(async () => {
     showError("Funcionalidade de teste Premium desativada em modo liberado.");
     return false;
