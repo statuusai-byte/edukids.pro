@@ -1,95 +1,53 @@
-import { Toaster as SonnerToaster } from "@/components/ui/sonner";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Suspense, lazy } from "react";
-import { AgeProvider } from "./context/AgeContext";
-import { ProfileProvider } from "./context/ProfileContext";
-import { SupabaseProvider } from "./context/SupabaseContext";
-import { PremiumProvider } from "./context/PremiumContext";
-import { HintsProvider } from "./context/HintsContext";
-import { ThemeProvider } from "./context/ThemeContext";
-import { Sparkles } from "lucide-react";
-import ErrorBoundary from "@/components/ErrorBoundary";
-import AmbientBackground from "@/components/AmbientBackground";
-import GlobalErrorLogger from "@/components/GlobalErrorLogger";
-import ReloadPrompt from "@/components/ReloadPrompt";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Toaster } from './components/ui/sonner';
+import { AuthProvider } from './context/AuthContext';
+import { ProfileProvider } from './context/ProfileContext';
+import { AgeProvider } from './context/AgeContext';
+import { ScreenTimeProvider } from './context/ScreenTimeContext';
 
-const NotFound = lazy(() => import("./pages/NotFound"));
-const Layout = lazy(() => import("./components/Layout"));
-const Activities = lazy(() => import("./pages/Activities"));
-const PlayPlus = lazy(() => import("./pages/PlayPlus"));
-const Store = lazy(() => import("./pages/Store"));
-const Dashboard = lazy(() => import("./pages/Dashboard"));
-const Settings = lazy(() => import("./pages/Settings"));
-const SubjectPage = lazy(() => import("./pages/SubjectPage"));
-const LessonPage = lazy(() => import("./pages/LessonPage"));
-const AchievementsPage = lazy(() => import("./pages/Achievements"));
-const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
-const Home = lazy(() => import("./pages/Home"));
-const Login = lazy(() => import("./pages/Login"));
-const Register = lazy(() => import("./pages/Register"));
+import Layout from './components/Layout';
+import ProtectedRoute from './components/ProtectedRoute';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import Activities from './pages/Activities';
+import ActivityDetail from './pages/ActivityDetail';
+import Dashboard from './pages/Dashboard';
+import Settings from './pages/Settings';
+import About from './pages/About';
+import NotFound from './pages/NotFound';
 
-const queryClient = new QueryClient();
+function App() {
+  return (
+    <Router>
+      <AuthProvider>
+        <ProfileProvider>
+          <AgeProvider>
+            <ScreenTimeProvider>
+              <Routes>
+                <Route element={<Layout />}>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/signup" element={<Signup />} />
+                  <Route path="/about" element={<About />} />
+                  
+                  <Route element={<ProtectedRoute />}>
+                    <Route path="/activities" element={<Activities />} />
+                    <Route path="/activities/:subjectSlug" element={<ActivityDetail />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/settings" element={<Settings />} />
+                  </Route>
 
-const Fallback = () => (
-  <div className="flex h-screen w-full items-center justify-center">
-    <Sparkles className="h-12 w-12 animate-spin text-primary" />
-  </div>
-);
-
-const AppRoutes = () => (
-  <Routes>
-    <Route path="/" element={<Home />} />
-    <Route path="/login" element={<Login />} />
-    <Route path="/register" element={<Register />} />
-
-    <Route element={<Layout />}>
-      <Route path="/activities" element={<Activities />} />
-      <Route path="/activities/:subject" element={<SubjectPage />} />
-      <Route
-        path="/activities/:subject/:activityId/modules/:moduleId/lessons/:lessonId"
-        element={<LessonPage />}
-      />
-      <Route path="/play-plus" element={<PlayPlus />} />
-      <Route path="/store" element={<Store />} />
-      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-      
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/settings" element={<Settings />} />
-      <Route path="/achievements" element={<AchievementsPage />} />
-    </Route>
-
-    <Route path="*" element={<NotFound />} />
-  </Routes>
-);
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <ThemeProvider defaultTheme="dark" storageKey="edukids-theme">
-      <AmbientBackground>
-        <BrowserRouter>
-          <SupabaseProvider>
-            <AgeProvider>
-              <ProfileProvider>
-                <PremiumProvider>
-                  <HintsProvider>
-                    <SonnerToaster />
-                    <GlobalErrorLogger />
-                    <ReloadPrompt />
-                    <ErrorBoundary>
-                      <Suspense fallback={<Fallback />}>
-                        <AppRoutes />
-                      </Suspense>
-                    </ErrorBoundary>
-                  </HintsProvider>
-                </PremiumProvider>
-              </ProfileProvider>
-            </AgeProvider>
-          </SupabaseProvider>
-        </BrowserRouter>
-      </AmbientBackground>
-    </ThemeProvider>
-  </QueryClientProvider>
-);
+                  <Route path="*" element={<NotFound />} />
+                </Route>
+              </Routes>
+            </ScreenTimeProvider>
+          </AgeProvider>
+        </ProfileProvider>
+      </AuthProvider>
+      <Toaster />
+    </Router>
+  );
+}
 
 export default App;

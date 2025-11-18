@@ -1,6 +1,6 @@
 import { useAge } from "@/context/AgeContext";
-import { useMemo, useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useMemo } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { subjectsData } from "@/data/activitiesData";
 import { TiltCard } from "@/components/TiltCard";
 import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -16,12 +16,6 @@ const iconColorClass: Record<string, string> = {
     orange: 'text-orange-400',
     teal: 'text-teal-400',
     indigo: 'text-indigo-400',
-    yellow: 'text-yellow-400',
-    red: 'text-red-400',
-    pink: 'text-pink-400',
-    slate: 'text-slate-400',
-    rose: 'text-rose-400',
-    lime: 'text-lime-400',
 };
 
 const bgColorClass: Record<string, string> = {
@@ -31,27 +25,12 @@ const bgColorClass: Record<string, string> = {
     orange: 'bg-orange-400',
     teal: 'bg-teal-400',
     indigo: 'bg-indigo-400',
-    yellow: 'bg-yellow-400',
-    red: 'bg-red-400',
-    pink: 'bg-pink-400',
-    slate: 'bg-slate-400',
-    rose: 'bg-rose-400',
-    lime: 'bg-lime-400',
 };
 
 const Activities = () => {
   const { ageGroup, isLoading: isAgeLoading } = useAge();
   const { isBlocked, limitMinutes } = useScreenTime();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  useEffect(() => {
-    if (!isAgeLoading && !ageGroup) {
-      setIsModalOpen(true);
-    }
-    if (ageGroup) {
-      setIsModalOpen(false);
-    }
-  }, [ageGroup, isAgeLoading]);
+  const navigate = useNavigate();
 
   const subjects = useMemo(() => {
     if (!ageGroup) return [];
@@ -69,6 +48,23 @@ const Activities = () => {
       .filter(subject => subject.availableActivitiesCount > 0);
   }, [ageGroup]);
 
+  if (isAgeLoading) {
+    return (
+      <div className="text-center py-16">
+        <Sparkles className="h-12 w-12 text-primary mx-auto mb-4 animate-spin" />
+        <h2 className="text-2xl font-bold">Carregando perfil...</h2>
+      </div>
+    );
+  }
+
+  if (!ageGroup) {
+    return <AgeSelectionModal open={true} onOpenChange={(isOpen) => {
+      if (!isOpen) {
+        navigate('/');
+      }
+    }} />;
+  }
+
   if (isBlocked) {
     return (
       <div className="text-center py-16 glass-card rounded-lg">
@@ -77,26 +73,13 @@ const Activities = () => {
         <p className="text-muted-foreground mt-2">
           O limite de {limitMinutes} minutos foi atingido. O acesso às atividades está bloqueado.
         </p>
-        <p className="text-sm text-muted-foreground mt-4">
-          Para continuar, um adulto deve desativar o bloqueio ou aumentar o limite no Painel dos Pais.
-        </p>
         <Link to="/dashboard" className="mt-4 inline-block text-primary underline">Ir para Painel dos Pais</Link>
-      </div>
-    );
-  }
-
-  if (isAgeLoading) {
-    return (
-      <div className="text-center py-16 glass-card rounded-lg">
-        <Sparkles className="h-12 w-12 text-primary mx-auto mb-4 animate-spin" />
-        <h2 className="text-2xl font-bold">Carregando perfil...</h2>
       </div>
     );
   }
 
   return (
     <div>
-      <AgeSelectionModal open={isModalOpen} onOpenChange={setIsModalOpen} />
       <h1 className="text-4xl font-bold tracking-tighter mb-8">Áreas de Estudo</h1>
       {subjects.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -133,7 +116,7 @@ const Activities = () => {
         <div className="text-center py-16 glass-card rounded-lg">
           <h2 className="text-2xl font-bold">Nenhuma área de estudo encontrada!</h2>
           <p className="text-muted-foreground mt-2">
-            Não há atividades para esta faixa etária no momento. Tente selecionar outra faixa etária.
+            Não há atividades para esta faixa etária no momento. Tente selecionar outra faixa etária nas configurações.
           </p>
         </div>
       )}
