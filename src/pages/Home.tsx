@@ -23,8 +23,13 @@ const Home = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center text-center p-4 bg-starry-sky bg-cover bg-center text-white">
-      <main className="z-10">
+    <div className="min-h-screen flex flex-col text-center p-4 bg-starry-sky bg-cover bg-center text-white">
+      <header className="w-full p-6 z-20">
+        <h1 className="text-3xl font-bold text-white text-shadow-md tracking-wider">
+          EDUKIDS TOP
+        </h1>
+      </header>
+      <main className="flex-grow flex flex-col items-center justify-center z-10">
         <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-shadow-lg animate-fade-in-down">
           Desbloqueie o Universo do Conhecimento
         </h1>
