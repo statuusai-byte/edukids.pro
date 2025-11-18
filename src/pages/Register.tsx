@@ -33,7 +33,6 @@ const Register = () => {
           supabaseClient={supabase}
           view="sign_up"
           providers={[]}
-          theme="dark"
           localization={{
             variables: {
               sign_up: {

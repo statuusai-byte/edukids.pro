@@ -31,7 +31,6 @@ const Login = () => {
         <Auth
           supabaseClient={supabase}
           providers={[]}
-          theme="dark"
           localization={{
             variables: {
               sign_in: {
