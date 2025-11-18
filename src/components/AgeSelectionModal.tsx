@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { useAge } from "@/context/AgeContext";
 import { useNavigate } from "react-router-dom";
 import { Rocket } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface AgeSelectionModalProps {
   open: boolean;
@@ -42,45 +43,51 @@ const AgeSelectionModal = ({ open, onOpenChange }: AgeSelectionModalProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md text-center p-6">
+      <DialogContent className={cn(
+        "glass-card sm:max-w-lg text-center p-8 border-0", // Estilo de vidro, mais espaçamento
+        "shadow-2xl shadow-primary/20" // Sombra mais pronunciada
+      )}>
         <DialogHeader>
-          <div className="mx-auto mb-3 rounded-full bg-primary/20 p-3 border border-primary/50 w-fit">
-            <Rocket className="h-6 w-6 text-primary" />
+          <div className="mx-auto mb-4 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 p-4 border border-primary/50 w-fit shadow-lg">
+            <Rocket className="h-8 w-8 text-primary animate-pulse" />
           </div>
-          <DialogTitle className="text-2xl font-bold">
-            Selecione a Faixa Etária
+          <DialogTitle className="text-3xl font-extrabold tracking-tight drop-shadow-lg">
+            Vamos Começar!
           </DialogTitle>
-          <DialogDescription className="text-muted-foreground">
-            Para personalizar as atividades, selecione a faixa etária do explorador.
+          <DialogDescription className="text-muted-foreground text-base mt-2">
+            Para personalizar a aventura, selecione a faixa etária do explorador.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
           {AGE_OPTIONS.map((opt) => (
             <button
               key={opt.id}
               onClick={() => setSelected(opt.id)}
-              className={`py-3 rounded-lg border transition-colors ${
+              className={cn(
+                "py-4 rounded-xl border text-lg font-semibold transition-all duration-300 transform focus:outline-none focus:ring-2 focus:ring-primary/50",
                 selected === opt.id
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "bg-secondary/20 border-white/6 hover:bg-secondary/30"
-              }`}
+                  ? "bg-primary text-primary-foreground border-primary shadow-lg scale-105"
+                  : "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 hover:scale-105"
+              )}
             >
               {opt.label}
             </button>
           ))}
         </div>
 
-        <div className="mt-6">
-          <DialogFooter>
-            <div className="flex w-full justify-between items-center gap-3">
-              <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
-              <Button onClick={handleConfirm} disabled={!selected} className="bg-primary">
+        <DialogFooter className="mt-8 sm:justify-center">
+            <div className="flex flex-col sm:flex-row w-full gap-3">
+              <Button variant="ghost" onClick={() => onOpenChange(false)} className="w-full hover:bg-white/10">Cancelar</Button>
+              <Button 
+                onClick={handleConfirm} 
+                disabled={!selected} 
+                className="w-full bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              >
                 Começar a Explorar
               </Button>
             </div>
-          </DialogFooter>
-        </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
