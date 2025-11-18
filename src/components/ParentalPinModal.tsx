@@ -100,6 +100,7 @@ const ParentalPinModal = ({ open, mode = "verify", onOpenChange, onVerified, tit
       showSuccess("PIN parental definido com sucesso.");
       setExistingPinExists(true);
       onOpenChange(false);
+      onVerified?.(pin); // Grant access immediately after setting
     } catch (e: any) {
       dismissToast(toastId);
       console.error("Failed to set parent pin securely", e);

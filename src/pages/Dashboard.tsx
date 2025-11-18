@@ -10,41 +10,32 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import ParentalPinModal from "@/components/ParentalPinModal";
 import { hasParentPin } from "@/utils/parental-helpers";
-// import { useSupabase } from "@/context/SupabaseContext"; // Removido
-import { showSuccess, showError } from "@/utils/toast"; // Adicionado showError para feedback
+import { showSuccess, showError } from "@/utils/toast";
 
 const Dashboard = () => {
   const { progress } = useProgress();
   const { todayUsage, limitMinutes, setLimitMinutes, blockEnabled, setBlockEnabled, resetToday, addMinutes, isBlocked } = useScreenTime();
   const { ageGroup } = useAge();
-  // const { signOut } = useSupabase(); // Removido
 
   const [isPinVerified, setIsPinVerified] = useState(false);
   const [pinModalOpen, setPinModalOpen] = useState(false);
   const [pinMode, setPinMode] = useState<"set" | "verify" | "remove">("verify");
-  const pendingActionRef = useRef<null | ((pin: string) => void)>(null); // Action now requires PIN
+  const pendingActionRef = useRef<null | ((pin: string) => void)>(null);
 
-  // Initial check for dashboard access
   useEffect(() => {
-    const checkPin = async () => {
-      // Em modo liberado, assumimos que o PIN não existe ou ignoramos a verificação inicial
-      // para permitir o acesso ao painel, mas mantemos o modal para ações sensíveis.
+    const checkPinRequirement = async () => {
+      if (isPinVerified) return;
+
       const pinExists = await hasParentPin();
-      if (!pinExists) {
-        setPinMode("set");
-      } else {
-        setPinMode("verify");
-      }
-      // Para fins de análise, liberamos o acesso, mas mantemos o modal para ações sensíveis.
-      // Se o PIN não existir, abrimos o modal para configurar.
       if (pinExists) {
-        setPinModalOpen(true);
+        setPinMode("verify");
       } else {
-        setIsPinVerified(true); // Acesso liberado se não houver PIN
+        setPinMode("set");
       }
+      setPinModalOpen(true);
     };
-    checkPin();
-  }, []);
+    checkPinRequirement();
+  }, [isPinVerified]);
 
   const handlePinVerified = (pin: string) => {
     setIsPinVerified(true);
@@ -56,11 +47,11 @@ const Dashboard = () => {
   };
 
   const handlePinModalClose = (open: boolean) => {
+    if (!isPinVerified) return; // Don't allow closing if not verified
     setPinModalOpen(open);
   };
 
   const onVerifyThenRun = useCallback((action: (pin: string) => void) => {
-    // Re-verify for sensitive actions.
     pendingActionRef.current = action;
     setPinMode("verify");
     setPinModalOpen(true);
@@ -139,8 +130,7 @@ const Dashboard = () => {
     return isNaN(val) ? 0 : val;
   }, [todayUsage, limitMinutes]);
 
-  // Se o PIN ainda não foi verificado, mostramos o modal e uma tela de fundo de acesso restrito.
-  if (!isPinVerified && pinModalOpen) {
+  if (!isPinVerified) {
     return (
       <>
         <ParentalPinModal
@@ -148,14 +138,17 @@ const Dashboard = () => {
           mode={pinMode}
           onOpenChange={handlePinModalClose}
           onVerified={handlePinVerified}
-          title={pinMode === "set" ? "Definir PIN Parental para o Painel" : "Verificar PIN Parental para o Painel"}
+          title={pinMode === "set" ? "Defina um PIN para o Painel" : "Verificar PIN Parental"}
         />
         <div className="min-h-screen flex items-center justify-center p-4">
           <div className="glass-card p-6 text-center">
             <ShieldCheck className="h-12 w-12 text-primary mx-auto mb-4" />
             <h2 className="text-2xl font-bold">Acesso Restrito</h2>
             <p className="text-muted-foreground mt-2">
-              Por favor, verifique o PIN parental para acessar o Painel dos Pais.
+              {pinMode === 'set' 
+                ? "É necessário definir um PIN para proteger o Painel dos Pais."
+                : "Por favor, verifique o PIN parental para acessar."
+              }
             </p>
           </div>
         </div>
@@ -163,14 +156,10 @@ const Dashboard = () => {
     );
   }
 
-  // Se o PIN foi verificado ou se não há PIN, mostramos o conteúdo do painel.
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-4xl font-bold tracking-tighter">Painel dos Pais</h1>
-        {/* <Button variant="outline" onClick={signOut} className="flex items-center gap-2">
-          <LogOut className="h-4 w-4" /> Sair
-        </Button> */}
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -301,7 +290,7 @@ const Dashboard = () => {
       </div>
 
       <ParentalPinModal
-        open={pinModalOpen && !isPinVerified}
+        open={pinModalOpen}
         onOpenChange={handlePinModalClose}
         mode={pinMode}
         onVerified={handlePinVerified}
