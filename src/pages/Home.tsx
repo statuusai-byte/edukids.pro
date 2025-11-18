@@ -66,7 +66,7 @@ const Home = () => {
                 className="w-full border-white/20 text-white hover:bg-white/10"
                 onClick={handleActionClick}
               >
-                <User className="mr-2 h-5 w-5" /> Definir Idade
+                <User className="mr-2 h-5 w-5" /> CRIAR CONTA
               </Button>
             </>
           )}
