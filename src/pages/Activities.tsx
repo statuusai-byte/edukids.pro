@@ -1,13 +1,13 @@
 import { useAge } from "@/context/AgeContext";
-import { useMemo } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useMemo, useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { subjectsData } from "@/data/activitiesData";
 import { TiltCard } from "@/components/TiltCard";
 import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Icon } from "@/components/Icon";
 import { useScreenTime } from "@/hooks/use-screen-time";
 import { Lock, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import AgeSelectionModal from "@/components/AgeSelectionModal";
 
 const iconColorClass: Record<string, string> = {
     cyan: 'text-cyan-400',
@@ -40,9 +40,18 @@ const bgColorClass: Record<string, string> = {
 };
 
 const Activities = () => {
-  const { ageGroup } = useAge();
+  const { ageGroup, isLoading: isAgeLoading } = useAge();
   const { isBlocked, limitMinutes } = useScreenTime();
-  const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (!isAgeLoading && !ageGroup) {
+      setIsModalOpen(true);
+    }
+    if (ageGroup) {
+      setIsModalOpen(false);
+    }
+  }, [ageGroup, isAgeLoading]);
 
   const subjects = useMemo(() => {
     if (!ageGroup) return [];
@@ -76,23 +85,18 @@ const Activities = () => {
     );
   }
 
-  if (!ageGroup) {
+  if (isAgeLoading) {
     return (
       <div className="text-center py-16 glass-card rounded-lg">
-        <Sparkles className="h-12 w-12 text-primary mx-auto mb-4" />
-        <h2 className="text-2xl font-bold">Selecione uma faixa etária para começar!</h2>
-        <p className="text-muted-foreground mt-2">
-          As atividades são personalizadas para cada idade. Vá para as configurações para escolher.
-        </p>
-        <Button className="mt-6" onClick={() => navigate("/settings")}>
-          Definir Idade
-        </Button>
+        <Sparkles className="h-12 w-12 text-primary mx-auto mb-4 animate-spin" />
+        <h2 className="text-2xl font-bold">Carregando perfil...</h2>
       </div>
     );
   }
 
   return (
     <div>
+      <AgeSelectionModal open={isModalOpen} onOpenChange={setIsModalOpen} />
       <h1 className="text-4xl font-bold tracking-tighter mb-8">Áreas de Estudo</h1>
       {subjects.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
