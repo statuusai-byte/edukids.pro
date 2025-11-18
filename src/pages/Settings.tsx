@@ -18,12 +18,16 @@ import {
   requirePinForPurchasesSet,
 } from "@/utils/parental-helpers";
 import { useTheme } from "@/context/ThemeContext";
+import { useSupabase } from "@/context/SupabaseContext";
+import { hasParentPin } from "@/utils/parental-helpers";
+import { supabase } from "@/integrations/supabase/client";
 
 const Settings = () => {
   const { ageGroup, setAgeGroup } = useAge();
   const { name, setName, avatarUrl, setAvatarFile, isLoading: isProfileLoading } = useProfile();
   const { clearAll } = useProgress();
   const { theme, setTheme } = useTheme();
+  const { signOut, user } = useSupabase();
   const [uiSounds, setUiSounds] = useState(true);
 
   const [currentName, setCurrentName] = useState(name);
@@ -36,12 +40,16 @@ const Settings = () => {
   const pendingActionRef = useRef<null | (() => void)>(null);
 
   const checkPinStatus = useCallback(async () => {
+    if (!user) {
+      setParentPinExists(false);
+      setIsCheckingPinStatus(false);
+      return;
+    }
     setIsCheckingPinStatus(true);
-    // Em modo liberado, assumimos que o PIN não existe, mas mantemos a função para simulação.
-    // Para fins de teste, vamos simular que o PIN não existe.
-    setParentPinExists(false); 
+    const exists = await hasParentPin();
+    setParentPinExists(exists);
     setIsCheckingPinStatus(false);
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     setCurrentName(name);
@@ -116,13 +124,24 @@ const Settings = () => {
   const afterPinModalChange = (open: boolean) => {
     setPinModalOpen(open);
     if (!open) {
-      // Re-check pin status after modal closes (in case set/remove was successful)
       checkPinStatus();
     }
   };
 
-  const handlePermanentDelete = () => {
-    showError("Exclusão de conta desativada em modo liberado.");
+  const handlePermanentDelete = async () => {
+    if (window.confirm("ATENÇÃO: Esta ação é irreversível. Tem certeza que deseja excluir permanentemente sua conta e todos os seus dados?")) {
+      const toastId = showLoading("Excluindo sua conta...");
+      try {
+        const { error } = await supabase.functions.invoke('delete-user');
+        dismissToast(toastId);
+        if (error) throw error;
+        showSuccess("Sua conta foi excluída com sucesso.");
+        await signOut();
+      } catch (e: any) {
+        dismissToast(toastId);
+        showError("Falha ao excluir a conta: " + e.message);
+      }
+    }
   };
 
   return (
@@ -152,7 +171,7 @@ const Settings = () => {
                   value={currentName}
                   onChange={(e) => setCurrentName(e.target.value)}
                   onBlur={handleNameBlur}
-                  disabled={isProfileLoading}
+                  disabled={isProfileLoading || !user}
                   className="bg-secondary/60 border-white/20"
                 />
               </div>
@@ -161,13 +180,10 @@ const Settings = () => {
             <div className="space-y-2">
               <Label>Email da conta</Label>
               <Input
-                value={"Modo Liberado (Sem Login)"}
+                value={user?.email ?? "Você não está logado"}
                 disabled
                 className="bg-secondary/60 border-white/20 text-muted-foreground"
               />
-              <p className="text-xs text-muted-foreground">
-                O aplicativo está em modo de análise. O login está desativado.
-              </p>
             </div>
 
             <div className="space-y-2">
@@ -223,11 +239,11 @@ const Settings = () => {
               <Switch id="ui-sounds" checked={uiSounds} onCheckedChange={handleToggleSounds} />
             </div>
             <div className="pt-4 border-t border-white/10">
-              <Button variant="destructive" onClick={handleResetProgress} className="w-full">
+              <Button variant="destructive" onClick={handleResetProgress} className="w-full" disabled={!user}>
                 <Trash2 className="mr-2 h-4 w-4" /> Resetar Todo o Progresso
               </Button>
               <p className="text-xs text-muted-foreground mt-2">
-                Isso apagará todas as lições marcadas como concluídas.
+                Isso apagará todas as lições marcadas como concluídas na sua conta.
               </p>
             </div>
           </CardContent>
@@ -258,11 +274,11 @@ const Settings = () => {
               {isCheckingPinStatus ? (
                 <Button disabled variant="secondary"><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Carregando</Button>
               ) : parentPinExists ? (
-                <Button variant="secondary" onClick={openRemovePin} disabled>
+                <Button variant="secondary" onClick={openRemovePin} disabled={!user}>
                   <ShieldX className="mr-2 h-4 w-4" /> Remover PIN
                 </Button>
               ) : (
-                <Button onClick={openSetPin} disabled>
+                <Button onClick={openSetPin} disabled={!user}>
                   <ShieldCheck className="mr-2 h-4 w-4" /> Definir PIN
                 </Button>
               )}
@@ -273,12 +289,9 @@ const Settings = () => {
                 id="require-pin"
                 checked={requirePinForPurchases}
                 onCheckedChange={requirePinChanged}
-                disabled={!parentPinExists}
+                disabled={!parentPinExists || !user}
               />
             </div>
-            <p className="text-xs text-red-400">
-              Ações de PIN desativadas em modo liberado.
-            </p>
           </CardContent>
         </Card>
 
@@ -288,16 +301,13 @@ const Settings = () => {
             <CardDescription>Gerencie sua sessão e dados da conta.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Button variant="outline" disabled className="w-full">
-              <LogOut className="mr-2 h-4 w-4" /> Sair da Conta (Desativado)
+            <Button variant="outline" onClick={signOut} className="w-full" disabled={!user}>
+              <LogOut className="mr-2 h-4 w-4" /> Sair da Conta
             </Button>
             <div className="pt-4 border-t border-white/10">
-              <Button variant="destructive" onClick={handlePermanentDelete} className="w-full" disabled>
-                <Trash2 className="mr-2 h-4 w-4" /> Excluir Conta Permanentemente (Desativado)
+              <Button variant="destructive" onClick={handlePermanentDelete} className="w-full" disabled={!user}>
+                <Trash2 className="mr-2 h-4 w-4" /> Excluir Conta Permanentemente
               </Button>
-              <p className="text-xs text-muted-foreground mt-2">
-                O login está desativado.
-              </p>
             </div>
           </CardContent>
         </Card>

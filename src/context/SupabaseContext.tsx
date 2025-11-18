@@ -1,31 +1,53 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
+import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
 
 interface SupabaseContextType {
   session: Session | null;
   user: User | null;
   isLoading: boolean;
-  // signOut: () => Promise<void>; // Removed
+  signOut: () => Promise<void>;
 }
 
 const SupabaseContext = createContext<SupabaseContextType | undefined>(undefined);
 
 export const SupabaseProvider = ({ children }: { children: ReactNode }) => {
-  // Em modo liberado, simulamos que não há usuário logado, mas o carregamento é instantâneo.
-  const [session] = useState<Session | null>(null);
-  const [user] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Apenas para garantir que o cliente Supabase está inicializado, mas não monitoramos o estado de auth.
-    // O app opera como se estivesse deslogado, mas com acesso total.
-    setIsLoading(false);
+    const getSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      setSession(data.session);
+      setUser(data.session?.user ?? null);
+      setIsLoading(false);
+    };
+
+    getSession();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        setIsLoading(false);
+      }
+    );
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
   }, []);
 
-  // Removemos a função signOut, pois não há login.
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    navigate('/');
+  };
 
   return (
-    <SupabaseContext.Provider value={{ session, user, isLoading }}>
+    <SupabaseContext.Provider value={{ session, user, isLoading, signOut }}>
       {children}
     </SupabaseContext.Provider>
   );

@@ -25,7 +25,9 @@ const SubjectPage = lazy(() => import("./pages/SubjectPage"));
 const LessonPage = lazy(() => import("./pages/LessonPage"));
 const AchievementsPage = lazy(() => import("./pages/Achievements"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
-const Home = lazy(() => import("./pages/Home")); // Restaurado
+const Home = lazy(() => import("./pages/Home"));
+const Login = lazy(() => import("./pages/Login"));
+const Register = lazy(() => import("./pages/Register"));
 
 const queryClient = new QueryClient();
 
@@ -37,8 +39,9 @@ const Fallback = () => (
 
 const AppRoutes = () => (
   <Routes>
-    {/* Rota raiz restaurada */}
     <Route path="/" element={<Home />} />
+    <Route path="/login" element={<Login />} />
+    <Route path="/register" element={<Register />} />
 
     <Route element={<Layout />}>
       <Route path="/activities" element={<Activities />} />
@@ -51,7 +54,6 @@ const AppRoutes = () => (
       <Route path="/store" element={<Store />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       
-      {/* Rotas internas */}
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/settings" element={<Settings />} />
       <Route path="/achievements" element={<AchievementsPage />} />
@@ -91,4 +93,3 @@ const App = () => (
 );
 
 export default App;
-// Forcing Vercel deploy trigger
