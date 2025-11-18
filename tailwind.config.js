@@ -102,6 +102,14 @@ module.exports = {
           "0%, 100%": { opacity: "1", transform: "scale(1)" },
           "50%": { opacity: "0.85", transform: "scale(1.05)" },
         },
+        "float-subtle": {
+          "0%, 100%": { transform: "translateY(0) rotate(0.5deg)" },
+          "50%": { transform: "translateY(-3px) rotate(-0.5deg)" },
+        },
+        "pulse-subtle": {
+          "0%, 100%": { transform: "scale(1)", boxShadow: "0 0 0 0 rgba(124, 58, 237, 0.4)" },
+          "50%": { transform: "scale(1.01)", boxShadow: "0 0 0 5px rgba(124, 58, 237, 0)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -111,6 +119,8 @@ module.exports = {
         "correct-answer-pop": "correct-answer-pop 0.4s ease-in-out",
         "incorrect-answer-shake": "incorrect-answer-shake 0.5s ease-in-out",
         "slow-glow": "slow-glow 4s ease-in-out infinite",
+        "float-subtle": "float-subtle 10s ease-in-out infinite",
+        "pulse-subtle": "pulse-subtle 2s ease-out infinite",
       },
     },
   },
