@@ -25,6 +25,7 @@ import AchievementsPage from '@/pages/Achievements';
 import PlayPlus from '@/pages/PlayPlus';
 import PrivacyPolicy from '@/pages/PrivacyPolicy';
 import SuccessPayment from '@/pages/SuccessPayment';
+import TermsOfUse from '@/pages/TermsOfUse';
 
 const App = () => {
   return (
@@ -45,6 +46,7 @@ const App = () => {
                       {/* Rotas do aplicativo que USAM o Layout principal */}
                       <Route element={<Layout />}>
                         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                        <Route path="/termos-de-uso" element={<TermsOfUse />} />
                         <Route path="/success-payment" element={<SuccessPayment />} />
 
                         <Route element={<ProtectedRoute />}>

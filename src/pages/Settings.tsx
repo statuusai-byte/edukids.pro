@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useAge } from "@/context/AgeContext";
-import { Trash2, ShieldCheck, ShieldX, Info, LogOut, Sun, Moon, Loader2 } from "lucide-react";
+import { Trash2, ShieldCheck, ShieldX, Info, LogOut, Sun, Moon, Loader2, FileText, Gavel } from "lucide-react";
 import { useProfile } from "@/context/ProfileContext";
 import { AvatarUploader } from "@/components/AvatarUploader";
 import { useProgress } from "@/hooks/use-progress";
@@ -21,6 +21,7 @@ import { useTheme } from "@/context/ThemeContext";
 import { useSupabase } from "@/context/SupabaseContext";
 import { hasParentPin } from "@/utils/parental-helpers";
 import { supabase } from "@/integrations/supabase/client";
+import { Link } from "react-router-dom";
 
 const Settings = () => {
   const { ageGroup, setAgeGroup } = useAge();
@@ -309,6 +310,25 @@ const Settings = () => {
                 <Trash2 className="mr-2 h-4 w-4" /> Excluir Conta Permanentemente
               </Button>
             </div>
+          </CardContent>
+        </Card>
+
+        <Card className="glass-card">
+          <CardHeader>
+            <CardTitle>Legal</CardTitle>
+            <CardDescription>Documentos importantes sobre o uso do aplicativo.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <Button asChild variant="link" className="p-0 justify-start w-full">
+              <Link to="/privacy-policy" className="flex items-center gap-2">
+                <FileText className="h-4 w-4" /> Política de Privacidade
+              </Link>
+            </Button>
+            <Button asChild variant="link" className="p-0 justify-start w-full">
+              <Link to="/termos-de-uso" className="flex items-center gap-2">
+                <Gavel className="h-4 w-4" /> Termos de Uso
+              </Link>
+            </Button>
           </CardContent>
         </Card>
       </div>
