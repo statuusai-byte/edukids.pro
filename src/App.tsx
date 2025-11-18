@@ -8,7 +8,6 @@ import { PremiumProvider } from '@/context/PremiumContext';
 import { HintsProvider } from '@/context/HintsContext';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import GlobalErrorLogger from '@/components/GlobalErrorLogger';
-import ReloadPrompt from '@/components/ReloadPrompt';
 
 import Layout from '@/components/Layout';
 import ProtectedRoute from '@/components/ProtectedRoute';
@@ -64,7 +63,6 @@ const App = () => {
                     </Routes>
                     <Toaster richColors />
                     <GlobalErrorLogger />
-                    <ReloadPrompt />
                   </HintsProvider>
                 </PremiumProvider>
               </AgeProvider>
